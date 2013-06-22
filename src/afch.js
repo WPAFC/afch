@@ -7,7 +7,7 @@
 // Bug reporting: <http://en.wikipedia.org/wiki/Wikipedia_talk:WikiProject_Articles_for_creation>
 ////////////////////////////////////////////
 //<nowiki>
-importScript('interface.js');
+importScript('User:Timotheus Canens/displaymessage.js');
 
 if((wgPageName.indexOf('Wikipedia:Articles_for_creation') != -1)||(wgPageName.indexOf('Wikipedia_talk:Articles_for_creation') != -1)||(wgPageName.indexOf('Wikipedia:Files_for_Upload') != -1)||(wgPageName.indexOf('User:*') != -1)) {
 	var afcHelper_advert = ' ([[WP:AFCH|AFCH]])';
