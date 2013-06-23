@@ -1145,8 +1145,9 @@ else if (wgPageName.indexOf('Wikipedia:Articles_for_creation/') != -1 || wgPageN
 // CSD it if it's a copyvio
 		if(value == 'cv'){
 			document.getElementById("afcHelper_blank").setAttribute("checked", "checked");
+                        afcHelper_turnvisible("afcHelper_extra_afccleared", true);
 // But don't if it's just a BLP vio
-		if(value == 'blp'){
+		}else if(value == 'blp'){
 			document.getElementById("afcHelper_blank").setAttribute("checked");
 			afcHelper_turnvisible("afcHelper_extra_afccleared", true);
 		}else{
