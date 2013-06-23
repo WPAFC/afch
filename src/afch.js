@@ -1,10 +1,9 @@
 ////////////////////////////////////////////
 // Yet another AfC helper script
-// v.4.1.19b1
+// v.4.1.19b2
 ////////////////////////////////////////////
-// Documentation: <http://en.wikipedia.org/wiki/Wikipedia:WikiProject_Articles_for_creation/Helper_script>
-// Release notes: <http://en.wikipedia.org/wiki/Wikipedia:WikiProject_Articles_for_creation/Helper_script/Changelog>
-// Bug reporting: <http://en.wikipedia.org/wiki/Wikipedia_talk:WikiProject_Articles_for_creation>
+// Home page and documentation: <http://en.wikipedia.org/wiki/Wikipedia:WikiProject_Articles_for_creation/Helper_script>
+// Development: <https://github.com/WikiProject-Articles-for-creation/afch>
 ////////////////////////////////////////////
 //<nowiki>
 importScript('User:Timotheus Canens/displaymessage.js');
@@ -582,6 +581,7 @@ else if (wgPageName.indexOf('Wikipedia:Articles_for_creation/') != -1 || wgPageN
 // Sourcing
                                          { label: 'v - Submission is improperly sourced', value: 'v' },
 // Custom
+					 { label: 'custom - Enter a decline reason in the box below, linking to relevent policies', value: 'reason' },
 					 { label: 'Select a reason for declining', selected : true, value: 'reason' }
 					 ], "afcHelper_onChange(this)");
 			text += reasonSelect;
