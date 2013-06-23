@@ -1411,14 +1411,14 @@ function() {
 			errormsg+='</i>';
 		}
 		// test if there are ref tags after reflist
-		var temppagetext = pagetext;
-		var n = temppagetext.search(reflistre);
-		var o = temppagetext.match(reflistre);
-		if(o != 'undefined')
-			temppagetext = temppagetext.slice(n + o.length);
-		if((temppagetext.search(rerefbegin))>0){
-			errormsg += '<h3><div style="color:red">Be careful, there is a &lt;ref&gt; tag after the references list! You might not see all references.</div></h3>';
-		}
+//		var temppagetext = pagetext;
+//		var n = temppagetext.search(reflistre);
+//		var o = temppagetext.match(reflistre);
+//		if(o[0] != 'undefined')
+//			temppagetext = temppagetext.slice(n + o[0].length);
+//		if((temppagetext.search(rerefbegin))>0){
+//			errormsg += '<h3><div style="color:red">Be careful, there is a &lt;ref&gt; tag after the references list! You might not see all references.</div></h3>';
+//		}
 		return errormsg;
 }
 
