@@ -1,10 +1,9 @@
 ////////////////////////////////////////////
 // Yet another AfC helper script
-// v.4.1.19b1
+// v.4.1.19b2
 ////////////////////////////////////////////
-// Documentation: <http://en.wikipedia.org/wiki/Wikipedia:WikiProject_Articles_for_creation/Helper_script>
-// Release notes: <http://en.wikipedia.org/wiki/Wikipedia:WikiProject_Articles_for_creation/Helper_script/Changelog>
-// Bug reporting: <http://en.wikipedia.org/wiki/Wikipedia_talk:WikiProject_Articles_for_creation>
+// Home page and documentation: <http://en.wikipedia.org/wiki/Wikipedia:WikiProject_Articles_for_creation/Helper_script>
+// Development: <https://github.com/WikiProject-Articles-for-creation/afch>
 ////////////////////////////////////////////
 //<nowiki>
 importScript('User:Timotheus Canens/displaymessage.js');
@@ -471,6 +470,7 @@ else if (wgPageName.indexOf('Wikipedia:Articles_for_creation/') != -1 || wgPageN
 			'film': 'subject appears to be a non-notable film',
 			'corp': 'subject appears to be a non-notable company or organization',
 			'bio': 'subject appears to be a non-notable person',
+			'afd': 'subject previously deleted through consensus',
 			'reason': ''
 	};
  	function afcHelper_init() {
@@ -550,7 +550,7 @@ else if (wgPageName.indexOf('Wikipedia:Articles_for_creation/') != -1 || wgPageN
                                          { label: 'blank - Submission is blank', value: 'blank' },
 					 { label: 'test - Submission appears to be a test edit (please ensure that it is not a test of a tool before declining)', value: 'test' },
 // BLP
-					 { label: 'blp - Blatant violation of BLP policies (immediately blank and mark for deletion)', value: 'blp' },
+					 { label: 'blp - Blatant violation of BLP policies (please blank the page)', value: 'blp' },
                                          { label: 'ilc - BLP does not meet minimum inline citation requirements (WP:MINREF)', value: 'ilc' },
 // Merging
 					 { label: 'mergeto - Submission should be merged into another article (type a comment with a link to the article below in the comment box)', value: 'mergeto' },
@@ -581,6 +581,7 @@ else if (wgPageName.indexOf('Wikipedia:Articles_for_creation/') != -1 || wgPageN
 // Sourcing
                                          { label: 'v - Submission is improperly sourced', value: 'v' },
 // Custom
+					 { label: 'custom - Enter a decline reason in the box below, linking to relevent policies', value: 'reason' },
 					 { label: 'Select a reason for declining', selected : true, value: 'reason' }
 					 ], "afcHelper_onChange(this)");
 			text += reasonSelect;
@@ -1141,8 +1142,13 @@ else if (wgPageName.indexOf('Wikipedia:Articles_for_creation/') != -1 || wgPageN
 		else
 			document.getElementById("afcHelper_extra_inline").innerHTML='';
 
-		if(value == 'blp' || value == 'cv'){
+// CSD it if it's a copyvio
+		if(value == 'cv'){
 			document.getElementById("afcHelper_blank").setAttribute("checked", "checked");
+                        afcHelper_turnvisible("afcHelper_extra_afccleared", true);
+// But don't if it's just a BLP vio
+		}else if(value == 'blp'){
+			document.getElementById("afcHelper_blank").setAttribute("checked");
 			afcHelper_turnvisible("afcHelper_extra_afccleared", true);
 		}else{
 			document.getElementById("afcHelper_blank").removeAttribute("checked");
@@ -1403,15 +1409,6 @@ function() {
 			for(i=0;i<refdouble.length;i++)
 				errormsg +=afcHelper_escapeHtmlChars(refdouble[i].toString())+'&gt;<br/>';
 			errormsg+='</i>';
-		}
-		// test if there are ref tags after reflist
-		var temppagetext = pagetext;
-		var n = temppagetext.search(reflistre);
-		var o = temppagetext.match(reflistre);
-		if(o[0] != 'undefined')
-			temppagetext = temppagetext.slice(n + o[0].length);
-		if((temppagetext.search(rerefbegin))>0){
-			errormsg += '<h3><div style="color:red">Be careful, there is a &lt;ref&gt; tag after the references list! You might not see all references.</div></h3>';
 		}
 		return errormsg;
 }
