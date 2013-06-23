@@ -470,7 +470,7 @@ else if (wgPageName.indexOf('Wikipedia:Articles_for_creation/') != -1 || wgPageN
 			'film': 'subject appears to be a non-notable film',
 			'corp': 'subject appears to be a non-notable company or organization',
 			'bio': 'subject appears to be a non-notable person',
-			'afd': 'subject previously deleted through consensus'
+			'afd': 'subject previously deleted through consensus',
 			'reason': ''
 	};
  	function afcHelper_init() {
