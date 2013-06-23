@@ -1142,8 +1142,12 @@ else if (wgPageName.indexOf('Wikipedia:Articles_for_creation/') != -1 || wgPageN
 		else
 			document.getElementById("afcHelper_extra_inline").innerHTML='';
 
-		if(value == 'blp' || value == 'cv'){
+// CSD it if it's a copyvio
+		if(value == 'cv'){
 			document.getElementById("afcHelper_blank").setAttribute("checked", "checked");
+// But don't if it's just a BLP vio
+		if(value == 'blp'){
+			document.getElementById("afcHelper_blank").setAttribute("checked");
 			afcHelper_turnvisible("afcHelper_extra_afccleared", true);
 		}else{
 			document.getElementById("afcHelper_blank").removeAttribute("checked");
