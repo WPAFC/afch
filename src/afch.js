@@ -550,7 +550,7 @@ else if (wgPageName.indexOf('Wikipedia:Articles_for_creation/') != -1 || wgPageN
                                          { label: 'blank - Submission is blank', value: 'blank' },
 					 { label: 'test - Submission appears to be a test edit (please ensure that it is not a test of a tool before declining)', value: 'test' },
 // BLP
-					 { label: 'blp - Blatant violation of BLP policies (immediately blank and mark for deletion)', value: 'blp' },
+					 { label: 'blp - Blatant violation of BLP policies (please blank the page)', value: 'blp' },
                                          { label: 'ilc - BLP does not meet minimum inline citation requirements (WP:MINREF)', value: 'ilc' },
 // Merging
 					 { label: 'mergeto - Submission should be merged into another article (type a comment with a link to the article below in the comment box)', value: 'mergeto' },
