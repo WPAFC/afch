@@ -1,16 +1,6 @@
-/*  _____________________________________________________________________________
- * |                                                                             |
- * |                    === WARNING: GLOBAL GADGET FILE ===                      |
- * |                  Changes to this page affect many users.                    |
- * | Please discuss changes on the talk page or on [[WT:Gadget]] before editing. |
- * |_____________________________________________________________________________|
- *
- * Imported from GitHub (https://github.com/WPAFC/afch/tree/4.1.19) on July 1st, 2013.
- * A helper script for [[Wikipedia:WikiProject Articles for creation]]; see [[Wikipedia:WikiProject Articles for creation/Helper script]]
- */
 ////////////////////////////////////////////
 // Yet another AfC helper script
-// v4.1.19
+// v4.1.20b1
 ////////////////////////////////////////////
 // Home page and documentation: <http://en.wikipedia.org/wiki/Wikipedia:WikiProject_Articles_for_creation/Helper_script>
 // Development: <https://github.com/WikiProject-Articles-for-creation/afch>
