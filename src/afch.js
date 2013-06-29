@@ -1352,7 +1352,10 @@ function() {
 		//Nmespaces WP (4) and WT (5)
 		//var afc_alltemplates= /\{\{\s*afc submission(?:\{\{[^\{\}]*\}\}|[^\}\{])*\}\}/i;
 		//afc_all=text.match(afc_alltemplates);
-
+		
+		// fix issue#1
+		pagetext = pagetext.replace(/\{\{AFC submission(\s*\|){0,2}[^decline]ts\s*=\s*/gi, "{{AFC submission|||ts=");
+		
 		//longer than 30 characters, but commonly added to the source code
 		texttest = pagetext.replace(/\<\!--  Bot generated title --\>/gi, "");
 		texttest = texttest.replace(/\<\!-- See Wikipedia\:WikiProject Musicians --\>/gi, "");
