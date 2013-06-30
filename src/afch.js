@@ -1181,7 +1181,6 @@ else if (wgPageName.indexOf('Wikipedia:Articles_for_creation/') != -1 || wgPageN
 		//Wikilink correct part #2
 		//text = text.replace(/\[\[\s*((?:\[\[[^\[\]]*\]\]|[^\]\[])*)\|\s*((?:\[\[[^\[\]]*\]\]|[^\]\[])*)\s*\]\]/gi, "then...\[\[$1\]\]");
 
-//todo: marker for mabdul
 		// Run AutoEd automatically
 		var AutoEd_baseurl = 'http://en.wikipedia.org/w/index.php?action=raw&ctype=text/javascript&title=Wikipedia:AutoEd/';
 		if (location.protocol === 'https:') {
@@ -1357,6 +1356,7 @@ function() {
 		
 		// fix issue#1
 		pagetext = pagetext.replace(/\{\{AFC submission(\s*\|){0,2}ts\s*=\s*/gi, "{{AFC submission|||ts=");
+		pagetext = pagetext.replace(/\{\{AFC submission\s*}}/gi, "{{AFC submission|||ts={{subst:LOCALTIMESTAMP}}|u=|ns={{subst:AFC submission/namespace number}}}}"); 
 		
 		//longer than 30 characters, but commonly added to the source code
 		texttest = pagetext.replace(/\<\!--  Bot generated title --\>/gi, "");
