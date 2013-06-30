@@ -720,7 +720,7 @@ else if (wgPageName.indexOf('Wikipedia:Articles_for_creation/') != -1 || wgPageN
 				else
 					newtalktitle = 'Talk:'+newtitle;
 				var token = afcHelper_getToken(true);
-				afcHelper_editPage(newtalktitle, talktext, token, 'Placing [[WP:AFC]] project banner', false);
+				afcHelper_editPage(newtalktitle, talktext, token, 'Placing [[Wikipedia:Articles for creation]] project banner', false);
 
 				while(afc_re.test(pagetext)){
 					var startindex = pagetext.search(afc_re);
@@ -828,7 +828,7 @@ else if (wgPageName.indexOf('Wikipedia:Articles_for_creation/') != -1 || wgPageN
 					}
 				}
 				var token = afcHelper_getToken(true);
-				afcHelper_editPage(newtitle, pagetext, token, "Cleanup following [[WP:AFC]] creation", false);
+				afcHelper_editPage(newtitle, pagetext, token, "Cleanup following [[Wikipedia:Articles for creation]] creation", false);
 			};
 			var token = afcHelper_getToken(true);
 			afcHelper_movePage(afcHelper_PageName, newtitle, token, 'Created via \[\[WP:AFC|Articles for creation\]\] (\[\[WP:WPAFC|you can help!\]\])' , callback);
@@ -1025,7 +1025,7 @@ else if (wgPageName.indexOf('Wikipedia:Articles_for_creation/') != -1 || wgPageN
 						pagetext = pagetext.substring(0, endindex) + '\n' + newComment + '\n----\n'+ pagetext.substring(endindex);
 					}
 				}
-				afcHelper_editPage(afcHelper_PageName, pagetext, token, "Commenting on [[WP:AFC|Articles for creation]] submission", false);
+				afcHelper_editPage(afcHelper_PageName, pagetext, token, "Commenting on [[Wikipedia:Articles for creation]] submission", false);
 			}
 		}
 		else if(action == 'mark'){
@@ -1065,7 +1065,7 @@ else if (wgPageName.indexOf('Wikipedia:Articles_for_creation/') != -1 || wgPageN
 			var startindex = pagetext.indexOf(afctemplate);
 			var endindex = pagetext.indexOf(afctemplate) + afctemplate.length;
 			pagetext = pagetext.substring(0, startindex) + newTemplate + pagetext.substring(endindex);
-			afcHelper_editPage(afcHelper_PageName, pagetext, token, "Marking [[WP:AFC|Articles for creation]] submission as being reviewed", false);
+			afcHelper_editPage(afcHelper_PageName, pagetext, token, "Marking [[Wikipedia:Articles for creation]] submission as being reviewed", false);
 		}
 		else if(action == 'unmark'){
 			displayMessage('<ul id="afcHelper_status"></ul><ul id="afcHelper_finish"></ul>');
@@ -1077,7 +1077,7 @@ else if (wgPageName.indexOf('Wikipedia:Articles_for_creation/') != -1 || wgPageN
 			}
 			var token = afcHelper_getToken(true);
 			pagetext = pagetext.replace(/\{\{\s*afc submission\s*\|\s*r\s*\|\s*\|/i, "\{\{AFC submission\|\|");
-			afcHelper_editPage(afcHelper_PageName, pagetext, token, "Unmarking [[WP:AFC|Articles for creation]] submission as being reviewed", false);
+			afcHelper_editPage(afcHelper_PageName, pagetext, token, "Unmarking [[Wikipedia:Articles for creation]] submission as being reviewed", false);
 		}
 		else if(action == 'cleanup'){
 			displayMessage('<ul id="afcHelper_status"></ul><ul id="afcHelper_finish"></ul>');
@@ -1087,7 +1087,7 @@ else if (wgPageName.indexOf('Wikipedia:Articles_for_creation/') != -1 || wgPageN
 			if(text==pagetext)
 				document.getElementById('afcHelper_finish').innerHTML += '<span id="afcHelper_finished_wrapper"><span id="afcHelper_finished_main><li id="afcHelper_done"><b>This submission is already cleaned. Nothing changed. (<a href="'+wgArticlePath.replace("$1", encodeURI(afcHelper_PageName))+'?action=purge" title="'+afcHelper_PageName+'">Reload page</a>)</b></li></span></span>';
 			else
-				afcHelper_editPage(afcHelper_PageName, pagetext, token, "Cleaning the [[WP:AFC|Articles for creation]] submission.", false);
+				afcHelper_editPage(afcHelper_PageName, pagetext, token, "Cleaning the [[Wikipedia:Articles for creation]] submission.", false);
 		}
 		document.getElementById('afcHelper_finished_main').style.display = '';
 	}
