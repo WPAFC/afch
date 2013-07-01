@@ -692,10 +692,10 @@ else if (wgPageName.indexOf('Wikipedia:Articles_for_creation/') != -1 || wgPageN
 						talktext += "yes";
 					else if(living=='dead')
 						talktext += "no";
-					talktext += "|class=" + assessment + "|listas=" + listas + "\}\}";
+					talktext += "|class=" + assessment + "|listas=" + listas + "\}\}\n";
 				}
 				
-				talktext +="\n\{\{subst:WPAFC/article|class=" + assessment + "\}\}\n"+talkAppend;
+				talktext +="\{\{subst:WPAFC/article|class=" + assessment + "\}\}\n"+talkAppend;
 				// disambig check
 				if(assessment == 'disambig'){
 					talktext += '\n\{\{WikiProject Disambiguation\}\}';
@@ -911,7 +911,7 @@ else if (wgPageName.indexOf('Wikipedia:Articles_for_creation/') != -1 || wgPageN
 					usertalkpage = "User_talk:"+username;
 					var usertext = afcHelper_getPageText(usertalkpage, true,true);
 					var reason = 'Your submission at \[\[Wikipedia:Articles for creation|Articles for creation\]\]';
-					usertext += "\n== Your submission at \[\[Wikipedia:Articles for creation|Articles for creation\]\] ==";
+					usertext += "\n== Your submission at AfC \[\["+afcHelper_PageName+"|"+SubmissionName+"\]\] ({{subst:CURRENTMONTHNAME}} {{subst:CURRENTDAY}}) ==";
 					var newnewnewtitle = afcHelper_submissionTitle.replace(" ","{{subst:Sp}}");
 					usertext += "\n\{\{subst:" + notifytemplate + "|1=" + newnewnewtitle;
 					if(code == 'cv')
@@ -1236,8 +1236,8 @@ function() {
 		text = autoEdLinks(text);
 });
 		//Ref tag correction part #1: remove whitespaces and commas between the ref tags and whitespaces before ref tags
-		text = text.replace(/\s*(\<\/\s*ref\s*\>)\s*[,]*\s*(<\s*ref\s*(name\s*=|group\s*=)*\s*[^\/]*>)\s*/gim, "$1$2");
-		text = text.replace(/\s*(<\s*ref\s*(name\s*=|group\s*=)*\s*.*[^\/]+>)\s*/gim, "$1");
+		text = text.replace(/\s*(\<\/\s*ref\s*\>)\s*[,]*\s*(<\s*ref\s*(name\s*=|group\s*=)*\s*[^\/]*>)\s*^/gim, "$1$2");
+		text = text.replace(/\s*(<\s*ref\s*(name\s*=|group\s*=)*\s*.*[^\/]+>)\s*^/gim, "$1");
 		//Ref tag correction part #2: move :;.,!? before ref tags
 		text = text.replace(/\s*((<\s*ref\s*(name\s*=|group\s*=)*\s*.*[\/]{1}>)|(<\s*ref\s*(name\s*=|group\s*=)*\s*[^\/]*>(?:\\<[^\<\>]*\>|[^><])*\<\/\s*ref\s*\>))\s*([.!?,;:])+/gim, "$6$1");
 //		text = text.replace(/\{\{(userspacedraft|userspace draft|user sandbox)(?:\{\{[^{}]*\}\}|[^}{])*\}\}/ig, "");
