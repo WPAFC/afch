@@ -670,7 +670,7 @@ else if (wgPageName.indexOf('Wikipedia:Articles_for_creation/') != -1 || wgPageN
 						username = username.replace(/\|/g,'');
 						usertalkpage = "User_talk:"+username;
 						var usertext = afcHelper_getPageText(usertalkpage, true, true);
-						usertext += "\n== Your submission at \[\[WP:AFC|Articles for creation\]\] ==";
+						usertext += "\n== Your submission at AfC \[\["+wgPageName+"|"+newtitle+"\]\] was accepted ==";
 						usertext += "\n\{\{subst:afc talk|1=" + newtitle + "|class=" + assessment + "|sig=yes\}\}";
 						var token = afcHelper_getToken(true);
 						afcHelper_editPage(usertalkpage, usertext, token, 'Your submission at \[\[WP:AFC|Articles for creation\]\]', false);
@@ -685,7 +685,7 @@ else if (wgPageName.indexOf('Wikipedia:Articles_for_creation/') != -1 || wgPageN
 				var token = afcHelper_getToken(true);
 				afcHelper_editPage("Wikipedia:Articles for creation/recent", recenttext, token, 'Updating recent AFC creations' , false);
 
-				var talktext = "\{\{Talk header\}\}\n";
+				var talktext = "";
 				if(biography){
 					talktext += "\{\{WikiProject Biography|living=";
 					if(living=='live')
@@ -911,6 +911,7 @@ else if (wgPageName.indexOf('Wikipedia:Articles_for_creation/') != -1 || wgPageN
 					usertalkpage = "User_talk:"+username;
 					var usertext = afcHelper_getPageText(usertalkpage, true,true);
 					var reason = 'Your submission at \[\[Wikipedia:Articles for creation|Articles for creation\]\]';
+					var SubmissionName = afcHelper_PageName.replace(/(Wikipedia( talk)*:Articles for creation\/)+/i,'');
 					usertext += "\n== Your submission at AfC \[\["+afcHelper_PageName+"|"+SubmissionName+"\]\] ({{subst:CURRENTMONTHNAME}} {{subst:CURRENTDAY}}) ==";
 					var newnewnewtitle = afcHelper_submissionTitle.replace(" ","{{subst:Sp}}");
 					usertext += "\n\{\{subst:" + notifytemplate + "|1=" + newnewnewtitle;
