@@ -660,7 +660,7 @@ else if (wgPageName.indexOf('Wikipedia:Articles_for_creation/') != -1 || wgPageN
 						username = username.replace(/\|/g,'');
 						usertalkpage = "User_talk:"+username;
 						var usertext = afcHelper_getPageText(usertalkpage, true, true);
-						usertext += "\n== Your submission at \[\[WP:AFC|Articles for creation\]\] ==";
+						usertext += "\n== Your submission at AfC \[\["+wgPageName+"|"+newtitle+"\]\] was accepted ==";
 						usertext += "\n\{\{subst:afc talk|1=" + newtitle + "|class=" + assessment + "|sig=yes\}\}";
 						var token = afcHelper_getToken(true);
 						afcHelper_editPage(usertalkpage, usertext, token, 'Your submission at \[\[WP:AFC|Articles for creation\]\]', false);
@@ -675,17 +675,17 @@ else if (wgPageName.indexOf('Wikipedia:Articles_for_creation/') != -1 || wgPageN
 				var token = afcHelper_getToken(true);
 				afcHelper_editPage("Wikipedia:Articles for creation/recent", recenttext, token, 'Updating recent AFC creations' , false);
 
-				var talktext = "\{\{Talk header\}\}\n";
+				var talktext = "";
 				if(biography){
 					talktext += "\{\{WikiProject Biography|living=";
 					if(living=='live')
 						talktext += "yes";
 					else if(living=='dead')
 						talktext += "no";
-					talktext += "|class=" + assessment + "|listas=" + listas + "\}\}";
+					talktext += "|class=" + assessment + "|listas=" + listas + "\}\}\n";
 				}
 				
-				talktext +="\n\{\{subst:WPAFC/article|class=" + assessment + "\}\}\n"+talkAppend;
+				talktext +="\{\{subst:WPAFC/article|class=" + assessment + "\}\}\n"+talkAppend;
 				// disambig check
 				if(assessment == 'disambig'){
 					talktext += '\n\{\{WikiProject Disambiguation\}\}';
@@ -710,7 +710,7 @@ else if (wgPageName.indexOf('Wikipedia:Articles_for_creation/') != -1 || wgPageN
 				else
 					newtalktitle = 'Talk:'+newtitle;
 				var token = afcHelper_getToken(true);
-				afcHelper_editPage(newtalktitle, talktext, token, 'Placing [[WP:AFC]] project banner', false);
+				afcHelper_editPage(newtalktitle, talktext, token, 'Placing [[Wikipedia:Articles for creation]] project banner', false);
 
 				while(afc_re.test(pagetext)){
 					var startindex = pagetext.search(afc_re);
@@ -818,7 +818,7 @@ else if (wgPageName.indexOf('Wikipedia:Articles_for_creation/') != -1 || wgPageN
 					}
 				}
 				var token = afcHelper_getToken(true);
-				afcHelper_editPage(newtitle, pagetext, token, "Cleanup following [[WP:AFC]] creation", false);
+				afcHelper_editPage(newtitle, pagetext, token, "Cleanup following [[Wikipedia:Articles for creation]] creation", false);
 			};
 			var token = afcHelper_getToken(true);
 			afcHelper_movePage(afcHelper_PageName, newtitle, token, 'Created via \[\[WP:AFC|Articles for creation\]\] (\[\[WP:WPAFC|you can help!\]\])' , callback);
@@ -901,7 +901,8 @@ else if (wgPageName.indexOf('Wikipedia:Articles_for_creation/') != -1 || wgPageN
 					usertalkpage = "User_talk:"+username;
 					var usertext = afcHelper_getPageText(usertalkpage, true,true);
 					var reason = 'Your submission at \[\[Wikipedia:Articles for creation|Articles for creation\]\]';
-					usertext += "\n== Your submission at \[\[Wikipedia:Articles for creation|Articles for creation\]\] ==";
+					var SubmissionName = afcHelper_PageName.replace(/(Wikipedia( talk)*:Articles for creation\/)+/i,'');
+					usertext += "\n== Your submission at AfC \[\["+afcHelper_PageName+"|"+SubmissionName+"\]\] ({{subst:CURRENTMONTHNAME}} {{subst:CURRENTDAY}}) ==";
 					var newnewnewtitle = afcHelper_submissionTitle.replace(" ","{{subst:Sp}}");
 					usertext += "\n\{\{subst:" + notifytemplate + "|1=" + newnewnewtitle;
 					if(code == 'cv')
@@ -1015,7 +1016,7 @@ else if (wgPageName.indexOf('Wikipedia:Articles_for_creation/') != -1 || wgPageN
 						pagetext = pagetext.substring(0, endindex) + '\n' + newComment + '\n----\n'+ pagetext.substring(endindex);
 					}
 				}
-				afcHelper_editPage(afcHelper_PageName, pagetext, token, "Commenting on [[WP:AFC|Articles for creation]] submission", false);
+				afcHelper_editPage(afcHelper_PageName, pagetext, token, "Commenting on [[Wikipedia:Articles for creation]] submission", false);
 			}
 		}
 		else if(action == 'mark'){
@@ -1055,7 +1056,7 @@ else if (wgPageName.indexOf('Wikipedia:Articles_for_creation/') != -1 || wgPageN
 			var startindex = pagetext.indexOf(afctemplate);
 			var endindex = pagetext.indexOf(afctemplate) + afctemplate.length;
 			pagetext = pagetext.substring(0, startindex) + newTemplate + pagetext.substring(endindex);
-			afcHelper_editPage(afcHelper_PageName, pagetext, token, "Marking [[WP:AFC|Articles for creation]] submission as being reviewed", false);
+			afcHelper_editPage(afcHelper_PageName, pagetext, token, "Marking [[Wikipedia:Articles for creation]] submission as being reviewed", false);
 		}
 		else if(action == 'unmark'){
 			displayMessage('<ul id="afcHelper_status"></ul><ul id="afcHelper_finish"></ul>');
@@ -1067,7 +1068,7 @@ else if (wgPageName.indexOf('Wikipedia:Articles_for_creation/') != -1 || wgPageN
 			}
 			var token = afcHelper_getToken(true);
 			pagetext = pagetext.replace(/\{\{\s*afc submission\s*\|\s*r\s*\|\s*\|/i, "\{\{AFC submission\|\|");
-			afcHelper_editPage(afcHelper_PageName, pagetext, token, "Unmarking [[WP:AFC|Articles for creation]] submission as being reviewed", false);
+			afcHelper_editPage(afcHelper_PageName, pagetext, token, "Unmarking [[Wikipedia:Articles for creation]] submission as being reviewed", false);
 		}
 		else if(action == 'cleanup'){
 			displayMessage('<ul id="afcHelper_status"></ul><ul id="afcHelper_finish"></ul>');
@@ -1077,7 +1078,7 @@ else if (wgPageName.indexOf('Wikipedia:Articles_for_creation/') != -1 || wgPageN
 			if(text==pagetext)
 				document.getElementById('afcHelper_finish').innerHTML += '<span id="afcHelper_finished_wrapper"><span id="afcHelper_finished_main><li id="afcHelper_done"><b>This submission is already cleaned. Nothing changed. (<a href="'+wgArticlePath.replace("$1", encodeURI(afcHelper_PageName))+'?action=purge" title="'+afcHelper_PageName+'">Reload page</a>)</b></li></span></span>';
 			else
-				afcHelper_editPage(afcHelper_PageName, pagetext, token, "Cleaning the [[WP:AFC|Articles for creation]] submission.", false);
+				afcHelper_editPage(afcHelper_PageName, pagetext, token, "Cleaning the [[Wikipedia:Articles for creation]] submission.", false);
 		}
 		document.getElementById('afcHelper_finished_main').style.display = '';
 	}
@@ -1171,7 +1172,6 @@ else if (wgPageName.indexOf('Wikipedia:Articles_for_creation/') != -1 || wgPageN
 		//Wikilink correct part #2
 		//text = text.replace(/\[\[\s*((?:\[\[[^\[\]]*\]\]|[^\]\[])*)\|\s*((?:\[\[[^\[\]]*\]\]|[^\]\[])*)\s*\]\]/gi, "then...\[\[$1\]\]");
 
-//todo: marker for mabdul
 		// Run AutoEd automatically
 		var AutoEd_baseurl = 'http://en.wikipedia.org/w/index.php?action=raw&ctype=text/javascript&title=Wikipedia:AutoEd/';
 		if (location.protocol === 'https:') {
@@ -1227,8 +1227,8 @@ function() {
 		text = autoEdLinks(text);
 });
 		//Ref tag correction part #1: remove whitespaces and commas between the ref tags and whitespaces before ref tags
-		text = text.replace(/\s*(\<\/\s*ref\s*\>)\s*[,]*\s*(<\s*ref\s*(name\s*=|group\s*=)*\s*[^\/]*>)\s*/gim, "$1$2");
-		text = text.replace(/\s*(<\s*ref\s*(name\s*=|group\s*=)*\s*.*[^\/]+>)\s*/gim, "$1");
+		text = text.replace(/\s*(\<\/\s*ref\s*\>)\s*[,]*\s*(<\s*ref\s*(name\s*=|group\s*=)*\s*[^\/]*>)\s*^/gim, "$1$2");
+		text = text.replace(/\s*(<\s*ref\s*(name\s*=|group\s*=)*\s*.*[^\/]+>)\s*^/gim, "$1");
 		//Ref tag correction part #2: move :;.,!? before ref tags
 		text = text.replace(/\s*((<\s*ref\s*(name\s*=|group\s*=)*\s*.*[\/]{1}>)|(<\s*ref\s*(name\s*=|group\s*=)*\s*[^\/]*>(?:\\<[^\<\>]*\>|[^><])*\<\/\s*ref\s*\>))\s*([.!?,;:])+/gim, "$6$1");
 //		text = text.replace(/\{\{(userspacedraft|userspace draft|user sandbox)(?:\{\{[^{}]*\}\}|[^}{])*\}\}/ig, "");
@@ -1252,6 +1252,8 @@ function() {
 		text = text.replace(/\<\!--- Important, do not remove this line before article has been created. ---\>/ig, "");
 		text = text.replace(/\<\!-- This will add a notice to the bottom of the page and won't blank it! The new template which says that your draft is waiting for a review will appear at the bottom; simply ignore the old \(grey\) drafted templates and the old \(red\) decline templates. A bot will update your article submission. Until then, please don't change anything in this text box and press "Save page". --\>/ig, "");
 		text = text.replace(/== Request review at \[\[WP:AFC\]\] ==\n/ig, "");
+		// Fixing issue #9
+		text = text.replace(/(?:\<\s*references\s*\>)((?:\<[^\<\>]*\>|[^\<\>])*)\<\s*references\s*\/\s*\>/ig, "{{reflist|refs=$1}}");		
 		// Remove {{userspacedraft}}, {{userspace draft}}, {{user sandbox}}
 		text = text.replace(/\{\{(userspacedraft|userspace draft|user sandbox)(?:\{\{[^{}]*\}\}|[^}{])*\}\}/ig, "");
 		text = text.replace(/^[-]{4,}$/igm, "");
@@ -1342,7 +1344,11 @@ function() {
 		//Nmespaces WP (4) and WT (5)
 		//var afc_alltemplates= /\{\{\s*afc submission(?:\{\{[^\{\}]*\}\}|[^\}\{])*\}\}/i;
 		//afc_all=text.match(afc_alltemplates);
-
+		
+		// fix issue#1
+		pagetext = pagetext.replace(/\{\{AFC submission(\s*\|){0,2}ts\s*=\s*/gi, "{{AFC submission|||ts=");
+		pagetext = pagetext.replace(/\{\{AFC submission\s*}}/gi, "{{AFC submission|||ts={{subst:LOCALTIMESTAMP}}|u=|ns={{subst:AFC submission/namespace number}}}}"); 
+		
 		//longer than 30 characters, but commonly added to the source code
 		texttest = pagetext.replace(/\<\!--  Bot generated title --\>/gi, "");
 		texttest = texttest.replace(/\<\!-- See Wikipedia\:WikiProject Musicians --\>/gi, "");
