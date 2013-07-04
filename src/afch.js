@@ -8,7 +8,7 @@
 //<nowiki>
 importScript('User:Timotheus Canens/displaymessage.js');
 
-if((wgPageName.indexOf('Wikipedia:Articles_for_creation') !== -1)||(wgPageName.indexOf('Wikipedia_talk:Articles_for_creation') !== -1)||(wgPageName.indexOf('Wikipedia:Files_for_Upload') !== -1)||(wgPageName.indexOf('User:*') !== -1)) {
+if((wgPageName.indexOf('Wikipedia:Articles_for_creation') != -1)||(wgPageName.indexOf('Wikipedia_talk:Articles_for_creation') != -1)||(wgPageName.indexOf('Wikipedia:Files_for_Upload') != -1)||(wgPageName.indexOf('User:*') != -1)) {
 	var afcHelper_advert = ' ([[WP:AFCH|AFCH]])';
 	var pagetext ='';
 	var usertalkpage='';
@@ -22,7 +22,7 @@ function afcHelper_escapeHtmlChars(original){
 	.replace(/'/g, "&#039;");
 }
 
-if (wgPageName.indexOf('Wikipedia:Articles_for_creation/Redirects') !== -1) {
+if (wgPageName.indexOf('Wikipedia:Articles_for_creation/Redirects') != -1) {
 	var afcHelper_PageName = wgPageName.replace(/_/g, ' ');
 	var afcHelper_RedirectSubmissions = new Array();
 	var afcHelper_RedirectSections = new Array();
@@ -52,11 +52,11 @@ if (wgPageName.indexOf('Wikipedia:Articles_for_creation/Redirects') !== -1) {
 		pagetext = afcHelper_getPageText(afcHelper_PageName, false, false);
 		// let the parsing begin.
 		// first, strip out the parts before the first section.
-		var section_re = /===[^=]*===/;
+		var section_re = /==[^=]*==/;
 		pagetext = pagetext.substring(pagetext.search(section_re));
 
 		// now parse it into sections.
-		section_re = /===[^=]*===/g;
+		section_re = /==[^=]*==/g;
 		var section_headers = pagetext.match(section_re);
 		for(var i = 0; i < section_headers.length; i++){
 			var section_start = pagetext.indexOf(section_headers[i]);
@@ -74,13 +74,13 @@ if (wgPageName.indexOf('Wikipedia:Articles_for_creation/Redirects') !== -1) {
 			if(!closed){
 				// parse.
 				var header = afcHelper_RedirectSections[i].match(section_re)[0];
-				if(header.search(/Redirect request/i) !== -1){
+				if(header.search(/Redirect request/i) != -1){
 					var wikilink_re = /\[\[[^\[\]]+\]\]/g;
 					var links = header.match(wikilink_re);
 					if(!links) continue;
 					for(var j = 0; j < links.length; j++){
 						links[j]=links[j].replace(/[\[\]]/g, '');
-						if(links[j].charAt(0) === ':')
+						if(links[j].charAt(0) == ':')
 							links[j] = links[j].substring(1);
 					}
 					var re = /Target of redirect:\s*\[\[([^\[\]]*)\]\]/i;
@@ -107,20 +107,20 @@ if (wgPageName.indexOf('Wikipedia:Articles_for_creation/Redirects') !== -1) {
 					}
 					afcHelper_RedirectSubmissions.push(submission);
 				}
-				else if(header.search(/Category request/i) !== -1){
+				else if(header.search(/Category request/i) != -1){
 					var wikilink_re = /\[\[[^\[\]]+\]\]/g;
 					var links = header.match(wikilink_re);
 					if(!links) continue;
 					// figure out the parent category.
 					var idx = afcHelper_RedirectSections[i].substring(header.length).search(/\[\[\s*:\s*(Category:[^\]\[]*)\]\]/i);
 					var parent = '';
-					if(idx !== -1)
+					if(idx != -1)
 						parent = RegExp.$1;
 					parent = parent.replace(/:\s*/g, ':');
 					for(var j = 0; j < links.length; j++){
 						links[j]=links[j].replace(/[\[\]]/g, '');
 						links[j]=links[j].replace(/Category\s*:\s*/gi, 'Category:');
-						if(links[j].charAt(0) === ':')
+						if(links[j].charAt(0) == ':')
 							links[j] = links[j].substring(1);
 
 						var submission = {
@@ -142,7 +142,7 @@ if (wgPageName.indexOf('Wikipedia:Articles_for_creation/Redirects') !== -1) {
 		// now layout the text.
 		for(var k = 0; k < afcHelper_RedirectSubmissions.length; k++){
 			text += '<ul>';
-			if(afcHelper_RedirectSubmissions[k].type === 'redirect'){
+			if(afcHelper_RedirectSubmissions[k].type == 'redirect'){
 				text += '<li>Redirect(s) to <a href="' + wgArticlePath.replace("$1", encodeURIComponent(afcHelper_RedirectSubmissions[k].to))
 				+ '">' + afcHelper_RedirectSubmissions[k].to + '</a>: <ul>';
 				for(var l = 0; l < afcHelper_RedirectSubmissions[k].from.length; l++){
@@ -179,10 +179,10 @@ if (wgPageName.indexOf('Wikipedia:Articles_for_creation/Redirects') !== -1) {
 	function afcHelper_redirect_onActionChange(id){
 		var extra = document.getElementById("afcHelper_redirect_extra_" + id);
 		var selectValue = document.getElementById("afcHelper_redirect_action_"+id).value;
-		if(selectValue === 'none')
+		if(selectValue == 'none')
 			extra.innerHTML = '';
-		else if(selectValue === 'accept'){
-			if(afcHelper_Submissions[id].type === 'redirect'){
+		else if(selectValue == 'accept'){
+			if(afcHelper_Submissions[id].type == 'redirect'){
 				extra.innerHTML = '<label for="afcHelper_redirect_from_' + id + '">From: </label><input type="text" '+
 				'name="afcHelper_redirect_from_' + id + '" id="afcHelper_redirect_from_' + id + '" value="'
 				+ afcHelper_escapeHtmlChars(afcHelper_Submissions[id].title) + '" />';
@@ -212,8 +212,8 @@ if (wgPageName.indexOf('Wikipedia:Articles_for_creation/Redirects') !== -1) {
 			}
 			extra.innerHTML += '<label for="afcHelper_redirect_comment_' + id +'">Comment:</label>'
 			+ '<input type="text" id="afcHelper_redirect_comment_' + id +'" name="afcHelper_redirect_comment_' + id +'"/>';
-		} else if(selectValue === 'decline'){
-			if(afcHelper_Submissions[id].type === 'redirect'){
+		} else if(selectValue == 'decline'){
+			if(afcHelper_Submissions[id].type == 'redirect'){
 			extra.innerHTML = '<label for="afcHelper_redirect_decline_'+ id +'">Reason for decline: </label>'
 			+ afcHelper_generateSelect('afcHelper_redirect_decline_'+
 					id, [
@@ -249,18 +249,18 @@ if (wgPageName.indexOf('Wikipedia:Articles_for_creation/Redirects') !== -1) {
 		for(var i = 0; i < afcHelper_Submissions.length; i++){
 			var action = document.getElementById("afcHelper_redirect_action_" + i).value;
 			afcHelper_Submissions[i].action = action;
-			if(action === 'none')
+			if(action == 'none')
 				continue;
-			if(action === 'accept'){
-				if(afcHelper_Submissions[i].type === 'redirect'){
+			if(action == 'accept'){
+				if(afcHelper_Submissions[i].type == 'redirect'){
 					afcHelper_Submissions[i].title = document.getElementById("afcHelper_redirect_from_" + i).value;
 					afcHelper_Submissions[i].to = document.getElementById("afcHelper_redirect_to_" + i).value;
 					afcHelper_Submissions[i].append = document.getElementById("afcHelper_redirect_append_" + i).value;
-					if(afcHelper_Submissions[i].append === 'custom'){
+					if(afcHelper_Submissions[i].append == 'custom'){
 						afcHelper_Submissions[i].append = prompt("Please enter the template to append for " + afcHelper_Submissions[i].title
 								+ ". Do not include the curly brackets.");
 					}
-					if(afcHelper_Submissions[i].append === 'none' || afcHelper_Submissions[i].append === null)
+					if(afcHelper_Submissions[i].append == 'none' || afcHelper_Submissions[i].append == null)
 						afcHelper_Submissions[i].append = '';
 					else
 						afcHelper_Submissions[i].append = '\{\{' + afcHelper_Submissions[i].append + '\}\}';
@@ -270,7 +270,7 @@ if (wgPageName.indexOf('Wikipedia:Articles_for_creation/Redirects') !== -1) {
 					afcHelper_Submissions[i].parent = document.getElementById("afcHelper_redirect_parent_" + i).value;
 				}
 			}
-			else if (action === 'decline'){
+			else if (action == 'decline'){
 				afcHelper_Submissions[i].reason = document.getElementById('afcHelper_redirect_decline_' + i).value;
 			}
 			afcHelper_Submissions[i].comment = document.getElementById("afcHelper_redirect_comment_" + i).value;
@@ -286,7 +286,7 @@ if (wgPageName.indexOf('Wikipedia:Articles_for_creation/Redirects') !== -1) {
 		// traverse the submissions and locate the relevant sections.
 		for(var i = 0; i < afcHelper_RedirectSubmissions.length; i++){
 			var sub = afcHelper_RedirectSubmissions[i];
-			if(pagetext.indexOf(afcHelper_RedirectSections[sub.section]) === -1){
+			if(pagetext.indexOf(afcHelper_RedirectSections[sub.section]) == -1){
 				// Someone has modified the section in the mean time. Skip.
 				document.getElementById('afcHelper_status').innerHTML += '<li>Skipping ' + sub.title + ': Cannot find section. Perhaps it was modified in the mean time?</li>';
 				continue;
@@ -296,45 +296,45 @@ if (wgPageName.indexOf('Wikipedia:Articles_for_creation/Redirects') !== -1) {
 			var endindex = startindex + text.length;
 
 			// First deal with cats. These are easy.
-			if(sub.type === 'category'){
-				if(sub.action === 'accept'){
+			if(sub.type == 'category'){
+				if(sub.action == 'accept'){
 					var cattext = '<!--Created by WP:AFC -->';
-					if(sub.parent !== '' )
+					if(sub.parent != '' )
 						cattext = '\[\['+ sub.parent + '\]\]';
 					afcHelper_editPage(sub.title, cattext, token, 'Created via \[\[WP:AFC|Articles for Creation\]\] (\[\[WP:WPAFC|you can help!\]\])', true);
 					var talktext = '\{\{subst:WPAFC/article|class=Cat\}\}';
 					var talktitle = sub.title.replace(/Category:/gi, 'Category talk:');
 					afcHelper_editPage(talktitle, talktext, token, 'Placing WPAFC project banner', true);
-					var header = text.match(/===[^=]*===/)[0];
+					var header = text.match(/==[^=]*==/)[0];
 					text = header + "\n\{\{AfC-c|a\}\}\n" + text.substring(header.length);
-					if(sub.comment !== '')
+					if(sub.comment != '')
 						text += '\n*\{\{subst:afc category|accept|2=' + sub.comment +'\}\} \~\~\~\~\n';
 					else
 						text += '\n*\{\{subst:afc category\}\} \~\~\~\~\n';
 					text += '\{\{AfC-c|b\}\}\n';
 					totalaccept ++;
 				}
-				else if (sub.action === 'decline'){
-					var header = text.match(/===[^=]*===/)[0];
+				else if (sub.action == 'decline'){
+					var header = text.match(/==[^=]*==/)[0];
 					var reason = afcHelper_categoryDecline_reasonhash[sub.reason];
-					if(reason === '')
+					if(reason == '')
 						reason = sub.comment;
-					else if (sub.comment !== '')
+					else if (sub.comment != '')
 						reason = reason + ': ' + sub.comment;
-					if(reason === ''){
+					if(reason == ''){
 						document.getElementById('afcHelper_status').innerHTML += '<li>Skipping ' + sub.title + ': No decline reason specified.</li>';
 						continue;
 					}
 					text = header + "\n\{\{AfC-c|d\}\}\n" + text.substring(header.length);
-					if(sub.comment === '')
+					if(sub.comment == '')
 						text += '\n*\{\{subst:afc category|' + sub.reason +'\}\} \~\~\~\~\n';
 					else
 						text += '\n*\{\{subst:afc category|decline|2=' + reason +'\}\} \~\~\~\~\n';
 					text += '\{\{AfC-c|b\}\}\n';
 					totaldecline++;
 				}
-				else if (sub.action === 'comment'){
-					if(sub.comment !== '')
+				else if (sub.action == 'comment'){
+					if(sub.comment != '')
 						text += '\n*\{\{afc comment|1=' + sub.comment +'\~\~\~\~\}\}\n';
 					totalcomment++;
 				}	
@@ -347,34 +347,34 @@ if (wgPageName.indexOf('Wikipedia:Articles_for_creation/Redirects') !== -1) {
 				var acceptcount = 0, declinecount = 0, commentcount = 0, hascomment = false;
 				for(var j = 0; j < sub.from.length; j++){
 					var redirect = sub.from[j];
-					if(redirect.action === 'accept'){
+					if(redirect.action == 'accept'){
 						var redirecttext = '#REDIRECT \[\[' + redirect.to + '\]\]\n' + redirect.append;;
 						afcHelper_editPage(redirect.title, redirecttext, token, 'Created via \[\[WP:AFC|Articles for Creation\]\] (\[\[WP:WPAFC|you can help!\]\])', true);
 					var talktext = '\{\{subst:WPAFC/redirect\}\}';
 					var talktitle = 'Talk:' + redirect.title;
 					afcHelper_editPage(talktitle, talktext, token, 'Placing WPAFC project banner', true);
 						acceptcomment += redirect.title + " &rarr; " + redirect.to;
-						if(redirect.comment !== ''){
+						if(redirect.comment != ''){
 							acceptcomment += ': ' + redirect.comment + '; ';
 							hascomment = true;
 						} else
 							acceptcomment += '; ';
 						acceptcount ++;
 					}
-					else if (redirect.action === 'decline'){
+					else if (redirect.action == 'decline'){
 						var reason = afcHelper_redirectDecline_reasonhash[redirect.reason];
-						if(reason === '')
+						if(reason == '')
 							reason = redirect.comment;
-						else if (redirect.comment !== '')
+						else if (redirect.comment != '')
 							reason = reason + ': ' + redirect.comment;
-						if(reason === ''){
+						if(reason == ''){
 							document.getElementById('afcHelper_status').innerHTML += '<li>Skipping ' + redirect.title + ': No decline reason specified.</li>';
 							continue;
 						}
 						declinecomment += redirect.title + " &rarr; " + redirect.to + ": " + reason + "; ";
 						declinecount ++;
 					}
-					else if (redirect.action === 'comment'){
+					else if (redirect.action == 'comment'){
 						othercomment += redirect.title + ": " + redirect.comment + ", ";
 						commentcount ++;
 					}
@@ -388,16 +388,16 @@ if (wgPageName.indexOf('Wikipedia:Articles_for_creation/Redirects') !== -1) {
 				if(commentcount > 0)
 					reason += '\n*\{\{afc comment|1=' + othercomment + '\~\~\~\~\}\}';
 				reason += '\n';
-				if(!hascomment && acceptcount === sub.from.length){
+				if(!hascomment && acceptcount == sub.from.length){
 					if(acceptcount > 1)
 						reason = '\n*\{\{subst:afc redirect|all\}\} \~\~\~\~\n';
 					else
 						reason = '\n*\{\{subst:afc redirect\}\} \~\~\~\~\n';
 				}
 				if(acceptcount + declinecount + commentcount > 0){
-					if(acceptcount + declinecount === sub.from.length){
+					if(acceptcount + declinecount == sub.from.length){
 						// Every request disposed of. Close.
-						var header = text.match(/===[^=]*===/)[0];
+						var header = text.match(/==[^=]*==/)[0];
 						if(acceptcount > declinecount)
 							text = header + "\n\{\{AfC-c|a\}\}\n" + text.substring(header.length);
 						else
@@ -436,7 +436,7 @@ if (wgPageName.indexOf('Wikipedia:Articles_for_creation/Redirects') !== -1) {
 	}
 	addOnloadHook(afcHelper_redirect_addLink);
 }
-else if (wgPageName.indexOf('Wikipedia:Articles_for_creation/') !== -1 || wgPageName.indexOf('Wikipedia_talk:Articles_for_creation/') !== -1) {
+else if (wgPageName.indexOf('Wikipedia:Articles_for_creation/') != -1 || wgPageName.indexOf('Wikipedia_talk:Articles_for_creation/') != -1) {
 	var afcHelper_PageName = wgPageName.replace(/_/g, ' ');
 	var afcHelper_AJAXnumber = 0;
 	var afcHelper_submissionTitle = wgTitle.replace(/Articles for creation\//g, '');
@@ -497,7 +497,7 @@ else if (wgPageName.indexOf('Wikipedia:Articles_for_creation/') !== -1 || wgPage
 		displayMessage(form);
 	}
  	function afcHelper_prompt(type) {
-		if(type === 'accept'){
+		if(type == 'accept'){
 			var text = '<h3>Accepting '+afcHelper_PageName+'</h3>'+
 			'<label for="afcHelper_movetarget">Move submission to: </label><input type="text" id="afcHelper_movetarget" name="afcHelper_movetarget" value="' +afcHelper_escapeHtmlChars(afcHelper_submissionTitle) +'" />'+
 			'<br /><label for="afcHelper_assessment">Assessment (optional): </label>';
@@ -539,7 +539,7 @@ else if (wgPageName.indexOf('Wikipedia:Articles_for_creation/') !== -1 || wgPage
 			'<br/><input type="button" id="afcHelper_prompt_button" name="afcHelper_prompt_button" value="Accept and publish to mainspace" onclick="afcHelper_act(\'accept\')" style="border-radius:3px; background-color:#adfcad" />';
 			document.getElementById('afcHelper_extra').innerHTML = text;
 		}
-		else if(type === 'decline'){
+		else if(type == 'decline'){
 			var text = '<h3>Declining '+afcHelper_PageName+'</h3>'+
 			'<label for="afcHelper_reason">Reason for ' + type + ': </label>';
 			var reasonSelect = afcHelper_generateSelect("afcHelper_reason",
@@ -591,7 +591,7 @@ else if (wgPageName.indexOf('Wikipedia:Articles_for_creation/') !== -1 || wgPage
 			'<div id="afcHelper_notify_Teahouse"><label for="afcHelper_notify_Teahouse">Notify author about <a href="'+wgArticlePath.replace("$1", 'Wikipedia:Teahouse')+'" title="Wikipedia:Teahouse" target="_blank">Wikipedia:Teahouse</a> <small>(works only in combination with the normal notification)</small>:</label><input type="checkbox" name="afcHelper_Teahouse" id="afcHelper_Teahouse" /><br/></div><div id="afcHelper_extra_inline" name="afcHelper_extra_inline"></div><input type="button" id="afcHelper_prompt_button" name="afcHelper_prompt_button" value="Decline" onclick="afcHelper_act(\'decline\')" style="border-radius:3px; background-color:#ffcdd5" />';
 			document.getElementById('afcHelper_extra').innerHTML = text;
 		}
-		else if(type === 'misc'){
+		else if(type == 'misc'){
 			var text = '<h3>Other options for '+afcHelper_PageName+'</h3>'+
 			'<input type="button" id="afcHelper_cleanup_button" name="afcHelper_cleanup_button" value="Clean the submission" onclick="afcHelper_act(\'cleanup\')" style="border-radius:3px; background-color:#d2d3cc" />'+
 //			'<input type="button" disabled="true" id="afcHelper_resubmit_button" name="afcHelper_resubmit_button" value="Resubmit" onclick="afcHelper_prompt(\'resubmit\')" style="border-radius:3px; background-color:#f3eba3" />'+
@@ -600,7 +600,7 @@ else if (wgPageName.indexOf('Wikipedia:Articles_for_creation/') !== -1 || wgPage
 			'<div id="afcHelper_extra"></div>';
 			document.getElementById('afcHelper_extra').innerHTML = text;
 		}
-		else if(type === 'resubmit'){
+		else if(type == 'resubmit'){
 			var text = '<br /><br /><h3>Place a submission template on '+afcHelper_PageName+'</h3><br />'+
 			'<label for="afcHelper_first_submitter">Submitter is the page creator: </label><input type="checkbox" name="afcHelper_first_submitter" id="afcHelper_first_submitter" /><br/>' +
 			'<label for="afcHelper_blank_submitter">Without any submitter: </label><input type="checkbox" name="afcHelper_blank_submitter" id="afcHelper_blank_submitter" /><br/>' +
@@ -608,12 +608,12 @@ else if (wgPageName.indexOf('Wikipedia:Articles_for_creation/') !== -1 || wgPage
 			'<input type="button" id="afcHelper_resubmit_button" name="afcHelper_resubmit2_button" value="Placing a draft template" onclick="afcHelper_act(\'resubmit\')" />';
 			document.getElementById('afcHelper_extra').innerHTML += text;
 		}
-		else if(type === 'mark'){
+		else if(type == 'mark'){
 				var text = '<h3>Marking submission ' +afcHelper_PageName+'for reviewing</h3>'+
 				'<br /><label for="afcHelper_comments">Additional comment (signature is automatically added): </label><textarea rows="3" cols="60" name="afcHelper_comments" id="afcHelper_comments"></textarea><br/><input type="button" id="afcHelper_prompt_button" style="padding:.2em .6em; border:1px solid; border-color:#aaa #555 #555 #aaa; border-radius:3px; background-color:#b1dae8" name="afcHelper_prompt_button" value="Place under review" onclick="afcHelper_act(\'mark\')" />';
 				document.getElementById('afcHelper_extra').innerHTML = text;
 		}
-		else if(type === 'comment'){
+		else if(type == 'comment'){
 			var text = '<h3>Commenting on ' +afcHelper_PageName+' </h3>'+
 			'<br /><label for="afcHelper_comments">Comment (signature is automatically added): </label><textarea rows="3" cols="60" name="afcHelper_comments" id="afcHelper_comments"></textarea><br/><input type="button" id="afcHelper_prompt_button" name="afcHelper_prompt_button" value="Add comment" onclick="afcHelper_act(\'comment\')" style="border-radius:3px; background-color:#f3eba3" />';
 			document.getElementById('afcHelper_extra').innerHTML = text;
@@ -621,7 +621,7 @@ else if (wgPageName.indexOf('Wikipedia:Articles_for_creation/') !== -1 || wgPage
 	}
 
  	function afcHelper_act(action) {
-		if(action === 'accept'){
+		if(action == 'accept'){
 			var newtitle = document.getElementById("afcHelper_movetarget").value;
 			var assessment = document.getElementById("afcHelper_assessment").value;
 			var pagePrepend = document.getElementById("afcHelper_pagePrepend").value;
@@ -639,7 +639,7 @@ else if (wgPageName.indexOf('Wikipedia:Articles_for_creation/') !== -1 || wgPage
 				var placeofdeath = '';
 				var yearofdeath ='';
 				var dateofdeath ='';
-				if(living==='dead'){
+				if(living=='dead'){
 					yearofdeath = document.getElementById("afcHelper_yearofdeath").value;
 					dateofdeath = document.getElementById("afcHelper_dateofdeath").value;
 					placeofdeath = document.getElementById("afcHelper_placeofdeath").value;
@@ -660,7 +660,7 @@ else if (wgPageName.indexOf('Wikipedia:Articles_for_creation/') !== -1 || wgPage
 						username = username.replace(/\|/g,'');
 						usertalkpage = "User_talk:"+username;
 						var usertext = afcHelper_getPageText(usertalkpage, true, true);
-						usertext += "\n=== Your submission at \[\[WP:AFC|Articles for creation\]\] ===";
+						usertext += "\n== Your submission at \[\[WP:AFC|Articles for creation\]\] ==";
 						usertext += "\n\{\{subst:afc talk|1=" + newtitle + "|class=" + assessment + "|sig=yes\}\}";
 						var token = afcHelper_getToken(true);
 						afcHelper_editPage(usertalkpage, usertext, token, 'Your submission at \[\[WP:AFC|Articles for creation\]\]', false);
@@ -678,16 +678,16 @@ else if (wgPageName.indexOf('Wikipedia:Articles_for_creation/') !== -1 || wgPage
 				var talktext = "\{\{Talk header\}\}\n";
 				if(biography){
 					talktext += "\{\{WikiProject Biography|living=";
-					if(living==='live')
+					if(living=='live')
 						talktext += "yes";
-					else if(living==='dead')
+					else if(living=='dead')
 						talktext += "no";
 					talktext += "|class=" + assessment + "|listas=" + listas + "\}\}";
 				}
 				
 				talktext +="\n\{\{subst:WPAFC/article|class=" + assessment + "\}\}\n"+talkAppend;
 				// disambig check
-				if(assessment === 'disambig'){
+				if(assessment == 'disambig'){
 					talktext += '\n\{\{WikiProject Disambiguation\}\}';
 				}
 				var testtemplate = /Template:/i;
@@ -727,12 +727,12 @@ else if (wgPageName.indexOf('Wikipedia:Articles_for_creation/') !== -1 || wgPage
 				}
 
 				var afcindex = pagetext.search(/\{\{afc/i);
-				while (afcindex !== -1){
+				while (afcindex != -1){
 					var endindex = pagetext.indexOf("\}\}", afcindex + 2);
 					pagetext = pagetext.substring(0,afcindex) + pagetext.substring(endindex+2);
 					afcindex = pagetext.search(/\{\{afc/i);
 				}
-				if(pagetext.indexOf("\<\!--- Important, do not remove this line before article has been created. ---\>") !== -1){
+				if(pagetext.indexOf("\<\!--- Important, do not remove this line before article has been created. ---\>") != -1){
 					var startindex = pagetext.indexOf("\<\!--- Important, do not remove this line before article has been created. ---\>");
 					var endindex = pagetext.indexOf(">", startindex);
 					pagetext = pagetext.substring(0, startindex) + pagetext.substring(endindex+1);
@@ -750,7 +750,7 @@ else if (wgPageName.indexOf('Wikipedia:Articles_for_creation/') !== -1 || wgPage
 								'\n| SHORT DESCRIPTION = '+shortdescription+
 								'\n| DATE OF BIRTH     = '+dateofbirth+ ', '+yearofbirth+
 								'\n| PLACE OF BIRTH    = '+placeofbirth;
-					if(living==='dead'){
+					if(living=='dead'){
 							templatel +=
 								'\n| DATE OF DEATH     = '+dateofdeath+ ', '+yearofdeath+
 								'\n| PLACE OF DEATH    = '+placeofdeath+'\n\}\}';
@@ -760,12 +760,12 @@ else if (wgPageName.indexOf('Wikipedia:Articles_for_creation/') !== -1 || wgPage
 								'\n| PLACE OF DEATH    = \n\}\}';
 						}
 					templatel+='\n\{\{subst:L|';
-					if(yearofbirth==='')
+					if(yearofbirth=='')
 						templatel+='MISSING|';
 					else
 						templatel+=yearofbirth+'|';
-					if(living==='dead'){
-						if(yearofdeath==='')
+					if(living=='dead'){
+						if(yearofdeath=='')
 							templatel+='MISSING|';
 						else
 							templatel+=yearofdeath+'|';
@@ -781,7 +781,7 @@ else if (wgPageName.indexOf('Wikipedia:Articles_for_creation/') !== -1 || wgPage
 				pagetext = pagePrepend + '\n' + pagetext + templatel + pageAppend;
 				// test if the submission contains any category and if not, add {{uncategorized}}
 				cat_re = /\[\[Category/gi;
-				if(!cat_re.test(pagetext) && (assessment !== 'disambig') && (assessment !== 'redirect') && (assessment !== 'project') && (assessment !== 'portal') && (assessment !== 'template')){
+				if(!cat_re.test(pagetext) && (assessment != 'disambig') && (assessment != 'redirect') && (assessment != 'project') && (assessment != 'portal') && (assessment != 'template')){
 					if(biography){
 						pagetext += '\{\{subst:dated|Improve categories\}\}';
 					}else{
@@ -789,7 +789,7 @@ else if (wgPageName.indexOf('Wikipedia:Articles_for_creation/') !== -1 || wgPage
 					}
 				}
 				var stub_re = /stub\}\}/gi;
-				if((assessment === 'stub') && (!stub_re.test(pagetext))){
+				if((assessment == 'stub') && (!stub_re.test(pagetext))){
 					if(biography){
 						pagetext += '\n\{\{bio-stub\}\}';
 					}else{
@@ -797,12 +797,12 @@ else if (wgPageName.indexOf('Wikipedia:Articles_for_creation/') !== -1 || wgPage
 					}
 				}
 				// disambig check
-				var disambig_re = /Disambig|Mil-unit-dis|Hndis|Geodis|Numberdis/gi;
-				if((assessment === 'disambig') && (!disambig_re.test(pagetext))){
+				var disambig_re = /Disambig|Mil-unit-dis|Hndis|Geodis|Numberdis/gi
+				if((assessment == 'disambig') && (!disambig_re.test(pagetext))){
 					pagetext += '\n\{\{disambig\}\}';
 				}
 				//check if page is orphaned (mainspace) and tag it!
-				if((assessment !== 'disambig') && (assessment !== 'redirect') && (assessment !== 'project') && (assessment !== 'portal') && (assessment !== 'template')){
+				if((assessment != 'disambig') && (assessment != 'redirect') && (assessment != 'project') && (assessment != 'portal') && (assessment != 'template')){
 					document.getElementById('afcHelper_status').innerHTML += '<li id="afcHelper_orphan">Checking if article is orphan...</li>';
 					var req = sajax_init_object();
 					req.open("GET", wgScriptPath + "/api.php?action=query&list=backlinks&format=json&bltitle="+encodeURIComponent(newtitle)+"&blnamespace=0&bllimit=10", false);
@@ -823,7 +823,7 @@ else if (wgPageName.indexOf('Wikipedia:Articles_for_creation/') !== -1 || wgPage
 			var token = afcHelper_getToken(true);
 			afcHelper_movePage(afcHelper_PageName, newtitle, token, 'Created via \[\[WP:AFC|Articles for creation\]\] (\[\[WP:WPAFC|you can help!\]\])' , callback);
 		}
-		else if(action === 'decline'){
+		else if(action == 'decline'){
 			var code = document.getElementById("afcHelper_reason").value;
 			var reasontext = afcHelper_reasonhash[code];
 			var customreason = document.getElementById("afcHelper_comments").value;
@@ -834,10 +834,10 @@ else if (wgPageName.indexOf('Wikipedia:Articles_for_creation/') !== -1 || wgPage
 			var notify = document.getElementById("afcHelper_notify").checked;
 			var teahouse = document.getElementById("afcHelper_Teahouse").checked;
 			var extra = '';
-			if(code === 'cv' || code === 'dup' || code === 'mergeto' || code === 'exists' || code === 'lang' || code === 'plot'){
+			if(code == 'cv' || code == 'dup' || code == 'mergeto' || code == 'exists' || code == 'lang' || code == 'plot'){
 				extra = document.getElementById("afcHelper_extra_inlinebox").value;
 			}
-			if(extra === null){
+			if(extra == null){
 				return;
 			}
 
@@ -859,7 +859,7 @@ else if (wgPageName.indexOf('Wikipedia:Articles_for_creation/') !== -1 || wgPage
 			pagetext=afctemplate+pagetext;
 			//TEMP END: removing after cleanup works
 			var notifytemplate = "afc decline";
-			if(code === 'reason' && customreason === ''){
+			if(code == 'reason' && customreason == ''){
 				alert("You must enter a reason!");
 				return;
 			}
@@ -874,18 +874,18 @@ else if (wgPageName.indexOf('Wikipedia:Articles_for_creation/') !== -1 || wgPage
 			var newcomment = '';
 			// overwrite any reason that was there.
 			newtemplate += '|d|'+code;
-			if(code === 'reason'){
+			if(code == 'reason'){
 				newtemplate += '|3=' + customreason;
 			}
-			else if(extra !== ''){
+			else if(extra != ''){
 				newtemplate += '|3=' + extra;
 			}
 			newtemplate += '|declinets=\{\{subst:CURRENTTIMESTAMP\}\}|decliner=\{\{subst:REVISIONUSER\}\}'+afctemplate.substring(endpipe);
-			if(code !== 'reason' && customreason !== ''){
+			if(code != 'reason' && customreason != ''){
 				newcomment = "*\{\{afc comment|1=" + customreason + " \~\~\~\~\}\}";
 			}
 			summary = "Declining submission";
-			if(code === 'reason')
+			if(code == 'reason')
 				summary += ': see comment therein';
 			else
 				summary += ': ' + reasontext;
@@ -896,15 +896,15 @@ else if (wgPageName.indexOf('Wikipedia:Articles_for_creation/') !== -1 || wgPage
 					var user = author_re.exec(afctemplate)[0];
 					var username = user.split(/=/)[1];
 					username = username.replace(/[\|]/g,'');
-					if(username!=='Example')
+					if(username!='Example')
 					{
 					usertalkpage = "User_talk:"+username;
 					var usertext = afcHelper_getPageText(usertalkpage, true,true);
 					var reason = 'Your submission at \[\[Wikipedia:Articles for creation|Articles for creation\]\]';
-					usertext += "\n=== Your submission at \[\[Wikipedia:Articles for creation|Articles for creation\]\] ===";
+					usertext += "\n== Your submission at \[\[Wikipedia:Articles for creation|Articles for creation\]\] ==";
 					var newnewnewtitle = afcHelper_submissionTitle.replace(" ","{{subst:Sp}}");
 					usertext += "\n\{\{subst:" + notifytemplate + "|1=" + newnewnewtitle;
-					if(code === 'cv')
+					if(code == 'cv')
 						usertext += "|cv=yes";
 					usertext += "|sig=yes\}\}";
 
@@ -921,22 +921,22 @@ else if (wgPageName.indexOf('Wikipedia:Articles_for_creation/') !== -1 || wgPage
 						var response = eval('(' + req.responseText + ')');
 						var pageid = response['query']['pageids'][0];
  						var foundTH=0;
-	 					if (pageid!=="-1"){
+	 					if (pageid!="-1"){
 							var pagecats = new Array ();
 							pagecats = response['query']['pages'][pageid]['categories'];
-							if(typeof pagecats !== 'undefined'){
+							if(typeof pagecats != 'undefined'){
 	 							for(var i = 0; i < pagecats.length; i++){
-									if ((pagecats[i].title === ("Category:Wikipedians who have received a Teahouse invitation")) || (pagecats[i].title === ("Category:Wikipedians who have received a Teahouse invitation through AfC"))){
+									if ((pagecats[i].title == ("Category:Wikipedians who have received a Teahouse invitation")) || (pagecats[i].title == ("Category:Wikipedians who have received a Teahouse invitation through AfC"))){
 										foundTH=1;
 										break;
 									}
 								}
 							}
 						}
-						if(foundTH===0){
+						if(foundTH==0){
 							document.getElementById('afcHelper_get_teahouse').innerHTML = '<li id="afcHelper_get_teahouse">Sent <a href="'+wgArticlePath.replace("$1", encodeURI('User talk:'+username))+'" title="User talk:'+username+'">User talk:'+username+'</a> an invitation.</li>';
 							usertext += "\n\n\n\{\{subst:Wikipedia:Teahouse/AFC_invitation\}\}";
-							reason += '; adding invitation for the \[\[Wikipedia:Teahouse|Teahouse\]\]!';
+							reason += '; adding invitation for the \[\[Wikipedia:Teahouse|Teahouse\]\]!'
 						}else{
 							document.getElementById('afcHelper_get_teahouse').innerHTML = '<a href="'+wgArticlePath.replace("$1", encodeURI('User talk:'+username))+'" title="User talk:'+username+'">'+username+'</a> already has an invitation.';
 						}
@@ -949,10 +949,10 @@ else if (wgPageName.indexOf('Wikipedia:Articles_for_creation/') !== -1 || wgPage
 			}
 			if(!blank){
 				var containComment = 0;
-				//var containComment = (pagetext.indexOf('----') !== -1);
+				//var containComment = (pagetext.indexOf('----') != -1);
 				containComment = pagetext.indexOf('----');
-				if(newcomment !== ''){
-					if(containComment!==0){
+				if(newcomment != ''){
+					if(containComment!=0){
 						pagetext = pagetext.substring(0, startindex) + newtemplate + '\n' + newcomment + '\n----\n'+ pagetext.substring(endindex);
 					}else{
 						pagetext = pagetext.substring(0, startindex) + newtemplate + pagetext.substring(endindex);
@@ -977,19 +977,19 @@ else if (wgPageName.indexOf('Wikipedia:Articles_for_creation/') !== -1 || wgPage
 		afcHelper_editPage(afcHelper_PageName, pagetext, token, summary, false);
 		}
 
-		else if(action === 'comment'){
+		else if(action == 'comment'){
 			var comment = document.getElementById("afcHelper_comments").value;
 			displayMessage('<ul id="afcHelper_status"></ul><ul id="afcHelper_finish"></ul>');
 			document.getElementById('afcHelper_finish').innerHTML += '<span id="afcHelper_finished_wrapper"><span id="afcHelper_finished_main" style="display:none"><li id="afcHelper_done"><b>Done (<a href="'+wgArticlePath.replace("$1", encodeURI(afcHelper_PageName))+'?action=purge" title="'+afcHelper_PageName+'">Reload page</a>)</b></li></span></span>';
 			var token = afcHelper_getToken(true);
 			var containComment = 0;
-			//var containComment = (pagetext.indexOf('----') !== -1);
+			//var containComment = (pagetext.indexOf('----') != -1);
 			containComment = pagetext.indexOf('----');
-			if(containComment === -1)
+			if(containComment == -1)
 		          containComment = 0;
 
 			var newComment = "\{\{afc comment|1=" + comment + " \~\~\~\~\}\}";
-			if(comment !== ''){
+			if(comment != ''){
 				if(!containComment){
 					var afc_re = /\{\{\s*afc submission\s*\|\s*[||h|r|d](?:\{\{[^\{\}]*\}\}|[^\}\{])*\}\}/i;
 					if(!afc_re.test(pagetext)){
@@ -1002,7 +1002,7 @@ else if (wgPageName.indexOf('Wikipedia:Articles_for_creation/') !== -1 || wgPage
 				}
 				else{
 					var idx = pagetext.indexOf('----');
-					if(idx !== -1)
+					if(idx != -1)
 						pagetext = pagetext.substring(0, idx) + newComment +'\n' + pagetext.substring(idx);
 					else{
 						var afc_re = /\{\{\s*afc submission\s*\|\s*[||h|r|d](?:\{\{[^\{\}]*\}\}|[^\}\{])*\}\}/i;
@@ -1018,14 +1018,14 @@ else if (wgPageName.indexOf('Wikipedia:Articles_for_creation/') !== -1 || wgPage
 				afcHelper_editPage(afcHelper_PageName, pagetext, token, "Commenting on [[WP:AFC|Articles for creation]] submission", false);
 			}
 		}
-		else if(action === 'mark'){
+		else if(action == 'mark'){
 			var comment = document.getElementById("afcHelper_comments").value;
 			displayMessage('<ul id="afcHelper_status"></ul><ul id="afcHelper_finish"></ul>');
 			document.getElementById('afcHelper_finish').innerHTML += '<span id="afcHelper_finished_wrapper"><span id="afcHelper_finished_main" style="display:none"><li id="afcHelper_done"><b>Done (<a href="'+wgArticlePath.replace("$1", encodeURI(afcHelper_PageName))+'?action=purge" title="'+afcHelper_PageName+'">Reload page</a>)</b></li></span></span>';
 			var token = afcHelper_getToken(true);
-			var containComment = (pagetext.indexOf('----') !== -1);
+			var containComment = (pagetext.indexOf('----') != -1);
 			var newComment = "\{\{afc comment|1=" + comment + " \~\~\~\~\}\}";
-			if(comment !== ''){
+			if(comment != ''){
 				if(!containComment){
 					var afc_re = /\{\{\s*afc submission\s*\|\s*[||h|r|d](?:\{\{[^\{\}]*\}\}|[^\}\{])*\}\}/i;
 					if(!afc_re.test(pagetext)){
@@ -1057,7 +1057,7 @@ else if (wgPageName.indexOf('Wikipedia:Articles_for_creation/') !== -1 || wgPage
 			pagetext = pagetext.substring(0, startindex) + newTemplate + pagetext.substring(endindex);
 			afcHelper_editPage(afcHelper_PageName, pagetext, token, "Marking [[WP:AFC|Articles for creation]] submission as being reviewed", false);
 		}
-		else if(action === 'unmark'){
+		else if(action == 'unmark'){
 			displayMessage('<ul id="afcHelper_status"></ul><ul id="afcHelper_finish"></ul>');
 			document.getElementById('afcHelper_finish').innerHTML += '<span id="afcHelper_finished_wrapper"><span id="afcHelper_finished_main" style="display:none"><li id="afcHelper_done"><b>Done (<a href="'+wgArticlePath.replace("$1", encodeURI(afcHelper_PageName))+'?action=purge" title="'+afcHelper_PageName+'">Reload page</a>)</b></li></span></span>';
 			var afc_re = /\{\{\s*afc submission\s*\|\s*r\s*\|(?:\{\{[^\{\}]*\}\}|[^\}\{])*\}\}/i;
@@ -1069,12 +1069,12 @@ else if (wgPageName.indexOf('Wikipedia:Articles_for_creation/') !== -1 || wgPage
 			pagetext = pagetext.replace(/\{\{\s*afc submission\s*\|\s*r\s*\|\s*\|/i, "\{\{AFC submission\|\|");
 			afcHelper_editPage(afcHelper_PageName, pagetext, token, "Unmarking [[WP:AFC|Articles for creation]] submission as being reviewed", false);
 		}
-		else if(action === 'cleanup'){
+		else if(action == 'cleanup'){
 			displayMessage('<ul id="afcHelper_status"></ul><ul id="afcHelper_finish"></ul>');
 			document.getElementById('afcHelper_finish').innerHTML += '<span id="afcHelper_finished_wrapper"><span id="afcHelper_finished_main" style="display:none"><li id="afcHelper_done"><b>Done (<a href="'+wgArticlePath.replace("$1", encodeURI(afcHelper_PageName))+'?action=purge" title="'+afcHelper_PageName+'">Reload page</a>)</b></li></span></span>';
 			var token = afcHelper_getToken(true);
 			var text = afcHelper_getPageText(afcHelper_PageName, true,false);
-			if(text===pagetext)
+			if(text==pagetext)
 				document.getElementById('afcHelper_finish').innerHTML += '<span id="afcHelper_finished_wrapper"><span id="afcHelper_finished_main><li id="afcHelper_done"><b>This submission is already cleaned. Nothing changed. (<a href="'+wgArticlePath.replace("$1", encodeURI(afcHelper_PageName))+'?action=purge" title="'+afcHelper_PageName+'">Reload page</a>)</b></li></span></span>';
 			else
 				afcHelper_editPage(afcHelper_PageName, pagetext, token, "Cleaning the [[WP:AFC|Articles for creation]] submission.", false);
@@ -1096,11 +1096,11 @@ else if (wgPageName.indexOf('Wikipedia:Articles_for_creation/') !== -1 || wgPage
 		req.setRequestHeader("Content-length", params.length);
 		req.setRequestHeader("Connection", "close");
 		req.onreadystatechange = function() {
-			if(req.readyState === 4 && req.status === 200) {
+			if(req.readyState == 4 && req.status == 200) {
 				var error = true;
 				response = eval('(' + req.responseText + ')');
 				try {
-					if (typeof(response['move']) !== "undefined") {
+					if (typeof(response['move']) != "undefined") {
 						document.getElementById('afcHelper_move'+escape(oldtitle)).innerHTML = 'Moved <a href="'+wgArticlePath.replace("$1", encodeURI(oldtitle))+'" title="'+oldtitle+'">'+oldtitle+'</a>';
 						error = false;
 					} else {
@@ -1111,7 +1111,7 @@ else if (wgPageName.indexOf('Wikipedia:Articles_for_creation/') !== -1 || wgPage
 					document.getElementById('afcHelper_move'+escape(oldtitle)).innerHTML = '<div style="color:red"><b>Move failed on <a href="'+wgArticlePath.replace("$1", encodeURI(oldtitle))+'" title="'+oldtitle+'">'+oldtitle+'</a></b></div>';
 				}
 				if(!error){
-					if(callback !== null)
+					if(callback != null)
 						callback();
 				}
 				document.getElementById('afcHelper_AJAX_finished_'+func_id).style.display = '';
@@ -1127,27 +1127,27 @@ else if (wgPageName.indexOf('Wikipedia:Articles_for_creation/') !== -1 || wgPage
 
 	function afcHelper_onChange(select){
 		var value = select.options[select.selectedIndex].value;
-		if(value==='cv')
+		if(value=='cv')
 			document.getElementById("afcHelper_extra_inline").innerHTML='<label for="afcHelper_extra">Please enter the URL if available: </label><input type="text" id="afcHelper_extra_inlinebox" name="afcHelper_extra_inlinebox" value="http://" size="100%"/>';
-		else if(value==='dup')
+		else if(value=='dup')
 			document.getElementById("afcHelper_extra_inline").innerHTML='<label for="afcHelper_extra_inline">Please enter the title of the duplicate submission, if possible. Do not enter the prefix (e.g., John Doe): </label><input type="text" id="afcHelper_extra_inlinebox" name="afcHelper_extra_inlinebox" value="" />';
-		else if(value==='mergeto')
+		else if(value=='mergeto')
 			document.getElementById("afcHelper_extra_inline").innerHTML='<label for="afcHelper_extra_inline">Please enter the title of the article to merge to, if possible: </label><input type="text" id="afcHelper_extra_inlinebox" name="afcHelper_extra_inlinebox" value="" />';
-		else if(value==='lang')
+		else if(value=='lang')
 			document.getElementById("afcHelper_extra_inline").innerHTML='<label for="afcHelper_extra_inline">Please enter the language the article is written in, if possible/known (e.g. German): </label><input type="text" id="afcHelper_extra_inlinebox" name="afcHelper_extra_inlinebox" value="" />';
-		else if(value==='exists')
+		else if(value=='exists')
 			document.getElementById("afcHelper_extra_inline").innerHTML='<label for="afcHelper_extra_inline">Please enter the title of the existing article, if possible: </label><input type="text" id="afcHelper_extra_inlinebox" name="afcHelper_extra_inlinebox" value="" />';
-		else if(value==='plot')
+		else if(value=='plot')
 			document.getElementById("afcHelper_extra_inline").innerHTML='<label for="afcHelper_extra_inline">Please enter the title of the existing article on the fiction, if there is one: </label><input type="text" id="afcHelper_extra_inlinebox" name="afcHelper_extra_inlinebox" value="" />';
 		else
 			document.getElementById("afcHelper_extra_inline").innerHTML='';
 
 // CSD it if it's a copyvio
-		if(value === 'cv'){
+		if(value == 'cv'){
 			document.getElementById("afcHelper_blank").setAttribute("checked", "checked");
                         afcHelper_turnvisible("afcHelper_extra_afccleared", true);
 // But don't if it's just a BLP vio
-		}else if(value === 'blp'){
+		}else if(value == 'blp'){
 			document.getElementById("afcHelper_blank").setAttribute("checked");
 			afcHelper_turnvisible("afcHelper_extra_afccleared", true);
 		}else{
@@ -1251,7 +1251,7 @@ function() {
 		text = text.replace(/\<\!-- Do not include any categories - these don't need to be added until the article is accepted; They will just get removed by a bot! --\>/ig, "");
 		text = text.replace(/\<\!--- Important, do not remove this line before article has been created. ---\>/ig, "");
 		text = text.replace(/\<\!-- This will add a notice to the bottom of the page and won't blank it! The new template which says that your draft is waiting for a review will appear at the bottom; simply ignore the old \(grey\) drafted templates and the old \(red\) decline templates. A bot will update your article submission. Until then, please don't change anything in this text box and press "Save page". --\>/ig, "");
-		text = text.replace(/=== Request review at \[\[WP:AFC\]\] ===\n/ig, "");
+		text = text.replace(/== Request review at \[\[WP:AFC\]\] ==\n/ig, "");
 		// Remove {{userspacedraft}}, {{userspace draft}}, {{user sandbox}}
 		text = text.replace(/\{\{(userspacedraft|userspace draft|user sandbox)(?:\{\{[^{}]*\}\}|[^}{])*\}\}/ig, "");
 		text = text.replace(/^[-]{4,}$/igm, "");
@@ -1297,7 +1297,7 @@ function() {
 		if(submissiontemplates.length>0){
 			var find_shrinked=/\|\s*small\s*=\s*yes/gi;
 			for((i=submissiontemplates.length-1);i>=0;i--){
-				if(i===(submissiontemplates.length-1)){
+				if(i==(submissiontemplates.length-1)){
 					var temp=submissiontemplates[i].toString();
 					if(find_shrinked.test(submissiontemplates[i])){	
 						temp=temp.replace(find_shrinked, "");
@@ -1321,7 +1321,7 @@ function() {
 }
 	function afcHelper_generateSelect(title, options, onchange){
 		var text = '<select name="' + title + '" id="' + title +'" ';
-		if(onchange !== null)
+		if(onchange != null)
 			text += 'onchange = "' + onchange + '" ';
 		text+= '>';
 		for(var i = 0; i < options.length; i ++){
@@ -1358,7 +1358,7 @@ function() {
 			for(var i=0;i<testmatch.length;i++)
 			{
 				if(testmatch[i].length>34){
-					if(errormsg === '')
+					if(errormsg == '')
 						errormsg = '<h3><div style="color:red">Please check the source code! This page contains one or more long (30+ characters) HTML comment! (please report false positives)</div></h3><br/>';
 					errormsg += 'The hidden text is: <i>'+testmatch[i].slice(4)+'</i><br/>';
 				}
@@ -1388,7 +1388,7 @@ function() {
 		refend=texttest.match(rerefend);
 		if(refbegin){//Firefox workaround!
 			if(refend){//Firefox workaround!
-				if(refbegin.length!==refend.length){
+				if(refbegin.length!=refend.length){
 					errormsg += '<h3><div style="color:red">Please check the source code! This page contains unclosed &lt;ref&gt; tags!</div></h3>';
 				}
 			}
@@ -1442,7 +1442,7 @@ function afcHelper_getPageText(title, show,redirectcheck) {
 	req.send(params);
 	var response = eval('(' + req.responseText + ')');
 	pageid = response['query']['pageids'][0];
-	if(pageid === "-1"){
+	if(pageid == "-1"){
 		if(show)
 			document.getElementById('afcHelper_get'+escape(title)).innerHTML = 'The page <a class="new" href="'+wgArticlePath.replace("$1", encodeURI(title))+'" title="'+title+'">'+title+'</a> does not exist';
 		delete req;
@@ -1452,7 +1452,7 @@ function afcHelper_getPageText(title, show,redirectcheck) {
 //	if(redirectcheck){
 //		var oldusername  = response['query']['redirects'][0]['from'];
 //		var newusername = response['query']['redirects'][0]['to'];
-//		if(oldusername !== newusername)
+//		if(oldusername != newusername)
 //			usertalkpage = newusername;
 //	}
 	delete req;
@@ -1477,10 +1477,10 @@ function afcHelper_editPage(title, newtext, token, summary, createonly) {
 	req.setRequestHeader("Content-length", params.length);
 	req.setRequestHeader("Connection", "close");
 	req.onreadystatechange = function() {
-		if(req.readyState === 4 && req.status === 200) {
+		if(req.readyState == 4 && req.status == 200) {
 			response = eval('(' + req.responseText + ')');
 			try {
-				if (response['edit']['result'] === "Success") {
+				if (response['edit']['result'] == "Success") {
 					document.getElementById('afcHelper_edit'+escape(title)).innerHTML = 'Saved <a href="'+wgArticlePath.replace("$1", encodeURI(title))+'" title="'+title+'">'+title+'</a>';
 				} else {
 					document.getElementById('afcHelper_edit'+escape(title)).innerHTML = '<div style="color:red"><b>Edit failed on <a href="'+wgArticlePath.replace("$1", encodeURI(title))+'" title="'+title+'">'+title+'</a></b></div>. Error info:' +response['error']['code'] + ' : ' + response['error']['info'];
@@ -1499,15 +1499,15 @@ function afcHelper_editPage(title, newtext, token, summary, createonly) {
 //function to add afc cleared (csd) checkbox if afc cleared is checked
 function afcHelper_trigger(type){
 	var e = document.getElementById(type);
-	if(type === "afcHelper_biography_status_box"){
+	if(type == "afcHelper_biography_status_box"){
 		var f = document.getElementById("afcHelper_biography_status");
-		if(f.value === "dead"){
+		if(f.value == "dead"){
 			e.style.display =  'block';
 		}else{
 			e.style.display =  'none';
 		}
 	}else{
-		e.style.display = ((e.style.display!=='none') ? 'none' : 'block');
+		e.style.display = ((e.style.display!='none') ? 'none' : 'block');
 	}
 }
 
