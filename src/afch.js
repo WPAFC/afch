@@ -1,6 +1,6 @@
 ////////////////////////////////////////////
 // Yet another AfC helper script
-// v4.1.20b1
+// v4.1.20b2
 ////////////////////////////////////////////
 // Home page and documentation: <http://en.wikipedia.org/wiki/Wikipedia:WikiProject_Articles_for_creation/Helper_script>
 // Development: <https://github.com/WikiProject-Articles-for-creation/afch>
