@@ -802,6 +802,10 @@ else if (wgPageName.indexOf('Wikipedia:Articles_for_creation/') !== -1 || wgPage
 				if((assessment === 'disambig') && (!disambig_re.test(pagetext))){
 					pagetext += '\n\{\{disambig\}\}';
 				}
+
+				// Template uncommenting -- covert {{tl}}'d templates to the real thing
+				pagetext = pagetext.replace(/\{\{(tl|tlx|tlg)\|(.*?)\}\}/ig, "\{\{$2\}\}");
+
 				//check if page is orphaned (mainspace) and tag it!
 				if((assessment !== 'disambig') && (assessment !== 'redirect') && (assessment !== 'project') && (assessment !== 'portal') && (assessment !== 'template')){
 					document.getElementById('afcHelper_status').innerHTML += '<li id="afcHelper_orphan">Checking if article is orphan...</li>';
