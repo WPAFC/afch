@@ -1380,7 +1380,7 @@ function() {
 		if(deletionlog.length){
 			errormsg += '<h3><div style="color:red">The page ' + afcHelper_escapeHtmlChars(afcHelper_submissionTitle) + ' was deleted ' + deletionlog.length + ' times. Here are the edit summary(s) of the <a href="'+wgScript+'?title=Special%3ALog&type=delete&page='+ afcHelper_submissionTitle +'" target="_blank">deletion log</a>:</div></h3><table border=1><tr><td>Timestamp</td><td>User</td><td>Reason</td></tr>';
 			for(var i=0; i<deletionlog.length; i++){
-				errormsg += '<tr><td>'+deletionlog[i].timestamp+'</td><td><a href="'+wgArticlePath.replace("$1", encodeURIComponent(deletionlog[i].user))+'" target="_blank" title="User:'+deletionlog[i].user+'">'+deletionlog[i].user+'</a></td><td>'+deletionlog[i].comment+'</td></tr>';
+				errormsg += '<tr><td>'+deletionlog[i].timestamp+'</td><td><a href="'+wgArticlePath.replace("$1", encodeURIComponent("User:"+deletionlog[i].user))+'" target="_blank" title="User:'+deletionlog[i].user+'">'+deletionlog[i].user+'</a></td><td>'+deletionlog[i].comment+'</td></tr>';
 			}
 			errormsg += '</table>';
 		}
