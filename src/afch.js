@@ -83,7 +83,7 @@ if (wgPageName.indexOf('Wikipedia:Articles_for_creation/Redirects') !== -1) {
 					if(!links) continue;
 					for(var j = 0; j < links.length; j++){
 						links[j]=links[j].replace(/[\[\]]/g, '');
-						if(links[j].charAt(0) == ':')
+						if(links[j].charAt(0) === ':')
 							links[j] = links[j].substring(1);
 					}
 					var re = /Target of redirect:\s*\[\[([^\[\]]*)\]\]/i;
@@ -110,20 +110,20 @@ if (wgPageName.indexOf('Wikipedia:Articles_for_creation/Redirects') !== -1) {
 					}
 					afcHelper_RedirectSubmissions.push(submission);
 				}
-				else if(header.search(/Category request/i) != -1){
+				else if(header.search(/Category request/i) !== -1){
 					var wikilink_re = /\[\[[^\[\]]+\]\]/g;
 					var links = header.match(wikilink_re);
 					if(!links) continue;
 					// figure out the parent category.
 					var idx = afcHelper_RedirectSections[i].substring(header.length).search(/\[\[\s*:\s*(Category:[^\]\[]*)\]\]/i);
 					var parent = '';
-					if(idx != -1)
+					if(idx !== -1)
 						parent = RegExp.$1;
 					parent = parent.replace(/:\s*/g, ':');
 					for(var j = 0; j < links.length; j++){
 						links[j]=links[j].replace(/[\[\]]/g, '');
 						links[j]=links[j].replace(/Category\s*:\s*/gi, 'Category:');
-						if(links[j].charAt(0) == ':')
+						if(links[j].charAt(0) === ':')
 							links[j] = links[j].substring(1);
  
 						var submission = {
@@ -188,10 +188,10 @@ if (wgPageName.indexOf('Wikipedia:Articles_for_creation/Redirects') !== -1) {
 	function afcHelper_redirect_onActionChange(id){
 		var extra = document.getElementById("afcHelper_redirect_extra_" + id);
 		var selectValue = document.getElementById("afcHelper_redirect_action_"+id).value;
-		if(selectValue == 'none')
+		if(selectValue === 'none')
 			extra.innerHTML = '';
-		else if(selectValue == 'accept'){
-			if(afcHelper_Submissions[id].type == 'redirect'){
+		else if(selectValue === 'accept'){
+			if(afcHelper_Submissions[id].type === 'redirect'){
 				extra.innerHTML = '<label for="afcHelper_redirect_from_' + id + '">From: </label><input type="text" '+
 				'name="afcHelper_redirect_from_' + id + '" id="afcHelper_redirect_from_' + id + '" value="'
 				+ afcHelper_escapeHtmlChars(afcHelper_Submissions[id].title) + '" />';
@@ -221,8 +221,8 @@ if (wgPageName.indexOf('Wikipedia:Articles_for_creation/Redirects') !== -1) {
 			}
 			extra.innerHTML += '<label for="afcHelper_redirect_comment_' + id +'">Comment:</label>'
 			+ '<input type="text" id="afcHelper_redirect_comment_' + id +'" name="afcHelper_redirect_comment_' + id +'"/>';
-		} else if(selectValue == 'decline'){
-			if(afcHelper_Submissions[id].type == 'redirect'){
+		} else if(selectValue === 'decline'){
+			if(afcHelper_Submissions[id].type === 'redirect'){
 			extra.innerHTML = '<label for="afcHelper_redirect_decline_'+ id +'">Reason for decline: </label>'
 			+ afcHelper_redirect_generateSelect('afcHelper_redirect_decline_'+
 					id, [
@@ -258,18 +258,18 @@ if (wgPageName.indexOf('Wikipedia:Articles_for_creation/Redirects') !== -1) {
 		for(var i = 0; i < afcHelper_Submissions.length; i++){
 			var action = document.getElementById("afcHelper_redirect_action_" + i).value;
 			afcHelper_Submissions[i].action = action;
-			if(action == 'none')
+			if(action === 'none')
 				continue;
-			if(action == 'accept'){
-				if(afcHelper_Submissions[i].type == 'redirect'){
+			if(action === 'accept'){
+				if(afcHelper_Submissions[i].type === 'redirect'){
 					afcHelper_Submissions[i].title = document.getElementById("afcHelper_redirect_from_" + i).value;
 					afcHelper_Submissions[i].to = document.getElementById("afcHelper_redirect_to_" + i).value;
 					afcHelper_Submissions[i].append = document.getElementById("afcHelper_redirect_append_" + i).value;
-					if(afcHelper_Submissions[i].append == 'custom'){
+					if(afcHelper_Submissions[i].append === 'custom'){
 						afcHelper_Submissions[i].append = prompt("Please enter the template to append for " + afcHelper_Submissions[i].title
 								+ ". Do not include the curly brackets.");
 					}
-					if(afcHelper_Submissions[i].append == 'none' || afcHelper_Submissions[i].append == null)
+					if(afcHelper_Submissions[i].append === 'none' || afcHelper_Submissions[i].append === null)
 						afcHelper_Submissions[i].append = '';
 					else
 						afcHelper_Submissions[i].append = '\{\{' + afcHelper_Submissions[i].append + '\}\}';
@@ -279,7 +279,7 @@ if (wgPageName.indexOf('Wikipedia:Articles_for_creation/Redirects') !== -1) {
 					afcHelper_Submissions[i].parent = document.getElementById("afcHelper_redirect_parent_" + i).value;
 				}
 			}
-			else if (action == 'decline'){
+			else if (action === 'decline'){
 				afcHelper_Submissions[i].reason = document.getElementById('afcHelper_redirect_decline_' + i).value;
 			}
 			afcHelper_Submissions[i].comment = document.getElementById("afcHelper_redirect_comment_" + i).value;
@@ -295,7 +295,7 @@ if (wgPageName.indexOf('Wikipedia:Articles_for_creation/Redirects') !== -1) {
 		// traverse the submissions and locate the relevant sections.
 		for(var i = 0; i < afcHelper_RedirectSubmissions.length; i++){
 			var sub = afcHelper_RedirectSubmissions[i];
-			if(pagetext.indexOf(afcHelper_RedirectSections[sub.section]) == -1){
+			if(pagetext.indexOf(afcHelper_RedirectSections[sub.section]) === -1){
 				// Someone has modified the section in the mean time. Skip.
 				document.getElementById('afcHelper_status').innerHTML += '<li>Skipping ' + sub.title + ': Cannot find section. Perhaps it was modified in the mean time?</li>';
 				continue;
@@ -305,10 +305,10 @@ if (wgPageName.indexOf('Wikipedia:Articles_for_creation/Redirects') !== -1) {
 			var endindex = startindex + text.length;
  
 			// First deal with cats. These are easy.
-			if(sub.type == 'category'){
-				if(sub.action == 'accept'){
+			if(sub.type === 'category'){
+				if(sub.action === 'accept'){
 					var cattext = '<!--Created by WP:AFC -->';
-					if(sub.parent != '' )
+					if(sub.parent !== '' )
 						cattext = '\[\['+ sub.parent + '\]\]';
 					afcHelper_redirect_editPage(sub.title, cattext, token, 'Created via \[\[WP:AFC|Articles for Creation\]\] (\[\[WP:WPAFC|you can help!\]\])', true);
 					var talktext = '\{\{subst:WPAFC/article|class=Cat\}\}';
@@ -316,26 +316,26 @@ if (wgPageName.indexOf('Wikipedia:Articles_for_creation/Redirects') !== -1) {
 					afcHelper_redirect_editPage(talktitle, talktext, token, 'Placing WPAFC project banner', true);
 					var header = text.match(/==[^=]*==/)[0];
 					text = header + "\n\{\{AfC-c|a\}\}\n" + text.substring(header.length);
-					if(sub.comment != '')
+					if(sub.comment !== '')
 						text += '\n*\{\{subst:afc category|accept|2=' + sub.comment +'\}\} \~\~\~\~\n';
 					else
 						text += '\n*\{\{subst:afc category\}\} \~\~\~\~\n';
 					text += '\{\{AfC-c|b\}\}\n';
 					totalaccept ++;
 				}
-				else if (sub.action == 'decline'){
+				else if (sub.action === 'decline'){
 					var header = text.match(/==[^=]*==/)[0];
 					var reason = afcHelper_categoryDecline_reasonhash[sub.reason];
-					if(reason == '')
+					if(reason === '')
 						reason = sub.comment;
-					else if (sub.comment != '')
+					else if (sub.comment !== '')
 						reason = reason + ': ' + sub.comment;
-					if(reason == ''){
+					if(reason === ''){
 						document.getElementById('afcHelper_status').innerHTML += '<li>Skipping ' + sub.title + ': No decline reason specified.</li>';
 						continue;
 					}
 					text = header + "\n\{\{AfC-c|d\}\}\n" + text.substring(header.length);
-					if(sub.comment == '')
+					if(sub.comment === '')
 						text += '\n*\{\{subst:afc category|' + sub.reason +'\}\} \~\~\~\~\n';
 					else
 						text += '\n*\{\{subst:afc category|decline|2=' + reason +'\}\} \~\~\~\~\n';
@@ -356,34 +356,34 @@ if (wgPageName.indexOf('Wikipedia:Articles_for_creation/Redirects') !== -1) {
 				var acceptcount = 0, declinecount = 0, commentcount = 0, hascomment = false;
 				for(var j = 0; j < sub.from.length; j++){
 					var redirect = sub.from[j];
-					if(redirect.action == 'accept'){
+					if(redirect.action === 'accept'){
 						var redirecttext = '#REDIRECT \[\[' + redirect.to + '\]\]\n' + redirect.append;;
 						afcHelper_redirect_editPage(redirect.title, redirecttext, token, 'Created via \[\[WP:AFC|Articles for Creation\]\] (\[\[WP:WPAFC|you can help!\]\])', true);
 					var talktext = '\{\{subst:WPAFC/redirect\}\}';
 					var talktitle = 'Talk:' + redirect.title;
 					afcHelper_redirect_editPage(talktitle, talktext, token, 'Placing WPAFC project banner', true);
 						acceptcomment += redirect.title + " &rarr; " + redirect.to;
-						if(redirect.comment != ''){
+						if(redirect.comment !== ''){
 							acceptcomment += ': ' + redirect.comment + '; ';
 							hascomment = true;
 						} else
 							acceptcomment += '; ';
 						acceptcount ++;
 					}
-					else if (redirect.action == 'decline'){
+					else if (redirect.action === 'decline'){
 						var reason = afcHelper_redirectDecline_reasonhash[redirect.reason];
-						if(reason == '')
+						if(reason === '')
 							reason = redirect.comment;
-						else if (redirect.comment != '')
+						else if (redirect.comment !== '')
 							reason = reason + ': ' + redirect.comment;
-						if(reason == ''){
+						if(reason === ''){
 							document.getElementById('afcHelper_status').innerHTML += '<li>Skipping ' + redirect.title + ': No decline reason specified.</li>';
 							continue;
 						}
 						declinecomment += redirect.title + " &rarr; " + redirect.to + ": " + reason + "; ";
 						declinecount ++;
 					}
-					else if (redirect.action == 'comment'){
+					else if (redirect.action === 'comment'){
 						othercomment += redirect.title + ": " + redirect.comment + ", ";
 						commentcount ++;
 					}
@@ -397,14 +397,14 @@ if (wgPageName.indexOf('Wikipedia:Articles_for_creation/Redirects') !== -1) {
 				if(commentcount > 0)
 					reason += '\n*\{\{afc comment|1=' + othercomment + '\~\~\~\~\}\}';
 				reason += '\n';
-				if(!hascomment && acceptcount == sub.from.length){
+				if(!hascomment && acceptcount === sub.from.length){
 					if(acceptcount > 1)
 						reason = '\n*\{\{subst:afc redirect|all\}\} \~\~\~\~\n';
 					else
 						reason = '\n*\{\{subst:afc redirect\}\} \~\~\~\~\n';
 				}
 				if(acceptcount + declinecount + commentcount > 0){
-					if(acceptcount + declinecount == sub.from.length){
+					if(acceptcount + declinecount === sub.from.length){
 						// Every request disposed of. Close.
 						var header = text.match(/==[^=]*==/)[0];
 						if(acceptcount > declinecount)
