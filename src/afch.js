@@ -1236,7 +1236,6 @@ function() {
 		text = text.replace(/\s*(<\s*ref\s*(name\s*=|group\s*=)*\s*.*[^\/]+>)\s*^/gim, "$1");
 		//Ref tag correction part #2: move :;.,!? before ref tags
 		text = text.replace(/\s*((<\s*ref\s*(name\s*=|group\s*=)*\s*.*[\/]{1}>)|(<\s*ref\s*(name\s*=|group\s*=)*\s*[^\/]*>(?:\\<[^\<\>]*\>|[^><])*\<\/\s*ref\s*\>))\s*([.!?,;:])+/gim, "$6$1");
-//		text = text.replace(/\{\{(userspacedraft|userspace draft|user sandbox)(?:\{\{[^{}]*\}\}|[^}{])*\}\}/ig, "");
 
 		// Remove all unneeded HTML comments and wizards stuff
 		text = text.replace("* \[http\:\/\/www.example.com\/ example.com\]", "");
@@ -1352,7 +1351,7 @@ function() {
 		
 		// fix issue#1
 		pagetext = pagetext.replace(/\{\{AFC submission(\s*\|){0,2}ts\s*=\s*/gi, "{{AFC submission|||ts=");
-		pagetext = pagetext.replace(/\{\{AFC submission\s*}}/gi, "{{AFC submission|||ts={{subst:LOCALTIMESTAMP}}|u=|ns={{subst:AFC submission/namespace number}}}}"); 
+		pagetext = pagetext.replace(/\{\{AFC submission\s*\}\}/gi, "{{AFC submission|||ts={{subst:LOCALTIMESTAMP}}|u=|ns={{subst:AFC submission/namespace number}}}}"); 
 		
 		//longer than 30 characters, but commonly added to the source code
 		texttest = pagetext.replace(/\<\!--  Bot generated title --\>/gi, "");
