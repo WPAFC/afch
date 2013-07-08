@@ -1269,7 +1269,8 @@ function() {
 		text = text.replace(/\<\!-- This will add a notice to the bottom of the page and won't blank it! The new template which says that your draft is waiting for a review will appear at the bottom; simply ignore the old \(grey\) drafted templates and the old \(red\) decline templates. A bot will update your article submission. Until then, please don't change anything in this text box and press "Save page". --\>/ig, "");
 		text = text.replace(/== Request review at \[\[WP:AFC\]\] ==\n/ig, "");
 		// Fixing issue #9
-		text = text.replace(/(?:\<\s*references\s*\>)((?:\<[^\<\>]*\>|[^\<\>])*)\<\s*references\s*\/\s*\>/ig, "{{reflist|refs=$1}}");		
+		text = text.replace(/(?:<\s*references\s*>([\S\s]*)<\/references>|<\s*references\s*\/\s*>)/gi, "\n{{reflist|refs=$1}}");		
+		text = text.replace("{{reflist|refs=}}","{{reflist}}"); // hack to make sure we don't leave an unneeded |refs=
 		// Remove {{userspacedraft}}, {{userspace draft}}, {{user sandbox}}
 		text = text.replace(/\{\{(userspacedraft|userspace draft|user sandbox)(?:\{\{[^{}]*\}\}|[^}{])*\}\}/ig, "");
 		text = text.replace(/^[-]{4,}$/igm, "");
