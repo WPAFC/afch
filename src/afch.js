@@ -431,10 +431,16 @@ if (wgPageName.indexOf('Wikipedia:Articles_for_creation/Redirects') !== -1) {
 		afcHelper_editPage(afcHelper_PageName, pagetext, token, summary, false, afcHelper_purge(afcHelper_PageName));
 		document.getElementById('afcHelper_finished_main').style.display = '';
 	}
-	function afcHelper_redirect_addLink() {
-		addPortletLink("p-cactions", "javascript:afcHelper_redirect_init()", "Review", "ca-afcHelper", "Review");
-	}
-	addOnloadHook(afcHelper_redirect_addLink);
+
+	// Create portlet link
+	var redirectportletLink = mw.util.addPortletLink( 'p-cactions', '#',
+	        'Review', 'ca-afcHelper', 'Review'
+	);
+	// Bind click handler
+	$( redirectportletLink ).click( function ( e ) {
+	        e.preventDefault();
+	        afcHelper_redirect_init()
+	});
 }
 else if (wgPageName.indexOf('Wikipedia:Articles_for_creation/') !== -1 || wgPageName.indexOf('Wikipedia_talk:Articles_for_creation/') !== -1) {
 	var afcHelper_PageName = wgPageName.replace(/_/g, ' ');
@@ -1127,9 +1133,15 @@ else if (wgPageName.indexOf('Wikipedia:Articles_for_creation/') !== -1 || wgPage
 		req.send(params);
 	}
 
-	function afcHelper_addLink() {
-		addPortletLink("p-cactions", "javascript:afcHelper_init()", "Review", "ca-afcHelper", "Review");
-	}
+	// Create portlet link
+	var afcportletLink = mw.util.addPortletLink( 'p-cactions', '#',
+	        'Review', 'ca-afcHelper', 'Review'
+	);
+	// Bind click handler
+	$( afcportletLink ).click( function ( e ) {
+	        e.preventDefault();
+	        afcHelper_init()
+	});
 
 	function afcHelper_onChange(select){
 		var value = select.options[select.selectedIndex].value;
@@ -1322,8 +1334,6 @@ function() {
 		}
 	return text;
 }
-
-	addOnloadHook(afcHelper_addLink);
 }
 	function afcHelper_generateSelect(title, options, onchange){
 		var text = '<select name="' + title + '" id="' + title +'" ';
