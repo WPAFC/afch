@@ -182,7 +182,7 @@ if (wgPageName.indexOf('Wikipedia:Articles_for_creation/Redirects') !== -1) {
 			text += '</ul>';			
 		}
 		text += '<input type="button" id="afcHelper_redirect_done_button" name="afcHelper_redirect_done_button" value="Done" onclick="afcHelper_redirect_performActions()" />';
-		jsMsg(text);
+		displayMessage(text);
 	}
  
 	function afcHelper_redirect_onActionChange(id){
@@ -285,7 +285,7 @@ if (wgPageName.indexOf('Wikipedia:Articles_for_creation/Redirects') !== -1) {
 			afcHelper_Submissions[i].comment = document.getElementById("afcHelper_redirect_comment_" + i).value;
 		}
 		// Data loaded. Show progress screen and get edit token and WP:AFC/R page text.
-		jsMsg('<ul id="afcHelper_status"></ul><ul id="afcHelper_finish"></ul>');
+		displayMessage('<ul id="afcHelper_status"></ul><ul id="afcHelper_finish"></ul>');
 		document.getElementById('afcHelper_finish').innerHTML += '<span id="afcHelper_finished_wrapper"><span id="afcHelper_finished_main" style="display:none"><li id="afcHelper_done"><b>Done (<a href="'+ wgArticlePath.replace("$1", encodeURI(afcHelper_RedirectPageName))+'?action=purge" title="'+afcHelper_RedirectPageName+'">Reload page</a>)</b></li></span></span>';
 		var token = afcHelper_redirect_getToken(true);
 		var pagetext = afcHelper_redirect_getPageText(afcHelper_RedirectPageName, true);
@@ -539,7 +539,7 @@ if (wgPageName.indexOf('Wikipedia:Articles_for_creation/Redirects') !== -1) {
 	// Bind click handler
 	$( redirectportletLink ).click( function ( e ) {
 	        e.preventDefault();
-	        afcHelper_redirect_init()
+	        afcHelper_redirect_init();
 	});
 }
 else if (wgPageName.indexOf('Wikipedia:Articles_for_creation/') !== -1 || wgPageName.indexOf('Wikipedia_talk:Articles_for_creation/') !== -1) {
@@ -1240,7 +1240,7 @@ else if (wgPageName.indexOf('Wikipedia:Articles_for_creation/') !== -1 || wgPage
 	// Bind click handler
 	$( afcportletLink ).click( function ( e ) {
 	        e.preventDefault();
-	        afcHelper_init()
+	        afcHelper_init();
 	});
 
 	function afcHelper_onChange(select){
