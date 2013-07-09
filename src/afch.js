@@ -532,10 +532,15 @@ if (wgPageName.indexOf('Wikipedia:Articles_for_creation/Redirects') !== -1) {
 		return text;
 	}
  
-	function afcHelper_redirect_addLink() {
-		addPortletLink("p-cactions", "javascript:afcHelper_redirect_init()", "Review", "ca-afcHelper", "Review");
-	}
-	addOnloadHook(afcHelper_redirect_addLink);
+	// Create portlet link
+	var redirectportletLink = mw.util.addPortletLink( 'p-cactions', '#',
+	        'Review', 'ca-afcHelper', 'Review'
+	);
+	// Bind click handler
+	$( redirectportletLink ).click( function ( e ) {
+	        e.preventDefault();
+	        afcHelper_redirect_init()
+	});
 }
 else if (wgPageName.indexOf('Wikipedia:Articles_for_creation/') !== -1 || wgPageName.indexOf('Wikipedia_talk:Articles_for_creation/') !== -1) {
 	var afcHelper_PageName = wgPageName.replace(/_/g, ' ');
