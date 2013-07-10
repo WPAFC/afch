@@ -1350,6 +1350,7 @@ function() {
 		text = text.replace(/\s*((<\s*ref\s*(name\s*=|group\s*=)*\s*.*[\/]{1}>)|(<\s*ref\s*(name\s*=|group\s*=)*\s*[^\/]*>(?:\\<[^\<\>]*\>|[^><])*\<\/\s*ref\s*\>))\s*([.!?,;:])+/gim, "$6$1");
 
 		// Remove all unneeded HTML comments and wizards stuff
+                // This is where you put new cleanup switches for HTML comments
 		text = text.replace("* \[http\:\/\/www.example.com\/ example.com\]", "");
 		text = text.replace(/'''Subject of my article''' is.../ig, "");
 		text = text.replace(/\<\!--- Carry on from here, and delete this comment. ---\>/ig, "");
@@ -1366,6 +1367,8 @@ function() {
 		text = text.replace(/\<\!-- Please leave this line alone! --\>/ig, "");
 		text = text.replace(/\<\!-- Do not include any categories - these don't need to be added until the article is accepted; They will just get removed by a bot! --\>/ig, "");
 		text = text.replace(/\<\!--- Important, do not remove this line before article has been created. ---\>/ig, "");
+                text = text.replace(/\<\!-- Important, do not remove this line before article has been created. --\>/ig, "");
+                text = text.replace(/\<\!- Important, do not remove this line before article has been created. -\>/ig, "");
 		text = text.replace(/\<\!-- This will add a notice to the bottom of the page and won't blank it! The new template which says that your draft is waiting for a review will appear at the bottom; simply ignore the old \(grey\) drafted templates and the old \(red\) decline templates. A bot will update your article submission. Until then, please don't change anything in this text box and press "Save page". --\>/ig, "");
 		text = text.replace(/== Request review at \[\[WP:AFC\]\] ==\n/ig, "");
 		// Fixing issue #9
