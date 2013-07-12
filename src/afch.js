@@ -361,7 +361,7 @@ if ((wgPageName.indexOf('Wikipedia:Articles_for_creation') !== -1) || (wgPageNam
 						var redirect = sub.from[j];
 						if (redirect.action === 'accept') {
 							var redirecttext = '#REDIRECT \[\[' + redirect.to + '\]\]\n' + redirect.append;;
-							afcHelper_redirect_editPage(redirect.title, redirecttext, token, 'Created via \[\[WP:AFC|Articles for Creation\]\] (\[\[WP:WPAFC|you can help!\]\])', true);
+							afcHelper_redirect_editPage(redirect.title, redirecttext, token, 'Redirected page to \[\[' + redirect.to + '\]\] via \[\[WP:AFC|Articles for Creation\]\] (\[\[WP:WPAFC|you can help!\]\])', true);
 							var talktext = '\{\{subst:WPAFC/redirect\}\}';
 							var talktitle = 'Talk:' + redirect.title;
 							afcHelper_redirect_editPage(talktitle, talktext, token, 'Placing WPAFC project banner', true);
