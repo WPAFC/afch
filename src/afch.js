@@ -18,7 +18,6 @@ if ((wgPageName.indexOf('Wikipedia:Articles_for_creation') !== -1) || (wgPageNam
 	}
 
 	if (wgPageName.indexOf('Wikipedia:Articles_for_creation/Redirects') !== -1) {
-		if (typeof(afcHelper_advert) === 'undefined') afcHelper_advert = ' ([[WP:AFCH|AFCH]])';
 		var afcHelper_RedirectPageName = wgPageName.replace(/_/g, ' ');
 		var afcHelper_RedirectSubmissions = new Array();
 		var afcHelper_RedirectSections = new Array();
@@ -46,7 +45,7 @@ if ((wgPageName.indexOf('Wikipedia:Articles_for_creation') !== -1) || (wgPageNam
 			afcHelper_RedirectSections = new Array();
 			afcHelper_numTotal = 0;
 
-			var pagetext = afcHelper_redirect_getPageText(afcHelper_RedirectPageName, false);
+			pagetext = afcHelper_getPageText(afcHelper_RedirectPageName, false);
 			// let the parsing begin.
 			// first, strip out the parts before the first section.
 			var section_re = /==[^=]*==/;
@@ -145,7 +144,7 @@ if ((wgPageName.indexOf('Wikipedia:Articles_for_creation') !== -1) || (wgPageNam
 					} else text += '<a href="' + wgArticlePath.replace("$1", encodeURIComponent(afcHelper_RedirectSubmissions[k].to)) + '">' + afcHelper_RedirectSubmissions[k].to + '</a>: <ul>';
 					for (var l = 0; l < afcHelper_RedirectSubmissions[k].from.length; l++) {
 						var from = afcHelper_RedirectSubmissions[k].from[l];
-						text += "<li>From: " + from.title + '<br/><label for="afcHelper_redirect_action_' + from.id + '">Action: </label>' + afcHelper_redirect_generateSelect('afcHelper_redirect_action_' + from.id, [{
+						text += "<li>From: " + from.title + '<br/><label for="afcHelper_redirect_action_' + from.id + '">Action: </label>' + afcHelper_generateSelect('afcHelper_redirect_action_' + from.id, [{
 							label: 'Accept',
 							value: 'accept'
 						}, {
@@ -163,7 +162,7 @@ if ((wgPageName.indexOf('Wikipedia:Articles_for_creation') !== -1) || (wgPageNam
 					text += '</ul></li>';
 				} else {
 					text += '<li>Category submission: ' + afcHelper_RedirectSubmissions[k].title;
-					text += '<br/> <label for="afcHelper_redirect_action_' + afcHelper_RedirectSubmissions[k].id + '">Action: </label>' + afcHelper_redirect_generateSelect('afcHelper_redirect_action_' + afcHelper_RedirectSubmissions[k].id, [{
+					text += '<br/> <label for="afcHelper_redirect_action_' + afcHelper_RedirectSubmissions[k].id + '">Action: </label>' + afcHelper_generateSelect('afcHelper_redirect_action_' + afcHelper_RedirectSubmissions[k].id, [{
 						label: 'Accept',
 						value: 'accept'
 					}, {
@@ -192,7 +191,7 @@ if ((wgPageName.indexOf('Wikipedia:Articles_for_creation') !== -1) || (wgPageNam
 				if (afcHelper_Submissions[id].type === 'redirect') {
 					extra.innerHTML = '<label for="afcHelper_redirect_from_' + id + '">From: </label><input type="text" ' + 'name="afcHelper_redirect_from_' + id + '" id="afcHelper_redirect_from_' + id + '" value="' + afcHelper_escapeHtmlChars(afcHelper_Submissions[id].title) + '" />';
 					extra.innerHTML += '&nbsp;<label for="afcHelper_redirect_to_' + id + '">To: </label><input type="text" ' + 'name="afcHelper_redirect_to_' + id + '" id="afcHelper_redirect_to_' + id + '" value="' + afcHelper_escapeHtmlChars(afcHelper_Submissions[id].to) + '" />';
-					extra.innerHTML += '<label for="afcHelper_redirect_append_' + id + '">Template to append: </label>' + afcHelper_redirect_generateSelect('afcHelper_redirect_append_' + id, [{
+					extra.innerHTML += '<label for="afcHelper_redirect_append_' + id + '">Template to append: </label>' + afcHelper_generateSelect('afcHelper_redirect_append_' + id, [{
 						label: 'R from alternative name',
 						value: 'R from alternative name'
 					}, {
@@ -225,7 +224,7 @@ if ((wgPageName.indexOf('Wikipedia:Articles_for_creation') !== -1) || (wgPageNam
 				extra.innerHTML += '<label for="afcHelper_redirect_comment_' + id + '">Comment:</label>' + '<input type="text" id="afcHelper_redirect_comment_' + id + '" name="afcHelper_redirect_comment_' + id + '"/>';
 			} else if (selectValue === 'decline') {
 				if (afcHelper_Submissions[id].type === 'redirect') {
-					extra.innerHTML = '<label for="afcHelper_redirect_decline_' + id + '">Reason for decline: </label>' + afcHelper_redirect_generateSelect('afcHelper_redirect_decline_' + id, [{
+					extra.innerHTML = '<label for="afcHelper_redirect_decline_' + id + '">Reason for decline: </label>' + afcHelper_generateSelect('afcHelper_redirect_decline_' + id, [{
 						label: 'Already exists',
 						value: 'exists'
 					}, {
@@ -246,7 +245,7 @@ if ((wgPageName.indexOf('Wikipedia:Articles_for_creation') !== -1) || (wgPageNam
 						value: 'custom'
 					}]);
 				} else {
-					extra.innerHTML = '<label for="afcHelper_redirect_decline_' + id + '">Reason for decline: </label>' + afcHelper_redirect_generateSelect('afcHelper_redirect_decline_' + id, [{
+					extra.innerHTML = '<label for="afcHelper_redirect_decline_' + id + '">Reason for decline: </label>' + afcHelper_generateSelect('afcHelper_redirect_decline_' + id, [{
 						label: 'Already exists',
 						value: 'exists'
 					}, {
@@ -299,7 +298,7 @@ if ((wgPageName.indexOf('Wikipedia:Articles_for_creation') !== -1) || (wgPageNam
 			displayMessage('<ul id="afcHelper_status"></ul><ul id="afcHelper_finish"></ul>');
 			document.getElementById('afcHelper_finish').innerHTML += '<span id="afcHelper_finished_wrapper"><span id="afcHelper_finished_main" style="display:none"><li id="afcHelper_done"><b>Done (<a href="' + wgArticlePath.replace("$1", encodeURI(afcHelper_RedirectPageName)) + '?action=purge" title="' + afcHelper_RedirectPageName + '">Reload page</a>)</b></li></span></span>';
 			var token = afcHelper_redirect_getToken(true);
-			var pagetext = afcHelper_redirect_getPageText(afcHelper_RedirectPageName, true);
+			pagetext = afcHelper_getPageText(afcHelper_RedirectPageName, true);
 			var totalaccept = 0;
 			var totaldecline = 0;
 			var totalcomment = 0;
@@ -476,44 +475,6 @@ if ((wgPageName.indexOf('Wikipedia:Articles_for_creation') !== -1) || (wgPageNam
 				}
 			};
 			req.send(params);
-		}
-
-		function afcHelper_redirect_getPageText(title, show) {
-			if (show) {
-				document.getElementById('afcHelper_status').innerHTML += '<li id="afcHelper_get' + escape(title) + '">Getting <a href="' + wgArticlePath.replace("$1", encodeURI(title)) + '" title="' + title + '">' + title + '</a></li>';
-			}
-			var req = sajax_init_object();
-			req.open("GET", wgScriptPath + "/api.php?action=query&prop=revisions&rvprop=content&format=json&indexpageids=1&titles=" + encodeURIComponent(title), false);
-			req.send(null);
-			var response = eval('(' + req.responseText + ')');
-			pageid = response['query']['pageids'][0];
-			if (pageid === "-1") {
-				if (show) {
-					document.getElementById('afcHelper_get' + escape(title)).innerHTML = '<a class="new" href="' + wgArticlePath.replace("$1", encodeURI(title)) + '" title="' + title + '">' + title + '</a> does not exist';
-				}
-				delete req;
-				return '';
-			}
-			pagetext = response['query']['pages'][pageid]['revisions'][0]['*'];
-			delete req;
-			if (show) {
-				document.getElementById('afcHelper_get' + escape(title)).innerHTML = 'Got <a href="' + wgArticlePath.replace("$1", encodeURI(title)) + '" title="' + title + '">' + title + '</a>';
-			}
-			return pagetext;
-		}
-
-		function afcHelper_redirect_generateSelect(title, options, onchange) {
-			var text = '<select name="' + title + '" id="' + title + '" ';
-			if (onchange !== null) text += 'onchange = "' + onchange + '" ';
-			text += '>';
-			for (var i = 0; i < options.length; i++) {
-				var o = options[i];
-				text += '<option value="' + afcHelper_escapeHtmlChars(o.value) + '" ';
-				if (o.selected) text += 'selected="selected" ';
-				text += '>' + o.label + '</option>';
-			}
-			text += "</select>";
-			return text;
 		}
 
 		// Create portlet link
