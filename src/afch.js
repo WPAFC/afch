@@ -1254,40 +1254,40 @@ if ((wgPageName.indexOf('Wikipedia:Articles_for_creation') !== -1) || (wgPageNam
 				AutoEd_baseurl = 'https://en.wikipedia.org/w/index.php?action=raw&ctype=text/javascript&title=Wikipedia:AutoEd/';
 			}
 			//Import individual modules for use
-			$.getScript(AutoEd_baseurl + 'unicodify.js', function() {
+			importScriptURI(AutoEd_baseurl + 'unicodify.js', function() {
 				text = autoEdUnicodify(text);
 			});
-			$.getScript(AutoEd_baseurl + 'isbn.js', function() {
+			importScriptURI(AutoEd_baseurl + 'isbn.js', function() {
 				text = autoEdISBN(text);
 			});
-			$.getScript(AutoEd_baseurl + 'whitespace.js', function() {
+			importScriptURI(AutoEd_baseurl + 'whitespace.js', function() {
 				text = autoEdWhitespace(text);
 			});
-			$.getScript(AutoEd_baseurl + 'wikilinks.js', function() {
+			importScriptURI(AutoEd_baseurl + 'wikilinks.js', function() {
 				text = autoEdWikilinks(text);
 			});
-			$.getScript(AutoEd_baseurl + 'htmltowikitext.js', function() {
+			importScriptURI(AutoEd_baseurl + 'htmltowikitext.js', function() {
 				text = autoEdHTMLtoWikitext(text);
 			});
-			$.getScript(AutoEd_baseurl + 'headlines.js', function() {
+			importScriptURI(AutoEd_baseurl + 'headlines.js', function() {
 				text = autoEdHeadlines(text);
 			});
-			$.getScript(AutoEd_baseurl + 'unicodecontrolchars.js', function() {
+			importScriptURI(AutoEd_baseurl + 'unicodecontrolchars.js', function() {
 				text = autoEdUnicodeControlChars(text);
 			});
-			$.getScript(AutoEd_baseurl + 'unicodehex.js', function() {
+			importScriptURI(AutoEd_baseurl + 'unicodehex.js', function() {
 				text = autoEdUnicodeHex(text);
 			});
-			$.getScript(AutoEd_baseurl + 'templates.js', function() {
+			importScriptURI(AutoEd_baseurl + 'templates.js', function() {
 				text = autoEdTemplates(text);
 			});
-			$.getScript(AutoEd_baseurl + 'tablestowikitext.js', function() {
+			importScriptURI(AutoEd_baseurl + 'tablestowikitext.js', function() {
 				text = autoEdTablestoWikitext(text);
 			});
-			$.getScript(AutoEd_baseurl + 'extrabreaks.js', function() {
+			importScriptURI(AutoEd_baseurl + 'extrabreaks.js', function() {
 				text = autoEdExtraBreaks(text);
 			});
-			$.getScript(AutoEd_baseurl + 'links.js', function() {
+			importScriptURI(AutoEd_baseurl + 'links.js', function() {
 				text = autoEdLinks(text);
 			});
 			//Ref tag correction part #1: remove whitespaces and commas between the ref tags and whitespaces before ref tags
