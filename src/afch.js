@@ -8,11 +8,11 @@
 //<nowiki>
 if ((wgPageName.indexOf('Wikipedia:Articles_for_creation') !== -1) || (wgPageName.indexOf('Wikipedia_talk:Articles_for_creation') !== -1) || (wgPageName.indexOf('Wikipedia:Files_for_Upload') !== -1) || (wgPageName.indexOf('User:*') !== -1)) {
 	importScript('User:Timotheus Canens/displaymessage.js');
+	var afchelper_baseurl = '//en.wikipedia.org/w/index.php?action=raw&ctype=text/javascript&title=MediaWiki:Gadget-afchelper.js';
 	importScriptURI(afchelper_baseurl + '/core.js');
 	var afcHelper_advert = ' ([[WP:AFCH|AFCH]])';
 	var pagetext = '';
 	var usertalkpage = '';
-	var afchelper_baseurl = '//en.wikipedia.org/w/index.php?action=raw&ctype=text/javascript&title=MediaWiki:Gadget-afchelper.js';
 	
 	function afcHelper_escapeHtmlChars(original) {
 		return original.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
