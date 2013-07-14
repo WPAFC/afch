@@ -832,10 +832,9 @@ function afcHelper_cleanup(text) {
 	text = text.replace(/\<\!- Important, do not remove this line before article has been created. -\>/ig, "");
 	text = text.replace(/\<\!-- This will add a notice to the bottom of the page and won't blank it! The new template which says that your draft is waiting for a review will appear at the bottom; simply ignore the old \(grey\) drafted templates and the old \(red\) decline templates. A bot will update your article submission. Until then, please don't change anything in this text box and press "Save page". --\>/ig, "");
 	text = text.replace(/== Request review at \[\[WP:AFC\]\] ==\n/ig, "");
-	// Fixing issue #9
 	text = text.replace(/(?:<\s*references\s*>([\S\s]*)<\/references>|<\s*references\s*\/\s*>)/gi, "\n{{reflist|refs=$1}}");
-	text = text.replace("{{reflist|refs=}}", "{{reflist}}"); // hack to make sure we don't leave an unneeded |refs=
-	// Remove {{userspacedraft}}, {{userspace draft}}, {{user sandbox}}
+	// hack to make sure we don't leave an unneeded |refs=
+	text = text.replace("{{reflist|refs=}}", "{{reflist}}");
 	text = text.replace(/\{\{(userspacedraft|userspace draft|user sandbox)(?:\{\{[^{}]*\}\}|[^}{])*\}\}/ig, "");
 	text = text.replace(/^[-]{4,}$/igm, "");
 
@@ -901,14 +900,15 @@ function afcHelper_cleanup(text) {
 
 function afcHelper_blanking() {
 	pagetext = afcHelper_getPageText(afcHelper_PageName, false, false);
+	// fix issue#1 before cleanup!
+	pagetext = pagetext.replace(/\{\{AFC submission(\s*\|){0,2}ts\s*=\s*/gi, "{{AFC submission|||ts=");
+	pagetext = pagetext.replace(/\{\{AFC submission\s*\}\}/gi, "{{AFC submission|||ts={{subst:LOCALTIMESTAMP}}|u=|ns={{subst:AFC submission/namespace number}}}}");
+
 	pagetext = afcHelper_cleanup(pagetext);
 	//test for AFC submission templates with not enough parameter
 	//Nmespaces WP (4) and WT (5)
 	//var afc_alltemplates= /\{\{\s*afc submission(?:\{\{[^\{\}]*\}\}|[^\}\{])*\}\}/i;
 	//afc_all=text.match(afc_alltemplates);
-	// fix issue#1
-	pagetext = pagetext.replace(/\{\{AFC submission(\s*\|){0,2}ts\s*=\s*/gi, "{{AFC submission|||ts=");
-	pagetext = pagetext.replace(/\{\{AFC submission\s*\}\}/gi, "{{AFC submission|||ts={{subst:LOCALTIMESTAMP}}|u=|ns={{subst:AFC submission/namespace number}}}}");
 
 	//longer than 30 characters, but commonly added to the source code
 	texttest = pagetext.replace(/\<\!--  Bot generated title --\>/gi, "");
