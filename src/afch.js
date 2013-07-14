@@ -6,9 +6,9 @@
 // Development: <https://github.com/WikiProject-Articles-for-creation/afch>
 ////////////////////////////////////////////
 //<nowiki>
-importScript('User:Timotheus Canens/displaymessage.js');
-
 if ((wgPageName.indexOf('Wikipedia:Articles_for_creation') !== -1) || (wgPageName.indexOf('Wikipedia_talk:Articles_for_creation') !== -1) || (wgPageName.indexOf('Wikipedia:Files_for_Upload') !== -1) || (wgPageName.indexOf('User:*') !== -1)) {
+	importScript('User:Timotheus Canens/displaymessage.js');
+	importScriptURI(afchelper_baseurl + '/core.js');
 	var afcHelper_advert = ' ([[WP:AFCH|AFCH]])';
 	var pagetext = '';
 	var usertalkpage = '';
