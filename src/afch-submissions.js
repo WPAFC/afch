@@ -437,6 +437,7 @@ function afcHelper_act(action) {
 					}
 				}
 				var token = afcHelper_getToken(true);
+				pagetext = afcHelper_cleanup(pagetext);
 				afcHelper_editPage(newtitle, pagetext, token, "Cleanup following [[Wikipedia:Articles for creation]] creation", false);
 			};
 		var token = afcHelper_getToken(true);
@@ -583,6 +584,7 @@ function afcHelper_act(action) {
 		//first remove the multiple pending templates, otherwise one isn't recognized
 		pagetext = pagetext.replace(/\{\{\s*afc submission\s*\|\s*[||h|r](?:\{\{[^{}]*\}\}|[^}{])*\}\}/i, "");
 		var token = afcHelper_getToken(true);
+		pagetext = afcHelper_cleanup(pagetext);
 		afcHelper_editPage(afcHelper_PageName, pagetext, token, summary, false);
 	} else if (action === 'comment') {
 		var comment = document.getElementById("afcHelper_comments").value;
