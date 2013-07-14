@@ -421,9 +421,9 @@ function afcHelper_act(action) {
 				pagetext = pagetext.replace(/\{\{(tl|tlx|tlg)\|(.*?)\}\}/ig, "\{\{$2\}\}");
 
 				// automatic tagging of linkrot
-				var linkrotre = /((<\s*ref\s*(name\s*=|group\s*=)*\s*.*[\/]{1}>)|(<\s*ref\s*(name\s*=|group\s*=)*\s*[^\/]*>))+(?:(?:https?|ftp|file)://|www\.|ftp\.)(?:\([-A-Z0-9+&@#/%=~_|$?!:,.]*\)|[-A-Z0-9+&@#/%=~_|$?!:,.])*(?:\([-A-Z0-9+&@#/%=~_|$?!:,.]*\)|[A-Z0-9+&@#/%=~_|$])+(\<\/ref\>)+/gi;
-				if(linkrotre.test(pagetext)){
-					pagetext = {{subst:dated|Cleanup-bare URLs}}
+				var linkrotre = /((<\s*ref\s*(name\s*=|group\s*=)*\s*.*[\/]{1}>)|(<\s*ref\s*(name\s*=|group\s*=)*\s*[^\/]*>))+(?:(?:https?|ftp|file):\/\/|www\.|ftp\.)(?:\([-A-Z0-9+&@#/%=~_|$?!:,.]*\)|[-A-Z0-9+&@#/%=~_|$?!:,.])*(?:\([-A-Z0-9+&@#/%=~_|$?!:,.]*\)|[A-Z0-9+&@#/%=~_|$])+(\<\/ref\>)+/gi;
+				if(linkrotre.test(pagetext)){	
+					pagetext = "{{subst:dated|Cleanup-bare URLs}}" + pagetext;
 				}
 				//check if page is orphaned (mainspace) and tag it!
 				if ((assessment !== 'disambig') && (assessment !== 'redirect') && (assessment !== 'project') && (assessment !== 'portal') && (assessment !== 'template')) {
@@ -749,10 +749,12 @@ function afcHelper_onChange(select) {
 		// But don't if it's just a BLP vio
 	} else if (value === 'blp') {
 		document.getElementById("afcHelper_blank").setAttribute("checked");
+		afcHelper_turnvisible("afcHelper_afccleared", false);
 		afcHelper_turnvisible("afcHelper_extra_afccleared", true);
 	} else {
 		document.getElementById("afcHelper_blank").removeAttribute("checked");
 		afcHelper_turnvisible("afcHelper_extra_afccleared", false);
+		afcHelper_turnvisible("afcHelper_afccleared", false);
 	}
 }
 
