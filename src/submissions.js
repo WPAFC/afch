@@ -581,9 +581,14 @@ function afcHelper_act(action) {
 				}
 			} else pagetext = pagetext.substring(0, startindex) + newtemplate + pagetext.substring(endindex);
 		} else {
-			pagetext = newtemplate + '\n' + newcomment + '\n\{\{afc cleared';
-			if (blank_csd) pagetext += "\|csd\}\}";
-			else pagetext += "\}\}";
+			if (blank_csd){
+				if (extra !== "http://" || extra !== ""){
+					pagetext = "\{\{Db-g12|url=" + extra + "\}\}\n" + newtemplate +  "\n" + pagetext;
+				}else{
+					pagetext = "\{\{Db-g12\}\}\n" + pagetext;
+				}
+			}	
+			pagetext = newtemplate + '\n' + newcomment + '\n\{\{afc cleared\}\}';
 		}
 
 		//first remove the multiple pending templates, otherwise one isn't recognized
@@ -908,7 +913,7 @@ function afcHelper_cleanup(text) {
 function afcHelper_blanking() {
 	pagetext = afcHelper_getPageText(afcHelper_PageName, false, false);
 	// fix issue#1 before cleanup!
-	pagetext = pagetext.replace(/\{\{AFC submission(\s*\|){0,2}ts\s*=\s*/gi, "{{AFC submission|||ts=");
+	pagetext = pagetext.replace(/\{\{AFC submission(\s*\|){0,}ts\s*=\s*/gi, "{{AFC submission|||ts=");
 	pagetext = pagetext.replace(/\{\{AFC submission\s*\}\}/gi, "{{AFC submission|||ts={{subst:LOCALTIMESTAMP}}|u=|ns={{subst:AFC submission/namespace number}}}}");
 
 	pagetext = afcHelper_cleanup(pagetext);
