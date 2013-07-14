@@ -279,7 +279,7 @@ function afcHelper_redirect_performActions() {
 	// Data loaded. Show progress screen and get edit token and WP:AFC/R page text.
 	displayMessage('<ul id="afcHelper_status"></ul><ul id="afcHelper_finish"></ul>');
 	document.getElementById('afcHelper_finish').innerHTML += '<span id="afcHelper_finished_wrapper"><span id="afcHelper_finished_main" style="display:none"><li id="afcHelper_done"><b>Done (<a href="' + wgArticlePath.replace("$1", encodeURI(afcHelper_RedirectPageName)) + '?action=purge" title="' + afcHelper_RedirectPageName + '">Reload page</a>)</b></li></span></span>';
-	var token = afcHelper_redirect_getToken(true);
+	var token = afcHelper_getToken(true);
 	pagetext = afcHelper_getPageText(afcHelper_RedirectPageName, true);
 	var totalaccept = 0;
 	var totaldecline = 0;
@@ -301,10 +301,10 @@ function afcHelper_redirect_performActions() {
 			if (sub.action === 'accept') {
 				var cattext = '<!--Created by WP:AFC -->';
 				if (sub.parent !== '') cattext = '\[\[' + sub.parent + '\]\]';
-				afcHelper_redirect_editPage(sub.title, cattext, token, 'Created via \[\[WP:AFC|Articles for Creation\]\] (\[\[WP:WPAFC|you can help!\]\])', true);
+				afcHelper_editPage(sub.title, cattext, token, 'Created via \[\[WP:AFC|Articles for Creation\]\] (\[\[WP:WPAFC|you can help!\]\])', true);
 				var talktext = '\{\{subst:WPAFC/article|class=Cat\}\}';
 				var talktitle = sub.title.replace(/Category:/gi, 'Category talk:');
-				afcHelper_redirect_editPage(talktitle, talktext, token, 'Placing WPAFC project banner', true);
+				afcHelper_editPage(talktitle, talktext, token, 'Placing WPAFC project banner', true);
 				var header = text.match(/==[^=]*==/)[0];
 				text = header + "\n\{\{AfC-c|a\}\}\n" + text.substring(header.length);
 				if (sub.comment !== '') text += '\n*\{\{subst:afc category|accept|2=' + sub.comment + '\}\} \~\~\~\~\n';
@@ -342,10 +342,10 @@ function afcHelper_redirect_performActions() {
 				var redirect = sub.from[j];
 				if (redirect.action === 'accept') {
 					var redirecttext = '#REDIRECT \[\[' + redirect.to + '\]\]\n' + redirect.append;;
-					afcHelper_redirect_editPage(redirect.title, redirecttext, token, 'Redirected page to \[\[' + redirect.to + '\]\] via \[\[WP:AFC|Articles for Creation\]\] (\[\[WP:WPAFC|you can help!\]\])', true);
+					afcHelper_editPage(redirect.title, redirecttext, token, 'Redirected page to \[\[' + redirect.to + '\]\] via \[\[WP:AFC|Articles for Creation\]\] (\[\[WP:WPAFC|you can help!\]\])', true);
 					var talktext = '\{\{subst:WPAFC/redirect\}\}';
 					var talktitle = 'Talk:' + redirect.title;
-					afcHelper_redirect_editPage(talktitle, talktext, token, 'Placing WPAFC project banner', true);
+					afcHelper_editPage(talktitle, talktext, token, 'Placing WPAFC project banner', true);
 					acceptcomment += redirect.title + " &rarr; " + redirect.to;
 					if (redirect.comment !== '') {
 						acceptcomment += ': ' + redirect.comment + '; ';
@@ -405,58 +405,8 @@ function afcHelper_redirect_performActions() {
 		summary += " commenting on " + totalcomment + " request" + (totalcomment > 1 ? 's' : '');
 	}
 
-	afcHelper_redirect_editPage(afcHelper_RedirectPageName, pagetext, token, summary, false);
+	afcHelper_editPage(afcHelper_RedirectPageName, pagetext, token, summary, false);
 	document.getElementById('afcHelper_finished_main').style.display = '';
-}
-
-function afcHelper_redirect_getToken(show) {
-	if (show) {
-		document.getElementById('afcHelper_status').innerHTML += '<li id="afcHelper_gettoken">Getting token</li>';
-	}
-	var req = sajax_init_object();
-	req.open("GET", wgScriptPath + "/api.php?action=query&prop=info&indexpageids=1&intoken=edit&format=json&titles=" + encodeURIComponent(afcHelper_RedirectPageName), false);
-	req.send(null);
-	var response = eval('(' + req.responseText + ')');
-	pageid = response['query']['pageids'][0];
-	token = response['query']['pages'][pageid]['edittoken'];
-	delete req;
-	if (show) {
-		document.getElementById('afcHelper_gettoken').innerHTML = 'Got token';
-	}
-	return token;
-}
-
-function afcHelper_redirect_editPage(title, newtext, token, summary, createonly) {
-	summary += afcHelper_advert;
-	document.getElementById('afcHelper_finished_wrapper').innerHTML = '<span id="afcHelper_AJAX_finished_' + afcHelper_Redirect_AJAXnumber + '" style="display:none">' + document.getElementById('afcHelper_finished_wrapper').innerHTML + '</span>';
-	var func_id = afcHelper_Redirect_AJAXnumber;
-	afcHelper_Redirect_AJAXnumber++;
-	document.getElementById('afcHelper_status').innerHTML += '<li id="afcHelper_edit' + escape(title) + '">Editing <a href="' + wgArticlePath.replace("$1", encodeURI(title)) + '" title="' + title + '">' + title + '</a></li>';
-	var req = sajax_init_object();
-	var params = "action=edit&format=json&token=" + encodeURIComponent(token) + "&title=" + encodeURIComponent(title) + "&text=" + encodeURIComponent(newtext) + "&notminor=1&summary=" + encodeURIComponent(summary);
-	if (createonly) params += "&createonly=1";
-	url = wgScriptPath + "/api.php";
-	req.open("POST", url, true);
-	req.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-	req.setRequestHeader("Content-length", params.length);
-	req.setRequestHeader("Connection", "close");
-	req.onreadystatechange = function() {
-		if (req.readyState === 4 && req.status === 200) {
-			response = eval('(' + req.responseText + ')');
-			try {
-				if (response['edit']['result'] === "Success") {
-					document.getElementById('afcHelper_edit' + escape(title)).innerHTML = 'Saved <a href="' + wgArticlePath.replace("$1", encodeURI(title)) + '?redirect=no" title="' + title + '">' + title + '</a>';
-				} else {
-					document.getElementById('afcHelper_edit' + escape(title)).innerHTML = '<div style="color:red"><b>Edit failed on <a href="' + wgArticlePath.replace("$1", encodeURI(title)) + '?redirect=no" title="' + title + '">' + title + '</a></b></div>. Error info:' + response['error']['code'] + ' : ' + response['error']['info'];
-				}
-			} catch (err) {
-				document.getElementById('afcHelper_edit' + escape(title)).innerHTML = '<div style="color:red"><b>Edit failed on <a href="' + wgArticlePath.replace("$1", encodeURI(title)) + '?redirect=no" title="' + title + '">' + title + '</a></b></div>';
-			}
-			document.getElementById('afcHelper_AJAX_finished_' + func_id).style.display = '';
-			delete req;
-		}
-	};
-	req.send(params);
 }
 
 // Create portlet link
