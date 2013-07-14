@@ -12,11 +12,8 @@ if ((wgPageName.indexOf('Wikipedia:Articles_for_creation') !== -1) || (wgPageNam
 	var afcHelper_advert = ' ([[WP:AFCH|AFCH]])';
 	var pagetext = '';
 	var usertalkpage = '';
-	var afchelper_baseurl = 'http://en.wikipedia.org/w/index.php?action=raw&ctype=text/javascript&title=MediaWiki:Gadget-afchelper.js';
-	if (location.protocol === 'https:') {
-		afchelper_baseurl = 'https://en.wikipedia.org/w/index.php?action=raw&ctype=text/javascript&title=MediaWiki:Gadget-afchelper.js';
-	}
-
+	var afchelper_baseurl = '//en.wikipedia.org/w/index.php?action=raw&ctype=text/javascript&title=MediaWiki:Gadget-afchelper.js';
+	
 	function afcHelper_escapeHtmlChars(original) {
 		return original.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
 	}

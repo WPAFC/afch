@@ -772,10 +772,7 @@ function afcHelper_cleanup(text) {
 	//Wikilink correct part #2
 	//text = text.replace(/\[\[\s*((?:\[\[[^\[\]]*\]\]|[^\]\[])*)\|\s*((?:\[\[[^\[\]]*\]\]|[^\]\[])*)\s*\]\]/gi, "then...\[\[$1\]\]");
 	// Run AutoEd automatically
-	var AutoEd_baseurl = 'http://en.wikipedia.org/w/index.php?action=raw&ctype=text/javascript&title=Wikipedia:AutoEd/';
-	if (location.protocol === 'https:') {
-		AutoEd_baseurl = 'https://en.wikipedia.org/w/index.php?action=raw&ctype=text/javascript&title=Wikipedia:AutoEd/';
-	}
+	var AutoEd_baseurl = '//en.wikipedia.org/w/index.php?action=raw&ctype=text/javascript&title=Wikipedia:AutoEd/';
 	//Import individual modules for use
 	importScriptURI(AutoEd_baseurl + 'unicodify.js', function() {
 		text = autoEdUnicodify(text);
