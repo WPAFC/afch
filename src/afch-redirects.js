@@ -410,7 +410,7 @@ function afcHelper_redirect_performActions() {
 }
 
 // Create portlet link
-var redirectportletLink = mw.util.addPortletLink('p-cactions', '#', 'Review', 'ca-afcHelper', 'Review');
+var redirectportletLink = mw.util.addPortletLink('p-cactions', '#', 'Review', 'ca-afcHelper', 'Review', 'a');
 // Bind click handler
 $(redirectportletLink).click(function(e) {
 	e.preventDefault();
