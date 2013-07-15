@@ -14,19 +14,6 @@ function afcHelper_generateSelect(title, options, onchange) {
 	return text;
 }
 
-function afcHelper_getToken(show) {
-	if (show) document.getElementById('afcHelper_status').innerHTML += '<li id="afcHelper_gettoken">Getting token</li>';
-	var req = sajax_init_object();
-	req.open("GET", wgScriptPath + "/api.php?action=query&prop=info&indexpageids=1&intoken=edit&format=json&titles=" + encodeURIComponent(afcHelper_PageName), false);
-	req.send(null);
-	var response = eval('(' + req.responseText + ')');
-	pageid = response['query']['pageids'][0];
-	token = response['query']['pages'][pageid]['edittoken'];
-	delete req;
-	if (show) document.getElementById('afcHelper_gettoken').innerHTML = 'Got token';
-	return token;
-}
-
 function afcHelper_getPageText(title, show, redirectcheck) {
 	if (show) document.getElementById('afcHelper_status').innerHTML += '<li id="afcHelper_get' + escape(title) + '">Getting <a href="' + wgArticlePath.replace("$1", encodeURI(title)) + '" title="' + title + '">' + title + '</a></li>';
 	var req = sajax_init_object();
