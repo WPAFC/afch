@@ -51,10 +51,18 @@ function afcHelper_getPageText(title, show, redirectcheck) {
 			var newusername = response['query']['redirects'][0]['to'];
 			if ((typeof(oldusername) !== 'undefined') && (typeof(newusername) !== 'undefined') && (oldusername != newusername)){
 				usertalkpage = newusername;
+				if (show){
+					document.getElementById('afcHelper_get' + escape(title)).innerHTML = 'Got <a href="' + wgArticlePath.replace("$1", encodeURI(title)) + '" title="' + newusername + '">' + newusername + '</a> (page was renamed from ' + oldusername + ')';
+				}
+			}else{
+				redirectcheck = false;
 			}
-		}
+		}		
 	delete req;
-	if (show) document.getElementById('afcHelper_get' + escape(title)).innerHTML = 'Got <a href="' + wgArticlePath.replace("$1", encodeURI(title)) + '" title="' + title + '">' + title + '</a>';
+	if (show && !redirectcheck){
+		document.getElementById('afcHelper_get' + escape(title)).innerHTML = 'Got <a href="' + wgArticlePath.replace("$1", encodeURI(title)) + '" title="' + title + '">' + title + '</a>';
+	}
+
 	return newtext;
 }
 
