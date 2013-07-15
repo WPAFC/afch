@@ -31,8 +31,8 @@ function afcHelper_getPageText(title, show, redirectcheck) {
 	if (show) document.getElementById('afcHelper_status').innerHTML += '<li id="afcHelper_get' + escape(title) + '">Getting <a href="' + wgArticlePath.replace("$1", encodeURI(title)) + '" title="' + title + '">' + title + '</a></li>';
 	var req = sajax_init_object();
 	var params = "action=query&prop=revisions&rvprop=content&format=json&indexpageids=1&titles=" + encodeURIComponent(title);
-	//	if(redirectcheck)
-	//		params += "&redirects=";
+		if(redirectcheck)
+			params += "&redirects=";
 	req.open("POST", wgScriptPath + "/api.php", false);
 	req.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
 	req.setRequestHeader("Content-length", params.length);
@@ -46,12 +46,13 @@ function afcHelper_getPageText(title, show, redirectcheck) {
 		return '';
 	}
 	var newtext = response['query']['pages'][pageid]['revisions'][0]['*'];
-	//	if(redirectcheck){
-	//		var oldusername  = response['query']['redirects'][0]['from'];
-	//		var newusername = response['query']['redirects'][0]['to'];
-	//		if(oldusername != newusername)
-	//			usertalkpage = newusername;
-	//	}
+		if(redirectcheck){
+			var oldusername  = response['query']['redirects'][0]['from'];
+			var newusername = response['query']['redirects'][0]['to'];
+			if ((typeof(oldusername) !== 'undefined') && (typeof(newusername) !== 'undefined') && (oldusername != newusername)){
+				usertalkpage = newusername;
+			}
+		}
 	delete req;
 	if (show) document.getElementById('afcHelper_get' + escape(title)).innerHTML = 'Got <a href="' + wgArticlePath.replace("$1", encodeURI(title)) + '" title="' + title + '">' + title + '</a>';
 	return newtext;

@@ -529,6 +529,7 @@ function afcHelper_act(action) {
 					usertext += "|sig=yes\}\}";
 
 					if (teahouse) {
+						//todo: add a redirect check similar to editpage!
 						document.getElementById('afcHelper_status').innerHTML += '<div id="afcHelper_get_teahouse"></div>';
 						document.getElementById('afcHelper_get_teahouse').innerHTML = '<li id="afcHelper_get_teahouse">Checking for existing Teahouse Invitation for <a href="' + wgArticlePath.replace("$1", encodeURI('User_talk:' + username)) + '" title="User talk:' + username + '">User talk:' + username + '</a></li>';
 						var req = sajax_init_object();
