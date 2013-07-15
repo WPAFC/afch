@@ -279,7 +279,7 @@ function afcHelper_redirect_performActions() {
 	// Data loaded. Show progress screen and get edit token and WP:AFC/R page text.
 	displayMessage('<ul id="afcHelper_status"></ul><ul id="afcHelper_finish"></ul>');
 	document.getElementById('afcHelper_finish').innerHTML += '<span id="afcHelper_finished_wrapper"><span id="afcHelper_finished_main" style="display:none"><li id="afcHelper_done"><b>Done (<a href="' + wgArticlePath.replace("$1", encodeURI(afcHelper_RedirectPageName)) + '?action=purge" title="' + afcHelper_RedirectPageName + '">Reload page</a>)</b></li></span></span>';
-	var token = afcHelper_getToken(true);
+	var token = mw.user.tokens.get('editToken');
 	pagetext = afcHelper_getPageText(afcHelper_RedirectPageName, true);
 	var totalaccept = 0;
 	var totaldecline = 0;
