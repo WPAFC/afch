@@ -476,12 +476,12 @@ function afcHelper_act(action) {
 			alert("Unable to locate AFC submission template, aborting...");
 			return;
 		}
-		//TEMP: removing after cleanup works
+		//todo: removing after cleanup works
 		var afctemplate = afc_re.exec(pagetext)[0];
 		//moving the first hit to the top
 		pagetext = pagetext.replace(afctemplate, '');
 		pagetext = afctemplate + pagetext;
-		//TEMP END: removing after cleanup works
+		//todo END: removing after cleanup works
 		var notifytemplate = "afc decline";
 		if (code === 'reason' && customreason === '') {
 			alert("You must enter a reason!");
@@ -504,6 +504,8 @@ function afcHelper_act(action) {
 			newtemplate += '|3=' + extra;
 		}
 		newtemplate += '|declinets=\{\{subst:CURRENTTIMESTAMP\}\}|decliner=\{\{subst:REVISIONUSER\}\}' + afctemplate.substring(endpipe);
+		//correcting namespace number after page moves mostly from userspace
+		newtemplate = newtemplate.replace(/\s*\|\s*ns\s*=\s*[0-9]{1,2}\s*/gi, '\|ns=\{\{subst:AFC submission/namespace number\}\}');
 		if (code !== 'reason' && customreason !== '') {
 			newcomment = "*\{\{afc comment|1=" + customreason + " \~\~\~\~\}\}";
 		}
