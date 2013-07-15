@@ -287,7 +287,7 @@ function afcHelper_act(action) {
 						var user = author_re.exec(afctemplate)[0];
 						username = user.split(/=/)[1];
 						username = username.replace(/\|/g, '');
-						usertalkpage = "User_talk:" + username;
+						usertalkpage = "User talk:" + username;
 						var usertext = afcHelper_getPageText(usertalkpage, true, true);
 						usertext += "\n== Your submission at AfC \[\[" + wgPageName + "|" + newtitle + "\]\] was accepted ==";
 						usertext += "\n\{\{subst:afc talk|1=" + newtitle + "|class=" + assessment + "|sig=yes\}\}";
@@ -518,7 +518,7 @@ function afcHelper_act(action) {
 				var username = user.split(/=/)[1];
 				username = username.replace(/[\|]/g, '');
 				if (username !== 'Example') {
-					usertalkpage = "User_talk:" + username;
+					usertalkpage = "User talk:" + username;
 					var usertext = afcHelper_getPageText(usertalkpage, true, true);
 					var reason = 'Your submission at \[\[Wikipedia:Articles for creation|Articles for creation\]\]';
 					var SubmissionName = afcHelper_PageName.replace(/(Wikipedia( talk)*:Articles for creation\/)+/i, '');
@@ -531,7 +531,7 @@ function afcHelper_act(action) {
 					if (teahouse) {
 						//todo: add a redirect check similar to editpage!
 						document.getElementById('afcHelper_status').innerHTML += '<div id="afcHelper_get_teahouse"></div>';
-						document.getElementById('afcHelper_get_teahouse').innerHTML = '<li id="afcHelper_get_teahouse">Checking for existing Teahouse Invitation for <a href="' + wgArticlePath.replace("$1", encodeURI('User_talk:' + username)) + '" title="User talk:' + username + '">User talk:' + username + '</a></li>';
+						document.getElementById('afcHelper_get_teahouse').innerHTML = '<li id="afcHelper_get_teahouse">Checking for existing Teahouse Invitation for <a href="' + wgArticlePath.replace("$1", encodeURI('User talk:' + username)) + '" title="User talk:' + username + '">User talk:' + username + '</a></li>';
 						var req = sajax_init_object();
 						var params = "action=query&prop=categories&format=json&indexpageids=1&titles=" + encodeURIComponent(usertalkpage);
 						req.open("POST", wgScriptPath + "/api.php", false);
