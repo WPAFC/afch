@@ -294,7 +294,7 @@ for (var i = 0; i < afcHelper_Submissions.length; i++) {
 	}
 	afcHelper_Submissions[i].comment = document.getElementById("afcHelper_ffu_comment_" + i).value;
 }
-// Data loaded. Show progress screen and get edit token and WP:AFC/R page text.
+// Data loaded. Show progress screen and get edit token and WP:FFU page text.
 displayMessage('<ul id="afcHelper_status"></ul><ul id="afcHelper_finish"></ul>');
 document.getElementById('afcHelper_finish').innerHTML += '<span id="afcHelper_finished_wrapper"><span id="afcHelper_finished_main" style="display:none"><li id="afcHelper_done"><b>Done (<a href="' + wgArticlePath.replace("$1", encodeURI(afcHelper_ffuPageName)) + '?action=purge" title="' + afcHelper_ffuPageName + '">Reload page</a>)</b></li></span></span>';
 var token = mw.user.tokens.get('editToken');
@@ -346,11 +346,11 @@ for (var i = 0; i < afcHelper_ffuSubmissions.length; i++) {
 					// update [[Wikipedia:Files for upload/recent]]
 			if(sub.talkpage==true){
 				var newentry = "\|File:" + sub.to + "|" + sub.filedescription + "\n";
-				var lastentry = recenttext.toLowerCase().lastIndexOf("\{\{afc contrib");
-				var firstentry = recenttext.toLowerCase().indexOf("\{\{afc contrib");
+				var lastentry = recenttext.toLowerCase().lastIndexOf("| File:");
+				var firstentry = recenttext.toLowerCase().indexOf("| File:");
 				recenttext = recenttext.substring(0, lastentry);
 				recenttext = recenttext.substring(0, firstentry) + newentry + recenttext.substring(firstentry);
-				afcHelper_editPage("Wikipedia:Articles for creation/recent", recenttext, token, 'Updating recent AFC creations');
+				afcHelper_editPage("Wikipedia:Files for upload/recent", recenttext, token, 'Updating recently uploaded FFUs');
 			}
 		} else if (sub.action == 'decline') {
 			var header = text.match(/==[^=]*==/)[0];
