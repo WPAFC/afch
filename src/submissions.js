@@ -494,7 +494,7 @@ function afcHelper_act(action) {
 		}
 		newtemplate += '|declinets=\{\{subst:CURRENTTIMESTAMP\}\}|decliner=\{\{subst:REVISIONUSER\}\}' + afctemplate.substring(endpipe);
 		//correcting namespace number after page moves mostly from userspace
-		newtemplate = newtemplate.replace(/\s*\|\s*ns\s*=\s*[0-9]{1,2}\s*/gi, '\|ns=\{\{subst:NAMESPACENUMBER\}\}');
+		newtemplate = newtemplate.replace(/\s*\|\s*ns\s*=\s*[0-9]{0,2}\s*/gi, '\|ns=\{\{subst:NAMESPACENUMBER\}\}');
 		if (code !== 'reason' && customreason !== '') {
 			newcomment = "*\{\{afc comment|1=" + customreason + " \~\~\~\~\}\}";
 		}
