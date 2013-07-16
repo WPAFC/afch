@@ -772,6 +772,9 @@ function afcHelper_cleanup(text) {
 	//Commenting out cats
 	text = text.replace(/\[\[Category:/gi, "\[\[:Category:");
 
+	// Fix {{afc comment}} when possible (takes rest of text on line and converts to a template parameter)
+	text = text.replace(/\{\{afc comment(?!\s*\|\s*1\s*=)\s*\}\}\s*(.*?)\s*[\r\n]/ig, "\{\{afc comment\|1=$1\}\}\n");
+
 	//Wikilink correction
 	//text = text.replace(/\[{1,2}https?:\/\/(secure.wikimedia.org\/wikipedia\/en\/wiki|en.wikipedia.org\/wiki|enwp.org)\/([^\s\|]+)(\s|\|)?([^\]]*)\]{1,2}/gi, "\[\[$2|$4\]\]");
 	text = text.replace(/(\[){2}(?:https?:)?\/\/(secure.wikimedia.org\/wikipedia\/en\/wiki|en.wikipedia.org\/wiki|enwp.org)\/([^\s\|]+)(\s|\|)?((?:\[\[[^\[\]]*\]\]|[^\]\[])*)(\]){2}/gi, "\[\[$3$4$5\]\]");
