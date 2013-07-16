@@ -776,11 +776,10 @@ function afcHelper_cleanup(text) {
 	text = text.replace(/\{\{afc comment(?!\s*\|\s*1\s*=)\s*\}\}\s*(.*?)\s*[\r\n]/ig, "\{\{afc comment\|1=$1\}\}\n");
 
 	//Wikilink correction
-	//text = text.replace(/\[{1,2}https?:\/\/(secure.wikimedia.org\/wikipedia\/en\/wiki|en.wikipedia.org\/wiki|enwp.org)\/([^\s\|]+)(\s|\|)?([^\]]*)\]{1,2}/gi, "\[\[$2|$4\]\]");
-	text = text.replace(/(\[){2}(?:https?:)?\/\/(secure.wikimedia.org\/wikipedia\/en\/wiki|en.wikipedia.org\/wiki|enwp.org)\/([^\s\|]+)(\s|\|)?((?:\[\[[^\[\]]*\]\]|[^\]\[])*)(\]){2}/gi, "\[\[$3$4$5\]\]");
-	text = text.replace(/(\[){1}(?:https?:)?\/\/(secure.wikimedia.org\/wikipedia\/en\/wiki|en.wikipedia.org\/wiki|enwp.org)\/([^\s\|]+)(\s|\|)?((?:\[\[[^\[\]]*\]\]|[^\]\[])*)(\]){1}/gi, "\[\[$3$4$5\]\]");
+	text = text.replace(/(\[){2}(?:https?:)?\/\/(en.wikipedia.org\/wiki|enwp.org)\/([^\s\|]+)(\s|\|)?((?:\[\[[^\[\]]*\]\]|[^\]\[])*)(\]){2}/gi, "\[\[$3$4$5\]\]");
+	text = text.replace(/(\[){1}(?:https?:)?\/\/(en.wikipedia.org\/wiki|enwp.org)\/([^\s\|]+)(\s|\|)?((?:\[\[[^\[\]]*\]\]|[^\]\[])*)(\]){1}/gi, "\[\[$3$4$5\]\]");
 	//KISS: for the case at the end of the url is a <ref> it detects all < symbols and stops there
-	text = text.replace(/https?:\/\/(secure.wikimedia.org\/wikipedia\/en\/wiki|en.wikipedia.org\/wiki|enwp.org)\/([^\s\<]+)/gi, "\[\[$2\]\]");
+	text = text.replace(/https?:\/\/(en.wikipedia.org\/wiki|enwp.org)\/([^\s\<]+)/gi, "\[\[$2\]\]");
 	//remove boldings and big-tags from headlines; ignore level 1 headlines for not breaking URLs and other stuff!
 	text = text.replace(/[\s\n]*(={2,})\s*(?:\s*<big>|\s*''')*\s*(.*?)\s*(?:\s*<\/big>|\s*''')*\s*?(={2,})[\n\s]*/gi, "\n\n$1 $2 $1\n\n");
 	//todo
