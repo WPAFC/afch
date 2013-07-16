@@ -357,7 +357,7 @@ function afcHelper_act(action) {
 				pagetext = pagetext.replace(/\[\[:Category/gi, "\[\[Category");
 				pagetext = pagetext.replace(/\{\{:DEFAULTSORT:/gi, "\{\{:DEFAULTSORT:"); //fixes upper and lowercase problems!
 				// Remove Doncram's category on accept per issue #39
-				pagetext = pagetext.replace(/\[\[:{0,1}Category:Submissions by Doncram ready for review]]/gi, "");
+				pagetext = pagetext.replace(/\[\[:?Category:Submissions by Doncram ready for review]]/gi, "");
 
 				// [[Template:L]]
 				var templatel = '\n';
@@ -647,20 +647,12 @@ function afcHelper_act(action) {
 				pagetext = pagetext.substring(0, idx) + newComment + '\n' + pagetext.substring(idx);
 			}
 		}
-		var afc_re = /\{\{\s*afc submission\s*\|\s*[||h](?:\{\{[^\{\}]*\}\}|[^\}\{])*\}\}/i;
+		var afc_re = /(\{\{\s*afc submission\s*\|)(\s*[||h]\s*)*((?:\{\{[^\{\}]*\}\}|[^\}\{])*\}\})/i;
 		if (!afc_re.test(pagetext)) {
 			alert("Unable to locate AFC submission template, aborting...");
 			return;
 		}
-		var afctemplate = afc_re.exec(pagetext)[0];
-		var firstpipe = afctemplate.indexOf('|');
-		var endpipe = afctemplate.indexOf('|ts');
-		var newTemplate = afctemplate.substring(0, firstpipe);
-		newTemplate += '|r||';
-		newTemplate += afctemplate.substring(endpipe);
-		var startindex = pagetext.indexOf(afctemplate);
-		var endindex = pagetext.indexOf(afctemplate) + afctemplate.length;
-		pagetext = pagetext.substring(0, startindex) + newTemplate + pagetext.substring(endindex);
+		pagetext = pagetext.replace(afc_re, "$1\|r\|$3");
 		afcHelper_editPage(afcHelper_PageName, pagetext, token, "Marking [[Wikipedia:Articles for creation]] submission as being reviewed", false);
 	} else if (action === 'unmark') {
 		displayMessage('<ul id="afcHelper_status"></ul><ul id="afcHelper_finish"></ul>');
