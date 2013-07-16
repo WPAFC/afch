@@ -771,7 +771,9 @@ function afcHelper_cleanup(text) {
 	text = text.replace(/\[\[Category:/gi, "\[\[:Category:");
 
 	//Wikilink correction
-	text = text.replace(/\[{1,2}https?:\/\/(secure.wikimedia.org\/wikipedia\/en\/wiki|en.wikipedia.org\/wiki|enwp.org)\/([^\s\|]+)(\s|\|)?([^\]]*)\]{1,2}/gi, "\[\[$2|$4\]\]");
+	//text = text.replace(/\[{1,2}https?:\/\/(secure.wikimedia.org\/wikipedia\/en\/wiki|en.wikipedia.org\/wiki|enwp.org)\/([^\s\|]+)(\s|\|)?([^\]]*)\]{1,2}/gi, "\[\[$2|$4\]\]");
+	text = text.replace(/(\[){2}https?:\/\/(secure.wikimedia.org\/wikipedia\/en\/wiki|en.wikipedia.org\/wiki|enwp.org)\/([^\s\|]+)(\s|\|)?((?:\[\[[^\[\]]*\]\]|[^\]\[])*)(\]){2}/gi, "\[\[$2$4$5\]\]");
+	text = text.replace(/(\[){1}https?:\/\/(secure.wikimedia.org\/wikipedia\/en\/wiki|en.wikipedia.org\/wiki|enwp.org)\/([^\s\|]+)(\s|\|)?((?:\[\[[^\[\]]*\]\]|[^\]\[])*)(\]){1}/gi, "\[\[$2$4$5\]\]");
 	//KISS: for the case at the end of the url is a <ref> it detects all < symbols and stops there
 	text = text.replace(/https?:\/\/(secure.wikimedia.org\/wikipedia\/en\/wiki|en.wikipedia.org\/wiki|enwp.org)\/([^\s\<]+)/gi, "\[\[$2\]\]");
 	//remove boldings and big-tags from headlines; ignore level 1 headlines for not breaking URLs and other stuff!
