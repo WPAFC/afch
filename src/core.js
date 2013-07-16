@@ -28,7 +28,7 @@ function afcHelper_getPageText(title, show, redirectcheck) {
 	var response = eval('(' + req.responseText + ')');
 	pageid = response['query']['pageids'][0];
 	if (pageid === "-1") {
-		if (show) document.getElementById('afcHelper_get' + escape(title)).innerHTML = 'The page <a class="new" href="' + wgArticlePath.replace("$1", encodeURI(title)) + '" title="' + title + '">' + title + '</a> does not exist';
+		if (show) $("#afcHelper_get" + escape(title)).html('The page <a class="new" href="' + wgArticlePath.replace("$1", encodeURI(title)) + '" title="' + title + '">' + title + '</a> does not exist');
 		delete req;
 		return '';
 	}
@@ -46,16 +46,13 @@ function afcHelper_getPageText(title, show, redirectcheck) {
 			}
 		}		
 	delete req;
-	if (show && !redirectcheck){
-		document.getElementById('afcHelper_get' + escape(title)).innerHTML = 'Got <a href="' + wgArticlePath.replace("$1", encodeURI(title)) + '" title="' + title + '">' + title + '</a>';
-	}
-
-	return newtext;
+	if (show && !redirectcheck)	$("#afcHelper_get" + escape(title)).html('Got <a href="' + wgArticlePath.replace("$1", encodeURI(title)) + '" title="' + title + '">' + title + '</a>')
+		return newtext;
 }
 
 function afcHelper_editPage(title, newtext, token, summary, createonly) {
 	summary += afcHelper_advert;
-	document.getElementById('afcHelper_finished_wrapper').innerHTML = '<span id="afcHelper_AJAX_finished_' + afcHelper_AJAXnumber + '" style="display:none">' + document.getElementById('afcHelper_finished_wrapper').innerHTML + '</span>';
+	$("#afcHelper_finished_wrapper").html('<span id="afcHelper_AJAX_finished_' + afcHelper_AJAXnumber + '" style="display:none">' + $("#afcHelper_finished_wrapper").html() + '</span>');
 	var func_id = afcHelper_AJAXnumber;
 	afcHelper_AJAXnumber++;
 	document.getElementById('afcHelper_status').innerHTML += '<li id="afcHelper_edit' + escape(title) + '">Editing <a href="' + wgArticlePath.replace("$1", encodeURI(title)) + '" title="' + title + '">' + title + '</a></li>';
@@ -72,14 +69,14 @@ function afcHelper_editPage(title, newtext, token, summary, createonly) {
 			response = eval('(' + req.responseText + ')');
 			try {
 				if (response['edit']['result'] === "Success") {
-					document.getElementById('afcHelper_edit' + escape(title)).innerHTML = 'Saved <a href="' + wgArticlePath.replace("$1", encodeURI(title)) + '" title="' + title + '">' + title + '</a>';
+					$("#afcHelper_edit" + escape(title)).html('Saved <a href="' + wgArticlePath.replace("$1", encodeURI(title)) + '" title="' + title + '">' + title + '</a>');
 				} else {
-					document.getElementById('afcHelper_edit' + escape(title)).innerHTML = '<div style="color:red"><b>Edit failed on <a href="' + wgArticlePath.replace("$1", encodeURI(title)) + '" title="' + title + '">' + title + '</a></b></div>. Error info:' + response['error']['code'] + ' : ' + response['error']['info'];
+					$('#afcHelper_edit' + escape(title)).html('<div style="color:red"><b>Edit failed on <a href="' + wgArticlePath.replace("$1", encodeURI(title)) + '" title="' + title + '">' + title + '</a></b></div>. Error info:' + response['error']['code'] + ' : ' + response['error']['info']);
 				}
 			} catch (err) {
-				document.getElementById('afcHelper_edit' + escape(title)).innerHTML = '<div style="color:red"><b>Edit failed on <a href="' + wgArticlePath.replace("$1", encodeURI(title)) + '" title="' + title + '">' + title + '</a></b></div>';
+				$("#afcHelper_edit" + escape(title)).html('<div style="color:red"><b>Edit failed on <a href="' + wgArticlePath.replace("$1", encodeURI(title)) + '" title="' + title + '">' + title + '</a></b></div>');
 			}
-			document.getElementById('afcHelper_AJAX_finished_' + func_id).style.display = '';
+			$("#afcHelper_AJAX_finished_" + func_id).css("display", '');
 			delete req;
 		}
 	};
