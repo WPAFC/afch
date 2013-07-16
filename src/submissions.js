@@ -364,6 +364,8 @@ function afcHelper_act(action) {
 					pagetext = pagetext.substring(0, startindex) + pagetext.substring(endindex + 1);
 				}
 
+				// Remove html comments (<!--) that surround categories
+				pagetext = pagetext.replace(/<!--\s*\[\[:{0,1}(Category:.*?)\]\]\s*-->/gi, "\[\[$1\]\]");
 				// Uncomment cats (after the cleanup commented them)
 				pagetext = pagetext.replace(/\[\[:Category/gi, "\[\[Category");
 				pagetext = pagetext.replace(/\{\{:DEFAULTSORT:/gi, "\{\{:DEFAULTSORT:"); //fixes upper and lowercase problems!
