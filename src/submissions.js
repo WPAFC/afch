@@ -337,21 +337,10 @@ function afcHelper_act(action) {
 				} else newtalktitle = 'Talk:' + newtitle;
 				var token = mw.user.tokens.get('editToken');
 				afcHelper_editPage(newtalktitle, talktext, token, 'Placing [[Wikipedia:Articles for creation]] project banner', false);
-
-				while (afc_re.test(pagetext)) {
-					var startindex = pagetext.search(afc_re);
-					var template = afc_re.exec(pagetext)[0];
-					var endindex = startindex + template.length;
-					pagetext = pagetext.substring(0, startindex) + pagetext.substring(endindex);
-				}
-				var cmt_re = /\{\{\s*afc comment\s*\|(?:\{\{[^\{\}]*\}\}|[^\}\{])*\}\}/i;
-				while (cmt_re.test(pagetext)) {
-					var startindex = pagetext.search(cmt_re);
-					var template = cmt_re.exec(pagetext)[0];
-					var endindex = startindex + template.length;
-					pagetext = pagetext.substring(0, startindex) + pagetext.substring(endindex);
-				}
-
+				
+				pagetext = pagetext.replace(/\{\{\s*afc\s*submission\s*\|(?:\{\{[^\{\}]*\}\}|[^\}\{])*\}\}/gim, "");
+				pagetext = pagetext.replace(/\{\{\s*afc\s*comment\s*\|(?:\{\{[^\{\}]*\}\}|[^\}\{])*\}\}/gim, "");
+				
 				var afcindex = pagetext.search(/\{\{afc/i);
 				while (afcindex !== -1) {
 					var endindex = pagetext.indexOf("\}\}", afcindex + 2);
