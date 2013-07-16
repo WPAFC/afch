@@ -1,5 +1,6 @@
 //<nowiki>
 // Script should be located at [[MediaWiki:Gadget-afchelper.js/ffu.js]]
+// WARNING: dysfunctional and in development
 var afcHelper_ffuPageName = wgPageName.replace(/_/g, ' ');
 var afcHelper_ffuSubmissions = new Array();
 var afcHelper_ffuSections = new Array();
@@ -8,7 +9,7 @@ var afcHelper_ffu_AJAXnumber = 0;
 var afcHelper_Submissions = new Array();
 
 function afcHelper_ffu_init() {
-	pagetext = afcHelper_ffu_getPageText(afcHelper_ffuPageName, false);
+	pagetext = afcHelper_getPageText(afcHelper_ffuPageName, false);
 	// let the parsing begin.
 	// first, strip out the parts before the first section.
 	var section_re = /==[^=]*==/;
@@ -296,8 +297,8 @@ for (var i = 0; i < afcHelper_Submissions.length; i++) {
 // Data loaded. Show progress screen and get edit token and WP:AFC/R page text.
 displayMessage('<ul id="afcHelper_status"></ul><ul id="afcHelper_finish"></ul>');
 document.getElementById('afcHelper_finish').innerHTML += '<span id="afcHelper_finished_wrapper"><span id="afcHelper_finished_main" style="display:none"><li id="afcHelper_done"><b>Done (<a href="' + wgArticlePath.replace("$1", encodeURI(afcHelper_ffuPageName)) + '?action=purge" title="' + afcHelper_ffuPageName + '">Reload page</a>)</b></li></span></span>';
-var token = afcHelper_ffu_getToken(true);
-pagetext = afcHelper_ffu_getPageText(afcHelper_ffuPageName, true);
+var token = mw.user.tokens.get('editToken');
+pagetext = afcHelper_getPageText(afcHelper_ffuPageName, true);
 var totalaccept = 0;
 var totaldecline = 0;
 var totalcomment = 0;
@@ -316,7 +317,7 @@ for (var i = 0; i < afcHelper_ffuSubmissions.length; i++) {
 		if (sub.action == 'accept'){
 			//create local file description talkpage?
 			if((sub.talkpage==true)&&(sub.to!='')){
-				afcHelper_ffu_editPage('File talk\:'+afcHelper_Submissions[i].to, '\{\{subst:WPAFCF\}\}\n'+afcHelper_Submissions[i].append, token, 'Placing [[WP:AFC|WPAFC]] project banner', true);
+				afcHelper_editPage('File talk\:'+afcHelper_Submissions[i].to, '\{\{subst:WPAFCF\}\}\n'+afcHelper_Submissions[i].append, token, 'Placing [[WP:AFC|WPAFC]] project banner', true);
 					}
  
 					//do first the notifying of the user before adding another potential signature
@@ -324,12 +325,12 @@ for (var i = 0; i < afcHelper_ffuSubmissions.length; i++) {
 			if(sub.notify==true){
 				//assuming the first User/IP is the requester
 				var requestinguser=text.replace(/\[\[(User talk:|User:|Special:Contributions\/)([^\|]*)?([^\]]*)\]\]/i, $2);
-				var userpagetext = afcHelper_ffu_getPageText(requestinguser, true);
+				var userpagetext = afcHelper_getPageText(requestinguser, true);
 				if (sub.to === '')
 					userpagetext += '\n== Your request at \[\[WP:FFU|Files for Upload\]\] ==\n\{\{subst:ffu talk\}\} \~\~\~\~\n';
 				else
 					userpagetext += '\n== Your request at \[\[WP:FFU|Files for Upload\]\] ==\n\{\{subst:ffu talk|file=' + afcHelper_Submissions[i].to + '\}\} \~\~\~\~\n';
-				afcHelper_ffu_editPage('User talk:'+requestinguser, userpagetext, token, 'Notifying about the [[WP:FFU|FFU]] request', true);
+				afcHelper_editPage('User talk:'+requestinguser, userpagetext, token, 'Notifying about the [[WP:FFU|FFU]] request', true);
 					}
  
 					//update text of the FFU page
@@ -391,83 +392,8 @@ if (totalcomment > 0) {
 	summary += " commenting on " + totalcomment + " request" + (totalcomment > 1 ? 's' : '');
 		}
  
-		afcHelper_ffu_editPage(afcHelper_ffuPageName, pagetext, token, summary, false);
+		afcHelper_editPage(afcHelper_ffuPageName, pagetext, token, summary, false);
 		document.getElementById('afcHelper_finished_main').style.display = '';
-	}
- 
-	function afcHelper_ffu_getToken(show) {
-		if (show) {
-			document.getElementById('afcHelper_status').innerHTML += '<li id="afcHelper_gettoken">Getting token</li>';
-}
-var req = sajax_init_object();
-req.open("GET", wgScriptPath + "/api.php?action=query&prop=info&indexpageids=1&intoken=edit&format=json&titles=" + encodeURIComponent(afcHelper_ffuPageName), false);
-req.send(null);
-var response = eval('(' + req.responseText + ')');
-pageid = response['query']['pageids'][0];
-token = response['query']['pages'][pageid]['edittoken'];
-delete req;
-if (show) {
-	document.getElementById('afcHelper_gettoken').innerHTML = 'Got token';
-		}
-		return token;
-	}
- 
-	function afcHelper_ffu_editPage(title, newtext, token, summary, createonly) {
-		summary += afcHelper_advert;
-		document.getElementById('afcHelper_finished_wrapper').innerHTML = '<span id="afcHelper_AJAX_finished_' + afcHelper_ffu_AJAXnumber + '" style="display:none">' + document.getElementById('afcHelper_finished_wrapper').innerHTML + '</span>';
-var func_id = afcHelper_ffu_AJAXnumber;
-afcHelper_ffu_AJAXnumber++;
-document.getElementById('afcHelper_status').innerHTML += '<li id="afcHelper_edit' + escape(title) + '">Editing <a href="' + wgArticlePath.replace("$1", encodeURI(title)) + '" title="' + title + '">' + title + '</a></li>';
-var req = sajax_init_object();
-var params = "action=edit&format=json&token=" + encodeURIComponent(token) + "&title=" + encodeURIComponent(title) + "&text=" + encodeURIComponent(newtext) + "&notminor=1&summary=" + encodeURIComponent(summary);
-if (createonly)
-	params += "&createonly=1";
-url = wgScriptPath + "/api.php";
-req.open("POST", url, true);
-req.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-req.setRequestHeader("Content-length", params.length);
-req.setRequestHeader("Connection", "close");
-req.onreadystatechange = function() {
-	if (req.readyState == 4 && req.status == 200) {
-		response = eval('(' + req.responseText + ')');
-		try {
-			if (response['edit']['result'] == "Success") {
-				document.getElementById('afcHelper_edit' + escape(title)).innerHTML = 'Saved <a href="' + wgArticlePath.replace("$1", encodeURI(title)) + '?ffu=no" title="' + title + '">' + title + '</a>';
-			} else {
-				document.getElementById('afcHelper_edit' + escape(title)).innerHTML = '<div style="color:red"><b>Edit failed on <a href="' + wgArticlePath.replace("$1", encodeURI(title)) + '?ffu=no" title="' + title + '">' + title + '</a></b></div>. Error info:' + response['error']['code'] + ' : ' + response['error']['info'];
-			}
-		} catch(err) {
-			document.getElementById('afcHelper_edit' + escape(title)).innerHTML = '<div style="color:red"><b>Edit failed on <a href="' + wgArticlePath.replace("$1", encodeURI(title)) + '?ffu=no" title="' + title + '">' + title + '</a></b></div>';
-		}
-		document.getElementById('afcHelper_AJAX_finished_' + func_id).style.display = '';
-				delete req;
-			}
-		};
-		req.send(params);
-	}
- 
-	function afcHelper_ffu_getPageText(title, show) {
-		if (show) {
-			document.getElementById('afcHelper_status').innerHTML += '<li id="afcHelper_get' + escape(title) + '">Getting <a href="' + wgArticlePath.replace("$1", encodeURI(title)) + '" title="' + title + '">' + title + '</a></li>';
-}
-var req = sajax_init_object();
-req.open("GET", wgScriptPath + "/api.php?action=query&prop=revisions&rvprop=content&format=json&indexpageids=1&titles=" + encodeURIComponent(title), false);
-req.send(null);
-var response = eval('(' + req.responseText + ')');
-pageid = response['query']['pageids'][0];
-if (pageid == "-1") {
-	if (show) {
-		document.getElementById('afcHelper_get' + escape(title)).innerHTML = '<a class="new" href="' + wgArticlePath.replace("$1", encodeURI(title)) + '" title="' + title + '">' + title + '</a> does not exist';
-	}
-	delete req;
-	return '';
-}
-pagetext = response['query']['pages'][pageid]['revisions'][0]['*'];
-delete req;
-if (show) {
-	document.getElementById('afcHelper_get' + escape(title)).innerHTML = 'Got <a href="' + wgArticlePath.replace("$1", encodeURI(title)) + '" title="' + title + '">' + title + '</a>';
-		}
-		return pagetext;
 	}
  
 	function afcHelper_ffu_generateSelect(title, options, onchange) {
@@ -486,9 +412,11 @@ text += "</select>";
 		return text;
 	}
  
-	function afcHelper_ffu_addLink() {
-		addPortletLink("p-cactions", "javascript:afcHelper_ffu_init()", "Review", "ca-afcHelper", "Review");
-	}
- 
-	addOnloadHook(afcHelper_ffu_addLink);
+// Create portlet link
+var redirectportletLink = mw.util.addPortletLink('p-cactions', '#', 'Review', 'ca-afcHelper', 'Review', 'a');
+// Bind click handler
+$(redirectportletLink).click(function(e) {
+	e.preventDefault();
+	afcHelper_ffu_init();
+});
 //</nowiki>
