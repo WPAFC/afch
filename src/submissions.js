@@ -740,25 +740,25 @@ $(afcportletLink).click(function(e) {
 
 function afcHelper_onChange(select) {
 	var value = select.options[select.selectedIndex].value;
-	if (value === 'cv') document.getElementById("afcHelper_extra_inline").innerHTML = '<label for="afcHelper_extra">Please enter the URL if available: </label><input type="text" id="afcHelper_extra_inlinebox" name="afcHelper_extra_inlinebox" value="http://" size="100%"/>';
-	else if (value === 'dup') document.getElementById("afcHelper_extra_inline").innerHTML = '<label for="afcHelper_extra_inline">Please enter the title of the duplicate submission, if possible. Do not enter the prefix (e.g., John Doe): </label><input type="text" id="afcHelper_extra_inlinebox" name="afcHelper_extra_inlinebox" value="" />';
-	else if (value === 'mergeto') document.getElementById("afcHelper_extra_inline").innerHTML = '<label for="afcHelper_extra_inline">Please enter the title of the article to merge to, if possible: </label><input type="text" id="afcHelper_extra_inlinebox" name="afcHelper_extra_inlinebox" value="" />';
-	else if (value === 'lang') document.getElementById("afcHelper_extra_inline").innerHTML = '<label for="afcHelper_extra_inline">Please enter the language the article is written in, if possible/known (e.g. German): </label><input type="text" id="afcHelper_extra_inlinebox" name="afcHelper_extra_inlinebox" value="" />';
-	else if (value === 'exists') document.getElementById("afcHelper_extra_inline").innerHTML = '<label for="afcHelper_extra_inline">Please enter the title of the existing article, if possible: </label><input type="text" id="afcHelper_extra_inlinebox" name="afcHelper_extra_inlinebox" value="" />';
-	else if (value === 'plot') document.getElementById("afcHelper_extra_inline").innerHTML = '<label for="afcHelper_extra_inline">Please enter the title of the existing article on the fiction, if there is one: </label><input type="text" id="afcHelper_extra_inlinebox" name="afcHelper_extra_inlinebox" value="" />';
-	else document.getElementById("afcHelper_extra_inline").innerHTML = '';
+	if (value === 'cv') $("#afcHelper_extra_inline").html('<label for="afcHelper_extra">Please enter the URL if available: </label><input type="text" id="afcHelper_extra_inlinebox" name="afcHelper_extra_inlinebox" value="http://" size="100%"/>');
+	else if (value === 'dup') $("#afcHelper_extra_inline").html('<label for="afcHelper_extra_inline">Please enter the title of the duplicate submission, if possible. Do not enter the prefix (e.g., John Doe): </label><input type="text" id="afcHelper_extra_inlinebox" name="afcHelper_extra_inlinebox" value="" />');
+	else if (value === 'mergeto') $("#afcHelper_extra_inline").html('<label for="afcHelper_extra_inline">Please enter the title of the article to merge to, if possible: </label><input type="text" id="afcHelper_extra_inlinebox" name="afcHelper_extra_inlinebox" value="" />');
+	else if (value === 'lang') $("#afcHelper_extra_inline").html('<label for="afcHelper_extra_inline">Please enter the language the article is written in, if possible/known (e.g. German): </label><input type="text" id="afcHelper_extra_inlinebox" name="afcHelper_extra_inlinebox" value="" />');
+	else if (value === 'exists') $("#afcHelper_extra_inline").html('<label for="afcHelper_extra_inline">Please enter the title of the existing article, if possible: </label><input type="text" id="afcHelper_extra_inlinebox" name="afcHelper_extra_inlinebox" value="" />');
+	else if (value === 'plot') $("#afcHelper_extra_inline").html('<label for="afcHelper_extra_inline">Please enter the title of the existing article on the fiction, if there is one: </label><input type="text" id="afcHelper_extra_inlinebox" name="afcHelper_extra_inlinebox" value="" />');
+	else $("#afcHelper_extra_inline").html("");
 
 	// CSD it if it's a copyvio
 	if (value === 'cv') {
-		document.getElementById("afcHelper_blank").setAttribute("checked", "checked");
+		$("#afcHelper_blank").attr("checked", "checked");
 		afcHelper_turnvisible("afcHelper_extra_afccleared", true);
 		// But don't if it's just a BLP vio
 	} else if (value === 'blp') {
-		document.getElementById("afcHelper_blank").setAttribute("checked");
+		$("#afcHelper_blank").attr("checked", false); // XXX: DOMobj.setAttribute() requires 2 args, so guessing here :S
 		afcHelper_turnvisible("afcHelper_afccleared", false);
 		afcHelper_turnvisible("afcHelper_extra_afccleared", true);
 	} else {
-		document.getElementById("afcHelper_blank").removeAttribute("checked");
+		$("#afcHelper_blank").attr("checked", false);
 		afcHelper_turnvisible("afcHelper_extra_afccleared", false);
 		afcHelper_turnvisible("afcHelper_afccleared", false);
 	}
@@ -1005,6 +1005,7 @@ function afcHelper_blanking() {
 
 //function to add afc cleared (csd) checkbox if afc cleared is checked
 function afcHelper_trigger(type) {
+	// TODO: jQuery-ify this part, but I don't have internet or local documentation...
 	var e = document.getElementById(type);
 	if (type === "afcHelper_biography_status_box") {
 		var f = document.getElementById("afcHelper_biography_status");
@@ -1019,7 +1020,7 @@ function afcHelper_trigger(type) {
 }
 
 function afcHelper_turnvisible(type, bool) {
-	if (bool) document.getElementById(type).style.display = 'block'; //setAttribute("checked", "checked");
-	else document.getElementById(type).style.display = 'none'; //document.getElementById("afcHelper_blank").removeAttribute("checked");		
+	if (bool) $("#" + type).css("display", "block"); //setAttribute("checked", "checked");
+	else $("#" + type).css("display", "none"); //document.getElementById("afcHelper_blank").removeAttribute("checked");		
 }
 //</nowiki>
