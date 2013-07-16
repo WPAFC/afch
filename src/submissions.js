@@ -690,12 +690,12 @@ function afcHelper_act(action) {
 		if (text === pagetext) document.getElementById('afcHelper_finish').innerHTML += '<span id="afcHelper_finished_wrapper"><span id="afcHelper_finished_main><li id="afcHelper_done"><b>This submission is already cleaned. Nothing changed. (<a href="' + wgArticlePath.replace("$1", encodeURI(afcHelper_PageName)) + '?action=purge" title="' + afcHelper_PageName + '">Reload page</a>)</b></li></span></span>';
 		else afcHelper_editPage(afcHelper_PageName, pagetext, token, "Cleaning the [[Wikipedia:Articles for creation]] submission.", false);
 	}
-	document.getElementById('afcHelper_finished_main').style.display = '';
+	$("#afcHelper_finished_main").css("display", "");
 }
 
 function afcHelper_movePage(oldtitle, newtitle, token, summary, callback) {
 	summary += afcHelper_advert;
-	document.getElementById('afcHelper_finished_wrapper').innerHTML = '<span id="afcHelper_AJAX_finished_' + afcHelper_AJAXnumber + '" style="display:none">' + document.getElementById('afcHelper_finished_wrapper').innerHTML + '</span>';
+	$("#afcHelper_finished_wrapper").html('<span id="afcHelper_AJAX_finished_' + afcHelper_AJAXnumber + '" style="display:none">' + $("#afcHelper_finished_wrapper").html() + '</span>');
 	var func_id = afcHelper_AJAXnumber;
 	afcHelper_AJAXnumber++;
 	document.getElementById('afcHelper_status').innerHTML += '<li id="afcHelper_move' + escape(oldtitle) + '">Moving <a href="' + wgArticlePath.replace("$1", encodeURI(oldtitle)) + '" title="' + oldtitle + '">' + oldtitle + '</a> to <a href="' + wgArticlePath.replace("$1", encodeURI(newtitle)) + '" title="' + newtitle + '">' + newtitle + '</a></li>';
@@ -712,18 +712,18 @@ function afcHelper_movePage(oldtitle, newtitle, token, summary, callback) {
 			response = eval('(' + req.responseText + ')');
 			try {
 				if (typeof(response['move']) !== "undefined") {
-					document.getElementById('afcHelper_move' + escape(oldtitle)).innerHTML = 'Moved <a href="' + wgArticlePath.replace("$1", encodeURI(oldtitle)) + '" title="' + oldtitle + '">' + oldtitle + '</a>';
+					$("#afcHelper_move" + escape(oldtitle)).html('Moved <a href="' + wgArticlePath.replace("$1", encodeURI(oldtitle)) + '" title="' + oldtitle + '">' + oldtitle + '</a>');
 					error = false;
 				} else {
-					document.getElementById('afcHelper_move' + escape(oldtitle)).innerHTML = '<div style="color:red"><b>Move failed on <a href="' + wgArticlePath.replace("$1", encodeURI(oldtitle)) + '" title="' + oldtitle + '">' + oldtitle + '</a></b></div>. Error info:' + response['error']['code'] + ' : ' + response['error']['info'];
+					$("#afcHelper_move" + escape(oldtitle)).html('<div style="color:red"><b>Move failed on <a href="' + wgArticlePath.replace("$1", encodeURI(oldtitle)) + '" title="' + oldtitle + '">' + oldtitle + '</a></b></div>. Error info:' + response['error']['code'] + ' : ' + response['error']['info']);
 				}
 			} catch (err) {
-				document.getElementById('afcHelper_move' + escape(oldtitle)).innerHTML = '<div style="color:red"><b>Move failed on <a href="' + wgArticlePath.replace("$1", encodeURI(oldtitle)) + '" title="' + oldtitle + '">' + oldtitle + '</a></b></div>';
+				$("#afcHelper_move" + escape(oldtitle)).html('<div style="color:red"><b>Move failed on <a href="' + wgArticlePath.replace("$1", encodeURI(oldtitle)) + '" title="' + oldtitle + '">' + oldtitle + '</a></b></div>');
 			}
 			if (!error) {
 				if (callback !== null) callback();
 			}
-			document.getElementById('afcHelper_AJAX_finished_' + func_id).style.display = '';
+			$("#afcHelper_AJAX_finished_" + func_id).css("display", "");
 			delete req;
 		}
 	};
