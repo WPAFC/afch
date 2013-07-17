@@ -5,7 +5,7 @@ var afcHelper_ffuPageName = wgPageName.replace(/_/g, ' ');
 var afcHelper_ffuSubmissions = new Array();
 var afcHelper_ffuSections = new Array();
 var afcHelper_numTotal = 0;
-var afcHelper_ffu_AJAXnumber = 0;
+var afcHelper_AJAXnumber = 0;
 var afcHelper_Submissions = new Array();
 
 function afcHelper_ffu_init() {
@@ -292,7 +292,7 @@ for (var i = 0; i < afcHelper_Submissions.length; i++) {
 	} else if (action == 'decline') {
 		afcHelper_Submissions[i].reason = document.getElementById('afcHelper_ffu_decline_' + i).value;
 	}
-	afcHelper_Submissions[i].comment = document.getElementById("afcHelper_ffu_comment_" + i).value;
+	afcHelper_Submissions[i].comment = $('#afcHelper_ffu_comment_' + i).val();
 }
 // Data loaded. Show progress screen and get edit token and WP:FFU page text.
 displayMessage('<ul id="afcHelper_status"></ul><ul id="afcHelper_finish"></ul>');
@@ -354,7 +354,8 @@ for (var i = 0; i < afcHelper_ffuSubmissions.length; i++) {
 			}
 		} else if (sub.action == 'decline') {
 			var header = text.match(/==[^=]*==/)[0];
-			var reason = afcHelper_categoryDecline_reasonhash[sub.reason];
+			var reason = sub.reason;
+			console.log('Reason: '+reason)
 			if (reason == '')
 				reason = sub.comment;
 			else if (sub.comment != '')
@@ -363,16 +364,18 @@ for (var i = 0; i < afcHelper_ffuSubmissions.length; i++) {
 				document.getElementById('afcHelper_status').innerHTML += '<li>Skipping ' + sub.title + ': No decline reason specified.</li>';
 				continue;
 			}
-			text = header + "\n\{\{AfC-c|d\}\}\n" + text.substring(header.length);
+			text = header + "\n\{\{subst:ffu d\}\}\n" + text.substring(header.length);
 			if (sub.comment == '')
-				text += '\n*\{\{subst:afc category|' + sub.reason + '\}\} \~\~\~\~\n';
+				text += '\n*\{\{subst:ffu|' + sub.reason + '\}\} \~\~\~\~\n';
 			else
-				text += '\n*\{\{subst:afc category|decline|2=' + reason + '\}\} \~\~\~\~\n';
-			text += '\{\{AfC-c|b\}\}\n';
+				text += '\n*\{\{subst:ffu|' + sub.reason + '\}\} ' + reason + '\}\} \~\~\~\~\n';
+			text += '\{\{subst:AfC-c|b\}\}\n';
+			console.log('Text: '+text)
 			totaldecline++;
+
 		} else if (sub.action == 'comment') {
 			if (sub.comment != '')
-				text += '\n\{\{afc comment|1=' + sub.comment + '\~\~\~\~\}\}\n';
+				text += '\n\{\{subst:ffu|c\}\} ' + sub.comment + '\~\~\~\~\n';
 					totalcomment++;
 				}
 			pagetext = pagetext.substring(0, startindex) + text + pagetext.substring(endindex);

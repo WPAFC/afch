@@ -6,7 +6,7 @@
 // Development: <https://github.com/WikiProject-Articles-for-creation/afch>
 ////////////////////////////////////////////
 //<nowiki>
-if ((wgPageName.indexOf('Wikipedia:Articles_for_creation') !== -1) || (wgPageName.indexOf('Wikipedia_talk:Articles_for_creation') !== -1) || (wgPageName.indexOf('Wikipedia:Files_for_Upload') !== -1) || (wgPageName.indexOf('User:*') !== -1)) {
+if ((wgPageName.indexOf('Wikipedia:Articles_for_creation') !== -1) || (wgPageName.indexOf('Wikipedia_talk:Articles_for_creation') !== -1) || (wgPageName.indexOf('Wikipedia:Files_for_upload') !== -1) || (wgPageName.indexOf('User:*') !== -1)) {
 	importScript('User:Timotheus Canens/displaymessage.js');
 	var afchelper_baseurl = '//en.wikipedia.org/w/index.php?action=raw&ctype=text/javascript&title=MediaWiki:AFCH-beta.js';
 	importScriptURI(afchelper_baseurl + '/core.js');
@@ -20,6 +20,9 @@ if ((wgPageName.indexOf('Wikipedia:Articles_for_creation') !== -1) || (wgPageNam
 
 	if (wgPageName.indexOf('Wikipedia:Articles_for_creation/Redirects') !== -1) {
 		importScriptURI(afchelper_baseurl + '/redirects.js');
+	} else if ((wgPageName.indexOf('Wikipedia:Files_for_upload') !== -1) {
+		importScriptURI(afchelper_baseurl + '/ffu.js');		
+	}
 	} else if ((wgPageName.indexOf('Wikipedia:Articles_for_creation/') !== -1)
 	            || (wgPageName.indexOf('Wikipedia_talk:Articles_for_creation/') !== -1)
 	            || (wgPageName.indexOf('User:') !== -1)
