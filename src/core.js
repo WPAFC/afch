@@ -33,20 +33,22 @@ function afcHelper_getPageText(title, show, redirectcheck) {
 		return '';
 	}
 	var newtext = response['query']['pages'][pageid]['revisions'][0]['*'];
-		if(redirectcheck){
+		if(redirectcheck && response['query']['redirects'] /* If &redirects if specified but there is no redirect, this stops us from getting an error */){
 			var oldusername  = response['query']['redirects'][0]['from'];
 			var newusername = response['query']['redirects'][0]['to'];
 			if ((typeof(oldusername) !== 'undefined') && (typeof(newusername) !== 'undefined') && (oldusername != newusername)){
 				usertalkpage = newusername;
 				if (show){
-					document.getElementById('afcHelper_get' + escape(title)).innerHTML = 'Got <a href="' + wgArticlePath.replace("$1", encodeURI(title)) + '" title="' + newusername + '">' + newusername + '</a> (page was renamed from ' + oldusername + ')';
+					document.getElementById('afcHelper_status').innerHTML += '<li id="afcHelper_get' + escape(title) + '">Got <a href="' + wgArticlePath.replace("$1", encodeURI(title)) + '" title="' + newusername + '">' + newusername + '</a> (page was renamed from ' + oldusername + ')</li>';
 				}
 			}else{
 				redirectcheck = false;
 			}
+		}else{
+				redirectcheck = false;
 		}		
 	delete req;
-	if (show && !redirectcheck)	$("#afcHelper_get" + escape(title)).html('Got <a href="' + wgArticlePath.replace("$1", encodeURI(title)) + '" title="' + title + '">' + title + '</a>')
+	if (show && !redirectcheck)	document.getElementById('afcHelper_status').innerHTML += '<li id="afcHelper_get' + escape(title) + '">Got <a href="' + wgArticlePath.replace("$1", encodeURI(title)) + '" title="' + title + '">' + title + '</a></li>';
 		return newtext;
 }
 
