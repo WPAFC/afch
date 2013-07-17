@@ -54,7 +54,7 @@ function afcHelper_redirect_init() {
 			// parse.
 			var header = afcHelper_RedirectSections[i].match(section_re)[0];
 			if (header.search(/Redirect request/i) !== -1) {
-				var wikilink_re = /\[\[(\s*[^=]*)*\]\]/g;
+				var wikilink_re = /\[\[(\s*[^=]*?)*?\]\]/g;
 				var links = header.match(wikilink_re);
 				if (!links) continue;
 				for (var j = 0; j < links.length; j++) {
