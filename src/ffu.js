@@ -348,8 +348,8 @@ for (var i = 0; i < afcHelper_ffuSubmissions.length; i++) {
 			if(sub.talkpage==true){
 				recenttext = afcHelper_getPageText('Wikipedia:Files_for_upload/recent',true)
 				var newentry = "\|File:" + sub.to + "|" + ( typeof sub.filedescription  !== "undefined" ? sub.filedescription : "" ) + "\n";
-				var lastentry = recenttext.toLowerCase().lastIndexOf("| File:");
-				var firstentry = recenttext.toLowerCase().indexOf("| File:");
+				var lastentry = recenttext.toLowerCase().lastIndexOf("| file:");
+				var firstentry = recenttext.toLowerCase().indexOf("| file:");
 				recenttext = recenttext.substring(0, lastentry);
 				recenttext = recenttext.substring(0, firstentry) + newentry + recenttext.substring(firstentry);
 				afcHelper_editPage("Wikipedia:Files for upload/recent", recenttext, token, 'Updating recently uploaded FFUs');
