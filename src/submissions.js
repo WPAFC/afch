@@ -855,10 +855,10 @@ function afcHelper_cleanup(text) {
 	text = text.replace(/\<\!-- Just press the \"Save page\" button below without changing anything! Doing so will submit your article submission for review. Once you have saved this page you will find a new yellow 'Review waiting' box at the bottom of your submission page. If you have submitted your page previously, the old pink 'Submission declined' template or the old grey 'Draft' template will still appear at the top of your submission page, but you should ignore them. Again, please don't change anything in this text box. Just press the \"Save page\" button below. --\>/ig, "");
 	text = text.replace(/== Request review at \[\[WP:AFC\]\] ==\n/ig, "");
 	text = text.replace(/(?:<\s*references\s*>([\S\s]*)<\/references>|<\s*references\s*\/\s*>)/gi, "\n{{reflist|refs=$1}}");
-	// hack to make sure we don't leave an unneeded |refs=
-	text = text.replace("{{reflist|refs=}}", "{{reflist}}");
+	text = text.replace("{{reflist|refs=}}", "{{reflist}}"); // hack to make sure we don't leave an unneeded |refs=
 	text = text.replace(/\{\{(userspacedraft|userspace draft|user sandbox)(?:\{\{[^{}]*\}\}|[^}{])*\}\}/ig, "");
-	text = text.replace(/^[-]{4,}$/igm, "");
+	text = text.replace(/<!--\s*-->/ig,""); // Remove empty HTML comments
+	text = text.replace(/^[-]{4,}$/igm, ""); // Removes horizontal rules
 
 	var afc_re = /\{\{\s*afc submission\s*\|\s*[||h|r](?:\{\{[^\{\}]*\}\}|[^\}\{])*\}\}/i;
 	var afc_alt = /\{\{\s*afc submission\s*\|\s*[^t](?:\{\{[^\{\}]*\}\}|[^\}\{])*\}\}/i;
