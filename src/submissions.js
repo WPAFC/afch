@@ -715,18 +715,18 @@ function afcHelper_movePage(oldtitle, newtitle, token, summary, callback) {
 			response = eval('(' + req.responseText + ')');
 			try {
 				if (typeof(response['move']) !== "undefined") {
-					$("#afcHelper_move" + escape(oldtitle)).html('Moved <a href="' + wgArticlePath.replace("$1", encodeURI(oldtitle)) + '" title="' + oldtitle + '">' + oldtitle + '</a>');
+					document.getElementById('afcHelper_move' + escape(oldtitle)).innerHTML = 'Moved <a href="' + wgArticlePath.replace("$1", encodeURI(oldtitle)) + '" title="' + oldtitle + '">' + oldtitle + '</a>';
 					error = false;
 				} else {
-					$("#afcHelper_move" + escape(oldtitle)).html('<div style="color:red"><b>Move failed on <a href="' + wgArticlePath.replace("$1", encodeURI(oldtitle)) + '" title="' + oldtitle + '">' + oldtitle + '</a></b></div>. Error info:' + response['error']['code'] + ' : ' + response['error']['info']);
+					document.getElementById('afcHelper_move' + escape(oldtitle)).innerHTML = '<div style="color:red"><b>Move failed on <a href="' + wgArticlePath.replace("$1", encodeURI(oldtitle)) + '" title="' + oldtitle + '">' + oldtitle + '</a></b></div>. Error info:' + response['error']['code'] + ' : ' + response['error']['info'];
 				}
 			} catch (err) {
-				$("#afcHelper_move" + escape(oldtitle)).html('<div style="color:red"><b>Move failed on <a href="' + wgArticlePath.replace("$1", encodeURI(oldtitle)) + '" title="' + oldtitle + '">' + oldtitle + '</a></b></div>');
+				document.getElementById('afcHelper_move' + escape(oldtitle)).innerHTML = '<div style="color:red"><b>Move failed on <a href="' + wgArticlePath.replace("$1", encodeURI(oldtitle)) + '" title="' + oldtitle + '">' + oldtitle + '</a></b></div>';
 			}
 			if (!error) {
 				if (callback !== null) callback();
 			}
-			$("#afcHelper_AJAX_finished_" + func_id).css("display", "");
+			document.getElementById('afcHelper_AJAX_finished_' + func_id).style.display = '';
 			delete req;
 		}
 	};
