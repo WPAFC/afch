@@ -309,7 +309,6 @@ var totalcomment = 0;
 // traverse the submissions and locate the relevant sections.
 for (var i = 0; i < afcHelper_ffuSubmissions.length; i++) {
 	var sub = afcHelper_ffuSubmissions[i];
-	console.log(sub)
 	if (pagetext.indexOf(afcHelper_ffuSections[sub.section]) == -1) {
 		// Someone has modified the section in the mean time. Skip.
 		document.getElementById('afcHelper_status').innerHTML += '<li>Skipping ' + sub.title + ': Cannot find section. Perhaps it was modified in the mean time?</li>';
@@ -319,74 +318,85 @@ for (var i = 0; i < afcHelper_ffuSubmissions.length; i++) {
 	var startindex = pagetext.indexOf(afcHelper_ffuSections[sub.section]);
 	var endindex = startindex + text.length;
 	
-	sub.action=afcHelper_Submissions[i].action;
-	console.log(sub.action)
-		if (sub.action == 'accept'){
-			//create local file description talkpage?
-			if((sub.talkpage==true)&&(sub.to!='')){
-				afcHelper_editPage('File talk\:'+afcHelper_Submissions[i].to, '\{\{subst:WPAFCF\}\}\n'+afcHelper_Submissions[i].append, token, 'Placing [[WP:AFC|WPAFC]] project banner', true);
-					}
+	var fromdata = Array();
+	for(var k in sub.from) fromdata[k]=sub.from[k];
+	console.log(fromdata);
 
-			//First notify the user so we don't have to process yet another signature
-			//todo list: if more files in one request were handled
-			if(sub.notify==true){
-				//assuming the first User/IP is the requester
-				var requestinguser=/\[\[(User[_ ]talk:|User:|Special:Contributions\/)([^\||\]\]]*)([^\]]*?)\]\]/i.exec(text)[2];
-				var userpagetext = afcHelper_getPageText('User talk:'+requestinguser, true);
+	/* BROKEN -- infinite loop weirdness at the moment. */
+	for (var i = 0; i < fromdata.length; i++) {
+		var mainid = fromdata[i].id;
+		var sub = afcHelper_Submissions[mainid];
+
+		sub.action=afcHelper_Submissions[i].action;
+		
+		console.log(sub.action)
+			if (sub.action == 'accept'){
+				//create local file description talkpage?
+				if((sub.talkpage==true)&&(sub.to!='')){
+					afcHelper_editPage('File talk\:'+afcHelper_Submissions[i].to, '\{\{subst:WPAFCF\}\}\n'+afcHelper_Submissions[i].append, token, 'Placing [[WP:AFC|WPAFC]] project banner', true);
+						}
+
+				//First notify the user so we don't have to process yet another signature
+				//todo list: if more files in one request were handled
+				if(sub.notify==true){
+					//assuming the first User/IP is the requester
+					var requestinguser=/\[\[(User[_ ]talk:|User:|Special:Contributions\/)([^\||\]\]]*)([^\]]*?)\]\]/i.exec(text)[2];
+					var userpagetext = afcHelper_getPageText('User talk:'+requestinguser, true);
+					if (sub.to === '')
+						userpagetext += '\n== Your request at \[\[WP:FFU|Files for upload\]\] ==\n\{\{subst:ffu talk\}\} \~\~\~\~\n';
+					else
+						userpagetext += '\n== Your request at \[\[WP:FFU|Files for upload\]\] ==\n\{\{subst:ffu talk|file=' + afcHelper_Submissions[i].to + '\}\} \~\~\~\~\n';
+					afcHelper_editPage('User talk:'+requestinguser, userpagetext, token, 'Notifying about the [[WP:FFU|FFU]] request', true);
+						}
+	 
+				//update text of the FFU page
+				var header = text.match(/==[^=]*==/)[0];
+				text = header + "\n\{\{subst:ffu a\}\}\n" + text.substring(header.length);
 				if (sub.to === '')
-					userpagetext += '\n== Your request at \[\[WP:FFU|Files for upload\]\] ==\n\{\{subst:ffu talk\}\} \~\~\~\~\n';
+					text += '\n*\{\{subst:ffu|a\}\} \~\~\~\~\n';
 				else
-					userpagetext += '\n== Your request at \[\[WP:FFU|Files for upload\]\] ==\n\{\{subst:ffu talk|file=' + afcHelper_Submissions[i].to + '\}\} \~\~\~\~\n';
-				afcHelper_editPage('User talk:'+requestinguser, userpagetext, token, 'Notifying about the [[WP:FFU|FFU]] request', true);
-					}
- 
-			//update text of the FFU page
-			var header = text.match(/==[^=]*==/)[0];
-			text = header + "\n\{\{subst:ffu a\}\}\n" + text.substring(header.length);
-			if (sub.to === '')
-				text += '\n*\{\{subst:ffu|a\}\} \~\~\~\~\n';
-			else
-				text += '\n*\{\{subst:ffu|file=' + sub.to + '\}\} \~\~\~\~\n';
-			text += '\{\{subst:ffu b\}\}\n';
-					totalaccept++;					
- 
-			// update [[Wikipedia:Files for upload/recent]]
-			if(sub.recent==true){
-				recenttext = afcHelper_getPageText('Wikipedia:Files_for_upload/recent',true)
-				var newentry = "\|File:" + sub.to + "|" + ( typeof sub.filedescription  !== "undefined" ? sub.filedescription : "" ) + "\n";
-				var lastentry = recenttext.toLowerCase().lastIndexOf("| file:");
-				var firstentry = recenttext.toLowerCase().indexOf("| file:");
-				recenttext = recenttext.substring(0, lastentry);
-				recenttext = recenttext.substring(0, firstentry) + newentry + recenttext.substring(firstentry) + '\n}}';
-				afcHelper_editPage("Wikipedia:Files for upload/recent", recenttext, token, 'Updating recently uploaded FFUs');
-			}
-		} else if (sub.action == 'decline') {
-			var header = text.match(/==[^=]*==/)[0];
-			var reason = sub.reason;
-			console.log('Reason: '+reason)
-			if (reason == '')
-				reason = sub.comment;
-			else if (sub.comment != '')
-				reason = reason + ': ' + sub.comment;
-			if (reason == '') {
-				document.getElementById('afcHelper_status').innerHTML += '<li>Skipping ' + sub.title + ': No decline reason specified.</li>';
-				continue;
-			}
-			text = header + "\n\{\{subst:ffu d\}\}\n" + text.substring(header.length);
-			if (sub.comment == '')
-				text += '\n*\{\{subst:ffu|' + sub.reason + '\}\} \~\~\~\~\n';
-			else
-				text += '\n*\{\{subst:ffu|' + sub.reason + '\}\} ' + sub.comment + ' \~\~\~\~\n';
-			text += '\{\{subst:ffu b\}\}\n';
-			console.log('Text: '+text)
-			totaldecline++;
-
-		} else if (sub.action == 'comment') {
-			if (sub.comment != '')
-				text += '\n\{\{subst:ffu|c\}\} ' + sub.comment + '\~\~\~\~\n';
-					totalcomment++;
+					text += '\n*\{\{subst:ffu|file=' + sub.to + '\}\} \~\~\~\~\n';
+				text += '\{\{subst:ffu b\}\}\n';
+						totalaccept++;					
+	 
+				// update [[Wikipedia:Files for upload/recent]]
+				if(sub.recent==true){
+					recenttext = afcHelper_getPageText('Wikipedia:Files_for_upload/recent',true)
+					var newentry = "\|File:" + sub.to + "|" + ( typeof sub.filedescription  !== "undefined" ? sub.filedescription : "" ) + "\n";
+					var lastentry = recenttext.toLowerCase().lastIndexOf("| file:");
+					var firstentry = recenttext.toLowerCase().indexOf("| file:");
+					recenttext = recenttext.substring(0, lastentry);
+					recenttext = recenttext.substring(0, firstentry) + newentry + recenttext.substring(firstentry) + '\n}}';
+					afcHelper_editPage("Wikipedia:Files for upload/recent", recenttext, token, 'Updating recently uploaded FFUs');
 				}
-			pagetext = pagetext.substring(0, startindex) + text + pagetext.substring(endindex);
+			} else if (sub.action == 'decline') {
+				var header = text.match(/==[^=]*==/)[0];
+				var reason = sub.reason;
+				console.log('Reason: '+reason)
+				if (reason == '')
+					reason = sub.comment;
+				else if (sub.comment != '')
+					reason = reason + ': ' + sub.comment;
+				if (reason == '') {
+					document.getElementById('afcHelper_status').innerHTML += '<li>Skipping ' + sub.title + ': No decline reason specified.</li>';
+					continue;
+				}
+				text = header + "\n\{\{subst:ffu d\}\}\n" + text.substring(header.length);
+				if (sub.comment == '')
+					text += '\n*\{\{subst:ffu|' + sub.reason + '\}\} \~\~\~\~\n';
+				else
+					text += '\n*\{\{subst:ffu|' + sub.reason + '\}\} ' + sub.comment + ' \~\~\~\~\n';
+				text += '\{\{subst:ffu b\}\}\n';
+				console.log('Text: '+text)
+				totaldecline++;
+
+			} else if (sub.action == 'comment') {
+				if (sub.comment != '')
+					text += '\n\{\{subst:ffu|c\}\} ' + sub.comment + '\~\~\~\~\n';
+						totalcomment++;
+					}
+				pagetext = pagetext.substring(0, startindex) + text + pagetext.substring(endindex);
+			}
 		}
  
 		var summary = "Updating submission status:";
