@@ -1,12 +1,20 @@
+/* TODO - some notes
+
+   * Need to integrate the two lists, so that sub.action=afcHelper_Submissions[i].action;
+     and such works -- hmm...
+       * afcHelper_Submissions contains the bullet points, broken down by link
+       * afcHelper_ffuSubmissions, meanwhile, is broken down by file
+*/
+
 //<nowiki>
 // Script should be located at [[MediaWiki:Gadget-afchelper.js/ffu.js]]
 // WARNING: dysfunctional and in development
 var afcHelper_ffuPageName = wgPageName.replace(/_/g, ' ');
-var afcHelper_ffuSubmissions = [];
-var afcHelper_ffuSections = [];
+var afcHelper_ffuSubmissions = new Array();
+var afcHelper_ffuSections = new Array();
 var afcHelper_numTotal = 0;
 var afcHelper_AJAXnumber = 0;
-var afcHelper_Submissions = [];
+var afcHelper_Submissions = new Array();
 
 function afcHelper_ffu_init() {
 	pagetext = afcHelper_getPageText(afcHelper_ffuPageName, false);
@@ -27,7 +35,7 @@ function afcHelper_ffu_init() {
 			afcHelper_ffuSections.push(section_text);
 		}
  
-		// parse the sections.
+	// parse the sections.
 	for (var i = 0; i < afcHelper_ffuSections.length; i++) {
 		var closed = /\{\{\s*ifu-c/i.test(afcHelper_ffuSections[i]);
 		if (!closed) {
@@ -36,9 +44,9 @@ function afcHelper_ffu_init() {
 			header=header.slice(2, (header.length-2));
 				var submission = {
 					type : 'ffu',
-					from : [],
+					from : new Array(),
 					section : i,
-					to : header,
+					to : '',
 					title : header,
 					notify : 1,
 					talkpage : 1,
@@ -53,7 +61,7 @@ function afcHelper_ffu_init() {
 				var links = afcHelper_ffuSections[i].match(urllinks_re);
 				if (links === null){
 					var linkscounter=1;
-					var links = [];
+					var links = new Array();
 						links.push('');
 				}
 				else
@@ -85,18 +93,18 @@ function afcHelper_ffu_init() {
 				afcHelper_ffuSubmissions.push(submission);
 		}
 	}
-	var text = '<h3>Reviewing Files for Upload requests</h3>';
+	var text = '<h3>Reviewing Files for upload requests</h3>';
 	// now layout the text.
 	var afcHelper_ffu_empty = 1;
-	var afcHelper_ffu_temp=[];
+	var afcHelper_ffu_temp=new Array();
 	for (var k = 0; k < afcHelper_ffuSubmissions.length; k++) {
 		text += '<ul>';
 		if (afcHelper_ffuSubmissions[k].type == 'ffu') {
-			if (( typeof (afcHelper_ffuSubmissions[k].to) == 'undefined') || (afcHelper_ffuSubmissions[k].to == '')) {
+			if (( typeof (afcHelper_ffuSubmissions[k].title) == 'undefined') || (afcHelper_ffuSubmissions[k].title == '')) {
 				text += '<li><b>No headline \#' + afcHelper_ffu_empty + '</b>: <ul>';
 				afcHelper_ffu_empty++;
 			} else {
-				text += '<li><b>'+afcHelper_ffuSubmissions[k].to +'</b>: <ul>';
+				text += '<li><b>'+afcHelper_ffuSubmissions[k].title +'</b>: <ul>';
 				}
  
 				var afcHelper_ffu_empty = 1;
@@ -310,13 +318,15 @@ for (var i = 0; i < afcHelper_ffuSubmissions.length; i++) {
 	var text = afcHelper_ffuSections[sub.section];
 	var startindex = pagetext.indexOf(afcHelper_ffuSections[sub.section]);
 	var endindex = startindex + text.length;
+	
 	sub.action=afcHelper_Submissions[i].action;
+	console.log(sub.action)
 		if (sub.action == 'accept'){
 			//create local file description talkpage?
 			if((sub.talkpage==true)&&(sub.to!='')){
 				afcHelper_editPage('File talk\:'+afcHelper_Submissions[i].to, '\{\{subst:WPAFCF\}\}\n'+afcHelper_Submissions[i].append, token, 'Placing [[WP:AFC|WPAFC]] project banner', true);
 					}
-			
+
 			//First notify the user so we don't have to process yet another signature
 			//todo list: if more files in one request were handled
 			if(sub.notify==true){
@@ -396,7 +406,7 @@ if (totalcomment > 0) {
 		afcHelper_editPage(afcHelper_ffuPageName, pagetext, token, summary, false);
 		document.getElementById('afcHelper_finished_main').style.display = '';
 	}
- 
+
 	function afcHelper_ffu_generateSelect(title, options, onchange) {
 		var text = '<select name="' + title + '" id="' + title + '" ';
 if (onchange != null)
