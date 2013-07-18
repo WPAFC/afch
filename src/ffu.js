@@ -2,11 +2,11 @@
 // Script should be located at [[MediaWiki:Gadget-afchelper.js/ffu.js]]
 // WARNING: dysfunctional and in development
 var afcHelper_ffuPageName = wgPageName.replace(/_/g, ' ');
-var afcHelper_ffuSubmissions = new Array();
-var afcHelper_ffuSections = new Array();
+var afcHelper_ffuSubmissions = [];
+var afcHelper_ffuSections = [];
 var afcHelper_numTotal = 0;
 var afcHelper_AJAXnumber = 0;
-var afcHelper_Submissions = new Array();
+var afcHelper_Submissions = [];
 
 function afcHelper_ffu_init() {
 	pagetext = afcHelper_getPageText(afcHelper_ffuPageName, false);
@@ -36,7 +36,7 @@ function afcHelper_ffu_init() {
 			header=header.slice(2, (header.length-2));
 				var submission = {
 					type : 'ffu',
-					from : new Array(),
+					from : [],
 					section : i,
 					to : header,
 					title : header,
@@ -53,7 +53,7 @@ function afcHelper_ffu_init() {
 				var links = afcHelper_ffuSections[i].match(urllinks_re);
 				if (links === null){
 					var linkscounter=1;
-					var links = new Array();
+					var links = [];
 						links.push('');
 				}
 				else
@@ -88,7 +88,7 @@ function afcHelper_ffu_init() {
 	var text = '<h3>Reviewing Files for Upload requests</h3>';
 	// now layout the text.
 	var afcHelper_ffu_empty = 1;
-	var afcHelper_ffu_temp=new Array();
+	var afcHelper_ffu_temp=[];
 	for (var k = 0; k < afcHelper_ffuSubmissions.length; k++) {
 		text += '<ul>';
 		if (afcHelper_ffuSubmissions[k].type == 'ffu') {
@@ -272,6 +272,7 @@ function afcHelper_ffu_performActions() {
 for (var i = 0; i < afcHelper_Submissions.length; i++) {
 	var action = document.getElementById("afcHelper_ffu_action_" + i).value;
 	afcHelper_Submissions[i].action = action;
+	console.log("Selected action:"+action)
 	if (action == 'none')
 		continue;
 	if (action == 'accept') {
@@ -282,7 +283,7 @@ for (var i = 0; i < afcHelper_Submissions.length; i++) {
 			afcHelper_Submissions[i].recent = document.getElementById("afcHelper_ffu_recent_" + i).value;
 			afcHelper_Submissions[i].recenttext = document.getElementById("afcHelper_ffu_recenttext_" + i).value;
  
-					if (afcHelper_Submissions[i].append == 'custom') {
+			if (afcHelper_Submissions[i].append == 'custom') {
 				afcHelper_Submissions[i].append = prompt("Please enter the template to append for " + afcHelper_Submissions[i].title + ". Do not include the curly brackets.");
 			}
 			if (afcHelper_Submissions[i].append == 'none' || afcHelper_Submissions[i].append == null)
@@ -319,21 +320,21 @@ for (var i = 0; i < afcHelper_ffuSubmissions.length; i++) {
 			if((sub.talkpage==true)&&(sub.to!='')){
 				afcHelper_editPage('File talk\:'+afcHelper_Submissions[i].to, '\{\{subst:WPAFCF\}\}\n'+afcHelper_Submissions[i].append, token, 'Placing [[WP:AFC|WPAFC]] project banner', true);
 					}
- 
-					//do first the notifying of the user before adding another potential signature
+			
+			//do first the notifying of the user before adding another potential signature
 			//todo list: if more files in one request were handled
 			if(sub.notify==true){
 				//assuming the first User/IP is the requester
-				var requestinguser=text.replace(/\[\[(User talk:|User:|Special:Contributions\/)([^\|]*)?([^\]]*)\]\]/i, $2);
-				var userpagetext = afcHelper_getPageText(requestinguser, true);
+				var requestinguser=/\[\[(User[ _]talk:|User:|Special:Contributions\/)([^\|]*)?([^\]]*?)\]\]/i.exec(text)[2];
+				var userpagetext = afcHelper_getPageText('User talk:'+requestinguser, true);
 				if (sub.to === '')
-					userpagetext += '\n== Your request at \[\[WP:FFU|Files for Upload\]\] ==\n\{\{subst:ffu talk\}\} \~\~\~\~\n';
+					userpagetext += '\n== Your request at \[\[WP:FFU|Files for upload\]\] ==\n\{\{subst:ffu talk\}\} \~\~\~\~\n';
 				else
-					userpagetext += '\n== Your request at \[\[WP:FFU|Files for Upload\]\] ==\n\{\{subst:ffu talk|file=' + afcHelper_Submissions[i].to + '\}\} \~\~\~\~\n';
+					userpagetext += '\n== Your request at \[\[WP:FFU|Files for upload\]\] ==\n\{\{subst:ffu talk|file=' + afcHelper_Submissions[i].to + '\}\} \~\~\~\~\n';
 				afcHelper_editPage('User talk:'+requestinguser, userpagetext, token, 'Notifying about the [[WP:FFU|FFU]] request', true);
 					}
  
-					//update text of the FFU page
+			//update text of the FFU page
 			var header = text.match(/==[^=]*==/)[0];
 			text = header + "\n\{\{subst:ffu a\}\}\n" + text.substring(header.length);
 			if (sub.to === '')
@@ -343,9 +344,10 @@ for (var i = 0; i < afcHelper_ffuSubmissions.length; i++) {
 			text += '\{\{subst:ffu b\}\}\n';
 					totalaccept++;					
  
-					// update [[Wikipedia:Files for upload/recent]]
+			// update [[Wikipedia:Files for upload/recent]]
 			if(sub.talkpage==true){
-				var newentry = "\|File:" + sub.to + "|" + sub.filedescription + "\n";
+				recenttext = afcHelper_getPageText('Wikipedia:Files_for_upload/recent',true)
+				var newentry = "\|File:" + sub.to + "|" + ( typeof sub.filedescription  !== "undefined" ? sub.filedescription : "" ) + "\n";
 				var lastentry = recenttext.toLowerCase().lastIndexOf("| File:");
 				var firstentry = recenttext.toLowerCase().indexOf("| File:");
 				recenttext = recenttext.substring(0, lastentry);
@@ -395,7 +397,7 @@ if (totalcomment > 0) {
 	summary += " commenting on " + totalcomment + " request" + (totalcomment > 1 ? 's' : '');
 		}
  
-		afcHelper_editPage(afcHelper_ffuPageName, pagetext, token, summary, false);
+		//afcHelper_editPage(afcHelper_ffuPageName, pagetext, token, summary, false);
 		document.getElementById('afcHelper_finished_main').style.display = '';
 	}
  
