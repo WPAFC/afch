@@ -1,5 +1,5 @@
 //<nowiki>
-// Script should be located at [[MediaWiki:Gadget-afchelper.js/submissions.js]]
+// Script should be located at [[MediaWiki:Gadget-afchelper.js/redirects.js]]
 var afcHelper_RedirectPageName = wgPageName.replace(/_/g, ' ');
 var afcHelper_RedirectSubmissions = new Array();
 var afcHelper_RedirectSections = new Array();
