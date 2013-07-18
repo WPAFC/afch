@@ -115,17 +115,14 @@ function afcHelper_ffu_init() {
 					label : 'Decline',
 					value : 'decline'
 				}, {
-					label : 'Ignore that URL',
-					value : 'ignore'
-				}, {
-					label : 'setting on hold',
+					label : 'Set on hold',
 					selected : true,
 					value : 'hold'
 				}, {
 					label : 'Comment',
 					value : 'comment'
 				}, {
-					label : 'None',
+					label : 'None/ignore this URL',
 					value : 'none'	}];
 				}
 				else{
@@ -137,21 +134,18 @@ function afcHelper_ffu_init() {
 					label : 'Decline',
 					value : 'decline'
 				}, {
-					label : 'Ignore that URL',
-					value : 'ignore'
-				}, {
-					label : 'setting on hold',
+					label : 'Set on hold',
 					value : 'hold'
 				}, {
 					label : 'Comment',
 					value : 'comment'
 				}, {
-					label : 'None',
+					label : 'None/ignore this URL',
 					selected : true,
 					value : 'none'	}];
 				}
 				if(/flickr.com/gi.test(from.title))
-					text += ' (start <a href="http://toolserver.org/~bryan/flickr/upload?username=' +wgUserName+ '&link='+from.title+'" target="_blank">Flickuploadbot</a> in a new tab/window)';
+					text += ' (<a href="http://toolserver.org/~bryan/flickr/upload?username=' +wgUserName+ '&link='+from.title+'" target="_blank"><b>launch Flickuploadbot</b></a> in a new window)';
 				text += '<br/><label for="afcHelper_ffu_action_' + from.id + '">Action: </label>' + afcHelper_ffu_generateSelect('afcHelper_ffu_action_' + from.id, selectoptions, 'afcHelper_ffu_onActionChange(' + from.id + ')') + '<div id="afcHelper_ffu_extra_' + from.id + '"></div></li>';
 			} 	
 			text += '</ul></li>';
@@ -172,14 +166,14 @@ function afcHelper_ffu_onActionChange(id) {
 	if (selectValue == 'none')
 		extra.innerHTML = '';
 	else if (selectValue == 'accept') {
-		extra.innerHTML = '&nbsp;<label for="afcHelper_ffu_to_' + id + '">File location (without the <i>File:</i> part): </label><input type="text" ' + 'name="afcHelper_ffu_to_' + id + '" id="afcHelper_ffu_to_' + id + '" />'+
+		extra.innerHTML = '<label for="afcHelper_ffu_to_' + id + '">Destination where you uploaded the file (without the <i>File:</i> part): </label><input type="text" ' + 'name="afcHelper_ffu_to_' + id + '" id="afcHelper_ffu_to_' + id + '" />'+
 		'<br/><label for="afcHelper_ffu_comment_' + id + '">Comment:</label>' + '<input type="text" id="afcHelper_ffu_comment_' + id + '" name="afcHelper_ffu_comment_' + id + '"/>'+
 		'<br/><label for="afcHelper_ffu_filetalkpage_' + id + '">Place {{subst:<a href="' + wgArticlePath.replace("$1", 'Template:WPAFCF') + '" title="Template:WPAFCF" target="_blank">WPAFCF</a>}} on the local files\'s decription\'s talk page: </label><input type="checkbox" id="afcHelper_ffu_filetalkpage_' + id + '" name="afcHelper_ffu_filetalkpage_' + id + '" checked="checked" onchange=afcHelper_trigger(\'afcHelper_ffu_append_' + id + '\') />'+
-		'<br/><label for="afcHelper_ffu_append_' + id + '">Additional Wikimarkup to append on the local talk page file (e.g. other WikiProjects): </label><input type="text" id="afcHelper_ffu_append_' + id + '" name="afcHelper_ffu_append_' + id +'"/>'+
-		'<br/><label for="afcHelper_ffu_recent_' + id + '">Update <a href="' + wgArticlePath.replace("$1", 'Wikipedia:Files for upload/recent') + '" title="Wikipedia:Files for upload/recent" target="_blank">Wikipedia:Files for upload/recent</a>? </label><input type="checkbox" id="afcHelper_ffu_recent_' + id + '" name="afcHelper_ffu_recent_' + id + '" checked="checked"  onchange=afcHelper_trigger(\'afcHelper_ffu_recenttext_' + id + '\') />'+
+		'<br/><label for="afcHelper_ffu_append_' + id + '">Additional wikicode to append on the local talk page file (e.g. other WikiProjects): </label><input type="text" id="afcHelper_ffu_append_' + id + '" name="afcHelper_ffu_append_' + id +'"/>'+
+		'<br/><label for="afcHelper_ffu_recent_' + id + '">Update <a href="' + wgArticlePath.replace("$1", 'Wikipedia:Files for upload/recent') + '" title="Wikipedia:Files for upload/recent" target="_blank">Wikipedia:Files for upload/recent</a>: </label><input type="checkbox" id="afcHelper_ffu_recent_' + id + '" name="afcHelper_ffu_recent_' + id + '" checked="checked"  onchange=afcHelper_trigger(\'afcHelper_ffu_recenttext_' + id + '\') />'+
 		'<div id="afcHelper_ffu_recenttext_' + id + '"><label for="afcHelper_ffu_recenttext_' + id + '">File description for <a href="' + wgArticlePath.replace("$1", 'Wikipedia:Files for upload/recent') + '" title="Wikipedia:Files for upload/recent" target="_blank">Wikipedia:Files for upload/recent</a>: </label><input type="text" id="afcHelper_ffu_recenttext_' + id + '" name="afcHelper_ffu_recenttext_' + id + '"/></div>'+
-		'<label for="afcHelper_ffu_notify_' + id + '">Notify user: </label>' + '<input type="checkbox" id="afcHelper_ffu_notify_' + id + '" name="afcHelper_ffu_notify_' + id + '" checked="checked" />'+
-		'<br/><label for="afcHelper_ffu_addcomment_' + id + '">Additional comment for this page:</label>' + '<input type="text" id="afcHelper_ffu_addcomment_' + id + '" name="afcHelper_ffu_addcomment_' + id + '"/>';
+		'<label for="afcHelper_ffu_notify_' + id + '">Notify requestor: </label>' + '<input type="checkbox" id="afcHelper_ffu_notify_' + id + '" name="afcHelper_ffu_notify_' + id + '" checked="checked" />'//+
+		//'<br/><label for="afcHelper_ffu_addcomment_' + id + '">Additional comment for this page:</label>' + '<input type="text" id="afcHelper_ffu_addcomment_' + id + '" name="afcHelper_ffu_addcomment_' + id + '"/>';
 	} else if (selectValue == 'decline') {
 		extra.innerHTML = '<label for="afcHelper_ffu_decline_' + id + '">Reason for decline: </label>' + afcHelper_ffu_generateSelect('afcHelper_ffu_decline_' + id, [{
 			label : 'Already exists',
@@ -194,16 +188,16 @@ function afcHelper_ffu_onActionChange(id) {
 			label : 'No permission',
 			value : 'permission'
 		}, {
-			label : 'Copyrighted and not free',
+			label : 'Copyrighted and non-free',
 			value : 'copyrighted'
 		}, {
-			label : 'Not a ffu request',
+			label : 'Not a FFU request',
 			value : 'notffu'
 		}, {
 			label : 'Corrupt',
 			value : 'corrupt'
 		}, {
-			label : 'too low quality',
+			label : 'Low quality',
 			value : 'quality'
 		}, {
 			label : 'Redundant',
@@ -228,42 +222,42 @@ function afcHelper_ffu_onActionChange(id) {
 			selected : true,
 			value : 'custom'
 		}])+
-		'<br/><label for="afcHelper_ffu_notify_' + id + '">Notify user: </label>' + '<input type="checkbox" id="afcHelper_ffu_notify_' + id + '" name="afcHelper_ffu_notify_' + id + '" checked="checked" />'+
-		'<br/><label for="afcHelper_ffu_addcomment_' + id + '">Additional comment:</label>' + '<input type="text" id="afcHelper_ffu_addcomment_' + id + '" name="afcHelper_ffu_addcomment_' + id + '"/>';
+		'<br/><label for="afcHelper_ffu_notify_' + id + '">Notify requestor: </label>' + '<input type="checkbox" id="afcHelper_ffu_notify_' + id + '" name="afcHelper_ffu_notify_' + id + '" checked="checked" />'//+
+		//'<br/><label for="afcHelper_ffu_addcomment_' + id + '">Additional comment:</label>' + '<input type="text" id="afcHelper_ffu_addcomment_' + id + '" name="afcHelper_ffu_addcomment_' + id + '"/>';
 	} else if (selectValue == 'hold') {
 		extra.innerHTML = '<label for="afcHelper_ffu_hold_' + id + '">Reason for setting it on hold: </label>' + afcHelper_ffu_generateSelect('afcHelper_ffu_hold_' + id, [{
-			label : 'No URL',
-			value : 'nourl'
-		}, {
-			label : 'on hold',
+			label : 'On hold (generic)',
 			value : 'h'
 		}, {
 			label : 'Article is at AFD',
 			value : 'afd'
+		}, {
+			label : 'No URL',
+			value : 'nourl'
 		}])+
-		'<br/><label for="afcHelper_ffu_notify_' + id + '">Notify user: </label>' + '<input type="checkbox" id="afcHelper_ffu_notify_' + id + '" name="afcHelper_ffu_notify_' + id + '" checked="checked" />'+
+		'<br/><label for="afcHelper_ffu_notify_' + id + '">Notify requestor: </label>' + '<input type="checkbox" id="afcHelper_ffu_notify_' + id + '" name="afcHelper_ffu_notify_' + id + '" checked="checked" />'+
 		'<br/><label for="afcHelper_ffu_comment_' + id + '">Additional comment:</label>' + '<input type="text" id="afcHelper_ffu_comment_' + id + '" name="afcHelper_ffu_comment_' + id + '"/>';
 	 } else if (selectValue == 'comment') {
 		extra.innerHTML = '<label for="afcHelper_ffu_comment_' + id + '">Placing a comment: </label>' + afcHelper_ffu_generateSelect('afcHelper_ffu_comment_' + id, [{
 			label : 'No license',
 			value : 'license'
 		}, {
-			label : 'License\'s link provides unsuiteable license',
+			label : 'License\'s link provides unsuitable license',
 			value : 'flickr'
 		}, {
-			label : 'Please upload it at Commons on your own',
+			label : 'Please upload the image at Commons on your own',
 			value : 'commons'
 		}, {
-			label : 'Non-free rationale',
+			label : 'Non-free rationale needed',
 			value : 'rat'
 		}, {
 			label : 'Custom - reason below',
 			selected : true,
 			value : 'custom'
 		}]);
-		if(document.getElementById('afcHelper_ffu_comment_' + id).value!='custom')
+		if(document.getElementById('afcHelper_ffu_comment_' + id).value == 'custom')
 			extra.innerHTML += '<br/><label for="afcHelper_ffu_comment_' + id + '">Additional comment:</label>' + '<input type="text" id="afcHelper_ffu_comment2_' + id + '" name="afcHelper_ffu_comment2_' + id + '"/>';
-		extra.innerHTML += '<br/><label for="afcHelper_ffu_notify_' + id + '">Notify user: </label>' + '<input type="checkbox" id="afcHelper_ffu_notify_' + id + '" name="afcHelper_ffu_notify_' + id + '" checked="checked" />';
+		extra.innerHTML += '<br/><label for="afcHelper_ffu_notify_' + id + '">Notify requestor: </label>' + '<input type="checkbox" id="afcHelper_ffu_notify_' + id + '" name="afcHelper_ffu_notify_' + id + '" checked="checked" />';
 		}
 	}
  
@@ -283,13 +277,14 @@ for (var i = 0; i < afcHelper_Submissions.length; i++) {
 			afcHelper_Submissions[i].recent = document.getElementById("afcHelper_ffu_recent_" + i).value;
 			afcHelper_Submissions[i].recenttext = document.getElementById("afcHelper_ffu_recenttext_" + i).value;
  
+			/* We don't need this block; let's just let users enter wikicode...
 			if (afcHelper_Submissions[i].append == 'custom') {
 				afcHelper_Submissions[i].append = prompt("Please enter the template to append for " + afcHelper_Submissions[i].title + ". Do not include the curly brackets.");
 			}
 			if (afcHelper_Submissions[i].append == 'none' || afcHelper_Submissions[i].append == null)
 				afcHelper_Submissions[i].append = '';
 			else
-				afcHelper_Submissions[i].append = '\{\{' + afcHelper_Submissions[i].append + '\}\}';
+				afcHelper_Submissions[i].append = '\{\{' + afcHelper_Submissions[i].append + '\}\}'; */
 	} else if (action == 'decline') {
 		afcHelper_Submissions[i].reason = document.getElementById('afcHelper_ffu_decline_' + i).value;
 	}
@@ -306,6 +301,7 @@ var totalcomment = 0;
 // traverse the submissions and locate the relevant sections.
 for (var i = 0; i < afcHelper_ffuSubmissions.length; i++) {
 	var sub = afcHelper_ffuSubmissions[i];
+	console.log(sub)
 	if (pagetext.indexOf(afcHelper_ffuSections[sub.section]) == -1) {
 		// Someone has modified the section in the mean time. Skip.
 		document.getElementById('afcHelper_status').innerHTML += '<li>Skipping ' + sub.title + ': Cannot find section. Perhaps it was modified in the mean time?</li>';
@@ -321,11 +317,11 @@ for (var i = 0; i < afcHelper_ffuSubmissions.length; i++) {
 				afcHelper_editPage('File talk\:'+afcHelper_Submissions[i].to, '\{\{subst:WPAFCF\}\}\n'+afcHelper_Submissions[i].append, token, 'Placing [[WP:AFC|WPAFC]] project banner', true);
 					}
 			
-			//do first the notifying of the user before adding another potential signature
+			//First notify the user so we don't have to process yet another signature
 			//todo list: if more files in one request were handled
 			if(sub.notify==true){
 				//assuming the first User/IP is the requester
-				var requestinguser=/\[\[(User[ _]talk:|User:|Special:Contributions\/)([^\|]*)?([^\]]*?)\]\]/i.exec(text)[2];
+				var requestinguser=/\[\[(User[_ ]talk:|User:|Special:Contributions\/)([^\||\]\]]*)([^\]]*?)\]\]/i.exec(text)[2];
 				var userpagetext = afcHelper_getPageText('User talk:'+requestinguser, true);
 				if (sub.to === '')
 					userpagetext += '\n== Your request at \[\[WP:FFU|Files for upload\]\] ==\n\{\{subst:ffu talk\}\} \~\~\~\~\n';
@@ -345,13 +341,13 @@ for (var i = 0; i < afcHelper_ffuSubmissions.length; i++) {
 					totalaccept++;					
  
 			// update [[Wikipedia:Files for upload/recent]]
-			if(sub.talkpage==true){
+			if(sub.recent==true){
 				recenttext = afcHelper_getPageText('Wikipedia:Files_for_upload/recent',true)
 				var newentry = "\|File:" + sub.to + "|" + ( typeof sub.filedescription  !== "undefined" ? sub.filedescription : "" ) + "\n";
 				var lastentry = recenttext.toLowerCase().lastIndexOf("| file:");
 				var firstentry = recenttext.toLowerCase().indexOf("| file:");
 				recenttext = recenttext.substring(0, lastentry);
-				recenttext = recenttext.substring(0, firstentry) + newentry + recenttext.substring(firstentry);
+				recenttext = recenttext.substring(0, firstentry) + newentry + recenttext.substring(firstentry) + '\n}}';
 				afcHelper_editPage("Wikipedia:Files for upload/recent", recenttext, token, 'Updating recently uploaded FFUs');
 			}
 		} else if (sub.action == 'decline') {
@@ -370,8 +366,8 @@ for (var i = 0; i < afcHelper_ffuSubmissions.length; i++) {
 			if (sub.comment == '')
 				text += '\n*\{\{subst:ffu|' + sub.reason + '\}\} \~\~\~\~\n';
 			else
-				text += '\n*\{\{subst:ffu|' + sub.reason + '\}\} ' + reason + '\}\} \~\~\~\~\n';
-			text += '\{\{subst:AfC-c|b\}\}\n';
+				text += '\n*\{\{subst:ffu|' + sub.reason + '\}\} ' + sub.comment + ' \~\~\~\~\n';
+			text += '\{\{subst:ffu b\}\}\n';
 			console.log('Text: '+text)
 			totaldecline++;
 
@@ -397,7 +393,7 @@ if (totalcomment > 0) {
 	summary += " commenting on " + totalcomment + " request" + (totalcomment > 1 ? 's' : '');
 		}
  
-		//afcHelper_editPage(afcHelper_ffuPageName, pagetext, token, summary, false);
+		afcHelper_editPage(afcHelper_ffuPageName, pagetext, token, summary, false);
 		document.getElementById('afcHelper_finished_main').style.display = '';
 	}
  
