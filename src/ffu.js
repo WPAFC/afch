@@ -1,8 +1,3 @@
-/* TODO LIST
-
- [ ] implement functionality for 'hold' option (both processing it and don't forget notifications)
-
- */
 //<nowiki>
 // Script should be located at [[MediaWiki:Gadget-afchelper.js/ffu.js]]
 // WARNING: dysfunctional and in development
@@ -177,7 +172,7 @@ function afcHelper_ffu_onActionChange(id) {
 		'<br/><label for="afcHelper_ffu_append_' + id + '">Additional wikicode to append on the local talk page file (e.g. other WikiProjects): </label><input type="text" id="afcHelper_ffu_append_' + id + '" name="afcHelper_ffu_append_' + id +'"/>'+
 		'<br/><label for="afcHelper_ffu_recent_' + id + '">Update <a href="' + wgArticlePath.replace("$1", 'Wikipedia:Files for upload/recent') + '" title="Wikipedia:Files for upload/recent" target="_blank">Wikipedia:Files for upload/recent</a>: </label><input type="checkbox" id="afcHelper_ffu_recent_' + id + '" name="afcHelper_ffu_recent_' + id + '" checked="checked"  onchange=afcHelper_trigger(\'afcHelper_ffu_recenttext_' + id + '\') />'+
 		'<div id="afcHelper_ffu_recenttext_' + id + '"><label for="afcHelper_ffu_recenttext_' + id + '">File description for <a href="' + wgArticlePath.replace("$1", 'Wikipedia:Files for upload/recent') + '" title="Wikipedia:Files for upload/recent" target="_blank">Wikipedia:Files for upload/recent</a>: </label><input type="text" id="afcHelper_ffu_recenttext_' + id + '" name="afcHelper_ffu_recenttext_' + id + '"/></div>'+
-		'<label for="afcHelper_ffu_notify_' + id + '">Notify requestor: </label>' + '<input type="checkbox" id="afcHelper_ffu_notify_' + id + '" name="afcHelper_ffu_notify_' + id + '" checked="checked" />'//+
+		'<label for="afcHelper_ffu_notify_' + id + '">Notify requestor: </label>' + '<input type="checkbox" id="afcHelper_ffu_notify_' + id + '" name="afcHelper_ffu_notify_' + id + '" checked="checked" />';//+
 		//'<br/><label for="afcHelper_ffu_addcomment_' + id + '">Additional comment for this page:</label>' + '<input type="text" id="afcHelper_ffu_addcomment_' + id + '" name="afcHelper_ffu_addcomment_' + id + '"/>';
 	} else if (selectValue == 'decline') {
 		extra.innerHTML = '<label for="afcHelper_ffu_decline_' + id + '">Reason for decline: </label>' + afcHelper_generateSelect('afcHelper_ffu_decline_' + id, [{
@@ -227,8 +222,8 @@ function afcHelper_ffu_onActionChange(id) {
 			selected : true,
 			value : 'custom'
 		}])+
-		'<br/><label for="afcHelper_ffu_notify_' + id + '">Notify requestor: </label>' + '<input type="checkbox" id="afcHelper_ffu_notify_' + id + '" name="afcHelper_ffu_notify_' + id + '" checked="checked" />'//+
-		//'<br/><label for="afcHelper_ffu_addcomment_' + id + '">Additional comment:</label>' + '<input type="text" id="afcHelper_ffu_addcomment_' + id + '" name="afcHelper_ffu_addcomment_' + id + '"/>';
+		'<br/><label for="afcHelper_ffu_addcomment_' + id + '">Additional comment:</label>' + '<input type="text" id="afcHelper_ffu_comment_' + id + '" name="afcHelper_ffu_comment_' + id + '"/>'+
+		'<br/><label for="afcHelper_ffu_notify_' + id + '">Notify requestor: </label>' + '<input type="checkbox" id="afcHelper_ffu_notify_' + id + '" name="afcHelper_ffu_notify_' + id + '" checked="checked" />';
 	} else if (selectValue == 'hold') {
 		extra.innerHTML = '<label for="afcHelper_ffu_hold_' + id + '">Reason for setting it on hold: </label>' + afcHelper_generateSelect('afcHelper_ffu_hold_' + id, [{
 			label : 'On hold (generic)',
@@ -240,8 +235,8 @@ function afcHelper_ffu_onActionChange(id) {
 			label : 'No URL',
 			value : 'nourl'
 		}])+
-		'<br/><label for="afcHelper_ffu_notify_' + id + '">Notify requestor: </label>' + '<input type="checkbox" id="afcHelper_ffu_notify_' + id + '" name="afcHelper_ffu_notify_' + id + '" checked="checked" />'+
-		'<br/><label for="afcHelper_ffu_comment_' + id + '">Additional comment:</label>' + '<input type="text" id="afcHelper_ffu_comment_' + id + '" name="afcHelper_ffu_comment_' + id + '"/>';
+		'<br/><label for="afcHelper_ffu_comment_' + id + '">Additional comment: </label>' + '<input type="text" id="afcHelper_ffu_comment_' + id + '" name="afcHelper_ffu_comment_' + id + '"/>'+
+		'<br/><label for="afcHelper_ffu_notify_' + id + '">Notify requestor: </label>' + '<input type="checkbox" id="afcHelper_ffu_notify_' + id + '" name="afcHelper_ffu_notify_' + id + '" checked="checked" />';
 	 } else if (selectValue == 'comment') {
 		extra.innerHTML = '<label for="afcHelper_ffu_comment_' + id + '">Placing a comment: </label>' + afcHelper_generateSelect('afcHelper_ffu_comment_' + id, [{
 			label : 'No license',
@@ -261,7 +256,7 @@ function afcHelper_ffu_onActionChange(id) {
 			value : 'custom'
 		}]);
 		if(document.getElementById('afcHelper_ffu_comment_' + id).value == 'custom')
-			extra.innerHTML += '<br/><label for="afcHelper_ffu_comment_' + id + '">Additional comment:</label>' + '<input type="text" id="afcHelper_ffu_comment2_' + id + '" name="afcHelper_ffu_comment2_' + id + '"/>';
+			extra.innerHTML += '<br/><label for="afcHelper_ffu_comment_' + id + '">Additional comment:</label>' + '<input type="text" id="afcHelper_ffu_comment_' + id + '" name="afcHelper_ffu_comment_' + id + '"/>';
 		extra.innerHTML += '<br/><label for="afcHelper_ffu_notify_' + id + '">Notify requestor: </label>' + '<input type="checkbox" id="afcHelper_ffu_notify_' + id + '" name="afcHelper_ffu_notify_' + id + '" checked="checked" />';
 		}
 	}
@@ -291,9 +286,13 @@ for (var i = 0; i < afcHelper_Submissions.length; i++) {
 				afcHelper_Submissions[i].append = '\{\{' + afcHelper_Submissions[i].append + '\}\}'; */
 	} else if (action == 'decline') {
 		afcHelper_Submissions[i].reason = document.getElementById('afcHelper_ffu_decline_' + i).value;
+	} else if (action == 'hold') {
+		afcHelper_Submissions[i].holdrat = document.getElementById('afcHelper_ffu_hold_' + i).value;
 	}
-	afcHelper_Submissions[i].comment = document.getElementById("afcHelper_ffu_comment_" + i).value;
+		console.log("and let's get this partay startay");
+		afcHelper_Submissions[i].comment = document.getElementById("afcHelper_ffu_comment_" + i).value;
 }
+
 
 // Data loaded. Show progress screen and get edit token and WP:FFU page text.
 displayMessage('<ul id="afcHelper_status"></ul><ul id="afcHelper_finish"></ul>');
@@ -329,6 +328,8 @@ for (var i = 0; i < afcHelper_ffuSubmissions.length; i++) {
 				userpagetext += '\n== Your request at \[\[WP:FFU|Files for upload\]\] ==\n\{\{subst:ffu talk|decline\}\} \~\~\~\~\n';
 			else if (sub_m.action == 'comment')
 				userpagetext += '\n== Your request at \[\[WP:FFU|Files for upload\]\] ==\n\{\{subst:ffu talk|comment\}\} \~\~\~\~\n';			
+			else if (sub_m.action == 'hold')
+				userpagetext += '\n== Your request at \[\[WP:FFU|Files for upload\]\] ==\n\{\{subst:ffu talk|h\}\} \~\~\~\~\n';			
 			else if (sub_m.action == 'accept')
 				if (sub_m.to === '')
 					userpagetext += '\n== Your request at \[\[WP:FFU|Files for upload\]\] ==\n\{\{subst:ffu|comment\}\} \~\~\~\~\n';								
@@ -365,19 +366,20 @@ for (var i = 0; i < afcHelper_ffuSubmissions.length; i++) {
 			}
 		} else if (sub_m.action == 'decline') {
 			var header = text.match(/==[^=]*==/)[0];
-			var reason = sub_m.reason;
-			console.log('Reason: '+reason)
-			if (reason == '')
-				reason = sub_m.comment;
-			else if (sub_m.comment != '')
-				reason = reason + ': ' + sub_m.comment;
-			if (reason == '') {
+			//var reason = sub_m.reason;
+			//if (reason == '')
+			//	reason = sub_m.comment;
+			//else if (sub_m.comment != '')
+			//	reason = reason + ': ' + sub_m.comment;
+			if (sub_m.reason == 'custom' && sub_m.comment == '') {
 				document.getElementById('afcHelper_status').innerHTML += '<li>Skipping ' + sub_m.title + ': No decline reason specified.</li>';
 				continue;
 			}
 			text = header + "\n\{\{subst:ffu d\}\}\n" + text.substring(header.length);
 			if (sub_m.comment == '')
 				text += '\n*\{\{subst:ffu|' + sub_m.reason + '\}\} \~\~\~\~\n';
+			else if (sub_m.reason == 'custom')
+				text += '\n*{{subst:ffu|d}} ' + sub_m.comment + ' \~\~\~\~\n';
 			else
 				text += '\n*\{\{subst:ffu|' + sub_m.reason + '\}\} ' + sub_m.comment + ' \~\~\~\~\n';
 			text += '\{\{subst:ffu b\}\}\n';
@@ -386,7 +388,13 @@ for (var i = 0; i < afcHelper_ffuSubmissions.length; i++) {
 			if (sub_m.comment != '')
 				text += '\n\{\{subst:ffu|c\}\} ' + sub_m.comment + '\~\~\~\~\n';
 					totalcomment++;
-				}
+		} else if (sub_m.action == 'hold') {
+			if (sub_m.comment == '')
+				text += '\n\{\{subst:ffu|' + sub_m.holdrat + '\}\} \~\~\~\~\n';
+			else
+				text += '\n\{\{subst:ffu|' + sub_m.holdrat + '\}\} ' + sub_m.comment + '\~\~\~\~\n';
+			totalcomment++; // a "hold" is basically equal to a comment
+			}
 			pagetext = pagetext.substring(0, startindex) + text + pagetext.substring(endindex);
 		}
 	}
