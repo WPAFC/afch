@@ -183,14 +183,8 @@ function afcHelper_ffu_onActionChange(id) {
 		//'<br/><label for="afcHelper_ffu_addcomment_' + id + '">Additional comment for this page:</label>' + '<input type="text" id="afcHelper_ffu_addcomment_' + id + '" name="afcHelper_ffu_addcomment_' + id + '"/>';
 	} else if (selectValue == 'decline') {
 		extra.innerHTML = '<label for="afcHelper_ffu_decline_' + id + '">Reason for decline: </label>' + afcHelper_generateSelect('afcHelper_ffu_decline_' + id, [{
-			label : 'Already exists',
-			value : 'exists'
-		}, {
-			label : 'Blank request',
-			value : 'blank'
-		}, {
-			label : 'Lack of response',
-			value : 'lackof'
+			label : 'Not a FFU request',
+			value : 'notffu'
 		}, {
 			label : 'No permission',
 			value : 'permission'
@@ -198,16 +192,16 @@ function afcHelper_ffu_onActionChange(id) {
 			label : 'Copyrighted and non-free',
 			value : 'copyrighted'
 		}, {
-			label : 'Not a FFU request',
-			value : 'notffu'
-		}, {
 			label : 'Corrupt',
 			value : 'corrupt'
+		}, {
+			label : 'Blank',
+			value : 'blank'
 		}, {
 			label : 'Low quality',
 			value : 'quality'
 		}, {
-			label : 'Redundant',
+			label : 'Redundant/already exists',
 			value : 'redundant'
 		}, {
 			label : 'Useless',
@@ -216,7 +210,7 @@ function afcHelper_ffu_onActionChange(id) {
 			label : 'Nonsense',
 			value : 'nonsense'
 		}, {
-			label : 'BLP',
+			label : 'BLP/attack',
 			value : 'blp'
 		}, {
 			label : 'Advert',
@@ -224,6 +218,12 @@ function afcHelper_ffu_onActionChange(id) {
 		}, {
 			label : 'Vandalism',
 			value : 'van'
+		}, {
+			label : 'Lack of response',
+			value : 'lackof'
+		}, {
+			label : 'Broken/invalid URL',
+			value : 'badlink'
 		}, {
 			label : 'Custom - reason below',
 			selected : true,
@@ -295,7 +295,6 @@ for (var i = 0; i < afcHelper_Submissions.length; i++) {
 	} else if (action == 'hold') {
 		afcHelper_Submissions[i].holdrat = document.getElementById('afcHelper_ffu_hold_' + i).value;
 	}
-		console.log("and let's get this partay startay");
 		afcHelper_Submissions[i].comment = document.getElementById("afcHelper_ffu_comment_" + i).value;
 		afcHelper_Submissions[i].notify = document.getElementById("afcHelper_ffu_notify_" + i).checked;
 }
@@ -394,7 +393,7 @@ for (var i = 0; i < afcHelper_ffuSubmissions.length; i++) {
 		} else if (sub_m.action == 'comment') {
 			if (sub_m.comment != '')
 				text += '\n\{\{subst:ffu|c\}\} ' + sub_m.comment + '\~\~\~\~\n';
-					totalcomment++;
+				totalcomment++;
 		} else if (sub_m.action == 'hold') {
 			if (sub_m.comment == '')
 				text += '\n\{\{subst:ffu|' + sub_m.holdrat + '\}\} \~\~\~\~\n';
@@ -402,6 +401,8 @@ for (var i = 0; i < afcHelper_ffuSubmissions.length; i++) {
 				text += '\n\{\{subst:ffu|' + sub_m.holdrat + '\}\} ' + sub_m.comment + ' \~\~\~\~\n';
 			totalcomment++; // a "hold" is basically equal to a comment
 			}
+			text.replace(/[\n\r]{3,}/g,"\n\n"); // remove excessive newlines !todo check this
+			console.log(text);
 			pagetext = pagetext.substring(0, startindex) + text + pagetext.substring(endindex);
 		}
 	}
@@ -422,7 +423,7 @@ for (var i = 0; i < afcHelper_ffuSubmissions.length; i++) {
 				}
 
 		/* And now finally update the WP:FFU page */
-		afcHelper_editPage(afcHelper_ffuPageName, pagetext, token, summary, false);
+		//afcHelper_editPage(afcHelper_ffuPageName, pagetext, token, summary, false);
 		document.getElementById('afcHelper_finished_main').style.display = '';
 	}
  
