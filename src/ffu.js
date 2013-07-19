@@ -1,8 +1,7 @@
 /* NOTES
 
-	- the "accept" functionality appears to work as intended
-	- "hold" for some reason posts double http://test.wikipedia.org/w/index.php?title=Wikipedia:Files_for_upload&diff=176141&oldid=176139
-    - when declining, adds checkmark twice?? http://test.wikipedia.org/w/index.php?title=Wikipedia:Files_for_upload&diff=176145&oldid=176144
+	- !todo make [Review request] only appear next to unclosed requests
+	- !todo make the "Getting...Editing..." stuff appear in the thread it is related to
 
 */
 //<nowiki>
@@ -33,7 +32,6 @@ function afcHelper_ffu_init() {
 			}
 			afcHelper_ffuSections.push(section_text);
 		}
- 
 	// parse the sections.
 	for (var i = 0; i < afcHelper_ffuSections.length; i++) {
 		var closed = /\{\{\s*ifu-c/i.test(afcHelper_ffuSections[i]);
@@ -90,26 +88,32 @@ function afcHelper_ffu_init() {
 					}
 				}
 				afcHelper_ffuSubmissions.push(submission);
+		} else {
+			// if a submission has been "done" already, maketh it nulleth
+			var sub = {
+				type : 'done-ffu',
+			};
+			afcHelper_Submissions.push(sub);
+			afcHelper_numTotal++;
 		}
 	}
-	var text = '<h3>Reviewing Files for upload requests</h3>';
+	//var text = '<h3>Reviewing Files for upload requests</h3>';
 	// now layout the text.
-	var afcHelper_ffu_empty = 1;
+	//var afcHelper_ffu_empty = 1;
 	var afcHelper_ffu_temp=new Array();
 	for (var k = 0; k < afcHelper_ffuSubmissions.length; k++) {
-		text += '<ul>';
+		var text = '<ul>';
 		if (afcHelper_ffuSubmissions[k].type == 'ffu') {
-			if (( typeof (afcHelper_ffuSubmissions[k].title) == 'undefined') || (afcHelper_ffuSubmissions[k].title == '')) {
-				text += '<li><b>No headline \#' + afcHelper_ffu_empty + '</b>: <ul>';
-				afcHelper_ffu_empty++;
-			} else {
-				text += '<li><b>'+afcHelper_ffuSubmissions[k].title +'</b>: <ul>';
-				}
- 
-				var afcHelper_ffu_empty = 1;
-				for (var l = 0; l < afcHelper_ffuSubmissions[k].from.length; l++) {
-					var from = afcHelper_ffuSubmissions[k].from[l];
-					text += '<li>Original URL: ';
+			//if (( typeof (afcHelper_ffuSubmissions[k].title) == 'undefined') || (afcHelper_ffuSubmissions[k].title == '')) {
+			//	text += '<li><b>No headline \#' + afcHelper_ffu_empty + '</b>: <ul>';
+			//	afcHelper_ffu_empty++;
+			//} else {
+			//text += '<li><b>'+afcHelper_ffuSubmissions[k].title +'</b>: <ul>';
+				//}
+			var afcHelper_ffu_empty = 1;
+			for (var l = 0; l < afcHelper_ffuSubmissions[k].from.length; l++) {
+				var from = afcHelper_ffuSubmissions[k].from[l];
+				text += '<li>Original URL: ';
 				var temp = from.title;
 				temp=temp.replace(/\s*/, '');
 				if(temp==''){
@@ -156,11 +160,11 @@ function afcHelper_ffu_init() {
 				text += '<br/><label for="afcHelper_ffu_action_' + from.id + '">Action: </label>' + afcHelper_generateSelect('afcHelper_ffu_action_' + from.id, selectoptions, 'afcHelper_ffu_onActionChange(' + from.id + ')') + '<div id="afcHelper_ffu_extra_' + from.id + '"></div></li>';
 			} 	
 			text += '</ul></li>';
-		}
-		text += '</ul>';
+			text += '</ul>';
+			text += '<input type="button" id="afcHelper_ffu_done_button" name="afcHelper_ffu_done_button" value="Done" onclick="afcHelper_ffu_performActions()" />';
+			displayMessage_inline(text,'display-message'+afcHelper_ffuSubmissions[k].section);
 	}
-	text += '<input type="button" id="afcHelper_ffu_done_button" name="afcHelper_ffu_done_button" value="Done" onclick="afcHelper_ffu_performActions()" />';
-	displayMessage(text);
+}
 	if(afcHelper_ffu_temp)
 	{
 		for(m=0; m<afcHelper_ffu_temp.length; m++)
@@ -271,34 +275,35 @@ function afcHelper_ffu_onActionChange(id) {
 function afcHelper_ffu_performActions() {
 	// Load all of the data.
 for (var i = 0; i < afcHelper_Submissions.length; i++) {
-	var action = document.getElementById("afcHelper_ffu_action_" + i).value;
-	afcHelper_Submissions[i].action = action;
-	console.log("Selected action:"+action)
-	if (action == 'none')
-		continue;
-	if (action == 'accept') {
-			afcHelper_Submissions[i].to = document.getElementById("afcHelper_ffu_to_" + i).value;
-			afcHelper_Submissions[i].talkpage = document.getElementById("afcHelper_ffu_filetalkpage_" + i).checked;
-			afcHelper_Submissions[i].append = document.getElementById("afcHelper_ffu_append_" + i).value;
-			afcHelper_Submissions[i].recent = document.getElementById("afcHelper_ffu_recent_" + i).checked;
-			afcHelper_Submissions[i].recenttext = document.getElementById("afcHelper_ffu_recenttext_" + i).value;
-			/* We don't need this block; let's just let users enter wikicode...
-			if (afcHelper_Submissions[i].append == 'custom') {
-				afcHelper_Submissions[i].append = prompt("Please enter the template to append for " + afcHelper_Submissions[i].title + ". Do not include the curly brackets.");
-			}
-			if (afcHelper_Submissions[i].append == 'none' || afcHelper_Submissions[i].append == null)
-				afcHelper_Submissions[i].append = '';
-			else
-				afcHelper_Submissions[i].append = '\{\{' + afcHelper_Submissions[i].append + '\}\}'; */
-	} else if (action == 'decline') {
-		afcHelper_Submissions[i].reason = document.getElementById('afcHelper_ffu_decline_' + i).value;
-	} else if (action == 'hold') {
-		afcHelper_Submissions[i].holdrat = document.getElementById('afcHelper_ffu_hold_' + i).value;
+	if (afcHelper_Submissions[i].type == 'ffu') {
+		var action = document.getElementById("afcHelper_ffu_action_" + i).value;
+		afcHelper_Submissions[i].action = action;
+		console.log("Selected action:"+action)
+		if (action == 'none')
+			continue;
+		if (action == 'accept') {
+				afcHelper_Submissions[i].to = document.getElementById("afcHelper_ffu_to_" + i).value;
+				afcHelper_Submissions[i].talkpage = document.getElementById("afcHelper_ffu_filetalkpage_" + i).checked;
+				afcHelper_Submissions[i].append = document.getElementById("afcHelper_ffu_append_" + i).value;
+				afcHelper_Submissions[i].recent = document.getElementById("afcHelper_ffu_recent_" + i).checked;
+				afcHelper_Submissions[i].recenttext = document.getElementById("afcHelper_ffu_recenttext_" + i).value;
+				/* We don't need this block; let's just let users enter wikicode...
+				if (afcHelper_Submissions[i].append == 'custom') {
+					afcHelper_Submissions[i].append = prompt("Please enter the template to append for " + afcHelper_Submissions[i].title + ". Do not include the curly brackets.");
+				}
+				if (afcHelper_Submissions[i].append == 'none' || afcHelper_Submissions[i].append == null)
+					afcHelper_Submissions[i].append = '';
+				else
+					afcHelper_Submissions[i].append = '\{\{' + afcHelper_Submissions[i].append + '\}\}'; */
+		} else if (action == 'decline') {
+			afcHelper_Submissions[i].reason = document.getElementById('afcHelper_ffu_decline_' + i).value;
+		} else if (action == 'hold') {
+			afcHelper_Submissions[i].holdrat = document.getElementById('afcHelper_ffu_hold_' + i).value;
+		}
+			afcHelper_Submissions[i].comment = document.getElementById("afcHelper_ffu_comment_" + i).value;
+			afcHelper_Submissions[i].notify = document.getElementById("afcHelper_ffu_notify_" + i).checked;
 	}
-		afcHelper_Submissions[i].comment = document.getElementById("afcHelper_ffu_comment_" + i).value;
-		afcHelper_Submissions[i].notify = document.getElementById("afcHelper_ffu_notify_" + i).checked;
 }
-
 
 // Data loaded. Show progress screen and get edit token and WP:FFU page text.
 displayMessage('<ul id="afcHelper_status"></ul><ul id="afcHelper_finish"></ul>');
@@ -407,7 +412,7 @@ for (var i = 0; i < afcHelper_ffuSubmissions.length; i++) {
 		}
 	}
 
- 		/* Here's where we generate the summary */
+		/* Here's where we generate the summary */
 		var summary = "Updating submission status:";
 		if (totalaccept > 0)
 			summary += " accepting " + totalaccept + " request" + (totalaccept > 1 ? 's' : '');
@@ -427,11 +432,85 @@ for (var i = 0; i < afcHelper_ffuSubmissions.length; i++) {
 		document.getElementById('afcHelper_finished_main').style.display = '';
 	}
  
+function add_review_links()
+{
+	var sectionHeaders= $("#mw-content-text h2");
+	var offset = 1;
+	sectionHeaders.each(function(index, element)
+	{
+		if (index > 0) // Hack so we don't add display-messsage inside the TOC
+			var idtitle = "display-message"+(index-1);
+			$('<div id="'+idtitle+'" style="display:none;"></div>').insertAfter(element);
+		var editSectionLink= $(element).children(".mw-editsection")
+		if(editSectionLink.length > 0)
+		{
+			editSectionLink = editSectionLink[0];
+			var reviewlink = document.createElement("a");
+			reviewlink.href = "#"+idtitle;
+			$(reviewlink).attr("sectionIndex", index + offset);
+			reviewlink.innerHTML = "Review request";
+			var editSectionContents = $(editSectionLink).html();
+			editSectionLink.innerHTML = "[";
+			editSectionLink.appendChild(reviewlink);
+			editSectionLink.innerHTML = editSectionLink.innerHTML + "] " + editSectionContents;
+			reviewlink.onclick = (function(){
+				console.log('bam!');
+				reviewlink.innerHTML = "Reviewing request...";
+				afcHelper_ffu_init();
+			});
+		}
+		else 
+		{
+			offset = offset - 1;
+		}
+	});
+	$("#bodyContent [sectionIndex]").click((function(){
+				$("#bodyContent [sectionIndex]").each(function(i) {
+					this.innerHTML = "Reviewing requests...";
+				});	
+				afcHelper_ffu_init();
+			}));
+}
+
+function displayMessage_inline( message, div, className ){
+	// a reimplementation of displayMessage that displays messages INLINE!
+	console.log('Message:'+message,'Div:'+div)
+	var divtitle = '#'+div
+	if ( !arguments.length || message === '' || message === null ) {
+		$( divtitle ).empty().hide();
+		return true; // Emptying and hiding message is intended behaviour, return true
+	} else {
+		// We special-case skin structures provided by the software. Skins that
+		// choose to abandon or significantly modify our formatting can just define
+		// an mw-js-message div to start with.
+		var $messageDiv = $( divtitle );
+		$messageDiv.attr('style',"margin:1em;padding:0.5em 2.5%;border:solid 1px #ddd;background-color:#fcfcfc");
+		if ( !$messageDiv.length ) {
+			if ( mw.util.$content.length ) {
+				mw.util.$content.prepend( $messageDiv );
+			} else {
+				return false;
+			}
+		}
+		if ( typeof message === 'object' ) {
+			$messageDiv.empty();
+			$messageDiv.append( message );
+		} else {
+			$messageDiv.html( message );
+		}
+		$messageDiv.prev().slideDown(); // scroll to the <h2>
+		return true;
+	}
+}
+
+add_review_links();
+
+/* use add_review_links() instead
 // Create portlet link
 var redirectportletLink = mw.util.addPortletLink('p-cactions', '#', 'Review', 'ca-afcHelper', 'Review', 'a');
 // Bind click handler
 $(redirectportletLink).click(function(e) {
 	e.preventDefault();
 	afcHelper_ffu_init();
-});
+}); */
 //</nowiki>
