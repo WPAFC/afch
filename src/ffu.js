@@ -1,8 +1,6 @@
 /* NOTES
 
 	- the "accept" functionality appears to work as intended
-	- "decline" __sometimes__ throws an error with "if (response['edit']['result'] === "Success") {" in core.js, an error w/ pagenames?
-	  seemingly on all IP talk pages 
 	- "hold" for some reason posts double http://test.wikipedia.org/w/index.php?title=Wikipedia:Files_for_upload&diff=176141&oldid=176139
     - when declining, adds checkmark twice?? http://test.wikipedia.org/w/index.php?title=Wikipedia:Files_for_upload&diff=176145&oldid=176144
 
@@ -344,7 +342,7 @@ for (var i = 0; i < afcHelper_ffuSubmissions.length; i++) {
 					userpagetext += '\n== Your request at \[\[WP:FFU|Files for upload\]\] ==\n\{\{subst:ffu|comment\}\} \~\~\~\~\n';								
 				else
 					userpagetext += '\n== Your request at \[\[WP:FFU|Files for upload\]\] ==\n\{\{subst:ffu talk|file=' + sub_m.to + '\}\} \~\~\~\~\n';
-			afcHelper_editPage('User talk:'+requestinguser, userpagetext, token, 'Notifying about the [[WP:FFU|FFU]] request', true);
+			afcHelper_editPage('User talk:'+requestinguser, userpagetext, token, 'Notifying about the [[WP:FFU|FFU]] request', false);
 				}
 
 		if (sub_m.action == 'accept'){
@@ -371,7 +369,7 @@ for (var i = 0; i < afcHelper_ffuSubmissions.length; i++) {
 				var firstentry = recenttext.toLowerCase().indexOf("| file:");
 				recenttext = recenttext.substring(0, lastentry);
 				recenttext = recenttext.substring(0, firstentry) + newentry + recenttext.substring(firstentry) + '\n}}';
-				afcHelper_editPage("Wikipedia:Files for upload/recent", recenttext, token, 'Updating recently uploaded FFUs');
+				afcHelper_editPage("Wikipedia:Files for upload/recent", recenttext, token, 'Updating recently uploaded FFUs', false);
 			}
 		} else if (sub_m.action == 'decline') {
 			var header = text.match(/==[^=]*==/)[0];
@@ -401,7 +399,7 @@ for (var i = 0; i < afcHelper_ffuSubmissions.length; i++) {
 			if (sub_m.comment == '')
 				text += '\n\{\{subst:ffu|' + sub_m.holdrat + '\}\} \~\~\~\~\n';
 			else
-				text += '\n\{\{subst:ffu|' + sub_m.holdrat + '\}\} ' + sub_m.comment + '\~\~\~\~\n';
+				text += '\n\{\{subst:ffu|' + sub_m.holdrat + '\}\} ' + sub_m.comment + ' \~\~\~\~\n';
 			totalcomment++; // a "hold" is basically equal to a comment
 			}
 			pagetext = pagetext.substring(0, startindex) + text + pagetext.substring(endindex);
