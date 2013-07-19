@@ -1,3 +1,12 @@
+/* NOTES
+
+	- the "accept" functionality appears to work as intended
+	- "decline" __sometimes__ throws an error with "if (response['edit']['result'] === "Success") {" in core.js, an error w/ pagenames?
+	  seemingly on all IP talk pages 
+	- "hold" for some reason posts double http://test.wikipedia.org/w/index.php?title=Wikipedia:Files_for_upload&diff=176141&oldid=176139
+    - when declining, adds checkmark twice?? http://test.wikipedia.org/w/index.php?title=Wikipedia:Files_for_upload&diff=176145&oldid=176144
+
+*/
 //<nowiki>
 // Script should be located at [[MediaWiki:Gadget-afchelper.js/ffu.js]]
 // WARNING: dysfunctional and in development
@@ -271,7 +280,6 @@ for (var i = 0; i < afcHelper_Submissions.length; i++) {
 		continue;
 	if (action == 'accept') {
 			afcHelper_Submissions[i].to = document.getElementById("afcHelper_ffu_to_" + i).value;
-			afcHelper_Submissions[i].notify = document.getElementById("afcHelper_ffu_notify_" + i).checked;
 			afcHelper_Submissions[i].talkpage = document.getElementById("afcHelper_ffu_filetalkpage_" + i).checked;
 			afcHelper_Submissions[i].append = document.getElementById("afcHelper_ffu_append_" + i).value;
 			afcHelper_Submissions[i].recent = document.getElementById("afcHelper_ffu_recent_" + i).checked;
@@ -291,6 +299,7 @@ for (var i = 0; i < afcHelper_Submissions.length; i++) {
 	}
 		console.log("and let's get this partay startay");
 		afcHelper_Submissions[i].comment = document.getElementById("afcHelper_ffu_comment_" + i).value;
+		afcHelper_Submissions[i].notify = document.getElementById("afcHelper_ffu_notify_" + i).checked;
 }
 
 
