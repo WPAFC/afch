@@ -1,3 +1,8 @@
+/* TODO LIST
+
+ [ ] implement functionality for 'hold' option (both processing it and don't forget notifications)
+
+ */
 //<nowiki>
 // Script should be located at [[MediaWiki:Gadget-afchelper.js/ffu.js]]
 // WARNING: dysfunctional and in development
@@ -126,7 +131,7 @@ function afcHelper_ffu_init() {
 					value : 'none'	}];
 				}
 				else{
-					text += '<a href="' +from.title + '" target="_blank">' + from.title + '</a>';
+					text += '<a href="' + from.title + '" target="_blank">' + from.title + '</a>';
 					selectoptions=[{
 					label : 'Accepted (already uploaded)',
 					value : 'accept'
@@ -146,7 +151,7 @@ function afcHelper_ffu_init() {
 				}
 				if(/flickr.com/gi.test(from.title))
 					text += ' (<a href="http://toolserver.org/~bryan/flickr/upload?username=' +wgUserName+ '&link='+from.title+'" target="_blank"><b>launch Flickuploadbot</b></a> in a new window)';
-				text += '<br/><label for="afcHelper_ffu_action_' + from.id + '">Action: </label>' + afcHelper_ffu_generateSelect('afcHelper_ffu_action_' + from.id, selectoptions, 'afcHelper_ffu_onActionChange(' + from.id + ')') + '<div id="afcHelper_ffu_extra_' + from.id + '"></div></li>';
+				text += '<br/><label for="afcHelper_ffu_action_' + from.id + '">Action: </label>' + afcHelper_generateSelect('afcHelper_ffu_action_' + from.id, selectoptions, 'afcHelper_ffu_onActionChange(' + from.id + ')') + '<div id="afcHelper_ffu_extra_' + from.id + '"></div></li>';
 			} 	
 			text += '</ul></li>';
 		}
@@ -175,7 +180,7 @@ function afcHelper_ffu_onActionChange(id) {
 		'<label for="afcHelper_ffu_notify_' + id + '">Notify requestor: </label>' + '<input type="checkbox" id="afcHelper_ffu_notify_' + id + '" name="afcHelper_ffu_notify_' + id + '" checked="checked" />'//+
 		//'<br/><label for="afcHelper_ffu_addcomment_' + id + '">Additional comment for this page:</label>' + '<input type="text" id="afcHelper_ffu_addcomment_' + id + '" name="afcHelper_ffu_addcomment_' + id + '"/>';
 	} else if (selectValue == 'decline') {
-		extra.innerHTML = '<label for="afcHelper_ffu_decline_' + id + '">Reason for decline: </label>' + afcHelper_ffu_generateSelect('afcHelper_ffu_decline_' + id, [{
+		extra.innerHTML = '<label for="afcHelper_ffu_decline_' + id + '">Reason for decline: </label>' + afcHelper_generateSelect('afcHelper_ffu_decline_' + id, [{
 			label : 'Already exists',
 			value : 'exists'
 		}, {
@@ -225,7 +230,7 @@ function afcHelper_ffu_onActionChange(id) {
 		'<br/><label for="afcHelper_ffu_notify_' + id + '">Notify requestor: </label>' + '<input type="checkbox" id="afcHelper_ffu_notify_' + id + '" name="afcHelper_ffu_notify_' + id + '" checked="checked" />'//+
 		//'<br/><label for="afcHelper_ffu_addcomment_' + id + '">Additional comment:</label>' + '<input type="text" id="afcHelper_ffu_addcomment_' + id + '" name="afcHelper_ffu_addcomment_' + id + '"/>';
 	} else if (selectValue == 'hold') {
-		extra.innerHTML = '<label for="afcHelper_ffu_hold_' + id + '">Reason for setting it on hold: </label>' + afcHelper_ffu_generateSelect('afcHelper_ffu_hold_' + id, [{
+		extra.innerHTML = '<label for="afcHelper_ffu_hold_' + id + '">Reason for setting it on hold: </label>' + afcHelper_generateSelect('afcHelper_ffu_hold_' + id, [{
 			label : 'On hold (generic)',
 			value : 'h'
 		}, {
@@ -238,7 +243,7 @@ function afcHelper_ffu_onActionChange(id) {
 		'<br/><label for="afcHelper_ffu_notify_' + id + '">Notify requestor: </label>' + '<input type="checkbox" id="afcHelper_ffu_notify_' + id + '" name="afcHelper_ffu_notify_' + id + '" checked="checked" />'+
 		'<br/><label for="afcHelper_ffu_comment_' + id + '">Additional comment:</label>' + '<input type="text" id="afcHelper_ffu_comment_' + id + '" name="afcHelper_ffu_comment_' + id + '"/>';
 	 } else if (selectValue == 'comment') {
-		extra.innerHTML = '<label for="afcHelper_ffu_comment_' + id + '">Placing a comment: </label>' + afcHelper_ffu_generateSelect('afcHelper_ffu_comment_' + id, [{
+		extra.innerHTML = '<label for="afcHelper_ffu_comment_' + id + '">Placing a comment: </label>' + afcHelper_generateSelect('afcHelper_ffu_comment_' + id, [{
 			label : 'No license',
 			value : 'license'
 		}, {
@@ -314,24 +319,29 @@ for (var i = 0; i < afcHelper_ffuSubmissions.length; i++) {
 		var mainid = sub.from[count].id;
 		var sub_m = afcHelper_Submissions[mainid];
 
+		//First notify the user so we don't have to process yet another signature
+		//todo list: if more files in one request were handled, only notify once (would require change in structure of program)
+		if((sub_m.action != 'none') && (sub_m.notify==true)){
+			//assuming the first User/IP is the requester
+			var requestinguser=/\[\[(User[_ ]talk:|User:|Special:Contributions\/)([^\||\]\]]*)([^\]]*?)\]\]/i.exec(text)[2];
+			var userpagetext = afcHelper_getPageText('User talk:'+requestinguser, true);
+			if (sub_m.action == 'decline')
+				userpagetext += '\n== Your request at \[\[WP:FFU|Files for upload\]\] ==\n\{\{subst:ffu talk|decline\}\} \~\~\~\~\n';
+			else if (sub_m.action == 'comment')
+				userpagetext += '\n== Your request at \[\[WP:FFU|Files for upload\]\] ==\n\{\{subst:ffu talk|comment\}\} \~\~\~\~\n';			
+			else if (sub_m.action == 'accept')
+				if (sub_m.to === '')
+					userpagetext += '\n== Your request at \[\[WP:FFU|Files for upload\]\] ==\n\{\{subst:ffu|comment\}\} \~\~\~\~\n';								
+				else
+					userpagetext += '\n== Your request at \[\[WP:FFU|Files for upload\]\] ==\n\{\{subst:ffu talk|file=' + sub_m.to + '\}\} \~\~\~\~\n';
+			afcHelper_editPage('User talk:'+requestinguser, userpagetext, token, 'Notifying about the [[WP:FFU|FFU]] request', true);
+				}
+
 		if (sub_m.action == 'accept'){
-			//create local file description talkpage?
+			//create local file description talkpage
 			if((sub_m.talkpage==true)&&(sub_m.to!='')){
 				afcHelper_editPage('File talk\:'+sub_m.to, '\{\{subst:WPAFCF\}\}\n'+sub_m.append, token, 'Placing [[WP:AFC|WPAFC]] project banner', true);
 			}
-
-			//First notify the user so we don't have to process yet another signature
-			//todo list: if more files in one request were handled
-			if(sub_m.notify==true){
-				//assuming the first User/IP is the requester
-				var requestinguser=/\[\[(User[_ ]talk:|User:|Special:Contributions\/)([^\||\]\]]*)([^\]]*?)\]\]/i.exec(text)[2];
-				var userpagetext = afcHelper_getPageText('User talk:'+requestinguser, true);
-				if (sub_m.to === '')
-					userpagetext += '\n== Your request at \[\[WP:FFU|Files for upload\]\] ==\n\{\{subst:ffu talk\}\} \~\~\~\~\n';
-				else
-					userpagetext += '\n== Your request at \[\[WP:FFU|Files for upload\]\] ==\n\{\{subst:ffu talk|file=' + sub_m.to + '\}\} \~\~\~\~\n';
-				afcHelper_editPage('User talk:'+requestinguser, userpagetext, token, 'Notifying about the [[WP:FFU|FFU]] request', true);
-					}
  
 			//update text of the FFU page
 			var header = text.match(/==[^=]*==/)[0];
@@ -372,7 +382,6 @@ for (var i = 0; i < afcHelper_ffuSubmissions.length; i++) {
 				text += '\n*\{\{subst:ffu|' + sub_m.reason + '\}\} ' + sub_m.comment + ' \~\~\~\~\n';
 			text += '\{\{subst:ffu b\}\}\n';
 			totaldecline++;
-
 		} else if (sub_m.action == 'comment') {
 			if (sub_m.comment != '')
 				text += '\n\{\{subst:ffu|c\}\} ' + sub_m.comment + '\~\~\~\~\n';
@@ -381,7 +390,7 @@ for (var i = 0; i < afcHelper_ffuSubmissions.length; i++) {
 			pagetext = pagetext.substring(0, startindex) + text + pagetext.substring(endindex);
 		}
 	}
- 
+
  		/* Here's where we generate the summary */
 		var summary = "Updating submission status:";
 		if (totalaccept > 0)
@@ -400,22 +409,6 @@ for (var i = 0; i < afcHelper_ffuSubmissions.length; i++) {
 		/* And now finally update the WP:FFU page */
 		afcHelper_editPage(afcHelper_ffuPageName, pagetext, token, summary, false);
 		document.getElementById('afcHelper_finished_main').style.display = '';
-	}
-
-	function afcHelper_ffu_generateSelect(title, options, onchange) {
-		var text = '<select name="' + title + '" id="' + title + '" ';
-		if (onchange != null)
-			text += 'onchange = "' + onchange + '" ';
-		text += '>';
-		for (var i = 0; i < options.length; i++) {
-			var o = options[i];
-			text += '<option value="' + afcHelper_escapeHtmlChars(o.value) + '" ';
-			if (o.selected)
-				text += 'selected="selected" ';
-			text += '>' + o.label + '</option>';
-		}
-		text += "</select>";
-				return text;
 	}
  
 // Create portlet link
