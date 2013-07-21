@@ -1,8 +1,3 @@
-/* NOTES
-
-	- !todo make [Review request] only appear next to unclosed requests
-
-*/
 //<nowiki>
 // Script should be located at [[MediaWiki:Gadget-afchelper.js/ffu.js]]
 // WARNING: dysfunctional and in development
@@ -436,11 +431,12 @@ function add_review_links(){
 	var offset = 1;
 	sectionHeaders.each(function(index, element)
 	{
+		var not_archived = $(element).next().html().indexOf('This is an archived discussion.') == -1;
 		if (index > 0) // Hack so we don't add display-messsage inside the TOC
 			var idtitle = "display-message"+(index-1);
 			$('<div id="'+idtitle+'" style="display:none;"></div>').insertAfter(element);
-		var editSectionLink= $(element).children(".mw-editsection")
-		if(editSectionLink.length > 0)
+		var editSectionLink= $(element).children(".mw-editsection");
+		if((editSectionLink.length > 0) && (not_archived))
 		{
 			editSectionLink = editSectionLink[0];
 			var reviewlink = document.createElement("a");
@@ -500,13 +496,3 @@ function displayMessage_inline( message, div, className ){
 }
 
 add_review_links();
-
-/* use add_review_links() instead
-// Create portlet link
-var redirectportletLink = mw.util.addPortletLink('p-cactions', '#', 'Review', 'ca-afcHelper', 'Review', 'a');
-// Bind click handler
-$(redirectportletLink).click(function(e) {
-	e.preventDefault();
-	afcHelper_ffu_init();
-}); */
-//</nowiki>
