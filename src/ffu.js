@@ -1,7 +1,6 @@
 /* NOTES
 
 	- !todo make [Review request] only appear next to unclosed requests
-	- !todo make the "Getting...Editing..." stuff appear in the thread it is related to
 
 */
 //<nowiki>
@@ -278,7 +277,6 @@ for (var i = 0; i < afcHelper_Submissions.length; i++) {
 	if (afcHelper_Submissions[i].type == 'ffu') {
 		var action = document.getElementById("afcHelper_ffu_action_" + i).value;
 		afcHelper_Submissions[i].action = action;
-		console.log("Selected action:"+action)
 		if (action == 'none')
 			continue;
 		if (action == 'accept') {
@@ -306,7 +304,8 @@ for (var i = 0; i < afcHelper_Submissions.length; i++) {
 }
 
 // Data loaded. Show progress screen and get edit token and WP:FFU page text.
-displayMessage('<ul id="afcHelper_status"></ul><ul id="afcHelper_finish"></ul>');
+displayMessage('<ul><li><b>Now processing...</li></ul><ul id="afcHelper_status"></ul><ul id="afcHelper_finish"></ul>');
+$("html, body").animate({ scrollTop: 0 }, "slow"); // Takes up back up to the top for the displayMessage() dialog, __slowly__
 document.getElementById('afcHelper_finish').innerHTML += '<span id="afcHelper_finished_wrapper"><span id="afcHelper_finished_main" style="display:none"><li id="afcHelper_done"><b>Done (<a href="' + wgArticlePath.replace("$1", encodeURI(afcHelper_ffuPageName)) + '?action=purge" title="' + afcHelper_ffuPageName + '">Reload page</a>)</b></li></span></span>';
 var token = mw.user.tokens.get('editToken');
 pagetext = afcHelper_getPageText(afcHelper_ffuPageName, true);
@@ -346,7 +345,7 @@ for (var i = 0; i < afcHelper_ffuSubmissions.length; i++) {
 					userpagetext += '\n== Your request at \[\[WP:FFU|Files for upload\]\] ==\n\{\{subst:ffu|comment\}\} \~\~\~\~\n';								
 				else
 					userpagetext += '\n== Your request at \[\[WP:FFU|Files for upload\]\] ==\n\{\{subst:ffu talk|file=' + sub_m.to + '\}\} \~\~\~\~\n';
-			afcHelper_editPage('User talk:'+requestinguser, userpagetext, token, 'Notifying about the [[WP:FFU|FFU]] request', false);
+			afcHelper_editPage('User talk:'+requestinguser, userpagetext, token, 'Notifying user about [[WP:FFU|FFU]] request', false);
 				}
 
 		if (sub_m.action == 'accept'){
@@ -407,7 +406,6 @@ for (var i = 0; i < afcHelper_ffuSubmissions.length; i++) {
 			totalcomment++; // a "hold" is basically equal to a comment
 			}
 			text.replace(/[\n\r]{3,}/g,"\n\n"); // remove excessive newlines !todo check this
-			console.log(text);
 			pagetext = pagetext.substring(0, startindex) + text + pagetext.substring(endindex);
 		}
 	}
@@ -428,12 +426,12 @@ for (var i = 0; i < afcHelper_ffuSubmissions.length; i++) {
 				}
 
 		/* And now finally update the WP:FFU page */
-		//afcHelper_editPage(afcHelper_ffuPageName, pagetext, token, summary, false);
+		afcHelper_editPage(afcHelper_ffuPageName, pagetext, token, summary, false);
 		document.getElementById('afcHelper_finished_main').style.display = '';
 	}
  
-function add_review_links()
-{
+function add_review_links(){
+	// Based on [[User:Writ_Keeper/Scripts/autoCloser.js]]
 	var sectionHeaders= $("#mw-content-text h2");
 	var offset = 1;
 	sectionHeaders.each(function(index, element)
@@ -454,7 +452,6 @@ function add_review_links()
 			editSectionLink.appendChild(reviewlink);
 			editSectionLink.innerHTML = editSectionLink.innerHTML + "] " + editSectionContents;
 			reviewlink.onclick = (function(){
-				console.log('bam!');
 				reviewlink.innerHTML = "Reviewing request...";
 				afcHelper_ffu_init();
 			});
@@ -473,8 +470,7 @@ function add_review_links()
 }
 
 function displayMessage_inline( message, div, className ){
-	// a reimplementation of displayMessage that displays messages INLINE!
-	console.log('Message:'+message,'Div:'+div)
+	// a reimplementation of [[User:Timotheus Canens/displaymessage.js]] that displays messages inline
 	var divtitle = '#'+div
 	if ( !arguments.length || message === '' || message === null ) {
 		$( divtitle ).empty().hide();
@@ -498,7 +494,7 @@ function displayMessage_inline( message, div, className ){
 		} else {
 			$messageDiv.html( message );
 		}
-		$messageDiv.prev().slideDown(); // scroll to the <h2>
+		$messageDiv.slideDown();
 		return true;
 	}
 }
