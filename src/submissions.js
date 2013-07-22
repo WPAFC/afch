@@ -1005,7 +1005,7 @@ function afcHelper_blanking() {
 	var temppagetext = pagetext;
 	var n = temppagetext.search(reflistre);
 	var o = temppagetext.match(reflistre);
-	if (typeof(o) !== 'undefined'){
+	if (o) {
 		temppagetext = temppagetext.slice(n + o[0].length);
 		if((temppagetext.search(rerefbegin))>-1){
 			errormsg += '<h3><div style="color:red">Be careful, there is a &lt;ref&gt; tag after the references list! You might not see all references.</div></h3>';
