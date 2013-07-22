@@ -1,6 +1,10 @@
 /* TODO
-    - fix http://test.wikipedia.org/w/index.php?title=Wikipedia:Files_for_upload&diff=176269&oldid=176187
-      does this have to do with accepting multiple requests or something?
+    - when I try to do more than one thing at once, suddenly everything becomes very difficult:
+      http://test.wikipedia.org/w/index.php?title=Wikipedia:Files_for_upload&diff=176280&oldid=176276
+      - works just fine with one item
+        http://test.wikipedia.org/w/index.php?title=Wikipedia%3AFiles_for_upload&diff=176282&oldid=176281
+      - probably has to do with text,startindex,endindex being _inside_ the for loop rather than outside,
+        which was changed originally to fix the "duplicate rationales" bug
 */
 //<nowiki>
 // Script should be located at [[MediaWiki:Gadget-afchelper.js/ffu.js]]
@@ -237,7 +241,7 @@ function afcHelper_ffu_onActionChange(id) {
 		'<br/><label for="afcHelper_ffu_comment_' + id + '">Additional comment: </label>' + '<input type="text" id="afcHelper_ffu_comment_' + id + '" name="afcHelper_ffu_comment_' + id + '"/>'+
 		'<br/><label for="afcHelper_ffu_notify_' + id + '">Notify requestor: </label>' + '<input type="checkbox" id="afcHelper_ffu_notify_' + id + '" name="afcHelper_ffu_notify_' + id + '" checked="checked" />';
 	 } else if (selectValue == 'comment') {
-		extra.innerHTML = '<label for="afcHelper_ffu_comment_' + id + '">Placing a comment: </label>' + afcHelper_generateSelect('afcHelper_ffu_comment_' + id, [{
+		extra.innerHTML = '<label for="afcHelper_ffu_prefmtcomment_' + id + '">Placing a comment: </label>' + afcHelper_generateSelect('afcHelper_ffu_prefmtcomment_' + id, [{
 			label : 'No license',
 			value : 'license'
 		}, {
@@ -254,8 +258,7 @@ function afcHelper_ffu_onActionChange(id) {
 			selected : true,
 			value : 'custom'
 		}]);
-		if(document.getElementById('afcHelper_ffu_comment_' + id).value == 'custom')
-			extra.innerHTML += '<br/><label for="afcHelper_ffu_comment_' + id + '">Additional comment:</label>' + '<input type="text" id="afcHelper_ffu_comment_' + id + '" name="afcHelper_ffu_comment_' + id + '"/>';
+		extra.innerHTML += '<br/><label for="afcHelper_ffu_comment_' + id + '">Additional comment: </label>' + '<input type="text" id="afcHelper_ffu_comment_' + id + '" name="afcHelper_ffu_comment_' + id + '"/>';
 		extra.innerHTML += '<br/><label for="afcHelper_ffu_notify_' + id + '">Notify requestor: </label>' + '<input type="checkbox" id="afcHelper_ffu_notify_' + id + '" name="afcHelper_ffu_notify_' + id + '" checked="checked" />';
 		}
 	}
@@ -278,6 +281,8 @@ for (var i = 0; i < afcHelper_Submissions.length; i++) {
 			afcHelper_Submissions[i].reason = document.getElementById('afcHelper_ffu_decline_' + i).value;
 		} else if (action == 'hold') {
 			afcHelper_Submissions[i].holdrat = document.getElementById('afcHelper_ffu_hold_' + i).value;
+		} else if (action == 'comment') {
+			afcHelper_Submissions[i].prefmtcomment = document.getElementById("afcHelper_ffu_prefmtcomment_" + i).value;
 		}
 			afcHelper_Submissions[i].comment = document.getElementById("afcHelper_ffu_comment_" + i).value;
 			afcHelper_Submissions[i].notify = document.getElementById("afcHelper_ffu_notify_" + i).checked;
@@ -301,11 +306,12 @@ for (var i = 0; i < afcHelper_ffuSubmissions.length; i++) {
 		document.getElementById('afcHelper_status').innerHTML += '<li>Skipping ' + sub.title + ': Cannot find section. Perhaps it was modified in the mean time?</li>';
 		continue;
 	}
-	var text = afcHelper_ffuSections[sub.section];
-	var startindex = pagetext.indexOf(afcHelper_ffuSections[sub.section]);
-	var endindex = startindex + text.length;
 
 	for (var count = 0; count < sub.from.length; count++) {
+		var text = afcHelper_ffuSections[sub.section];
+		var startindex = pagetext.indexOf(afcHelper_ffuSections[sub.section]);
+		var endindex = startindex + text.length;
+
 		var mainid = sub.from[count].id;
 		var sub_m = afcHelper_Submissions[mainid];
 
@@ -371,9 +377,15 @@ for (var i = 0; i < afcHelper_ffuSubmissions.length; i++) {
 			text += '\{\{subst:ffu b\}\}\n';
 			totaldecline++;
 		} else if (sub_m.action == 'comment') {
-			if (sub_m.comment != '')
-				text += '\n\{\{subst:ffu|c\}\} ' + sub_m.comment + '\~\~\~\~\n';
-				totalcomment++;
+			if ((sub_m.prefmtcomment != '') && (sub_m.prefmtcomment != 'custom')) {
+				if (sub_m.comment == '')
+					text += '\n\{\{subst:ffu|' + sub_m.prefmtcomment + '\}\} \~\~\~\~\n';
+				else
+					text += '\n\{\{subst:ffu|' + sub_m.prefmtcomment + '\}\} ' + sub_m.comment + ' \~\~\~\~\n';					
+			} else if (sub_m.comment != '') {
+				text += '\n\{\{subst:ffu|c\}\} ' + sub_m.prefmtcomment + ' \~\~\~\~\n';				
+			}
+			totalcomment++;
 		} else if (sub_m.action == 'hold') {
 			if (sub_m.comment == '')
 				text += '\n\{\{subst:ffu|' + sub_m.holdrat + '\}\} \~\~\~\~\n';
@@ -381,7 +393,6 @@ for (var i = 0; i < afcHelper_ffuSubmissions.length; i++) {
 				text += '\n\{\{subst:ffu|' + sub_m.holdrat + '\}\} ' + sub_m.comment + ' \~\~\~\~\n';
 			totalcomment++; // a "hold" is basically equal to a comment
 			}
-			text.replace(/[\n\r]{3,}/g,"\n\n"); // remove excessive newlines !todo check this
 			pagetext = pagetext.substring(0, startindex) + text + pagetext.substring(endindex);
 		}
 	}
