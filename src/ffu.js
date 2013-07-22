@@ -1,7 +1,3 @@
-/* TODO
-    - FFU/recent for some reason doesn't include descriptions
-      http://test.wikipedia.org/w/index.php?title=Wikipedia%3AFiles_for_upload%2Frecent&diff=176292&oldid=176288
-*/
 //<nowiki>
 // Script should be located at [[MediaWiki:Gadget-afchelper.js/ffu.js]]
 // WARNING: dysfunctional and in development
@@ -171,8 +167,8 @@ function afcHelper_ffu_onActionChange(id) {
 		'<br/><label for="afcHelper_ffu_filetalkpage_' + id + '">Place {{subst:<a href="' + wgArticlePath.replace("$1", 'Template:WPAFCF') + '" title="Template:WPAFCF" target="_blank">WPAFCF</a>}} on the local files\'s decription\'s talk page: </label><input type="checkbox" id="afcHelper_ffu_filetalkpage_' + id + '" name="afcHelper_ffu_filetalkpage_' + id + '" checked="checked" />'+
 		'<br/><label for="afcHelper_ffu_append_' + id + '">Additional wikicode to append on the local talk page file (e.g. other WikiProjects): </label><input type="text" id="afcHelper_ffu_append_' + id + '" name="afcHelper_ffu_append_' + id +'"/>'+
 		'<br/><label for="afcHelper_ffu_recent_' + id + '">Update <a href="' + wgArticlePath.replace("$1", 'Wikipedia:Files for upload/recent') + '" title="Wikipedia:Files for upload/recent" target="_blank">Wikipedia:Files for upload/recent</a>: </label><input type="checkbox" id="afcHelper_ffu_recent_' + id + '" name="afcHelper_ffu_recent_' + id + '" checked="checked" />'+
-		'<div id="afcHelper_ffu_recenttext_' + id + '"><label for="afcHelper_ffu_recenttext_' + id + '">File description for <a href="' + wgArticlePath.replace("$1", 'Wikipedia:Files for upload/recent') + '" title="Wikipedia:Files for upload/recent" target="_blank">Wikipedia:Files for upload/recent</a>: </label><input type="text" id="afcHelper_ffu_recenttext_' + id + '" name="afcHelper_ffu_recenttext_' + id + '"/></div>'+
-		'<label for="afcHelper_ffu_notify_' + id + '">Notify requestor: </label>' + '<input type="checkbox" id="afcHelper_ffu_notify_' + id + '" name="afcHelper_ffu_notify_' + id + '" checked="checked" />';
+		'<br/><label for="afcHelper_ffu_recenttext_' + id + '">File description for <a href="' + wgArticlePath.replace("$1", 'Wikipedia:Files for upload/recent') + '" title="Wikipedia:Files for upload/recent" target="_blank">Wikipedia:Files for upload/recent</a>: </label><input type="text" id="afcHelper_ffu_recenttext_' + id + '" name="afcHelper_ffu_recenttext_' + id + '"/>'+
+		'<br/><label for="afcHelper_ffu_notify_' + id + '">Notify requestor: </label>' + '<input type="checkbox" id="afcHelper_ffu_notify_' + id + '" name="afcHelper_ffu_notify_' + id + '" checked="checked" />';
 	} else if (selectValue == 'decline') {
 		extra.innerHTML = '<label for="afcHelper_ffu_decline_' + id + '">Reason for decline: </label>' + afcHelper_generateSelect('afcHelper_ffu_decline_' + id, [{
 			label : 'Not a FFU request',
@@ -351,13 +347,13 @@ for (var i = 0; i < afcHelper_ffuSubmissions.length; i++) {
 	 
 				// update [[Wikipedia:Files for upload/recent]]
 				if(sub_m.recent==true){
-					recenttext = afcHelper_getPageText('Wikipedia:Files_for_upload/recent',true)
-					var newentry = "\|File:" + sub_m.to + "|" + ( typeof sub_m.filedescription  !== "undefined" ? sub_m.filedescription : "" ) + "\n";
-					var lastentry = recenttext.toLowerCase().lastIndexOf("| file:");
-					var firstentry = recenttext.toLowerCase().indexOf("| file:");
-					recenttext = recenttext.substring(0, lastentry);
-					recenttext = recenttext.substring(0, firstentry) + newentry + recenttext.substring(firstentry) + '\n}}';
-					afcHelper_editPage("Wikipedia:Files for upload/recent", recenttext, token, 'Updating recently uploaded FFUs', false);
+					recentpagetext = afcHelper_getPageText('Wikipedia:Files_for_upload/recent',true)
+					var newentry = "\|File:" + sub_m.to + " | " + ( typeof sub_m.recenttext  !== "undefined" ? sub_m.recenttext : "" ) + "\n";
+					var lastentry = recentpagetext.toLowerCase().lastIndexOf("| file:");
+					var firstentry = recentpagetext.toLowerCase().indexOf("| file:");
+					recentpagetext = recentpagetext.substring(0, lastentry);
+					recentpagetext = recentpagetext.substring(0, firstentry) + newentry + recentpagetext.substring(firstentry) + '\n}}';
+					afcHelper_editPage("Wikipedia:Files for upload/recent", recentpagetext, token, 'Updating recently uploaded FFUs', false);
 				}
 			} else if (sub_m.action == 'decline') {
 				var header = text.match(/==[^=]*==/)[0];
