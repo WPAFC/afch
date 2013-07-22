@@ -365,6 +365,10 @@ function afcHelper_ffu_performActions() {
 		summary += " commenting on " + totalcomment + " request" + (totalcomment > 1 ? 's' : '');
 	}
 
+	// Clean up the page
+	pagetext = pagetext.replace(/[\n\r]{3,}/g,"\n\n");
+	pagetext = pagetext.replace(/[\n\r]+==/g,"\n\n==");
+
 	// And now finally update the WP:FFU page
 	afcHelper_editPage(afcHelper_ffuPageName, pagetext, token, summary, false);
 	document.getElementById('afcHelper_finished_main').style.display = '';
