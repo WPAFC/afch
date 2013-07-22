@@ -1,10 +1,6 @@
 /* TODO
-    - when I try to do more than one thing at once, suddenly everything becomes very difficult:
-      http://test.wikipedia.org/w/index.php?title=Wikipedia:Files_for_upload&diff=176280&oldid=176276
-      - works just fine with one item
-        http://test.wikipedia.org/w/index.php?title=Wikipedia%3AFiles_for_upload&diff=176282&oldid=176281
-      - probably has to do with text,startindex,endindex being _inside_ the for loop rather than outside,
-        which was changed originally to fix the "duplicate rationales" bug
+    - unchecking the box to add {{subst:WPAFC}} throws an error
+    - unchecking the box for [[WP:FFU/recent]] throws one two (check the inexplicable afcHelper_trigger)
 */
 //<nowiki>
 // Script should be located at [[MediaWiki:Gadget-afchelper.js/ffu.js]]
@@ -307,93 +303,96 @@ for (var i = 0; i < afcHelper_ffuSubmissions.length; i++) {
 		continue;
 	}
 
+	var origtext = afcHelper_ffuSections[sub.section];
+	var text = afcHelper_ffuSections[sub.section];
+	var startindex = pagetext.indexOf(afcHelper_ffuSections[sub.section]);
+	var endindex = startindex + text.length;
+
 	for (var count = 0; count < sub.from.length; count++) {
-		var text = afcHelper_ffuSections[sub.section];
-		var startindex = pagetext.indexOf(afcHelper_ffuSections[sub.section]);
-		var endindex = startindex + text.length;
+		if (text === origtext) { // This way, we don't modify a section more than once
+			var mainid = sub.from[count].id;
+			var sub_m = afcHelper_Submissions[mainid];
 
-		var mainid = sub.from[count].id;
-		var sub_m = afcHelper_Submissions[mainid];
+			// First notify the user so we don't have to process yet another signature
+			// todo list: if more files in one request were handled, only notify once (would require change in structure of program)
+			if((sub_m.action != 'none') && (sub_m.notify==true)){
+				// assuming the first User/IP is the requester
+				var requestinguser=/\[\[(User[_ ]talk:|User:|Special:Contributions\/)([^\||\]\]]*)([^\]]*?)\]\]/i.exec(text)[2];
+				var userpagetext = afcHelper_getPageText('User talk:'+requestinguser, true);
+				if (sub_m.action == 'decline')
+					userpagetext += '\n== Your request at \[\[WP:FFU|Files for upload\]\] ==\n\{\{subst:ffu talk|decline\}\} \~\~\~\~\n';
+				else if (sub_m.action == 'comment')
+					userpagetext += '\n== Your request at \[\[WP:FFU|Files for upload\]\] ==\n\{\{subst:ffu talk|comment\}\} \~\~\~\~\n';			
+				else if (sub_m.action == 'hold')
+					userpagetext += '\n== Your request at \[\[WP:FFU|Files for upload\]\] ==\n\{\{subst:ffu talk|h\}\} \~\~\~\~\n';			
+				else if (sub_m.action == 'accept')
+					if (sub_m.to === '')
+						userpagetext += '\n== Your request at \[\[WP:FFU|Files for upload\]\] ==\n\{\{subst:ffu|comment\}\} \~\~\~\~\n';								
+					else
+						userpagetext += '\n== Your request at \[\[WP:FFU|Files for upload\]\] ==\n\{\{subst:ffu talk|file=' + sub_m.to + '\}\} \~\~\~\~\n';
+				afcHelper_editPage('User talk:'+requestinguser, userpagetext, token, 'Notifying user about [[WP:FFU|FFU]] request', false);
+					}
 
-		// First notify the user so we don't have to process yet another signature
-		// todo list: if more files in one request were handled, only notify once (would require change in structure of program)
-		if((sub_m.action != 'none') && (sub_m.notify==true)){
-			// assuming the first User/IP is the requester
-			var requestinguser=/\[\[(User[_ ]talk:|User:|Special:Contributions\/)([^\||\]\]]*)([^\]]*?)\]\]/i.exec(text)[2];
-			var userpagetext = afcHelper_getPageText('User talk:'+requestinguser, true);
-			if (sub_m.action == 'decline')
-				userpagetext += '\n== Your request at \[\[WP:FFU|Files for upload\]\] ==\n\{\{subst:ffu talk|decline\}\} \~\~\~\~\n';
-			else if (sub_m.action == 'comment')
-				userpagetext += '\n== Your request at \[\[WP:FFU|Files for upload\]\] ==\n\{\{subst:ffu talk|comment\}\} \~\~\~\~\n';			
-			else if (sub_m.action == 'hold')
-				userpagetext += '\n== Your request at \[\[WP:FFU|Files for upload\]\] ==\n\{\{subst:ffu talk|h\}\} \~\~\~\~\n';			
-			else if (sub_m.action == 'accept')
-				if (sub_m.to === '')
-					userpagetext += '\n== Your request at \[\[WP:FFU|Files for upload\]\] ==\n\{\{subst:ffu|comment\}\} \~\~\~\~\n';								
-				else
-					userpagetext += '\n== Your request at \[\[WP:FFU|Files for upload\]\] ==\n\{\{subst:ffu talk|file=' + sub_m.to + '\}\} \~\~\~\~\n';
-			afcHelper_editPage('User talk:'+requestinguser, userpagetext, token, 'Notifying user about [[WP:FFU|FFU]] request', false);
+			if (sub_m.action == 'accept'){
+				// create local file description talkpage
+				if((sub_m.talkpage==true)&&(sub_m.to!='')){
+					afcHelper_editPage('File talk\:'+sub_m.to, '\{\{subst:WPAFCF\}\}\n'+sub_m.append, token, 'Placing [[WP:AFC|WPAFC]] project banner', true);
 				}
-
-		if (sub_m.action == 'accept'){
-			// create local file description talkpage
-			if((sub_m.talkpage==true)&&(sub_m.to!='')){
-				afcHelper_editPage('File talk\:'+sub_m.to, '\{\{subst:WPAFCF\}\}\n'+sub_m.append, token, 'Placing [[WP:AFC|WPAFC]] project banner', true);
-			}
- 
-			// update text of the FFU page
-			var header = text.match(/==[^=]*==/)[0];
-			text = header + "\n\{\{subst:ffu a\}\}\n" + text.substring(header.length);
-			if (sub_m.to === '')
-				text += '\n*\{\{subst:ffu|a\}\} \~\~\~\~\n';
-			else
-				text += '\n*\{\{subst:ffu|file=' + sub_m.to + '\}\} \~\~\~\~\n';
-			text += '\{\{subst:ffu b\}\}\n';
-					totalaccept++;					
- 
-			// update [[Wikipedia:Files for upload/recent]]
-			if(sub_m.recent==true){
-				recenttext = afcHelper_getPageText('Wikipedia:Files_for_upload/recent',true)
-				var newentry = "\|File:" + sub_m.to + "|" + ( typeof sub_m.filedescription  !== "undefined" ? sub_m.filedescription : "" ) + "\n";
-				var lastentry = recenttext.toLowerCase().lastIndexOf("| file:");
-				var firstentry = recenttext.toLowerCase().indexOf("| file:");
-				recenttext = recenttext.substring(0, lastentry);
-				recenttext = recenttext.substring(0, firstentry) + newentry + recenttext.substring(firstentry) + '\n}}';
-				afcHelper_editPage("Wikipedia:Files for upload/recent", recenttext, token, 'Updating recently uploaded FFUs', false);
-			}
-		} else if (sub_m.action == 'decline') {
-			var header = text.match(/==[^=]*==/)[0];
-			if (sub_m.reason == 'custom' && sub_m.comment == '') {
-				document.getElementById('afcHelper_status').innerHTML += '<li>Skipping ' + sub_m.title + ': No decline reason specified.</li>';
-				continue;
-			}
-			text = header + "\n\{\{subst:ffu d\}\}\n" + text.substring(header.length);
-			if (sub_m.comment == '')
-				text += '\n*\{\{subst:ffu|' + sub_m.reason + '\}\} \~\~\~\~\n';
-			else if (sub_m.reason == 'custom')
-				text += '\n*{{subst:ffu|d}} ' + sub_m.comment + ' \~\~\~\~\n';
-			else
-				text += '\n*\{\{subst:ffu|' + sub_m.reason + '\}\} ' + sub_m.comment + ' \~\~\~\~\n';
-			text += '\{\{subst:ffu b\}\}\n';
-			totaldecline++;
-		} else if (sub_m.action == 'comment') {
-			if ((sub_m.prefmtcomment != '') && (sub_m.prefmtcomment != 'custom')) {
-				if (sub_m.comment == '')
-					text += '\n\{\{subst:ffu|' + sub_m.prefmtcomment + '\}\} \~\~\~\~\n';
+	 
+				// update text of the FFU page
+				var header = text.match(/==[^=]*==/)[0];
+				text = header + "\n\{\{subst:ffu a\}\}\n" + text.substring(header.length);
+				if (sub_m.to === '')
+					text += '\n*\{\{subst:ffu|a\}\} \~\~\~\~\n';
 				else
-					text += '\n\{\{subst:ffu|' + sub_m.prefmtcomment + '\}\} ' + sub_m.comment + ' \~\~\~\~\n';					
-			} else if (sub_m.comment != '') {
-				text += '\n\{\{subst:ffu|c\}\} ' + sub_m.prefmtcomment + ' \~\~\~\~\n';				
-			}
-			totalcomment++;
-		} else if (sub_m.action == 'hold') {
-			if (sub_m.comment == '')
-				text += '\n\{\{subst:ffu|' + sub_m.holdrat + '\}\} \~\~\~\~\n';
-			else
-				text += '\n\{\{subst:ffu|' + sub_m.holdrat + '\}\} ' + sub_m.comment + ' \~\~\~\~\n';
-			totalcomment++; // a "hold" is basically equal to a comment
-			}
-			pagetext = pagetext.substring(0, startindex) + text + pagetext.substring(endindex);
+					text += '\n*\{\{subst:ffu|file=' + sub_m.to + '\}\} \~\~\~\~\n';
+				text += '\{\{subst:ffu b\}\}\n';
+						totalaccept++;					
+	 
+				// update [[Wikipedia:Files for upload/recent]]
+				if(sub_m.recent==true){
+					recenttext = afcHelper_getPageText('Wikipedia:Files_for_upload/recent',true)
+					var newentry = "\|File:" + sub_m.to + "|" + ( typeof sub_m.filedescription  !== "undefined" ? sub_m.filedescription : "" ) + "\n";
+					var lastentry = recenttext.toLowerCase().lastIndexOf("| file:");
+					var firstentry = recenttext.toLowerCase().indexOf("| file:");
+					recenttext = recenttext.substring(0, lastentry);
+					recenttext = recenttext.substring(0, firstentry) + newentry + recenttext.substring(firstentry) + '\n}}';
+					afcHelper_editPage("Wikipedia:Files for upload/recent", recenttext, token, 'Updating recently uploaded FFUs', false);
+				}
+			} else if (sub_m.action == 'decline') {
+				var header = text.match(/==[^=]*==/)[0];
+				if (sub_m.reason == 'custom' && sub_m.comment == '') {
+					document.getElementById('afcHelper_status').innerHTML += '<li>Skipping ' + sub_m.title + ': No decline reason specified.</li>';
+					continue;
+				}
+				text = header + "\n\{\{subst:ffu d\}\}\n" + text.substring(header.length);
+				if (sub_m.comment == '')
+					text += '\n*\{\{subst:ffu|' + sub_m.reason + '\}\} \~\~\~\~\n';
+				else if (sub_m.reason == 'custom')
+					text += '\n*{{subst:ffu|d}} ' + sub_m.comment + ' \~\~\~\~\n';
+				else
+					text += '\n*\{\{subst:ffu|' + sub_m.reason + '\}\} ' + sub_m.comment + ' \~\~\~\~\n';
+				text += '\{\{subst:ffu b\}\}\n';
+				totaldecline++;
+			} else if (sub_m.action == 'comment') {
+				if ((sub_m.prefmtcomment != '') && (sub_m.prefmtcomment != 'custom')) {
+					if (sub_m.comment == '')
+						text += '\n\{\{subst:ffu|' + sub_m.prefmtcomment + '\}\} \~\~\~\~\n';
+					else
+						text += '\n\{\{subst:ffu|' + sub_m.prefmtcomment + '\}\} ' + sub_m.comment + ' \~\~\~\~\n';					
+				} else if (sub_m.comment != '') {
+					text += '\n\{\{subst:ffu|c\}\} ' + sub_m.comment + ' \~\~\~\~\n';				
+				}
+				totalcomment++;
+			} else if (sub_m.action == 'hold') {
+				if (sub_m.comment == '')
+					text += '\n\{\{subst:ffu|' + sub_m.holdrat + '\}\} \~\~\~\~\n';
+				else
+					text += '\n\{\{subst:ffu|' + sub_m.holdrat + '\}\} ' + sub_m.comment + ' \~\~\~\~\n';
+				totalcomment++; // a "hold" is basically equal to a comment
+				}
+				pagetext = pagetext.substring(0, startindex) + text + pagetext.substring(endindex);
+		}
 		}
 	}
 
