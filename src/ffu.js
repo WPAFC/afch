@@ -1,3 +1,7 @@
+/* TODO
+    - fix http://test.wikipedia.org/w/index.php?title=Wikipedia:Files_for_upload&diff=176269&oldid=176187
+      does this have to do with accepting multiple requests or something?
+*/
 //<nowiki>
 // Script should be located at [[MediaWiki:Gadget-afchelper.js/ffu.js]]
 // WARNING: dysfunctional and in development
