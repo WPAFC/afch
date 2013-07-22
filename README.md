@@ -6,7 +6,7 @@ This is a script created to make reviewing Wikipedia article and redirect submis
 If you wish to contribute, that's great! Just fork the repository, make your changes in the `develop` branch, and then create a pull request. Frequent contributors can request to be added to the WPAFC organization on GitHub for the ability to commit directly to the repository, sans pull request.
 
 ## License
-The script is licensed under the [MIT License](https://wikimediafoundation.org/wiki/Terms_of_Use#License), which is printed below.
+The script is licensed under the [MIT License](http://opensource.org/licenses/MIT), which is printed below.
 
 ```
 Permission is hereby granted, free of charge, to any person obtaining a copy of
