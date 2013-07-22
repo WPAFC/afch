@@ -48,7 +48,7 @@ function afcHelper_ffu_init() {
 					comment : ''
 					};
  
-					var urllinks_re = /(http|gopher|https|ftp|ftps)\:\/\/[^\s\n]*/gi;
+				var urllinks_re = /(http|gopher|https|ftp|ftps)\:\/\/[^\s\n]*/gi;
 				var links = afcHelper_ffuSections[i].match(urllinks_re);
 				if (links === null){
 					var linkscounter=1;
@@ -91,20 +91,11 @@ function afcHelper_ffu_init() {
 			afcHelper_numTotal++;
 		}
 	}
-	//var text = '<h3>Reviewing Files for upload requests</h3>';
-	// now layout the text.
-	//var afcHelper_ffu_empty = 1;
+
 	var afcHelper_ffu_temp=new Array();
 	for (var k = 0; k < afcHelper_ffuSubmissions.length; k++) {
 		var text = '<ul>';
 		if (afcHelper_ffuSubmissions[k].type == 'ffu') {
-			//if (( typeof (afcHelper_ffuSubmissions[k].title) == 'undefined') || (afcHelper_ffuSubmissions[k].title == '')) {
-			//	text += '<li><b>No headline \#' + afcHelper_ffu_empty + '</b>: <ul>';
-			//	afcHelper_ffu_empty++;
-			//} else {
-			//text += '<li><b>'+afcHelper_ffuSubmissions[k].title +'</b>: <ul>';
-				//}
-			var afcHelper_ffu_empty = 1;
 			for (var l = 0; l < afcHelper_ffuSubmissions[k].from.length; l++) {
 				var from = afcHelper_ffuSubmissions[k].from[l];
 				text += '<li>Original URL: ';
@@ -150,7 +141,7 @@ function afcHelper_ffu_init() {
 					value : 'none'	}];
 				}
 				if(/flickr.com/gi.test(from.title))
-					text += ' (<a href="http://toolserver.org/~bryan/flickr/upload?username=' +wgUserName+ '&link='+from.title+'" target="_blank"><b>launch Flickuploadbot</b></a> in a new window)';
+					text += ' (<a href="http:// toolserver.org/~bryan/flickr/upload?username=' +wgUserName+ '&link='+from.title+'" target="_blank"><b>launch Flickuploadbot</b></a> in a new window)';
 				text += '<br/><label for="afcHelper_ffu_action_' + from.id + '">Action: </label>' + afcHelper_generateSelect('afcHelper_ffu_action_' + from.id, selectoptions, 'afcHelper_ffu_onActionChange(' + from.id + ')') + '<div id="afcHelper_ffu_extra_' + from.id + '"></div></li>';
 			} 	
 			text += '</ul></li>';
@@ -177,8 +168,7 @@ function afcHelper_ffu_onActionChange(id) {
 		'<br/><label for="afcHelper_ffu_append_' + id + '">Additional wikicode to append on the local talk page file (e.g. other WikiProjects): </label><input type="text" id="afcHelper_ffu_append_' + id + '" name="afcHelper_ffu_append_' + id +'"/>'+
 		'<br/><label for="afcHelper_ffu_recent_' + id + '">Update <a href="' + wgArticlePath.replace("$1", 'Wikipedia:Files for upload/recent') + '" title="Wikipedia:Files for upload/recent" target="_blank">Wikipedia:Files for upload/recent</a>: </label><input type="checkbox" id="afcHelper_ffu_recent_' + id + '" name="afcHelper_ffu_recent_' + id + '" checked="checked"  onchange=afcHelper_trigger(\'afcHelper_ffu_recenttext_' + id + '\') />'+
 		'<div id="afcHelper_ffu_recenttext_' + id + '"><label for="afcHelper_ffu_recenttext_' + id + '">File description for <a href="' + wgArticlePath.replace("$1", 'Wikipedia:Files for upload/recent') + '" title="Wikipedia:Files for upload/recent" target="_blank">Wikipedia:Files for upload/recent</a>: </label><input type="text" id="afcHelper_ffu_recenttext_' + id + '" name="afcHelper_ffu_recenttext_' + id + '"/></div>'+
-		'<label for="afcHelper_ffu_notify_' + id + '">Notify requestor: </label>' + '<input type="checkbox" id="afcHelper_ffu_notify_' + id + '" name="afcHelper_ffu_notify_' + id + '" checked="checked" />';//+
-		//'<br/><label for="afcHelper_ffu_addcomment_' + id + '">Additional comment for this page:</label>' + '<input type="text" id="afcHelper_ffu_addcomment_' + id + '" name="afcHelper_ffu_addcomment_' + id + '"/>';
+		'<label for="afcHelper_ffu_notify_' + id + '">Notify requestor: </label>' + '<input type="checkbox" id="afcHelper_ffu_notify_' + id + '" name="afcHelper_ffu_notify_' + id + '" checked="checked" />';
 	} else if (selectValue == 'decline') {
 		extra.innerHTML = '<label for="afcHelper_ffu_decline_' + id + '">Reason for decline: </label>' + afcHelper_generateSelect('afcHelper_ffu_decline_' + id, [{
 			label : 'Not a FFU request',
@@ -280,14 +270,6 @@ for (var i = 0; i < afcHelper_Submissions.length; i++) {
 				afcHelper_Submissions[i].append = document.getElementById("afcHelper_ffu_append_" + i).value;
 				afcHelper_Submissions[i].recent = document.getElementById("afcHelper_ffu_recent_" + i).checked;
 				afcHelper_Submissions[i].recenttext = document.getElementById("afcHelper_ffu_recenttext_" + i).value;
-				/* We don't need this block; let's just let users enter wikicode...
-				if (afcHelper_Submissions[i].append == 'custom') {
-					afcHelper_Submissions[i].append = prompt("Please enter the template to append for " + afcHelper_Submissions[i].title + ". Do not include the curly brackets.");
-				}
-				if (afcHelper_Submissions[i].append == 'none' || afcHelper_Submissions[i].append == null)
-					afcHelper_Submissions[i].append = '';
-				else
-					afcHelper_Submissions[i].append = '\{\{' + afcHelper_Submissions[i].append + '\}\}'; */
 		} else if (action == 'decline') {
 			afcHelper_Submissions[i].reason = document.getElementById('afcHelper_ffu_decline_' + i).value;
 		} else if (action == 'hold') {
@@ -323,10 +305,10 @@ for (var i = 0; i < afcHelper_ffuSubmissions.length; i++) {
 		var mainid = sub.from[count].id;
 		var sub_m = afcHelper_Submissions[mainid];
 
-		//First notify the user so we don't have to process yet another signature
-		//todo list: if more files in one request were handled, only notify once (would require change in structure of program)
+		// First notify the user so we don't have to process yet another signature
+		// todo list: if more files in one request were handled, only notify once (would require change in structure of program)
 		if((sub_m.action != 'none') && (sub_m.notify==true)){
-			//assuming the first User/IP is the requester
+			// assuming the first User/IP is the requester
 			var requestinguser=/\[\[(User[_ ]talk:|User:|Special:Contributions\/)([^\||\]\]]*)([^\]]*?)\]\]/i.exec(text)[2];
 			var userpagetext = afcHelper_getPageText('User talk:'+requestinguser, true);
 			if (sub_m.action == 'decline')
@@ -344,12 +326,12 @@ for (var i = 0; i < afcHelper_ffuSubmissions.length; i++) {
 				}
 
 		if (sub_m.action == 'accept'){
-			//create local file description talkpage
+			// create local file description talkpage
 			if((sub_m.talkpage==true)&&(sub_m.to!='')){
 				afcHelper_editPage('File talk\:'+sub_m.to, '\{\{subst:WPAFCF\}\}\n'+sub_m.append, token, 'Placing [[WP:AFC|WPAFC]] project banner', true);
 			}
  
-			//update text of the FFU page
+			// update text of the FFU page
 			var header = text.match(/==[^=]*==/)[0];
 			text = header + "\n\{\{subst:ffu a\}\}\n" + text.substring(header.length);
 			if (sub_m.to === '')
@@ -371,11 +353,6 @@ for (var i = 0; i < afcHelper_ffuSubmissions.length; i++) {
 			}
 		} else if (sub_m.action == 'decline') {
 			var header = text.match(/==[^=]*==/)[0];
-			//var reason = sub_m.reason;
-			//if (reason == '')
-			//	reason = sub_m.comment;
-			//else if (sub_m.comment != '')
-			//	reason = reason + ': ' + sub_m.comment;
 			if (sub_m.reason == 'custom' && sub_m.comment == '') {
 				document.getElementById('afcHelper_status').innerHTML += '<li>Skipping ' + sub_m.title + ': No decline reason specified.</li>';
 				continue;
@@ -405,7 +382,7 @@ for (var i = 0; i < afcHelper_ffuSubmissions.length; i++) {
 		}
 	}
 
-		/* Here's where we generate the summary */
+		// Here's where we generate the summary
 		var summary = "Updating submission status:";
 		if (totalaccept > 0)
 			summary += " accepting " + totalaccept + " request" + (totalaccept > 1 ? 's' : '');
@@ -420,7 +397,7 @@ for (var i = 0; i < afcHelper_ffuSubmissions.length; i++) {
 			summary += " commenting on " + totalcomment + " request" + (totalcomment > 1 ? 's' : '');
 				}
 
-		/* And now finally update the WP:FFU page */
+		// And now finally update the WP:FFU page
 		afcHelper_editPage(afcHelper_ffuPageName, pagetext, token, summary, false);
 		document.getElementById('afcHelper_finished_main').style.display = '';
 	}
@@ -448,7 +425,7 @@ function add_review_links(){
 			editSectionLink.appendChild(reviewlink);
 			editSectionLink.innerHTML = editSectionLink.innerHTML + "] " + editSectionContents;
 			reviewlink.onclick = (function(){
-				reviewlink.innerHTML = "Reviewing request...";
+				reviewlink.innerHTML = "Reviewing requests...";
 				afcHelper_ffu_init();
 			});
 		}
