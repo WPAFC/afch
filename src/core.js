@@ -33,29 +33,28 @@ function afcHelper_getPageText(title, show, redirectcheck) {
 		return '';
 	}
 	var newtext = response['query']['pages'][pageid]['revisions'][0]['*'];
-		if(redirectcheck){
+		if(redirectcheck && response['query']['redirects'] /* If &redirects if specified but there is no redirect, this stops us from getting an error */){
 			var oldusername  = response['query']['redirects'][0]['from'];
 			var newusername = response['query']['redirects'][0]['to'];
 			if ((typeof(oldusername) !== 'undefined') && (typeof(newusername) !== 'undefined') && (oldusername != newusername)){
 				usertalkpage = newusername;
 				if (show){
-					document.getElementById('afcHelper_get' + escape(title)).innerHTML = 'Got <a href="' + wgArticlePath.replace("$1", encodeURI(title)) + '" title="' + newusername + '">' + newusername + '</a> (page was renamed from ' + oldusername + ')';
+					document.getElementById('afcHelper_status').innerHTML += '<li id="afcHelper_get' + escape(title) + '">Got <a href="' + wgArticlePath.replace("$1", encodeURI(title)) + '" title="' + newusername + '">' + newusername + '</a> (page was renamed from ' + oldusername + ')</li>';
 				}
 			}else{
 				redirectcheck = false;
 			}
+		}else{
+				redirectcheck = false;
 		}		
 	delete req;
-	if (show && !redirectcheck){
-		document.getElementById('afcHelper_get' + escape(title)).innerHTML = 'Got <a href="' + wgArticlePath.replace("$1", encodeURI(title)) + '" title="' + title + '">' + title + '</a>';
-	}
-
-	return newtext;
+	if (show && !redirectcheck)	document.getElementById('afcHelper_status').innerHTML += '<li id="afcHelper_get' + escape(title) + '">Got <a href="' + wgArticlePath.replace("$1", encodeURI(title)) + '" title="' + title + '">' + title + '</a></li>';
+		return newtext;
 }
 
 function afcHelper_editPage(title, newtext, token, summary, createonly) {
 	summary += afcHelper_advert;
-	document.getElementById('afcHelper_finished_wrapper').innerHTML = '<span id="afcHelper_AJAX_finished_' + afcHelper_AJAXnumber + '" style="display:none">' + document.getElementById('afcHelper_finished_wrapper').innerHTML + '</span>';
+	$("#afcHelper_finished_wrapper").html('<span id="afcHelper_AJAX_finished_' + afcHelper_AJAXnumber + '" style="display:none">' + $("#afcHelper_finished_wrapper").html() + '</span>');
 	var func_id = afcHelper_AJAXnumber;
 	afcHelper_AJAXnumber++;
 	document.getElementById('afcHelper_status').innerHTML += '<li id="afcHelper_edit' + escape(title) + '">Editing <a href="' + wgArticlePath.replace("$1", encodeURI(title)) + '" title="' + title + '">' + title + '</a></li>';
@@ -79,7 +78,7 @@ function afcHelper_editPage(title, newtext, token, summary, createonly) {
 			} catch (err) {
 				document.getElementById('afcHelper_edit' + escape(title)).innerHTML = '<div style="color:red"><b>Edit failed on <a href="' + wgArticlePath.replace("$1", encodeURI(title)) + '" title="' + title + '">' + title + '</a></b></div>';
 			}
-			document.getElementById('afcHelper_AJAX_finished_' + func_id).style.display = '';
+			$("#afcHelper_AJAX_finished_" + func_id).css("display", '');
 			delete req;
 		}
 	};
