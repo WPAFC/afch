@@ -19,7 +19,7 @@ if ((wgPageName.indexOf('Wikipedia:Articles_for_creation') !== -1) || (wgPageNam
 
 	if (wgPageName.indexOf('Wikipedia:Articles_for_creation/Redirects') !== -1) {
 		importScriptURI(afchelper_baseurl + '/redirects.js');
-	} else if ((wgPageName.indexOf('Wikipedia:Files_for_upload') !== -1) {
+	} else if (wgPageName.indexOf('Wikipedia:Files_for_upload') !== -1) {
 		importScriptURI(afchelper_baseurl + '/ffu.js');		
 	} else if ((wgPageName.indexOf('Wikipedia:Articles_for_creation/') !== -1)
 				|| (wgPageName.indexOf('Wikipedia_talk:Articles_for_creation/') !== -1)
