@@ -477,7 +477,7 @@ function afcHelper_act(action) {
 			alert("Unable to locate AFC submission template, aborting...");
 			return;
 		}
-		//todo: removing after cleanup works
+		//TODO: removing after cleanup works
 		var afctemplate = afc_re.exec(pagetext)[0];
 		//moving the first hit to the top
 		pagetext = pagetext.replace(afctemplate, '');
@@ -532,7 +532,7 @@ function afcHelper_act(action) {
 					usertext += "|sig=yes\}\}";
 
 					if (teahouse) {
-						//todo: add a redirect check similar to editpage!
+						//TODO: add a redirect check similar to editpage!
 						document.getElementById('afcHelper_status').innerHTML += '<div id="afcHelper_get_teahouse"></div>';
 						$("#afcHelper_get_teahouse").html('<li id="afcHelper_get_teahouse">Checking for existing Teahouse Invitation for <a href="' + wgArticlePath.replace("$1", encodeURI('User_talk:' + username)) + '" title="User talk:' + username + '">User talk:' + username + '</a></li>');
 						var req = sajax_init_object();
@@ -784,8 +784,7 @@ function afcHelper_cleanup(text) {
 	text = text.replace(/https?:\/\/(en.wikipedia.org\/wiki|enwp.org)\/([^\s\<]+)/gi, "\[\[$2\]\]");
 	//remove boldings and big-tags from headlines; ignore level 1 headlines for not breaking URLs and other stuff!
 	text = text.replace(/[\s\n]*(={2,})\s*(?:\s*<big>|\s*''')*\s*(.*?)\s*(?:\s*<\/big>|\s*''')*\s*?(={2,})[\n\s]*/gi, "\n\n$1 $2 $1\n\n");
-	//todo
-	//Wikilink correct part #2
+	//TODO: Wikilink correct part #2
 	//text = text.replace(/\[\[\s*((?:\[\[[^\[\]]*\]\]|[^\]\[])*)\|\s*((?:\[\[[^\[\]]*\]\]|[^\]\[])*)\s*\]\]/gi, "then...\[\[$1\]\]");
 	// Run AutoEd automatically
 	var AutoEd_baseurl = '//en.wikipedia.org/w/index.php?action=raw&ctype=text/javascript&title=Wikipedia:AutoEd/';
@@ -965,7 +964,7 @@ function afcHelper_blanking() {
 		errormsg += '<h3><div style="color:red">The page ' + afcHelper_escapeHtmlChars(afcHelper_submissionTitle) + ' was deleted ' + deletionlog.length + ' times. Here are the edit summary(s) of the <a href="' + wgScript + '?title=Special%3ALog&type=delete&page=' + afcHelper_submissionTitle + '" target="_blank">deletion log</a>:</div></h3><table border=1><tr><td>Timestamp</td><td>User</td><td>Reason</td></tr>';
 		for (var i = 0; i < deletionlog.length; i++) {
 			deletioncomment = deletionlog[i].comment;
-			//todo: this still needs work with urlencoding; moreover piped links are not supported!
+			//TODO: this still needs work with urlencoding; moreover piped links are not supported!
 			deletioncomment = deletioncomment.replace(/\[\[((?:\[\[[^\[\]]*\]\]|[^\]\[[])*)\]\]/gi, "<a href=\"$1\" target=\"_blank\" title=\"$1\">$1</a>");
 			errormsg += '<tr><td>' + deletionlog[i].timestamp + '</td><td><a href="' + wgArticlePath.replace("$1", encodeURIComponent("User:" + deletionlog[i].user)) + '" target="_blank" title="User:' + deletionlog[i].user + '">' + deletionlog[i].user + '</a> (<a href="' + wgArticlePath.replace("$1", encodeURIComponent("User talk:" + deletionlog[i].user)) + '" target="_blank" title="User talk:' + deletionlog[i].user + '">talk</a>)</td><td>' + deletioncomment + '</td></tr>';
 		}
