@@ -694,6 +694,7 @@ function afcHelper_act(action) {
 		else afcHelper_editPage(afcHelper_PageName, pagetext, token, "Cleaning the [[Wikipedia:Articles for creation]] submission.", false);
 	}
 	$("#afcHelper_finished_main").css("display", "");
+	document.getElementById('afcHelper_finished_main').innerHTML += '<li id="afcHelper_load_Cat:Pend"><b>(<a href="' + wgArticlePath.replace("$1", encodeURI('Category:Pending AfC submissions')) + '" title="Category:Pending AfC submissions">Load Category:Pending AfC submissions</a>)</b></li>';
 }
 
 function afcHelper_movePage(oldtitle, newtitle, token, summary, callback) {
