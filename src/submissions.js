@@ -100,7 +100,16 @@ function afcHelper_prompt(type) {
 			value: ''
 		}], null);
 		text += assessmentSelect;
-		text += '<br /><label for="afcHelper_pagePrepend">Prepend to page (optional, e.g. maintain boxes, etc.): </label><textarea rows="3" cols="60" name="afcHelper_pagePrepend" id="afcHelper_pagePrepend"></textarea>' + '<br /><label for="afcHelper_pageAppend">Append to page (optional, e.g. categories, stub-tags, etc.): </label><textarea rows="3" cols="60" name="afcHelper_pageAppend" id="afcHelper_pageAppend"></textarea>' + '<br /><label for="afcHelper_talkAppend">Append to talk page (optional, e.g. WikiProjects, &#123;&#123;reqphoto&#125;&#125;, &#123;&#123;reqinfobox&#125;&#125;): </label><textarea rows="3" cols="60" name="afcHelper_talkAppend" id="afcHelper_talkAppend"></textarea>' + '<br /><label for="afcHelper_biography">Is the article a biography? </label><input type="checkbox" name="afcHelper_biography" id="afcHelper_biography" onchange=afcHelper_trigger(\'afcHelper_biography_blp\') />' + '<div id="afcHelper_biography_blp" name="afcHelper_biography_blp" style="display:none"><br /><label for="afcHelper_dateofbirth">Date of birth (if known/given, e.g. <i>November 2</i>)? </label><input type="text" id="afcHelper_dateofbirth" name="afcHelper_dateofbirth" />' + '<br /><label for="afcHelper_yearofbirth">Year of birth (if known/given)? </label><input type="text" id="afcHelper_yearofbirth" name="afcHelper_yearofbirth" />' + '<br /><label for="afcHelper_listas">Surname, Name (if known/given, e.g. <i>Bush, George Walker</i>)? </label><input type="text" id="afcHelper_listas" name="afcHelper_listas" />' + '<br /><label for="afcHelper_shortdescription">A very short description (two words) about the person, see also <a href="' + wgArticlePath.replace("$1", 'Wikipedia:Persondata#Short_description') + '" title="Wikipedia:Persondata#Short_description" target="_blank">Wikipedia:Persondata</a>: </label><input type="text" id="afcHelper_shortdescription" name="afcHelper_shortdescription" />' + '<br /><label for="afcHelper_alternativesname">Alternative names: </label><input type="text" id="afcHelper_alternativesname" name="afcHelper_alternativesname" />' + '<br /><label for="afcHelper_placeofbirth">The place of birth (if known): </label><input type="text" id="afcHelper_placeofbirth" name="afcHelper_placeofbirth" />' + '<br /><label for="afcHelper_biography_status">About a living person? </label>' + afcHelper_generateSelect('afcHelper_biography_status', [{
+		text += '<br /><label for="afcHelper_pagePrepend">Prepend to page (optional, e.g. maintain boxes, etc.): </label><textarea rows="3" cols="60" name="afcHelper_pagePrepend" id="afcHelper_pagePrepend"></textarea>'
+		+ '<br /><label for="afcHelper_pageAppend">Append to page (optional, e.g. categories, stub-tags, etc.): </label><textarea rows="3" cols="60" name="afcHelper_pageAppend" id="afcHelper_pageAppend"></textarea>'
+		+ '<br /><label for="afcHelper_talkAppend">Append to talk page (optional, e.g. WikiProjects): </label><textarea rows="3" cols="60" name="afcHelper_talkAppend" id="afcHelper_talkAppend"></textarea>'
+		+ '<br /><label for="afcHelper_reqphoto">Does the article needs a photo / image? (&#123;&#123;reqphoto&#125;&#125;) </label><input type="checkbox" name="afcHelper_reqphoto" id="afcHelper_reqphoto"/>'
+		+ '<br /><label for="afcHelper_reqinfobox">Does the article needs an infobox? (&#123;&#123;reqinfobox&#125;&#125;) </label><input type="checkbox" name="afcHelper_reqinfobox" id="afcHelper_reqinfobox"/>'
+		+ '<br /><label for="afcHelper_biography">Is the article a biography? </label><input type="checkbox" name="afcHelper_biography" id="afcHelper_biography" onchange=afcHelper_trigger(\'afcHelper_biography_blp\') />' + '<div id="afcHelper_biography_blp" name="afcHelper_biography_blp" style="display:none"><br /><label for="afcHelper_dateofbirth">Date of birth (if known/given, e.g. <i>November 2</i>)? </label><input type="text" id="afcHelper_dateofbirth" name="afcHelper_dateofbirth" />'
+		+ '<br /><label for="afcHelper_yearofbirth">Year of birth (if known/given)? </label><input type="text" id="afcHelper_yearofbirth" name="afcHelper_yearofbirth" />' + '<br /><label for="afcHelper_listas">Surname, Name (if known/given, e.g. <i>Bush, George Walker</i>)? </label><input type="text" id="afcHelper_listas" name="afcHelper_listas" />'
+		+ '<br /><label for="afcHelper_shortdescription">A very short description (two words) about the person, see also <a href="' + wgArticlePath.replace("$1", 'Wikipedia:Persondata#Short_description') + '" title="Wikipedia:Persondata#Short_description" target="_blank">Wikipedia:Persondata</a>: </label><input type="text" id="afcHelper_shortdescription" name="afcHelper_shortdescription" />'
+		+ '<br /><label for="afcHelper_alternativesname">Alternative names: </label><input type="text" id="afcHelper_alternativesname" name="afcHelper_alternativesname" />' + '<br /><label for="afcHelper_placeofbirth">The place of birth (if known): </label><input type="text" id="afcHelper_placeofbirth" name="afcHelper_placeofbirth" />'
+		+ '<br /><label for="afcHelper_biography_status">About a living person? </label>' + afcHelper_generateSelect('afcHelper_biography_status', [{
 			label: 'Living',
 			value: 'live'
 		}, {
@@ -110,7 +119,12 @@ function afcHelper_prompt(type) {
 			label: 'Unknown',
 			selected: true,
 			value: 'unknown'
-		}], "afcHelper_trigger(\'afcHelper_biography_status_box\')") + '<div id="afcHelper_biography_status_box" name="afcHelper_biography_status_box" style="display:none"><label for="afcHelper_placeofdeath">Place of death (if known/given)? </label><input type="text" id="afcHelper_placeofdeath" name="afcHelper_placeofdeath" />' + '<br /><label for="afcHelper_yearofdeath">Year of death (if known/given)? </label><input type="text" id="afcHelper_yearofdeath" name="afcHelper_yearofdeath" />' + '<br /><label for="afcHelper_dateofdeath">Date of death (if known/given; Month Day, e.g. <i>September 3</i>)? </label><input type="text" id="afcHelper_dateofdeath" name="afcHelper_dateofdeath" />' + '</div></div><div id="afcHelper_extra_inline" name="afcHelper_extra_inline"></div>' + '<br/><input type="button" id="afcHelper_prompt_button" name="afcHelper_prompt_button" value="Accept and publish to mainspace" onclick="afcHelper_act(\'accept\')" style="border-radius:3px; background-color:#adfcad" />';
+		}], "afcHelper_trigger(\'afcHelper_biography_status_box\')")
+		+ '<div id="afcHelper_biography_status_box" name="afcHelper_biography_status_box" style="display:none"><label for="afcHelper_placeofdeath">Place of death (if known/given)? </label><input type="text" id="afcHelper_placeofdeath" name="afcHelper_placeofdeath" />'
+		+ '<br /><label for="afcHelper_yearofdeath">Year of death (if known/given)? </label><input type="text" id="afcHelper_yearofdeath" name="afcHelper_yearofdeath" />'
+		+ '<br /><label for="afcHelper_dateofdeath">Date of death (if known/given; Month Day, e.g. <i>September 3</i>)? </label><input type="text" id="afcHelper_dateofdeath" name="afcHelper_dateofdeath" />'
+		+ '</div></div><div id="afcHelper_extra_inline" name="afcHelper_extra_inline"></div>'
+		+ '<br/><input type="button" id="afcHelper_prompt_button" name="afcHelper_prompt_button" value="Accept and publish to mainspace" onclick="afcHelper_act(\'accept\')" style="border-radius:3px; background-color:#adfcad" />';
 		document.getElementById('afcHelper_extra').innerHTML = text;
 	} else if (type === 'decline') {
 		var text = '<h3>Declining ' + afcHelper_PageName + '</h3>' + '<label for="afcHelper_reason">Reason for ' + type + ': </label>';
@@ -257,6 +271,8 @@ function afcHelper_act(action) {
 		var pageAppend = $("#afcHelper_pageAppend").val();
 		var talkAppend = $("#afcHelper_talkAppend").val();
 		var biography = $("#afcHelper_biography").attr("checked");
+		var reqinfobox = $("#afcHelper_reqinfobox").attr("checked");
+		var reqphoto = $("#afcHelper_reqphoto").attr("checked");		
 		if (biography) {
 			var living = $("#afcHelper_biography_status").val(); //dropdown menu
 			var yearofbirth = $("#afcHelper_yearofbirth").val();
@@ -309,7 +325,10 @@ function afcHelper_act(action) {
 					talktext += "\{\{WikiProject Biography|living=";
 					if (living === 'live') talktext += "yes";
 					else if (living === 'dead') talktext += "no";
-					talktext += "|class=" + assessment + "|listas=" + listas + "\}\}\n";
+					talktext += "|class=" + assessment + "|listas=" + listas;
+					if(reqphoto) talktext += "|needs-photo=yes";
+					if(reqinfobox) talktext += "|needs-infobox=yes";
+					talktext += "\}\}\n";
 				}
 
 				talktext += "\{\{subst:WPAFC/article|class=" + assessment + "\}\}\n" + talkAppend;
@@ -317,6 +336,9 @@ function afcHelper_act(action) {
 				if (assessment === 'disambig') {
 					talktext += '\n\{\{WikiProject Disambiguation\}\}';
 				}
+				if(reqinfobox && !biography) talktext += "\n\{\{Infobox requested\}\}";
+				if(reqphoto && !biography) talktext += "\n\{\{Image requested\}\}";
+
 				var testtemplate = /Template:/i;
 				var testcat = /Category:/i;
 				var testwp = /Wikipedia:/i;
