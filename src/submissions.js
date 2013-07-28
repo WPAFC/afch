@@ -68,6 +68,9 @@ function afcHelper_init() {
 	if (template_status === false || template_status === "t")
 		form += '<input type="button" id="afcHelper_submit_button" name="afcHelper_submit_button" value="Submit" onclick="afcHelper_prompt(\'submit\')" style="border-radius:3px; background-color:#66ccff" />';
 
+	if (template_status === false)
+		form += '<input type="button" id="afcHelper_draft_button" name="afcHelper_draft_button" value="Mark as draft submission" onclick="afcHelper_act(\'draft\')" style="border-radius:3px; background-color:#4aa02c" />';
+
 	if (template_status === "r") {
 		form += '<input type="button" id="afcHelper_unmark_button" name="afcHelper_unmark_button" value="Unmark as reviewing" onclick="afcHelper_act(\'unmark\')" style="border-radius:3px; background-color:#b1dae8" />';
 	} else if (template_status === "") {
@@ -78,9 +81,6 @@ function afcHelper_init() {
 		form += '<input type="button" id="afcHelper_cleanup_button" name="afcHelper_cleanup_button" value="Clean the submission" onclick="afcHelper_act(\'cleanup\')" style="border-radius:3px; background-color:#d2d3cc" />';
 
 	form += '<div id="afcHelper_extra"></div>';
-
-	// !todo theo
-	// if (template_status === false) display [mark as draft] button
 
 	displayMessage(form);
 }
@@ -291,7 +291,19 @@ function afcHelper_prompt(type) {
 }
 
 function afcHelper_act(action) {
-	if (action === 'submit') {
+	if (action === 'draft') {
+		var username = prompt("Please enter the submitter username, or leave blank for yourself:")
+		if (username == "")
+			template = "{{subst:AFC draft}}\n";
+		else
+			template = "{{subst:AFC draft|"+username+"}}\n";
+		displayMessage('<ul id="afcHelper_status"></ul><ul id="afcHelper_finish"></ul>');
+		document.getElementById('afcHelper_finish').innerHTML += '<span id="afcHelper_finished_wrapper"><span id="afcHelper_finished_main" style="display:none"><li id="afcHelper_done"><b>Done (<a href="' + wgArticlePath.replace("$1", encodeURI(afcHelper_PageName)) + '?action=purge" title="' + afcHelper_PageName + '">Reload page</a>)</b></li></span></span>';
+		newtext = template + pagetext;
+		newtext = afcHelper_cleanup(newtext);
+		var token = mw.user.tokens.get('editToken');
+		afcHelper_editPage(afcHelper_PageName, newtext, token, "Tagging [[Wikipedia:Articles for creation]] draft", false);
+	} else if (action === 'submit') {
 		var typeofsubmit = $("input[name=afcHelper_submit]:checked").val();
 		var customuser = $("#afcHelper_custom_submitter").val();
 		displayMessage('<ul id="afcHelper_status"></ul><ul id="afcHelper_finish"></ul>');
@@ -322,10 +334,10 @@ function afcHelper_act(action) {
 			alert("No valid submitter was specified, aborting...");
 			return;
 		}
-		pagetext = submit + pagetext;
-		pagetext = afcHelper_cleanup(pagetext);
+		newtext = submit + pagetext;
+		newtext = afcHelper_cleanup(newtext);
 		var token = mw.user.tokens.get('editToken');
-		afcHelper_editPage(afcHelper_PageName, pagetext, token, "Submitting [[Wikipedia:Articles for creation]] submission", false);
+		afcHelper_editPage(afcHelper_PageName, newtext, token, "Submitting [[Wikipedia:Articles for creation]] submission", false);
 	} else if (action === 'accept') {
 		var newtitle = $("#afcHelper_movetarget").val();
 		var assessment = $("#afcHelper_assessment").val();
