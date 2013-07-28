@@ -16,6 +16,7 @@ var afcHelper_reasonhash = {
 	'dict': 'submission is a dictionary definition',
 	'joke': 'submission appears to be a joke',
 	'blp': 'submission does not conform to BLP',
+	'van': 'submission is vandalism, a negative unsourced BLP, or an attack page',
 	'neo': 'submission is a neologism',
 	'npov': 'submission is not written from a neutral point of view',
 	'adv': 'submission is written like an advertisement',
