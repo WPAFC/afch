@@ -558,7 +558,7 @@ function afcHelper_act(action) {
 						document.getElementById('afcHelper_status').innerHTML += '<div id="afcHelper_get_teahouse"></div>';
 						$("#afcHelper_get_teahouse").html('<li id="afcHelper_get_teahouse">Checking for existing Teahouse Invitation for <a href="' + wgArticlePath.replace("$1", encodeURI('User_talk:' + username)) + '" title="User talk:' + username + '">User talk:' + username + '</a></li>');
 						var req = sajax_init_object();
-						var params = "action=query&prop=categories&format=json&indexpageids=1&titles=" + encodeURIComponent(usertalkpage);
+						var params = "action=query&prop=categories&format=json&indexpageids=1&titles=" + encodeURIComponent(usertalkpage) + "&redirects=";
 						req.open("POST", wgScriptPath + "/api.php", false);
 						req.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
 						req.setRequestHeader("Content-length", params.length);
@@ -985,9 +985,21 @@ function afcHelper_blanking() {
 	if (deletionlog.length) {
 		errormsg += '<h3><div style="color:red">The page ' + afcHelper_escapeHtmlChars(afcHelper_submissionTitle) + ' was deleted ' + deletionlog.length + ' times. Here are the edit summary(s) of the <a href="' + wgScript + '?title=Special%3ALog&type=delete&page=' + afcHelper_submissionTitle + '" target="_blank">deletion log</a>:</div></h3><table border=1><tr><td>Timestamp</td><td>User</td><td>Reason</td></tr>';
 		for (var i = 0; i < deletionlog.length; i++) {
-			deletioncomment = deletionlog[i].comment;
-			//TODO: this still needs work with urlencoding; moreover piped links are not supported!
-			deletioncomment = deletioncomment.replace(/\[\[((?:\[\[[^\[\]]*\]\]|[^\]\[[])*)\]\]/gi, "<a href=\"$1\" target=\"_blank\" title=\"$1\">$1</a>");
+			var deletioncomment = deletionlog[i].comment;
+			var deletioncomment1_re = /\[\[([^\[\]]*?[^\]\|]*?)(\|([^\[\]]*?))\]\]/gi;
+			var deletioncomment2_re = /\[\[((?:\[\[[^\[\]]*\]\]|[^\]\[[])*)\]\]/gi;
+			//first handle wikilinks with piped links
+			if (deletioncomment.match(deletioncomment1_re)){
+				var dlmatch = deletioncomment1_re.exec(deletioncomment);
+				deletioncomment = deletioncomment.replace(dlmatch[0], "<a href=\"" + wgArticlePath.replace("$1", encodeURIComponent(dlmatch[1])) + "\" target=\"_blank\" title=\""+dlmatch[1]+"\"></a>");
+				deletioncomment = deletioncomment.replace("\"></a>", "\">" + dlmatch[3] + "</a>");
+				deletioncomment = deletioncomment.replace("</a>|"+ dlmatch[3], "</a>");
+			}
+			//now the rest
+			if (deletioncomment.match(deletioncomment2_re)){
+				var dlmatch = deletioncomment2_re.exec(deletioncomment);
+				deletioncomment = deletioncomment.replace(dlmatch[0], "<a href=\"" + wgArticlePath.replace("$1", encodeURIComponent(dlmatch[1])) + "\" target=\"_blank\" title=\""+dlmatch[1]+"\">"+dlmatch[1]+"</a>");
+			}
 			errormsg += '<tr><td>' + deletionlog[i].timestamp + '</td><td><a href="' + wgArticlePath.replace("$1", encodeURIComponent("User:" + deletionlog[i].user)) + '" target="_blank" title="User:' + deletionlog[i].user + '">' + deletionlog[i].user + '</a> (<a href="' + wgArticlePath.replace("$1", encodeURIComponent("User talk:" + deletionlog[i].user)) + '" target="_blank" title="User talk:' + deletionlog[i].user + '">talk</a>)</td><td>' + deletioncomment + '</td></tr>';
 		}
 		errormsg += '</table>';
