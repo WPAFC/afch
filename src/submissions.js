@@ -45,21 +45,43 @@ function afcHelper_init() {
 	}
 	form = '<div id="afcHelper_initialform">';
 	form += afcHelper_blanking();
-	form += '<h3>Reviewing ' + afcHelper_PageName + '</h3>' +
+	form += '<h3>Reviewing ' + afcHelper_PageName + '</h3>'
 	// beta script notice
 	// '<br/><h5>You are using the beta script! If you find any bugs, errors or have improvements, please comment at <a href="'+wgArticlePath.replace("$1", 'Wikipedia:WikiProject_Articles_for_creation/Helper script/Development_page')+'" title="Wikipedia:WikiProject Articles for creation/Helper script/Development page" target="_blank">Wikipedia:WikiProject Articles for creation/Helper script/Development page</a></h5>'+
-	'<input type="button" id="afcHelper_accept_button" name="afcHelper_accept_button" value="Accept" onclick="afcHelper_prompt(\'accept\')" style="border-radius:3px; background-color:#adfcad" />'+'<input type="button" id="afcHelper_decline_button" name="afcHelper_decline_button" value="Decline" onclick="afcHelper_prompt(\'decline\')" style="border-radius:3px; background-color:#ffcdd5" />'+'<input type="button" id="afcHelper_comment_button" name="afcHelper_comment_button" value="Comment" onclick="afcHelper_prompt(\'comment\')" style="border-radius:3px; background-color:#f3eba3" />';
-	var afc_re = /\{\{\s*afc submission\s*\|\s*[||h|r](?:\{\{[^\{\}]*\}\}|[^\}\{])*\}\}/i;
-	if (!afc_re.test(pagetext)) { // only display submit option if not currently submitted
-		form += '<input type="button" id="afcHelper_submit_button" name="afcHelper_submit_button" value="Submit" onclick="afcHelper_prompt(\'submit\')" style="border-radius:3px; background-color:#66ccff" />';
-	}
-	var afc_re = /\{\{\s*afc submission\s*\|\s*r\s*\|(?:\{\{[^\{\}]*\}\}|[^\}\{])*\}\}/gi;
-	if (afc_re.test(pagetext)) {
-		form += '<input type="button" id="afcHelper_unmark_button" name="afcHelper_unmark_button" value="Unmark as reviewing" onclick="afcHelper_act(\'unmark\')" style="border-radius:3px; background-color:#b1dae8" />';
+
+	var template_status_re =  /\{\{\s*afc submission\s*\|\s*(\S\s*)\s*\|/gi;
+	var template_status = template_status_re.exec(pagetext);
+	if (template_status == null) {
+		template_status = false; // if there is no template on page
 	} else {
+		template_status = template_status[1].toLowerCase()
+	}
+
+	if (template_status === "" || template_status === "r") {
+		form += '<input type="button" id="afcHelper_accept_button" name="afcHelper_accept_button" value="Accept" onclick="afcHelper_prompt(\'accept\')" style="border-radius:3px; background-color:#adfcad" />';
+		form += '<input type="button" id="afcHelper_decline_button" name="afcHelper_decline_button" value="Decline" onclick="afcHelper_prompt(\'decline\')" style="border-radius:3px; background-color:#ffcdd5" />';
+	}
+
+	if (template_status === "" || template_status === "r" || template_status === "d")
+		form += '<input type="button" id="afcHelper_comment_button" name="afcHelper_comment_button" value="Comment" onclick="afcHelper_prompt(\'comment\')" style="border-radius:3px; background-color:#f3eba3" />';
+
+	if (template_status === false || template_status === "t")
+		form += '<input type="button" id="afcHelper_submit_button" name="afcHelper_submit_button" value="Submit" onclick="afcHelper_prompt(\'submit\')" style="border-radius:3px; background-color:#66ccff" />';
+
+	if (template_status === "r") {
+		form += '<input type="button" id="afcHelper_unmark_button" name="afcHelper_unmark_button" value="Unmark as reviewing" onclick="afcHelper_act(\'unmark\')" style="border-radius:3px; background-color:#b1dae8" />';
+	} else if (template_status === "") {
 		form += '<input type="button" id="afcHelper_mark_button" name="afcHelper_mark_button" value="Mark as reviewing" onclick="afcHelper_prompt(\'mark\')" style="border-radius:3px; background-color:#b1dae8" />';
 	}
-	form += '<input type="button" id="afcHelper_misc_button" name="afcHelper_misc_button" value="Other options" onclick="afcHelper_prompt(\'misc\')" style="border-radius:3px; background-color:#d2d3cc" />' + '<div id="afcHelper_extra"></div>';
+
+	if (template_status === false || template_status === "" || template_status === "r" || template_status === "d" || template_status === "t")
+		form += '<input type="button" id="afcHelper_cleanup_button" name="afcHelper_cleanup_button" value="Clean the submission" onclick="afcHelper_act(\'cleanup\')" style="border-radius:3px; background-color:#d2d3cc" />';
+
+	form += '<div id="afcHelper_extra"></div>';
+
+	// !todo theo
+	// if (template_status === false) display [mark as draft] button
+
 	displayMessage(form);
 }
 
@@ -251,10 +273,6 @@ function afcHelper_prompt(type) {
 		}], "afcHelper_onChange(this)");
 		text += reasonSelect;
 		text += '<br /><label for="afcHelper_comments">Additional comments (optional, signature is automatically added): </label><textarea rows="3" cols="60" name="afcHelper_comments" id="afcHelper_comments"></textarea>' + '<label for="afcHelper_blank">Blank the submission (replace the content with {{<a href="' + wgArticlePath.replace("$1", 'Template:Afc_cleared') + '" title="Template:Afc cleared" target="_blank">afc cleared</a>}}):</label><input type="checkbox" name="afcHelper_blank" id="afcHelper_blank" onchange=afcHelper_trigger(\'afcHelper_extra_afccleared\') /><br/><div id="afcHelper_extra_afccleared" name="afcHelper_extra_afccleared" style="display:none"><label for="afcHelper_afccleared">Trigger the \'csd\' parameter and nominate the submission for CSD? (replace the content with {{<a href="' + wgArticlePath.replace("$1", 'Template:Afc_cleared') + '" title="Template:Afc cleared" target="_blank">afc cleared|csd</a>}}):</label><input type="checkbox" name="afcHelper_blank_csd" id="afcHelper_blank_csd" checked="checked" /><br/></div>' + '<label for="afcHelper_notify">Notify author:</label><input type="checkbox" onchange=afcHelper_trigger(\'afcHelper_notify_Teahouse\') name="afcHelper_notify" id="afcHelper_notify" checked="checked" /><br/>' + '<div id="afcHelper_notify_Teahouse"><label for="afcHelper_notify_Teahouse">Notify author about <a href="' + wgArticlePath.replace("$1", 'Wikipedia:Teahouse') + '" title="Wikipedia:Teahouse" target="_blank">Wikipedia:Teahouse</a> <small>(works only in combination with the normal notification)</small>:</label><input type="checkbox" name="afcHelper_Teahouse" id="afcHelper_Teahouse" /><br/></div><div id="afcHelper_extra_inline" name="afcHelper_extra_inline"></div><input type="button" id="afcHelper_prompt_button" name="afcHelper_prompt_button" value="Decline" onclick="afcHelper_act(\'decline\')" style="border-radius:3px; background-color:#ffcdd5" />';
-		$("#afcHelper_extra").html(text);
-	} else if (type === 'misc') {
-		var text = '<h3>Other options for ' + afcHelper_PageName + '</h3>' + '<input type="button" id="afcHelper_cleanup_button" name="afcHelper_cleanup_button" value="Clean the submission" onclick="afcHelper_act(\'cleanup\')" style="border-radius:3px; background-color:#d2d3cc" />' +
-		'<div id="afcHelper_extra"></div>';
 		$("#afcHelper_extra").html(text);
 	} else if (type === 'submit') {
 		var text = '<h3>Place a submission template on ' + afcHelper_PageName + '</h3><br />'+
