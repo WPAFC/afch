@@ -157,6 +157,9 @@ function afcHelper_prompt(type) {
 		}, {
 			label: 'ilc - BLP does not meet minimum inline citation requirements (WP:MINREF)',
 			value: 'ilc'
+		}, {
+			label: 'van - submission is vandalism, a negative unsourced BLP, or an attack page',
+			value: 'van'
 		},
 		// Merging
 		{
