@@ -846,8 +846,6 @@ function afcHelper_cleanup(text) {
 	text = text.replace(/https?:\/\/(en.wikipedia.org\/wiki|enwp.org)\/([^\s\<]+)/gi, "\[\[$2\]\]");
 	//remove boldings and big-tags from headlines; ignore level 1 headlines for not breaking URLs and other stuff!
 	text = text.replace(/[\s\n]*(={2,})\s*(?:\s*<big>|\s*''')*\s*(.*?)\s*(?:\s*<\/big>|\s*''')*\s*?(={2,})[\n\s]*/gi, "\n\n$1 $2 $1\n\n");
-	//TODO: Wikilink correct part #2
-	//text = text.replace(/\[\[\s*((?:\[\[[^\[\]]*\]\]|[^\]\[])*)\|\s*((?:\[\[[^\[\]]*\]\]|[^\]\[])*)\s*\]\]/gi, "then...\[\[$1\]\]");
 	// Run AutoEd automatically
 	var AutoEd_baseurl = '//en.wikipedia.org/w/index.php?action=raw&ctype=text/javascript&title=Wikipedia:AutoEd/';
 	//Import individual modules for use
