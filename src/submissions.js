@@ -45,16 +45,14 @@ function afcHelper_init() {
 	}
 	form = '<div id="afcHelper_initialform">';
 	form += afcHelper_blanking();
-	form += '<h3>Reviewing ' + afcHelper_PageName + '</h3>'
-	// beta script notice
-	// '<br/><h5>You are using the beta script! If you find any bugs, errors or have improvements, please comment at <a href="'+wgArticlePath.replace("$1", 'Wikipedia:WikiProject_Articles_for_creation/Helper script/Development_page')+'" title="Wikipedia:WikiProject Articles for creation/Helper script/Development page" target="_blank">Wikipedia:WikiProject Articles for creation/Helper script/Development page</a></h5>'+
-
+	form += '<h3>Reviewing ' + afcHelper_PageName + '</h3>';
 	var template_status_re =  /\{\{\s*afc submission\s*\|\s*(\S\s*)\s*\|/gi;
 	var template_status = template_status_re.exec(pagetext);
-	if (template_status == null) {
-		template_status = false; // if there is no template on page
-	} else {
+	if (template_status) {
 		template_status = template_status[1].toLowerCase()
+		if(template_status === "|") template_status = "";
+	} else {
+		template_status = false; // if there is no template on page
 	}
 
 	if (template_status === "" || template_status === "r") {
@@ -617,7 +615,6 @@ function afcHelper_act(action) {
 					usertext += "|sig=yes\}\}";
 
 					if (teahouse) {
-						//TODO: add a redirect check similar to editpage!
 						document.getElementById('afcHelper_status').innerHTML += '<div id="afcHelper_get_teahouse"></div>';
 						$("#afcHelper_get_teahouse").html('<li id="afcHelper_get_teahouse">Checking for existing Teahouse Invitation for <a href="' + wgArticlePath.replace("$1", encodeURI('User_talk:' + username)) + '" title="User talk:' + username + '">User talk:' + username + '</a></li>');
 						var req = sajax_init_object();
@@ -630,7 +627,16 @@ function afcHelper_act(action) {
 						var response = eval('(' + req.responseText + ')');
 						var pageid = response['query']['pageids'][0];
 						var foundTH = 0;
-						if (pageid !== "-1") {
+						if (pageid !== "-1") {/*
+							var oldusername = response['query']['redirects'][0]['from'];
+							var newusername = response['query']['redirects'][0]['to'];
+							if ((typeof(oldusername) !== 'undefined') && (typeof(newusername) !== 'undefined') && (oldusername != newusername)){
+								document.getElementById('afcHelper_get_teahouse').innerHTML += '<li id="afcHelper_get_teahouse2">User talk page is redirect to <a href="' + wgArticlePath.replace("$1", encodeURI('User_talk:' + newusername)) + '" title="User talk:' + newusername + '">User talk:' + newusername + '</a> - checking there for TeaHouse invitations.</li>';
+								params = "action=query&prop=categories&format=json&indexpageids=1&titles=User_talk:" + encodeURIComponent(newusername);
+								req.send(params);
+								response = eval('(' + req.responseText + ')');
+								pageid = response['query']['pageids'][0];
+							}*/
 							var pagecats = new Array();
 							pagecats = response['query']['pages'][pageid]['categories'];
 							if (typeof pagecats !== 'undefined') {
