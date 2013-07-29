@@ -768,7 +768,7 @@ function afcHelper_act(action) {
 			alert("Unable to locate AFC submission template, aborting...");
 			return;
 		}
-		pagetext = pagetext.replace(afc_re, "$1\|r\|$3");
+		pagetext = pagetext.replace(afc_re, "$1r\|$3");
 		afcHelper_editPage(afcHelper_PageName, pagetext, token, "Marking [[Wikipedia:Articles for creation]] submission as being reviewed", false);
 	} else if (action === 'unmark') {
 		displayMessage('<ul id="afcHelper_status"></ul><ul id="afcHelper_finish"></ul>');
