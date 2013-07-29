@@ -287,7 +287,11 @@ function afcHelper_prompt(type) {
 			disabled: true
 		}], "afcHelper_onChange(this)");
 		text += reasonSelect;
-		text += '<br /><label for="afcHelper_comments">Additional comments (optional, signature is automatically added): </label><textarea rows="3" cols="60" name="afcHelper_comments" id="afcHelper_comments"></textarea>' + '<label for="afcHelper_blank">Blank the submission (replace the content with {{<a href="' + wgArticlePath.replace("$1", 'Template:Afc_cleared') + '" title="Template:Afc cleared" target="_blank">afc cleared</a>}}):</label><input type="checkbox" name="afcHelper_blank" id="afcHelper_blank" onchange=afcHelper_trigger(\'afcHelper_extra_afccleared\') /><br/><div id="afcHelper_extra_afccleared" name="afcHelper_extra_afccleared" style="display:none"><label for="afcHelper_afccleared">Trigger the \'csd\' parameter and nominate the submission for CSD? (replace the content with {{<a href="' + wgArticlePath.replace("$1", 'Template:Afc_cleared') + '" title="Template:Afc cleared" target="_blank">afc cleared|csd</a>}}):</label><input type="checkbox" name="afcHelper_blank_csd" id="afcHelper_blank_csd" checked="checked" /><br/></div>' + '<label for="afcHelper_notify">Notify author:</label><input type="checkbox" onchange=afcHelper_trigger(\'afcHelper_notify_Teahouse\') name="afcHelper_notify" id="afcHelper_notify" checked="checked" /><br/>' + '<div id="afcHelper_notify_Teahouse"><label for="afcHelper_notify_Teahouse">Notify author about <a href="' + wgArticlePath.replace("$1", 'Wikipedia:Teahouse') + '" title="Wikipedia:Teahouse" target="_blank">Wikipedia:Teahouse</a>:</label><input type="checkbox" name="afcHelper_Teahouse" id="afcHelper_Teahouse" /><br/></div><div id="afcHelper_extra_inline" name="afcHelper_extra_inline"></div><input type="button" id="afcHelper_prompt_button" name="afcHelper_prompt_button" value="Decline" onclick="afcHelper_act(\'decline\')" style="border-radius:3px; background-color:#ffcdd5" />';
+		text += '<br /><label for="afcHelper_comments">Additional comments (optional, signature is automatically added): </label><textarea rows="3" cols="60" name="afcHelper_comments" id="afcHelper_comments"></textarea>'
+			+ '<label for="afcHelper_blank">Blank the submission (replace the content with {{<a href="' + wgArticlePath.replace("$1", 'Template:Afc_cleared') + '" title="Template:Afc cleared" target="_blank">afc cleared</a>}}):</label><input type="checkbox" name="afcHelper_blank" id="afcHelper_blank" onchange=afcHelper_trigger(\'afcHelper_extra_afccleared\') /><br/>'
+			+ '<div id="afcHelper_extra_afccleared" name="afcHelper_extra_afccleared" style="display:none"><label for="afcHelper_afccleared">Trigger the \'csd\' parameter and nominate the submission for CSD? (replace the content with {{<a href="' + wgArticlePath.replace("$1", 'Template:Afc_cleared') + '" title="Template:Afc cleared" target="_blank">afc cleared|csd</a>}}):</label><input type="checkbox" name="afcHelper_blank_csd" id="afcHelper_blank_csd" checked="checked" /><br/></div>'
+		 	+ '<label for="afcHelper_notify">Notify author:</label><input type="checkbox" onchange=afcHelper_trigger(\'afcHelper_notify_Teahouse\') name="afcHelper_notify" id="afcHelper_notify" checked="checked" /><br/>'
+		 	+ '<div id="afcHelper_notify_Teahouse"><label for="afcHelper_notify_Teahouse">Notify author about <a href="' + wgArticlePath.replace("$1", 'Wikipedia:Teahouse') + '" title="Wikipedia:Teahouse" target="_blank">Wikipedia:Teahouse</a>:</label><input type="checkbox" name="afcHelper_Teahouse" id="afcHelper_Teahouse" /><br/></div><div id="afcHelper_extra_inline" name="afcHelper_extra_inline"></div><input type="button" id="afcHelper_prompt_button" name="afcHelper_prompt_button" value="Decline" onclick="afcHelper_act(\'decline\')" style="border-radius:3px; background-color:#ffcdd5" />';
 		$("#afcHelper_extra").html(text);
 	} else if (type === 'submit') {
 		var text = '<h3>Place a submission template on ' + afcHelper_PageName + '</h3><br />'+
@@ -880,9 +884,10 @@ function afcHelper_onChange(select) {
 	if (value === 'cv') {
 		$("#afcHelper_blank").attr("checked", "checked");
 		afcHelper_turnvisible("afcHelper_extra_afccleared", true);
+		afcHelper_turnvisible("afcHelper_afccleared", true);
 		// But don't if it's just a BLP vio
 	} else if (value === 'blp') {
-		$("#afcHelper_blank").attr("checked", false); // XXX: DOMobj.setAttribute() requires 2 args, so guessing here :S
+		$("#afcHelper_blank").attr("checked", false); // TODO: DOMobj.setAttribute() requires 2 args, so guessing here :S
 		afcHelper_turnvisible("afcHelper_afccleared", false);
 		afcHelper_turnvisible("afcHelper_extra_afccleared", true);
 	} else {
