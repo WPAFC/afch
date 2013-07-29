@@ -154,24 +154,28 @@ function afcHelper_prompt(type) {
 	} else if (type === 'decline') {
 		var text = '<h3>Declining ' + afcHelper_PageName + '</h3>' + '<label for="afcHelper_reason">Reason for ' + type + ': </label>';
 		var reasonSelect = afcHelper_generateSelect("afcHelper_reason",
-		// Duplicate articles
-		[{
-			label: 'exists - Submission is duplicated by another article already in mainspace',
-			value: 'exists'
+		[ {
+			label: 'Duplicate articles',
+			value: 'Duplicate articles',
+			disabled: true
 		}, {
 			label: 'dup - Submission is a duplicate of another existing submission',
 			value: 'dup'
-		},
-		// Test edits
-		{
+		}, {
+			label: 'Test edits',
+			value: 'Test edits',
+			disabled: true
+		},{
 			label: 'blank - Submission is blank',
 			value: 'blank'
 		}, {
 			label: 'test - Submission appears to be a test edit (please ensure that it is not a test of a tool before declining)',
 			value: 'test'
-		},
-		// BLP
-		{
+		}, {
+			label: 'BLP/Vandalism',
+			value: 'BLP/Vandalism',
+			disabled: true
+		},{
 			label: 'blp - Blatant violation of BLP policies (please blank the page)',
 			value: 'blp'
 		}, {
@@ -180,22 +184,28 @@ function afcHelper_prompt(type) {
 		}, {
 			label: 'van - submission is vandalism, a negative unsourced BLP, or an attack page',
 			value: 'van'
-		},
-		// Merging
-		{
+		}, {
+			label: 'Merging',
+			value: 'Merging',
+			disabled: true
+		},{
 			label: 'mergeto - Submission should be merged into another article (type a comment with a link to the article below in the comment box)',
 			value: 'mergeto'
-		},
-		// Blatant [[WP:NOT]] violations
-		{
+		}, {
+			label: 'Blatant [[WP:NOT]] violations',
+			value: 'Blatant [[WP:NOT]] violations',
+			disabled: true
+		},{
 			label: 'joke - Submission appears to be a joke',
 			value: 'joke'
 		}, {
 			label: 'not - Submission is covered under "What Wikipedia is not"',
 			value: 'not'
-		},
-		// Prose issues
-		{
+		}, {
+			label: 'Prose issues',
+			value: 'Prose issues',
+			disabled: true
+		},{
 			label: 'lang - Submission is not in English',
 			value: 'lang'
 		}, {
@@ -225,9 +235,11 @@ function afcHelper_prompt(type) {
 		}, {
 			label: 'npov - Submission does not read in an encyclopedic tone',
 			value: 'npov'
-		},
-		// Notability
-		{
+		}, {
+			label: 'Notability',
+			value: 'Notability',
+			disabled: true
+		},{
 			label: 'neo - Submission is  about a neologisim that does not meet notability guidelines',
 			value: 'neo'
 		}, {
@@ -254,20 +266,25 @@ function afcHelper_prompt(type) {
 		}, {
 			label: 'nn - Submission does not meet general notability guidelines (use a more specific reason if possible)',
 			value: 'nn'
-		},
-		// Sourcing
-		{
+		}, {
+			label: 'Sourcing',
+			value: 'Sourcing',
+			disabled: true
+		},{
 			label: 'v - Submission is improperly sourced',
 			value: 'v'
-		},
-		// Custom
-		{
+		}, {
+			label: 'Custom',
+			value: 'Custom',
+			disabled: true
+		},{
 			label: 'custom - Enter a decline reason in the box below, linking to relevent policies',
 			value: 'reason'
 		}, {
 			label: 'Select a reason for declining',
 			selected: true,
-			value: 'reason'
+			value: 'reason',
+			disabled: true
 		}], "afcHelper_onChange(this)");
 		text += reasonSelect;
 		text += '<br /><label for="afcHelper_comments">Additional comments (optional, signature is automatically added): </label><textarea rows="3" cols="60" name="afcHelper_comments" id="afcHelper_comments"></textarea>' + '<label for="afcHelper_blank">Blank the submission (replace the content with {{<a href="' + wgArticlePath.replace("$1", 'Template:Afc_cleared') + '" title="Template:Afc cleared" target="_blank">afc cleared</a>}}):</label><input type="checkbox" name="afcHelper_blank" id="afcHelper_blank" onchange=afcHelper_trigger(\'afcHelper_extra_afccleared\') /><br/><div id="afcHelper_extra_afccleared" name="afcHelper_extra_afccleared" style="display:none"><label for="afcHelper_afccleared">Trigger the \'csd\' parameter and nominate the submission for CSD? (replace the content with {{<a href="' + wgArticlePath.replace("$1", 'Template:Afc_cleared') + '" title="Template:Afc cleared" target="_blank">afc cleared|csd</a>}}):</label><input type="checkbox" name="afcHelper_blank_csd" id="afcHelper_blank_csd" checked="checked" /><br/></div>' + '<label for="afcHelper_notify">Notify author:</label><input type="checkbox" onchange=afcHelper_trigger(\'afcHelper_notify_Teahouse\') name="afcHelper_notify" id="afcHelper_notify" checked="checked" /><br/>' + '<div id="afcHelper_notify_Teahouse"><label for="afcHelper_notify_Teahouse">Notify author about <a href="' + wgArticlePath.replace("$1", 'Wikipedia:Teahouse') + '" title="Wikipedia:Teahouse" target="_blank">Wikipedia:Teahouse</a> <small>(works only in combination with the normal notification)</small>:</label><input type="checkbox" name="afcHelper_Teahouse" id="afcHelper_Teahouse" /><br/></div><div id="afcHelper_extra_inline" name="afcHelper_extra_inline"></div><input type="button" id="afcHelper_prompt_button" name="afcHelper_prompt_button" value="Decline" onclick="afcHelper_act(\'decline\')" style="border-radius:3px; background-color:#ffcdd5" />';
@@ -530,7 +547,7 @@ function afcHelper_act(action) {
 				afcHelper_editPage(newtitle, pagetext, token, "Cleanup following [[Wikipedia:Articles for creation]] creation", false);
 			};
 		var token = mw.user.tokens.get('editToken');
-		afcHelper_movePage(afcHelper_PageName, newtitle, token, 'Created via \[\[WP:AFC|Articles for creation\]\] (\[\[WP:WPAFC|you can help!\]\])', callback);
+		afcHelper_movePage(afcHelper_PageName, newtitle, token, 'Created via \[\[WP:AFC|Articles for creation\]\] (\[\[WP:WPAFC|you can help!\]\])', callback, true);
 	} else if (action === 'decline') {
 		var code = $("#afcHelper_reason").val();
 		var reasontext = afcHelper_reasonhash[code];
@@ -730,6 +747,8 @@ function afcHelper_act(action) {
 		}
 	} else if (action === 'mark') {
 		var comment = $("#afcHelper_comments").val();
+		if (comment == undefined) comment = window.overwrite_comment; // This handles the overwrite_redirect scenario
+
 		displayMessage('<ul id="afcHelper_status"></ul><ul id="afcHelper_finish"></ul>');
 		document.getElementById('afcHelper_finish').innerHTML += '<span id="afcHelper_finished_wrapper"><span id="afcHelper_finished_main" style="display:none"><li id="afcHelper_done"><b>Done (<a href="' + wgArticlePath.replace("$1", encodeURI(afcHelper_PageName)) + '?action=purge" title="' + afcHelper_PageName + '">Reload page</a>)</b></li></span></span>';
 		var token = mw.user.tokens.get('editToken');
@@ -755,7 +774,7 @@ function afcHelper_act(action) {
 			alert("Unable to locate AFC submission template, aborting...");
 			return;
 		}
-		pagetext = pagetext.replace(afc_re, "$1\|r\|$3");
+		pagetext = pagetext.replace(afc_re, "$1r\|$3");
 		afcHelper_editPage(afcHelper_PageName, pagetext, token, "Marking [[Wikipedia:Articles for creation]] submission as being reviewed", false);
 	} else if (action === 'unmark') {
 		displayMessage('<ul id="afcHelper_status"></ul><ul id="afcHelper_finish"></ul>');
@@ -780,7 +799,7 @@ function afcHelper_act(action) {
 	document.getElementById('afcHelper_finished_main').innerHTML += '<li id="afcHelper_load_Cat:Pend"><b>(<a href="' + wgArticlePath.replace("$1", encodeURI('Category:Pending AfC submissions')) + '" title="Category:Pending AfC submissions">Load Category:Pending AfC submissions</a>)</b></li>';
 }
 
-function afcHelper_movePage(oldtitle, newtitle, token, summary, callback) {
+function afcHelper_movePage(oldtitle, newtitle, token, summary, callback, overwrite_redirect) {
 	summary += afcHelper_advert;
 	$("#afcHelper_finished_wrapper").html('<span id="afcHelper_AJAX_finished_' + afcHelper_AJAXnumber + '" style="display:none">' + $("#afcHelper_finished_wrapper").html() + '</span>');
 	var func_id = afcHelper_AJAXnumber;
@@ -802,7 +821,29 @@ function afcHelper_movePage(oldtitle, newtitle, token, summary, callback) {
 					document.getElementById('afcHelper_move' + escape(oldtitle)).innerHTML = 'Moved <a href="' + wgArticlePath.replace("$1", encodeURI(oldtitle)) + '" title="' + oldtitle + '">' + oldtitle + '</a>';
 					error = false;
 				} else {
-					document.getElementById('afcHelper_move' + escape(oldtitle)).innerHTML = '<div style="color:red"><b>Move failed on <a href="' + wgArticlePath.replace("$1", encodeURI(oldtitle)) + '" title="' + oldtitle + '">' + oldtitle + '</a></b></div>. Error info:' + response['error']['code'] + ' : ' + response['error']['info'];
+					if (overwrite_redirect) {
+						if (response['error']['code'] == "articleexists") {
+							text = afcHelper_getPageText(newtitle);
+							if (text.search(/#redirect\s*\[\[/gi) != -1) { // Should probably use &redirects= to check if it's a redirect, rather than this hack...but this seemed simpler and more concise, rather than yet another API call
+								// !todo check if a user is an admin and give them one-click delete
+								del = confirm("The target title, "+newtitle+", is a redirect. Would you like to automatically tag it for deletion under {{db-move}} to make way for the approved submission?");
+								if (del) {
+									rat = "{{db-move|1="+oldtitle+"|2=redirect preventing move of accepted [[WP:AFC|article submission]].}}\n";
+									afcHelper_editPage(newtitle, rat+text, mw.user.tokens.get('editToken'), "Tagging redirect in the way of [[Wikipedia:Articles for creation]] submission for deletion under {{[[Template:Db-move|db-move]]}}");
+									window.overwrite_comment = 'This article submission has been approved, but a [[WP:REDIRECT|redirect]] is blocking it from being moved into the article space. An administrator should delete the redirect and move the article within the next few days. Thanks for your patience!';
+									document.getElementById('afcHelper_move' + escape(oldtitle)).innerHTML = '<div id="afcHelper_edit' + escape(oldtitle)+'"></div>'; // to allow for messages from the editor
+									afcHelper_act('mark') // We mark the submission as "under review"
+									document.getElementById('afcHelper_move' + escape(oldtitle)).innerHTML += '<div><b>Successfully tagged redirect page <a href="' + wgArticlePath.replace("$1", encodeURI(newtitle)) + '" title="' + newtitle + '">' + newtitle + '</a> for deletion</b> under {{db-move}}. The article should be moved by the administrator who deletes the redirect.</div>';
+								} else {
+									document.getElementById('afcHelper_move' + escape(oldtitle)).innerHTML = '<div style="color:red"><b>Move failed on <a href="' + wgArticlePath.replace("$1", encodeURI(oldtitle)) + '" title="' + oldtitle + '">' + oldtitle + '</a></b></div>. Error info: User canceled automatically tagging the target for deletion';
+								}
+							} else {
+								document.getElementById('afcHelper_move' + escape(oldtitle)).innerHTML = '<div style="color:red"><b>Move failed on <a href="' + wgArticlePath.replace("$1", encodeURI(oldtitle)) + '" title="' + oldtitle + '">' + oldtitle + '</a></b></div>. Error info:' + response['error']['code'] + ' : ' + response['error']['info'];
+							}
+						}
+					} else {
+						document.getElementById('afcHelper_move' + escape(oldtitle)).innerHTML = '<div style="color:red"><b>Move failed on <a href="' + wgArticlePath.replace("$1", encodeURI(oldtitle)) + '" title="' + oldtitle + '">' + oldtitle + '</a></b></div>. Error info:' + response['error']['code'] + ' : ' + response['error']['info'];
+					}
 				}
 			} catch (err) {
 				document.getElementById('afcHelper_move' + escape(oldtitle)).innerHTML = '<div style="color:red"><b>Move failed on <a href="' + wgArticlePath.replace("$1", encodeURI(oldtitle)) + '" title="' + oldtitle + '">' + oldtitle + '</a></b></div>';
