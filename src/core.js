@@ -8,6 +8,7 @@ function afcHelper_generateSelect(title, options, onchange) {
 		var o = options[i];
 		text += '<option value="' + afcHelper_escapeHtmlChars(o.value) + '" ';
 		if (o.selected) text += 'selected="selected" ';
+		if (o.disabled) text += 'disabled ';
 		text += '>' + o.label + '</option>';
 	}
 	text += "</select>";

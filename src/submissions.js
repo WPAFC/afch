@@ -156,24 +156,28 @@ function afcHelper_prompt(type) {
 	} else if (type === 'decline') {
 		var text = '<h3>Declining ' + afcHelper_PageName + '</h3>' + '<label for="afcHelper_reason">Reason for ' + type + ': </label>';
 		var reasonSelect = afcHelper_generateSelect("afcHelper_reason",
-		// Duplicate articles
-		[{
-			label: 'exists - Submission is duplicated by another article already in mainspace',
-			value: 'exists'
+		[ {
+			label: 'Duplicate articles',
+			value: 'Duplicate articles',
+			disabled: true
 		}, {
 			label: 'dup - Submission is a duplicate of another existing submission',
 			value: 'dup'
-		},
-		// Test edits
-		{
+		}, {
+			label: 'Test edits',
+			value: 'Test edits',
+			disabled: true
+		},{
 			label: 'blank - Submission is blank',
 			value: 'blank'
 		}, {
 			label: 'test - Submission appears to be a test edit (please ensure that it is not a test of a tool before declining)',
 			value: 'test'
-		},
-		// BLP
-		{
+		}, {
+			label: 'BLP/Vandalism',
+			value: 'BLP/Vandalism',
+			disabled: true
+		},{
 			label: 'blp - Blatant violation of BLP policies (please blank the page)',
 			value: 'blp'
 		}, {
@@ -182,22 +186,28 @@ function afcHelper_prompt(type) {
 		}, {
 			label: 'van - submission is vandalism, a negative unsourced BLP, or an attack page',
 			value: 'van'
-		},
-		// Merging
-		{
+		}, {
+			label: 'Merging',
+			value: 'Merging',
+			disabled: true
+		},{
 			label: 'mergeto - Submission should be merged into another article (type a comment with a link to the article below in the comment box)',
 			value: 'mergeto'
-		},
-		// Blatant [[WP:NOT]] violations
-		{
+		}, {
+			label: 'Blatant [[WP:NOT]] violations',
+			value: 'Blatant [[WP:NOT]] violations',
+			disabled: true
+		},{
 			label: 'joke - Submission appears to be a joke',
 			value: 'joke'
 		}, {
 			label: 'not - Submission is covered under "What Wikipedia is not"',
 			value: 'not'
-		},
-		// Prose issues
-		{
+		}, {
+			label: 'Prose issues',
+			value: 'Prose issues',
+			disabled: true
+		},{
 			label: 'lang - Submission is not in English',
 			value: 'lang'
 		}, {
@@ -227,9 +237,11 @@ function afcHelper_prompt(type) {
 		}, {
 			label: 'npov - Submission does not read in an encyclopedic tone',
 			value: 'npov'
-		},
-		// Notability
-		{
+		}, {
+			label: 'Notability',
+			value: 'Notability',
+			disabled: true
+		},{
 			label: 'neo - Submission is  about a neologisim that does not meet notability guidelines',
 			value: 'neo'
 		}, {
@@ -256,20 +268,25 @@ function afcHelper_prompt(type) {
 		}, {
 			label: 'nn - Submission does not meet general notability guidelines (use a more specific reason if possible)',
 			value: 'nn'
-		},
-		// Sourcing
-		{
+		}, {
+			label: 'Sourcing',
+			value: 'Sourcing',
+			disabled: true
+		},{
 			label: 'v - Submission is improperly sourced',
 			value: 'v'
-		},
-		// Custom
-		{
+		}, {
+			label: 'Custom',
+			value: 'Custom',
+			disabled: true
+		},{
 			label: 'custom - Enter a decline reason in the box below, linking to relevent policies',
 			value: 'reason'
 		}, {
 			label: 'Select a reason for declining',
 			selected: true,
-			value: 'reason'
+			value: 'reason',
+			disabled: true
 		}], "afcHelper_onChange(this)");
 		text += reasonSelect;
 		text += '<br /><label for="afcHelper_comments">Additional comments (optional, signature is automatically added): </label><textarea rows="3" cols="60" name="afcHelper_comments" id="afcHelper_comments"></textarea>' + '<label for="afcHelper_blank">Blank the submission (replace the content with {{<a href="' + wgArticlePath.replace("$1", 'Template:Afc_cleared') + '" title="Template:Afc cleared" target="_blank">afc cleared</a>}}):</label><input type="checkbox" name="afcHelper_blank" id="afcHelper_blank" onchange=afcHelper_trigger(\'afcHelper_extra_afccleared\') /><br/><div id="afcHelper_extra_afccleared" name="afcHelper_extra_afccleared" style="display:none"><label for="afcHelper_afccleared">Trigger the \'csd\' parameter and nominate the submission for CSD? (replace the content with {{<a href="' + wgArticlePath.replace("$1", 'Template:Afc_cleared') + '" title="Template:Afc cleared" target="_blank">afc cleared|csd</a>}}):</label><input type="checkbox" name="afcHelper_blank_csd" id="afcHelper_blank_csd" checked="checked" /><br/></div>' + '<label for="afcHelper_notify">Notify author:</label><input type="checkbox" onchange=afcHelper_trigger(\'afcHelper_notify_Teahouse\') name="afcHelper_notify" id="afcHelper_notify" checked="checked" /><br/>' + '<div id="afcHelper_notify_Teahouse"><label for="afcHelper_notify_Teahouse">Notify author about <a href="' + wgArticlePath.replace("$1", 'Wikipedia:Teahouse') + '" title="Wikipedia:Teahouse" target="_blank">Wikipedia:Teahouse</a> <small>(works only in combination with the normal notification)</small>:</label><input type="checkbox" name="afcHelper_Teahouse" id="afcHelper_Teahouse" /><br/></div><div id="afcHelper_extra_inline" name="afcHelper_extra_inline"></div><input type="button" id="afcHelper_prompt_button" name="afcHelper_prompt_button" value="Decline" onclick="afcHelper_act(\'decline\')" style="border-radius:3px; background-color:#ffcdd5" />';
