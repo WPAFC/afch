@@ -49,7 +49,7 @@ function afcHelper_init() {
 	// beta script notice
 	// '<br/><h5>You are using the beta script! If you find any bugs, errors or have improvements, please comment at <a href="'+wgArticlePath.replace("$1", 'Wikipedia:WikiProject_Articles_for_creation/Helper script/Development_page')+'" title="Wikipedia:WikiProject Articles for creation/Helper script/Development page" target="_blank">Wikipedia:WikiProject Articles for creation/Helper script/Development page</a></h5>'+
 
-	var template_status_re =  /\{\{\s*afc submission\s*\|\s*(\S\s*)\s*\|/gi;
+	var template_status_re =  /\{\{\s*afc submission\s*\|\s*([^\|]*)\s*\|/gi;
 	var template_status = template_status_re.exec(pagetext);
 	if (template_status == null) {
 		template_status = false; // if there is no template on page
