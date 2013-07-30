@@ -78,7 +78,7 @@ function afcHelper_init() {
 	if (template_status === false || template_status === "" || template_status === "r" || template_status === "d" || template_status === "t")
 		form += '<input type="button" id="afcHelper_cleanup_button" name="afcHelper_cleanup_button" value="Clean the submission" onclick="afcHelper_act(\'cleanup\')" style="border-radius:3px; background-color:#d2d3cc" />';
 
-	if (template_status === "d" && g13_eligible(afcHelper_PageName))
+	if (template_status === "d" && afcHelper_g13_eligible(afcHelper_PageName))
 		form += '<input type="button" id="afcHelper_g13_button" name="afcHelper_g13_button" value="Tag the submission for G13 speedy deletion" onclick="afcHelper_act(\'g13\')" style="border-radius:3px; background-color:#ff3333" />';
 
 	form += '<div id="afcHelper_extra"></div>';
@@ -1178,7 +1178,7 @@ function afcHelper_trigger(type) {
 }
 
 //function to check if the submission is g13 eligible -- only checks timestamp
-function g13_eligible(title) {
+function afcHelper_g13_eligible(title) {
 	var params = "action=query&prop=revisions&rvprop=timestamp&format=json&indexpageids=1&titles=" + encodeURIComponent(title);
 	var req = sajax_init_object();
 	req.open("POST", wgScriptPath + "/api.php", false);
@@ -1188,13 +1188,27 @@ function g13_eligible(title) {
 	req.send(params);
 	var response = eval('(' + req.responseText + ')');
 	pageid = response['query']['pageids'][0];
-	timestamp = response['query']['pages'][pageid]['revisions'][0]['timestamp']
+	timestamp = response['query']['pages'][pageid]['revisions'][0]['timestamp'];
 	var SIX_MONTHS = 15778500000; // six months in milliseconds, gracias google
 	var lastedited = new Date(timestamp);
 	if (((new Date) - lastedited) > SIX_MONTHS)
 		return true;
 	else
 		return false;
+}
+
+function afcHelper_page_creator(title) {
+	var params = "action=query&prop=revisions&rvprop=user&format=json&rvdir=newer&rvlimit=1&indexpageids=1&titles=" + encodeURIComponent(title);
+	var req = sajax_init_object();
+	req.open("POST", wgScriptPath + "/api.php", false);
+	req.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+	req.setRequestHeader("Content-length", params.length);
+	req.setRequestHeader("Connection", "close");
+	req.send(params);
+	var response = eval('(' + req.responseText + ')');
+	pageid = response['query']['pageids'][0];
+	user = response['query']['pages'][pageid]['revisions'][0]['user'];
+	return user;
 }
 
 function afcHelper_turnvisible(type, bool) {
