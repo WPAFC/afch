@@ -78,7 +78,7 @@ function afcHelper_ffu_init() {
 			}
 			afcHelper_ffuSubmissions.push(submission);
 		} else {
-			// if a submission has been "done" already, maketh it nulleth
+			// if a submission has been "done" already, kill it with fire
 			var sub = {
 				type: 'done-ffu',
 			};
@@ -197,7 +197,7 @@ function afcHelper_ffu_onActionChange(id) {
 			label: 'Lack of response',
 			value: 'lackof'
 		}, {
-			label: 'Broken/invalid URL',
+			label: 'Broken or invalid URL',
 			value: 'badlink'
 		}, {
 			label: 'Custom - reason below',
@@ -209,7 +209,7 @@ function afcHelper_ffu_onActionChange(id) {
 			label: 'On hold (generic)',
 			value: 'h'
 		}, {
-			label: 'Article is at AFD',
+			label: 'Article is at AfD',
 			value: 'afd'
 		}, {
 			label: 'No URL',
@@ -223,7 +223,7 @@ function afcHelper_ffu_onActionChange(id) {
 			label: 'License\'s link provides unsuitable license',
 			value: 'flickr'
 		}, {
-			label: 'Please upload the image at Commons on your own',
+			label: 'Please upload the image at Wikimedia Commons on your own',
 			value: 'commons'
 		}, {
 			label: 'Non-free rationale needed',
@@ -381,7 +381,7 @@ function add_review_links() {
 	sectionHeaders.each(function(index, element) {
 		var not_archived = $(element).next().html().indexOf('This is an archived discussion.') == -1;
 		if (index > 0) // Hack so we don't add display-messsage inside the TOC
-		var idtitle = "display-message" + (index - 1);
+			var idtitle = "display-message" + (index - 1);
 		$('<div id="' + idtitle + '" style="display:none;"></div>').insertAfter(element);
 		var editSectionLink = $(element).children(".mw-editsection");
 		if ((editSectionLink.length > 0) && (not_archived)) {
