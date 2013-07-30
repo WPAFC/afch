@@ -33,7 +33,7 @@ var afcHelper_reasonhash = {
 	'film': 'subject appears to be a non-notable film',
 	'corp': 'subject appears to be a non-notable company or organization',
 	'bio': 'subject appears to be a non-notable person',
-	'afd': 'subject previously deleted through the Articles for Deletion process',
+	'afd': 'subject previously deleted and prevented from recreation (SALTed)',
 	'ilc': 'submission does not contain minimum citations',
 	'reason': ''
 };
@@ -168,7 +168,7 @@ function afcHelper_prompt(type) {
 			label: 'Test edits',
 			value: 'Test edits',
 			disabled: true
-		},{
+		}, {
 			label: 'blank - Submission is blank',
 			value: 'blank'
 		}, {
@@ -178,7 +178,7 @@ function afcHelper_prompt(type) {
 			label: 'BLP/Vandalism',
 			value: 'BLP/Vandalism',
 			disabled: true
-		},{
+		}, {
 			label: 'blp - Blatant violation of BLP policies (please blank the page)',
 			value: 'blp'
 		}, {
@@ -191,14 +191,14 @@ function afcHelper_prompt(type) {
 			label: 'Merging',
 			value: 'Merging',
 			disabled: true
-		},{
+		}, {
 			label: 'mergeto - Submission should be merged into another article (type a comment with a link to the article below in the comment box)',
 			value: 'mergeto'
 		}, {
 			label: 'Blatant [[WP:NOT]] violations',
 			value: 'Blatant [[WP:NOT]] violations',
 			disabled: true
-		},{
+		}, {
 			label: 'joke - Submission appears to be a joke',
 			value: 'joke'
 		}, {
@@ -208,7 +208,7 @@ function afcHelper_prompt(type) {
 			label: 'Prose issues',
 			value: 'Prose issues',
 			disabled: true
-		},{
+		}, {
 			label: 'lang - Submission is not in English',
 			value: 'lang'
 		}, {
@@ -242,7 +242,7 @@ function afcHelper_prompt(type) {
 			label: 'Notability',
 			value: 'Notability',
 			disabled: true
-		},{
+		}, {
 			label: 'neo - Submission is  about a neologisim that does not meet notability guidelines',
 			value: 'neo'
 		}, {
@@ -273,14 +273,17 @@ function afcHelper_prompt(type) {
 			label: 'Sourcing',
 			value: 'Sourcing',
 			disabled: true
-		},{
+		}, {
 			label: 'v - Submission is improperly sourced',
 			value: 'v'
 		}, {
-			label: 'Custom',
-			value: 'Custom',
+			label: 'Other',
+			value: 'Other',
 			disabled: true
-		},{
+		}, {
+			label: 'afd - Article was previously deleted and prevented from recreation (SALTed)',
+			value: 'afd'
+		}, {
 			label: 'custom - Enter a decline reason in the box below, linking to relevent policies',
 			value: 'reason'
 		}, {
@@ -922,7 +925,7 @@ function afcHelper_onChange(select) {
 		afcHelper_turnvisible("afcHelper_extra_afccleared", true);
 		afcHelper_turnvisible("afcHelper_afccleared", true);
 		// But don't if it's just a BLP vio
-	} else if (value === 'blp') {
+	} else if (value === 'blp' || value === 'van') {
 		$("#afcHelper_blank").attr("checked", false); // TODO: DOMobj.setAttribute() requires 2 args, so guessing here :S
 		afcHelper_turnvisible("afcHelper_afccleared", false);
 		afcHelper_turnvisible("afcHelper_extra_afccleared", true);
