@@ -326,10 +326,38 @@ function afcHelper_act(action) {
 		var token = mw.user.tokens.get('editToken');
 		afcHelper_editPage(afcHelper_PageName, newtext, token, "Tagging [[Wikipedia:Articles for creation]] draft", false);
 	} else if (action === 'g13') {
-		alert('tagging for g13...');
-		// !todo do stuff
+		displayMessage('<ul id="afcHelper_status"></ul><ul id="afcHelper_finish"></ul>');
+		document.getElementById('afcHelper_finish').innerHTML += '<span id="afcHelper_finished_wrapper"><span id="afcHelper_finished_main" style="display:none"><li id="afcHelper_done"><b>Done (<a href="' + wgArticlePath.replace("$1", encodeURI(afcHelper_PageName)) + '?action=purge" title="' + afcHelper_PageName + '">Reload page</a>)</b></li></span></span>';
 		// tag page with "{{db-g13}}"
-		// notify creator with "{{subst:db-afc-notice|"+afcHelper_PageName+"}}"
+		newtext = "{{db-g13}}\n" + pagetext;
+		var token = mw.user.tokens.get('editToken');
+		afcHelper_editPage(afcHelper_PageName, newtext, token, "Tagging abandoned [[Wikipedia:Articles for creation]] draft for speedy deletion under [[WP:G13|G13]]", false);
+		// notify users
+		var users = new Array();
+		var templates = pagetext.match(/\{\{\s*afc submission\s*\|(?:\{\{[^\{\}]*\}\}|[^\}\{])*\}\}/gi);
+		var author_re = /\|\s*u=\s*[^\|]*\|/i;
+		for (var i=0; i<templates.length; i++) {
+			if (author_re.test(templates[i])) {
+				user = author_re.exec(templates[i])[0];
+				username = user.split(/=/)[1];
+				username = username.replace(/\|/g, '');
+				users.push(username);
+			}
+		}
+		users.push(afcHelper_page_creator(afcHelper_PageName)); // page creator 
+		var uniqueUsers = [];
+		$.each(users, function(i, l){ // we use jquery for better cross-browser support
+    		if($.inArray(l, uniqueUsers) === -1) uniqueUsers.push(l);
+		});
+		for (var i=0; i<uniqueUsers.length; i++) {
+			username = uniqueUsers[i]
+			usertalkpage = "User talk:" + username;
+			var usertext = afcHelper_getPageText(usertalkpage, true, true);
+			usertext += "\n{{subst:Db-afc-notice|"+afcHelper_PageName+"}} ~~~~";
+			var token = mw.user.tokens.get('editToken');
+			afcHelper_editPage(usertalkpage, usertext, token, 'Notification: [[WP:G13|G13]] speedy deletion nomination of [['+afcHelper_PageName+']]', false);
+		}
+
 	} else if (action === 'submit') {
 		var typeofsubmit = $("input[name=afcHelper_submit]:checked").val();
 		var customuser = $("#afcHelper_custom_submitter").val();
