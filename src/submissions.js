@@ -300,10 +300,12 @@ function afcHelper_prompt(type) {
 		 	+ '<div id="afcHelper_notify_Teahouse"><label for="afcHelper_notify_Teahouse">Notify author about <a href="' + wgArticlePath.replace("$1", 'Wikipedia:Teahouse') + '" title="Wikipedia:Teahouse" target="_blank">Wikipedia:Teahouse</a>:</label><input type="checkbox" name="afcHelper_Teahouse" id="afcHelper_Teahouse" /><br/></div><div id="afcHelper_extra_inline" name="afcHelper_extra_inline"></div><input type="button" id="afcHelper_prompt_button" name="afcHelper_prompt_button" value="Decline" onclick="afcHelper_act(\'decline\')" style="border-radius:3px; background-color:#ffcdd5" />';
 		$("#afcHelper_extra").html(text);
 	} else if (type === 'submit') {
-		var text = '<h3>Place a submission template on ' + afcHelper_PageName + '</h3><br />'+
-		'<input type="radio" name="afcHelper_submit" id="afcHelper_submit1" value="first" /> <label for="afcHelper_submit1">submit with the original submitter</label><br>'+
-		'<input type="radio" name="afcHelper_submit" id="afcHelper_submit2" value="self" checked /> <label for="afcHelper_submit2">submit with yourself as the submitter</label><br>'+
-		'<input type="radio" name="afcHelper_submit" id="afcHelper_submit3" value="custom" /> <label for="afcHelper_submit3">submit with a custom submitter:</label> <input type="text" name="afcHelper_custom_submitter" id="afcHelper_custom_submitter" /><br>'+
+		// !todo have "first" be pre-selected if submission template includes "t", else have "last" pre-selected
+		var text = '<h3>Place a submission template on ' + afcHelper_PageName + '</h3><br />';
+		text += '<input type="radio" name="afcHelper_submit" id="afcHelper_submit1" value="first" /> <label for="afcHelper_submit1">submit with the original submitter</label><br>' + 
+		'<input type="radio" name="afcHelper_submit" id="afcHelper_submit2" value="last" /> <label for="afcHelper_submit2">submit with the last non-bot editor as the submitter</label><br>'+
+		'<input type="radio" name="afcHelper_submit" id="afcHelper_submit3" value="self" checked /> <label for="afcHelper_submit3">submit with yourself as the submitter</label><br>'+
+		'<input type="radio" name="afcHelper_submit" id="afcHelper_submit4" value="custom" /> <label for="afcHelper_submit4">submit with a custom submitter:</label> <input type="text" name="afcHelper_custom_submitter" id="afcHelper_custom_submitter" /><br>'+
 		'<input type="button" id="afcHelper_submit_button" name="afcHelper_submit2_button" value="Place a submit template" onclick="afcHelper_act(\'submit\')" />';
 		$("#afcHelper_extra").html(text);
 	} else if (type === 'mark') {
@@ -360,12 +362,22 @@ function afcHelper_act(action) {
 			var token = mw.user.tokens.get('editToken');
 			afcHelper_editPage(usertalkpage, usertext, token, 'Notification: [[WP:G13|G13]] speedy deletion nomination of [['+afcHelper_PageName+']]', false);
 		}
-
 	} else if (action === 'submit') {
 		var typeofsubmit = $("input[name=afcHelper_submit]:checked").val();
 		var customuser = $("#afcHelper_custom_submitter").val();
 		displayMessage('<ul id="afcHelper_status"></ul><ul id="afcHelper_finish"></ul>');
 		document.getElementById('afcHelper_finish').innerHTML += '<span id="afcHelper_finished_wrapper"><span id="afcHelper_finished_main" style="display:none"><li id="afcHelper_done"><b>Done (<a href="' + wgArticlePath.replace("$1", encodeURI(afcHelper_PageName)) + '?action=purge" title="' + afcHelper_PageName + '">Reload page</a>)</b></li></span></span>';
+
+		// First we handle "last", since this uses a different method than the others
+		if (typeofsubmit == 'last') {
+			// Get the last non-bot editor to the page
+			// Add "{{subst:submit|user="+submitter+"}}\n"
+			// Remove [[Category:AfC_submissions_with_missing_AfC_template]]
+			// Cleanup the page
+			// Save page
+			return;
+		}
+
 		if (typeofsubmit == 'first') {
 			var afc_re = /\{\{\s*afc submission\s*\|(?:\{\{[^\{\}]*\}\}|[^\}\{])*\}\}/i;
 			if (afc_re.test(pagetext)) {
