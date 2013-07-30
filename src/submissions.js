@@ -889,7 +889,7 @@ function afcHelper_onChange(select) {
 	} else if (value === 'blp') {
 		$("#afcHelper_blank").attr("checked", false); // TODO: DOMobj.setAttribute() requires 2 args, so guessing here :S
 		afcHelper_turnvisible("afcHelper_afccleared", false);
-		afcHelper_turnvisible("afcHelper_extra_afccleared", true);
+		afcHelper_turnvisible("afcHelper_extra_afccleared", false);
 	} else {
 		$("#afcHelper_blank").attr("checked", false);
 		afcHelper_turnvisible("afcHelper_extra_afccleared", false);
@@ -959,7 +959,6 @@ function afcHelper_cleanup(text) {
 	text = text.replace(/\s*((<\s*ref\s*(name\s*=|group\s*=)*\s*.*[\/]{1}>)|(<\s*ref\s*(name\s*=|group\s*=)*\s*[^\/]*>(?:\\<[^\<\>]*\>|[^><])*\<\/\s*ref\s*\>))\s*([.!?,;:])+$/gim, "$6$1");
 
 	// Remove all unneeded HTML comments and wizards stuff
-	// This is where you put new cleanup switches for HTML comments
 	text = text.replace("* \[http\:\/\/www.example.com\/ example.com\]", "");
 	text = text.replace(/'''Subject of my article''' is.../ig, "");
 	text = text.replace(/\<\!--- Carry on from here, and delete this comment. ---\>/ig, "");
@@ -975,9 +974,7 @@ function afcHelper_cleanup(text) {
 	text = text.replace(/\<\!--Please don't change anything and press save --\>/ig, "");
 	text = text.replace(/\<\!-- Please leave this line alone! --\>/ig, "");
 	text = text.replace(/\<\!-- Do not include any categories - these don't need to be added until the article is accepted; They will just get removed by a bot! --\>/ig, "");
-	text = text.replace(/\<\!--- Important, do not remove this line before article has been created. ---\>/ig, "");
-	text = text.replace(/\<\!-- Important, do not remove this line before article has been created. --\>/ig, "");
-	text = text.replace(/\<\!- Important, do not remove this line before article has been created. -\>/ig, "");
+	text = text.replace(/\<\!-{1,3} Important, do not remove this line before article has been created. -{1,3}\>/ig, "");
 	text = text.replace(/\<\!-- This will add a notice to the bottom of the page and won't blank it! The new template which says that your draft is waiting for a review will appear at the bottom; simply ignore the old \(grey\) drafted templates and the old \(red\) decline templates. A bot will update your article submission. Until then, please don't change anything in this text box and press "Save page". --\>/ig, "");
 	text = text.replace(/\<\!-- Just press the \"Save page\" button below without changing anything! Doing so will submit your article submission for review. Once you have saved this page you will find a new yellow 'Review waiting' box at the bottom of your submission page. If you have submitted your page previously, the old pink 'Submission declined' template or the old grey 'Draft' template will still appear at the top of your submission page, but you should ignore them. Again, please don't change anything in this text box. Just press the \"Save page\" button below. --\>/ig, "");
 	text = text.replace(/== Request review at \[\[WP:AFC\]\] ==\n/ig, "");
@@ -1164,8 +1161,16 @@ function afcHelper_trigger(type) {
 		} else {
 			e.style.display = 'none';
 		}
+	} else if(type === "afcHelper_afcccleared"){
+		//dr
+		var f = document.getElementById("afcHelper_extra_afccleared");
+		if (f.value === "cv") {
+			e.style.display = 'block';
+		} else {
+			e.style.display = 'none';
+		}
 	} else {
-		e.style.display = ((e.style.display !== 'none') ? 'none' : 'block');
+			e.style.display = ((e.style.display !== 'none') ? 'none' : 'block');
 	}
 }
 
