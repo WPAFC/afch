@@ -49,7 +49,7 @@ function afcHelper_init() {
 	var template_status_re =  /\{\{\s*afc submission\s*\|\s*(\S\s*)\s*\|/gi;
 	var template_status = template_status_re.exec(pagetext);
 	if (template_status) {
-		template_status = template_status[1].toLowerCase()
+		template_status = template_status[1].toLowerCase();
 		if(template_status === "|") template_status = "";
 	} else {
 		template_status = false; // if there is no template on page
@@ -77,6 +77,9 @@ function afcHelper_init() {
 
 	if (template_status === false || template_status === "" || template_status === "r" || template_status === "d" || template_status === "t")
 		form += '<input type="button" id="afcHelper_cleanup_button" name="afcHelper_cleanup_button" value="Clean the submission" onclick="afcHelper_act(\'cleanup\')" style="border-radius:3px; background-color:#d2d3cc" />';
+
+	if (template_status === "d" && afcHelper_g13_eligible(afcHelper_PageName))
+		form += '<input type="button" id="afcHelper_g13_button" name="afcHelper_g13_button" value="Tag the submission for G13 speedy deletion" onclick="afcHelper_act(\'g13\')" style="border-radius:3px; background-color:#ff3333" />';
 
 	form += '<div id="afcHelper_extra"></div>';
 
@@ -322,6 +325,39 @@ function afcHelper_act(action) {
 		newtext = afcHelper_cleanup(newtext);
 		var token = mw.user.tokens.get('editToken');
 		afcHelper_editPage(afcHelper_PageName, newtext, token, "Tagging [[Wikipedia:Articles for creation]] draft", false);
+	} else if (action === 'g13') {
+		displayMessage('<ul id="afcHelper_status"></ul><ul id="afcHelper_finish"></ul>');
+		document.getElementById('afcHelper_finish').innerHTML += '<span id="afcHelper_finished_wrapper"><span id="afcHelper_finished_main" style="display:none"><li id="afcHelper_done"><b>Done (<a href="' + wgArticlePath.replace("$1", encodeURI(afcHelper_PageName)) + '?action=purge" title="' + afcHelper_PageName + '">Reload page</a>)</b></li></span></span>';
+		// tag page with "{{db-g13}}"
+		newtext = "{{db-g13}}\n" + pagetext;
+		var token = mw.user.tokens.get('editToken');
+		afcHelper_editPage(afcHelper_PageName, newtext, token, "Tagging abandoned [[Wikipedia:Articles for creation]] draft for speedy deletion under [[WP:G13|G13]]", false);
+		// notify users
+		var users = new Array();
+		var templates = pagetext.match(/\{\{\s*afc submission\s*\|(?:\{\{[^\{\}]*\}\}|[^\}\{])*\}\}/gi);
+		var author_re = /\|\s*u=\s*[^\|]*\|/i;
+		for (var i=0; i<templates.length; i++) {
+			if (author_re.test(templates[i])) {
+				user = author_re.exec(templates[i])[0];
+				username = user.split(/=/)[1];
+				username = username.replace(/\|/g, '');
+				users.push(username);
+			}
+		}
+		users.push(afcHelper_page_creator(afcHelper_PageName)); // page creator 
+		var uniqueUsers = [];
+		$.each(users, function(i, l){ // we use jquery for better cross-browser support
+    		if($.inArray(l, uniqueUsers) === -1) uniqueUsers.push(l);
+		});
+		for (var i=0; i<uniqueUsers.length; i++) {
+			username = uniqueUsers[i]
+			usertalkpage = "User talk:" + username;
+			var usertext = afcHelper_getPageText(usertalkpage, true, true);
+			usertext += "\n{{subst:Db-afc-notice|"+afcHelper_PageName+"}} ~~~~";
+			var token = mw.user.tokens.get('editToken');
+			afcHelper_editPage(usertalkpage, usertext, token, 'Notification: [[WP:G13|G13]] speedy deletion nomination of [['+afcHelper_PageName+']]', false);
+		}
+
 	} else if (action === 'submit') {
 		var typeofsubmit = $("input[name=afcHelper_submit]:checked").val();
 		var customuser = $("#afcHelper_custom_submitter").val();
@@ -1167,6 +1203,40 @@ function afcHelper_trigger(type) {
 	} else {
 		e.style.display = ((e.style.display !== 'none') ? 'none' : 'block');
 	}
+}
+
+//function to check if the submission is g13 eligible -- only checks timestamp
+function afcHelper_g13_eligible(title) {
+	var params = "action=query&prop=revisions&rvprop=timestamp&format=json&indexpageids=1&titles=" + encodeURIComponent(title);
+	var req = sajax_init_object();
+	req.open("POST", wgScriptPath + "/api.php", false);
+	req.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+	req.setRequestHeader("Content-length", params.length);
+	req.setRequestHeader("Connection", "close");
+	req.send(params);
+	var response = eval('(' + req.responseText + ')');
+	pageid = response['query']['pageids'][0];
+	timestamp = response['query']['pages'][pageid]['revisions'][0]['timestamp'];
+	var SIX_MONTHS = 15778500000; // six months in milliseconds, gracias google
+	var lastedited = new Date(timestamp);
+	if (((new Date) - lastedited) > SIX_MONTHS)
+		return true;
+	else
+		return false;
+}
+
+function afcHelper_page_creator(title) {
+	var params = "action=query&prop=revisions&rvprop=user&format=json&rvdir=newer&rvlimit=1&indexpageids=1&titles=" + encodeURIComponent(title);
+	var req = sajax_init_object();
+	req.open("POST", wgScriptPath + "/api.php", false);
+	req.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+	req.setRequestHeader("Content-length", params.length);
+	req.setRequestHeader("Connection", "close");
+	req.send(params);
+	var response = eval('(' + req.responseText + ')');
+	pageid = response['query']['pageids'][0];
+	user = response['query']['pages'][pageid]['revisions'][0]['user'];
+	return user;
 }
 
 function afcHelper_turnvisible(type, bool) {
