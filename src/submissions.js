@@ -33,7 +33,7 @@ var afcHelper_reasonhash = {
 	'film': 'subject appears to be a non-notable film',
 	'corp': 'subject appears to be a non-notable company or organization',
 	'bio': 'subject appears to be a non-notable person',
-	'afd': 'subject previously deleted through consensus',
+	'afd': 'subject previously deleted through the Articles for Deletion process',
 	'ilc': 'submission does not contain minimum citations',
 	'reason': ''
 };
