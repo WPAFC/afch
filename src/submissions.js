@@ -902,7 +902,7 @@ function afcHelper_movePage(oldtitle, newtitle, summary, callback, overwrite_red
 }
 
 // Create portlet link
-var afcportletLink = mw.util.addPortletLink('p-cactions', '#', 'Review', 'ca-afcHelper', 'Review', 'a');
+var afcportletLink = mw.util.addPortletLink('p-cactions', '#', 'Review', 'ca-afcHelper', 'Review', 'q');
 // Bind click handler
 $(afcportletLink).click(function(e) {
 	e.preventDefault();
@@ -937,9 +937,9 @@ function afcHelper_onChange(select) {
 }
 
 function afcHelper_cleanup(text) {
-	//Commenting out cats
 	// Remove html comments (<!--) that surround categories
 	text = text.replace(/\<!--\s*((\[\[:{0,1}(Category:.*?)\]\]\s*)+)--\>/gi, "$1");
+	//Commenting out cats
 	text = text.replace(/\[\[Category:/gi, "\[\[:Category:");
 
 	// Fix {{afc comment}} when possible (takes rest of text on line and converts to a template parameter)
@@ -1005,7 +1005,7 @@ function afcHelper_cleanup(text) {
 	text = text.replace(/\<\!--- Enter template purpose and instructions here. ---\>/ig, "");
 	text = text.replace(/\<\!--- Enter the content and\/or code of the template here. ---\>/ig, "");
 	text = text.replace(/\<\!-- EDIT BELOW THIS LINE --\>/ig, "");
-	text = text.replace("<!-- This will add a notice to the bottom of the page and won't blank it! The new template which says that your draft is waiting for a review will appear at the bottom; simply ignore the old (grey) drafted templates and the old (red) decline templates. A bot will update your article submission. Until then, please don't change anything in this text box.  Just press \"Save page\". -->", "");
+	text = text.replace(/\<\!-- This will add a notice to the bottom of the page and won't blank it! The new template which says that your draft is waiting for a review will appear at the bottom; simply ignore the old \(grey\) drafted templates and the old \(red\) decline templates. A bot will update your article submission. Until then, please don't change anything in this text box\s*(and|.\s*Just)+ press "Save page". --\>/ig, "");	
 	text = text.replace(/\<\!--Do not include any categories - these don't need to be added until the article is accepted; They will just get removed by a bot!--\>/ig, "");
 	text = text.replace(/\<\!--- Categories ---\>/gi, '');
 	text = text.replace(/\<\!--- After listing your sources please cite them using inline citations and place them after the information they cite. Please see \[\[Wikipedia:REFB\]\] for instructions on how to add citations. ---\>/ig, "");
@@ -1014,10 +1014,7 @@ function afcHelper_cleanup(text) {
 	text = text.replace(/\<\!--Please don't change anything and press save --\>/ig, "");
 	text = text.replace(/\<\!-- Please leave this line alone! --\>/ig, "");
 	text = text.replace(/\<\!-- Do not include any categories - these don't need to be added until the article is accepted; They will just get removed by a bot! --\>/ig, "");
-	text = text.replace(/\<\!--- Important, do not remove this line before article has been created. ---\>/ig, "");
-	text = text.replace(/\<\!-- Important, do not remove this line before article has been created. --\>/ig, "");
-	text = text.replace(/\<\!- Important, do not remove this line before article has been created. -\>/ig, "");
-	text = text.replace(/\<\!-- This will add a notice to the bottom of the page and won't blank it! The new template which says that your draft is waiting for a review will appear at the bottom; simply ignore the old \(grey\) drafted templates and the old \(red\) decline templates. A bot will update your article submission. Until then, please don't change anything in this text box and press "Save page". --\>/ig, "");
+	text = text.replace(/\<\!-{1,3}\s*Important, do not remove this line before article has been created.\s*-{1,3}\>/ig, "");
 	text = text.replace(/\<\!-- Just press the \"Save page\" button below without changing anything! Doing so will submit your article submission for review. Once you have saved this page you will find a new yellow 'Review waiting' box at the bottom of your submission page. If you have submitted your page previously, the old pink 'Submission declined' template or the old grey 'Draft' template will still appear at the top of your submission page, but you should ignore them. Again, please don't change anything in this text box. Just press the \"Save page\" button below. --\>/ig, "");
 	text = text.replace(/== Request review at \[\[WP:AFC\]\] ==\n/ig, "");
 	text = text.replace(/(?:<\s*references\s*>([\S\s]*)<\/references>|<\s*references\s*\/\s*>)/gi, "\n{{reflist|refs=$1}}");
@@ -1044,7 +1041,7 @@ function afcHelper_cleanup(text) {
 			break;
 		}
 	}
-	//create an array, strip the submission templates, then AFC comments and then add them back to the page, add then
+	//create an array, strip the submission templates, then AFC comments and then add them back to the page
 	var submissiontemplates = new Array();
 	var commentstemplates = new Array();
 	while (afc_all.test(text)) {
@@ -1055,7 +1052,7 @@ function afcHelper_cleanup(text) {
 		commentstemplates.push(afc_comment.exec(text));
 		text = text.replace(afc_comment.exec(text), "");
 	}
-	// Remove empty HTML comments -- fix for #16
+	// Remove empty HTML comments
 	text = text.replace(/<!--\s*-->/ig,"");
 	//removal of unnecessary new lines, stars, "-", and whitespaces at the top of the page
 	text = text.replace(/[*\n\s]*/m, "");
@@ -1095,10 +1092,6 @@ function afcHelper_blanking() {
 	pagetext = pagetext.replace(/\{\{AFC submission\s*\}\}/gi, "{{AFC submission|||ts={{subst:LOCALTIMESTAMP}}|u=|ns={{subst:AFC submission/namespace number}}}}");
 
 	pagetext = afcHelper_cleanup(pagetext);
-	//test for AFC submission templates with not enough parameter
-	//Nmespaces WP (4) and WT (5)
-	//var afc_alltemplates= /\{\{\s*afc submission(?:\{\{[^\{\}]*\}\}|[^\}\{])*\}\}/i;
-	//afc_all=text.match(afc_alltemplates);
 
 	//longer than 30 characters, but commonly added to the source code
 	texttest = pagetext.replace(/\<\!--  Bot generated title --\>/gi, "");
@@ -1119,7 +1112,7 @@ function afcHelper_blanking() {
 			}
 		}
 	}
-	//Check the deletion log and give and list it!
+	//Check the deletion log and list it!
 	var req = sajax_init_object();
 	req.open("GET", wgScriptPath + "/api.php?action=query&list=logevents&format=json&leprop=user%7Ctimestamp%7Ccomment&letype=delete&leaction=delete%2Fdelete&letitle=" + encodeURIComponent(afcHelper_submissionTitle) + "&lelimit=10", false);
 	req.send(null);
