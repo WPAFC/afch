@@ -12,10 +12,6 @@ if ((wgPageName.indexOf('Wikipedia:Articles_for_creation') !== -1) || (wgPageNam
 	var afcHelper_advert = ' ([[WP:AFCH|AFCH]])';
 	var pagetext = '';
 	var usertalkpage = '';
-	
-	function afcHelper_escapeHtmlChars(original) {
-		return original.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
-	}
 
 	if (wgPageName.indexOf('Wikipedia:Articles_for_creation/Redirects') !== -1) {
 		importScriptURI(afchelper_baseurl + '/redirects.js');
