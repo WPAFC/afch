@@ -1,5 +1,29 @@
 //<nowiki>
 // Script should be located at [[MediaWiki:Gadget-afchelper.js/core.js]]
+
+if ((wgPageName.indexOf('Wikipedia:Articles_for_creation') !== -1) || (wgPageName.indexOf('Wikipedia_talk:Articles_for_creation') !== -1) || (wgPageName.indexOf('Wikipedia:Files_for_upload') !== -1) || (wgPageName.indexOf('User:*') !== -1)) {
+	importScript('User:Timotheus Canens/displaymessage.js');
+	var afchelper_baseurl = mw.config.get('wgServer') + '/w/index.php?action=raw&ctype=text/javascript&title=MediaWiki:Gadget-afchelper.js';
+
+	var afcHelper_advert = ' ([[WP:AFCH|AFCH]])';
+	var pagetext = '';
+	var usertalkpage = '';
+
+	if (wgPageName.indexOf('Wikipedia:Articles_for_creation/Redirects') !== -1) {
+		importScriptURI(afchelper_baseurl + '/redirects.js');
+	} else if (wgPageName.indexOf('Wikipedia:Files_for_upload') !== -1) {
+		importScriptURI(afchelper_baseurl + '/ffu.js');		
+	} else if ((wgPageName.indexOf('Wikipedia:Articles_for_creation/') !== -1)
+				|| (wgPageName.indexOf('Wikipedia_talk:Articles_for_creation/') !== -1)
+				|| (wgPageName.indexOf('User:') !== -1)
+				|| (wgPageName.indexOf('User_talk:') !== -1)
+				){
+		importScriptURI(afchelper_baseurl + '/submissions.js');				
+	}
+} else {
+	throw "Stopped AFCH from loading on a non-AFC page."; // stop the rest of the script from loading
+}
+
 function afcHelper_generateSelect(title, options, onchange) {
 	var text = '<select name="' + title + '" id="' + title + '" ';
 	if (onchange !== null) text += 'onchange = "' + onchange + '" ';
