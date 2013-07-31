@@ -21,7 +21,7 @@ if ((wgPageName.indexOf('Wikipedia:Articles_for_creation') !== -1) || (wgPageNam
 		importScriptURI(afchelper_baseurl + '/submissions.js');				
 	}
 } else {
-	return; // stop the rest of the script from loading
+	throw "Stopped AFCH from loading on a non-AFC page."; // stop the rest of the script from loading
 }
 
 function afcHelper_generateSelect(title, options, onchange) {
