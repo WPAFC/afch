@@ -1226,7 +1226,7 @@ function afcHelper_trigger(type) {
 
 // function to get the last non-bot editor to a page
 function afcHelper_last_nonbot(title) {
-	var params = "action=query&prop=revisions&rvprop=user%7Ctimestamp&format=json&rvdir=older&rvlimit=3&indexpageids=1&titles=" + encodeURIComponent(title);
+	var params = "action=query&prop=revisions&format=json&rvprop=user%7Ctimestamp&indexpageids=1&rvlimit=1&rvdir=older&rvexcludeuser=ArticlesForCreationBot&titles=" + encodeURIComponent(title);
 	var req = sajax_init_object();
 	req.open("POST", wgScriptPath + "/api.php", false);
 	req.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
@@ -1236,14 +1236,7 @@ function afcHelper_last_nonbot(title) {
 	var response = eval('(' + req.responseText + ')');
 	pageid = response['query']['pageids'][0];
 	revisions = response['query']['pages'][pageid]['revisions'];
-	for (var i = 0; i < revisions.length; i++) {
-		user = revisions[i]['user'];
-		if (user != "ArticlesForCreationBot")
-			return revisions[i];
-		else 
-			continue;
-	}
-	return false; // if we were unable to find the editor
+	return response['query']['pages'][pageid]['revisions'][0];
 }
 
 //function to check if the submission is g13 eligible -- only checks timestamp
