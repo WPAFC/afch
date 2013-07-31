@@ -371,10 +371,19 @@ function afcHelper_act(action) {
 		// First we handle "last", since this uses a different method than the others
 		if (typeofsubmit == 'last') {
 			// Get the last non-bot editor to the page
-			// Add "{{subst:submit|user="+submitter+"}}\n"
-			// Remove [[Category:AfC_submissions_with_missing_AfC_template]]
-			// Cleanup the page
-			// Save page
+			var submitinfo = afcHelper_last_nonbot(afcHelper_PageName);
+			if (submitinfo) {
+				dt = new Date(submitinfo['timestamp']);
+				// output the date in the correct format
+				date = dt.getUTCFullYear() + ('0' + (dt.getUTCMonth()+1)).slice(-2) + ('0' + dt.getUTCDate()).slice(-2) + ('0' + dt.getUTCHours()).slice(-2) + ('0' + dt.getUTCMinutes()).slice(-2) + ('0' + dt.getUTCSeconds()).slice(-2);
+				var submit = "{{AFC submission|||ts="+date+"|u="+submitinfo['user']+"|ns={{subst:NAMESPACENUMBER}}}}\n";
+				newtext = submit + pagetext;
+				newtext = newtext.replace(/\[\[:?Category:AfC[_ ]submissions[_ ]with[_ ]missing[_ ]AfC[_ ]template\]\]/,"");
+				var token = mw.user.tokens.get('editToken');
+				afcHelper_editPage(afcHelper_PageName, newtext, token, "Submitting [[Wikipedia:Articles for creation]] submission", false);		
+			} else {
+				alert("Unable to find a non-bot editor; please check the page history.");
+			}
 			return;
 		}
 
@@ -1218,6 +1227,28 @@ function afcHelper_trigger(type) {
 	} else {
 		e.style.display = ((e.style.display !== 'none') ? 'none' : 'block');
 	}
+}
+
+// function to get the last non-bot editor to a page
+function afcHelper_last_nonbot(title) {
+	var params = "action=query&prop=revisions&rvprop=user%7Ctimestamp&format=json&rvdir=older&rvlimit=3&indexpageids=1&titles=" + encodeURIComponent(title);
+	var req = sajax_init_object();
+	req.open("POST", wgScriptPath + "/api.php", false);
+	req.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+	req.setRequestHeader("Content-length", params.length);
+	req.setRequestHeader("Connection", "close");
+	req.send(params);
+	var response = eval('(' + req.responseText + ')');
+	pageid = response['query']['pageids'][0];
+	revisions = response['query']['pages'][pageid]['revisions'];
+	for (var i = 0; i < revisions.length; i++) {
+		user = revisions[i]['user'];
+		if (user != "ArticlesForCreationBot")
+			return revisions[i];
+		else 
+			continue;
+	}
+	return false; // if we were unable to find the editor
 }
 
 //function to check if the submission is g13 eligible -- only checks timestamp
