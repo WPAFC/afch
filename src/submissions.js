@@ -384,39 +384,38 @@ function afcHelper_act(action) {
 			} else {
 				alert("Unable to find a non-bot editor; please check the page history.");
 			}
-			return;
-		}
-
-		if (typeofsubmit == 'first') {
-			var afc_re = /\{\{\s*afc submission\s*\|(?:\{\{[^\{\}]*\}\}|[^\}\{])*\}\}/i;
-			if (afc_re.test(pagetext)) {
-				var afctemplate = afc_re.exec(pagetext)[0];
-				var author_re = /\|\s*u=\s*[^\|]*\|/i;
-				if (author_re.test(afctemplate)) {
-					var user = author_re.exec(afctemplate)[0];
-					username = user.split(/=/)[1];
-					submitter = username.replace(/\|/g, '');
+		} else {
+			if (typeofsubmit == 'first') {
+				var afc_re = /\{\{\s*afc submission\s*\|(?:\{\{[^\{\}]*\}\}|[^\}\{])*\}\}/i;
+				if (afc_re.test(pagetext)) {
+					var afctemplate = afc_re.exec(pagetext)[0];
+					var author_re = /\|\s*u=\s*[^\|]*\|/i;
+					if (author_re.test(afctemplate)) {
+						var user = author_re.exec(afctemplate)[0];
+						username = user.split(/=/)[1];
+						submitter = username.replace(/\|/g, '');
+					} else {
+						alert("Could not find the original submitter, aborting...");
+						return;
+					}
 				} else {
-					alert("Could not find the original submitter, aborting...");
+					alert("Could not find an AfC submission template, aborting...");
 					return;
 				}
+				var submit = "{{subst:submit|user="+submitter+"}}\n";
+			} else if (typeofsubmit == 'self') {
+				var submit = "{{subst:submit}}\n";
+			} else if (typeofsubmit == 'custom' && customuser != null && customuser != "" ) {
+				var submit = "{{subst:submit|user="+customuser+"}}\n";
 			} else {
-				alert("Could not find an AfC submission template, aborting...");
+				alert("No valid submitter was specified, aborting...");
 				return;
 			}
-			var submit = "{{subst:submit|user="+submitter+"}}\n";
-		} else if (typeofsubmit == 'self') {
-			var submit = "{{subst:submit}}\n";
-		} else if (typeofsubmit == 'custom' && customuser != null && customuser != "" ) {
-			var submit = "{{subst:submit|user="+customuser+"}}\n";
-		} else {
-			alert("No valid submitter was specified, aborting...");
-			return;
+			newtext = submit + pagetext;
+			newtext = afcHelper_cleanup(newtext);
+			var token = mw.user.tokens.get('editToken');
+			afcHelper_editPage(afcHelper_PageName, newtext, token, "Submitting [[Wikipedia:Articles for creation]] submission", false);
 		}
-		newtext = submit + pagetext;
-		newtext = afcHelper_cleanup(newtext);
-		var token = mw.user.tokens.get('editToken');
-		afcHelper_editPage(afcHelper_PageName, newtext, token, "Submitting [[Wikipedia:Articles for creation]] submission", false);
 	} else if (action === 'accept') {
 		var newtitle = $("#afcHelper_movetarget").val();
 		var assessment = $("#afcHelper_assessment").val();
