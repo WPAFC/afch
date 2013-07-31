@@ -324,15 +324,14 @@ function afcHelper_act(action) {
 		document.getElementById('afcHelper_finish').innerHTML += '<span id="afcHelper_finished_wrapper"><span id="afcHelper_finished_main" style="display:none"><li id="afcHelper_done"><b>Done (<a href="' + wgArticlePath.replace("$1", encodeURI(afcHelper_PageName)) + '?action=purge" title="' + afcHelper_PageName + '">Reload page</a>)</b></li></span></span>';
 		newtext = template + pagetext;
 		newtext = afcHelper_cleanup(newtext);
-		var token = mw.user.tokens.get('editToken');
-		afcHelper_editPage(afcHelper_PageName, newtext, token, "Tagging [[Wikipedia:Articles for creation]] draft", false);
+		afcHelper_editPage(afcHelper_PageName, newtext, "Tagging [[Wikipedia:Articles for creation]] draft", false);
 	} else if (action === 'g13') {
 		displayMessage('<ul id="afcHelper_status"></ul><ul id="afcHelper_finish"></ul>');
 		document.getElementById('afcHelper_finish').innerHTML += '<span id="afcHelper_finished_wrapper"><span id="afcHelper_finished_main" style="display:none"><li id="afcHelper_done"><b>Done (<a href="' + wgArticlePath.replace("$1", encodeURI(afcHelper_PageName)) + '?action=purge" title="' + afcHelper_PageName + '">Reload page</a>)</b></li></span></span>';
 		// tag page with "{{db-g13}}"
 		newtext = "{{db-g13}}\n" + pagetext;
-		var token = mw.user.tokens.get('editToken');
-		afcHelper_editPage(afcHelper_PageName, newtext, token, "Tagging abandoned [[Wikipedia:Articles for creation]] draft for speedy deletion under [[WP:G13|G13]]", false);
+		
+		afcHelper_editPage(afcHelper_PageName, newtext, "Tagging abandoned [[Wikipedia:Articles for creation]] draft for speedy deletion under [[WP:G13|G13]]", false);
 		// notify users
 		var users = new Array();
 		var templates = pagetext.match(/\{\{\s*afc submission\s*\|(?:\{\{[^\{\}]*\}\}|[^\}\{])*\}\}/gi);
@@ -355,8 +354,7 @@ function afcHelper_act(action) {
 			usertalkpage = "User talk:" + username;
 			var usertext = afcHelper_getPageText(usertalkpage, true, true);
 			usertext += "\n{{subst:Db-afc-notice|"+afcHelper_PageName+"}} ~~~~";
-			var token = mw.user.tokens.get('editToken');
-			afcHelper_editPage(usertalkpage, usertext, token, 'Notification: [[WP:G13|G13]] speedy deletion nomination of [['+afcHelper_PageName+']]', false);
+			afcHelper_editPage(usertalkpage, usertext, 'Notification: [[WP:G13|G13]] speedy deletion nomination of [['+afcHelper_PageName+']]', false);
 		}
 	} else if (action === 'submit') {
 		var typeofsubmit = $("input[name=afcHelper_submit]:checked").val();
@@ -375,8 +373,7 @@ function afcHelper_act(action) {
 				var submit = "{{AFC submission|||ts="+date+"|u="+submitinfo['user']+"|ns={{subst:NAMESPACENUMBER}}}}\n";
 				newtext = submit + pagetext;
 				newtext = newtext.replace(/\[\[:?Category:AfC[_ ]submissions[_ ]with[_ ]missing[_ ]AfC[_ ]template\]\]/,"");
-				var token = mw.user.tokens.get('editToken');
-				afcHelper_editPage(afcHelper_PageName, newtext, token, "Submitting [[Wikipedia:Articles for creation]] submission", false);		
+				afcHelper_editPage(afcHelper_PageName, newtext, "Submitting [[Wikipedia:Articles for creation]] submission", false);		
 			} else {
 				alert("Unable to find a non-bot editor; please check the page history.");
 			}
@@ -409,8 +406,7 @@ function afcHelper_act(action) {
 			}
 			newtext = submit + pagetext;
 			newtext = afcHelper_cleanup(newtext);
-			var token = mw.user.tokens.get('editToken');
-			afcHelper_editPage(afcHelper_PageName, newtext, token, "Submitting [[Wikipedia:Articles for creation]] submission", false);
+			afcHelper_editPage(afcHelper_PageName, newtext, "Submitting [[Wikipedia:Articles for creation]] submission", false);
 		}
 	} else if (action === 'accept') {
 		var newtitle = $("#afcHelper_movetarget").val();
@@ -455,8 +451,7 @@ function afcHelper_act(action) {
 						var usertext = afcHelper_getPageText(usertalkpage, true, true);
 						usertext += "\n== Your submission at AfC \[\[" + wgPageName + "|" + newtitle + "\]\] was accepted ==";
 						usertext += "\n\{\{subst:afc talk|1=" + newtitle + "|class=" + assessment + "|sig=yes\}\}";
-						var token = mw.user.tokens.get('editToken');
-						afcHelper_editPage(usertalkpage, usertext, token, 'Your submission at \[\[WP:AFC|Articles for creation\]\]', false);
+						afcHelper_editPage(usertalkpage, usertext, 'Your submission at \[\[WP:AFC|Articles for creation\]\]', false);
 					}
 				}
 				var recenttext = afcHelper_getPageText("Wikipedia:Articles for creation/recent", true, false);
@@ -465,8 +460,7 @@ function afcHelper_act(action) {
 				var firstentry = recenttext.toLowerCase().indexOf("\{\{afc contrib");
 				recenttext = recenttext.substring(0, lastentry);
 				recenttext = recenttext.substring(0, firstentry) + newentry + recenttext.substring(firstentry);
-				var token = mw.user.tokens.get('editToken');
-				afcHelper_editPage("Wikipedia:Articles for creation/recent", recenttext, token, 'Updating recent AFC creations', false);
+				afcHelper_editPage("Wikipedia:Articles for creation/recent", recenttext, 'Updating recent AFC creations', false);
 
 				var talktext = "";
 				if (biography) {
@@ -505,8 +499,7 @@ function afcHelper_act(action) {
 					newtalktitle = newtitle.replace(/Portal:/i, '');
 					newtalktitle = 'Portal talk:' + newtalktitle;
 				} else newtalktitle = 'Talk:' + newtitle;
-				var token = mw.user.tokens.get('editToken');
-				afcHelper_editPage(newtalktitle, talktext, token, 'Placing [[Wikipedia:Articles for creation]] project banner', false);
+				afcHelper_editPage(newtalktitle, talktext, 'Placing [[Wikipedia:Articles for creation]] project banner', false);
 				
 				pagetext = pagetext.replace(/\{\{\s*afc\s*submission\s*\|(?:\{\{[^\{\}]*\}\}|[^\}\{])*\}\}/gim, "");
 				pagetext = pagetext.replace(/\{\{\s*afc\s*comment\s*\|(?:\{\{[^\{\}]*\}\}|[^\}\{])*\}\}/gim, "");
@@ -601,12 +594,10 @@ function afcHelper_act(action) {
 						$("#afcHelper_orphan").html("Page is orphaned, adding tag.");
 					}
 				}
-				var token = mw.user.tokens.get('editToken');
 				pagetext = afcHelper_cleanup(pagetext);
-				afcHelper_editPage(newtitle, pagetext, token, "Cleanup following [[Wikipedia:Articles for creation]] creation", false);
+				afcHelper_editPage(newtitle, pagetext, "Cleanup following [[Wikipedia:Articles for creation]] creation", false);
 			};
-		var token = mw.user.tokens.get('editToken');
-		afcHelper_movePage(afcHelper_PageName, newtitle, token, 'Created via \[\[WP:AFC|Articles for creation\]\] (\[\[WP:WPAFC|you can help!\]\])', callback, true);
+		afcHelper_movePage(afcHelper_PageName, newtitle, 'Created via \[\[WP:AFC|Articles for creation\]\] (\[\[WP:WPAFC|you can help!\]\])', callback, true);
 	} else if (action === 'decline') {
 		var code = $("#afcHelper_reason").val();
 		var reasontext = afcHelper_reasonhash[code];
@@ -627,8 +618,6 @@ function afcHelper_act(action) {
 
 		displayMessage('<ul id="afcHelper_status"></ul><ul id="afcHelper_finish"></ul>');
 		document.getElementById('afcHelper_finish').innerHTML += '<span id="afcHelper_finished_wrapper"><span id="afcHelper_finished_main" style="display:none"><li id="afcHelper_done"><b>Done (<a href="' + wgArticlePath.replace("$1", encodeURI(afcHelper_PageName)) + '?action=purge" title="' + afcHelper_PageName + '">Reload page</a>)</b></li></span></span>';
-		var token = mw.user.tokens.get('editToken');
-
 		// Find the first pending submission or marked as review on the page.
 		var afc_re = /\{\{\s*afc submission\s*\|\s*[||h|r](?:\{\{[^\{\}]*\}\}|[^\}\{])*\}\}/i;
 
@@ -734,8 +723,7 @@ function afcHelper_act(action) {
 						delete req;
 					}
 				} //end TH stuff
-				var token = mw.user.tokens.get('editToken');
-				afcHelper_editPage(usertalkpage, usertext, token, reason, false);
+				afcHelper_editPage(usertalkpage, usertext, reason, false);
 			} //exclude [[User:Example]]
 		}
 		if (!blank) {
@@ -764,14 +752,12 @@ function afcHelper_act(action) {
 
 		//first remove the multiple pending templates, otherwise one isn't recognized
 		pagetext = pagetext.replace(/\{\{\s*afc submission\s*\|\s*[||h|r](?:\{\{[^{}]*\}\}|[^}{])*\}\}/i, "");
-		var token = mw.user.tokens.get('editToken');
 		pagetext = afcHelper_cleanup(pagetext);
-		afcHelper_editPage(afcHelper_PageName, pagetext, token, summary, false);
+		afcHelper_editPage(afcHelper_PageName, pagetext, summary, false);
 	} else if (action === 'comment') {
 		var comment = $("#afcHelper_comments").val();
 		displayMessage('<ul id="afcHelper_status"></ul><ul id="afcHelper_finish"></ul>');
 		document.getElementById('afcHelper_finish').innerHTML += '<span id="afcHelper_finished_wrapper"><span id="afcHelper_finished_main" style="display:none"><li id="afcHelper_done"><b>Done (<a href="' + wgArticlePath.replace("$1", encodeURI(afcHelper_PageName)) + '?action=purge" title="' + afcHelper_PageName + '">Reload page</a>)</b></li></span></span>';
-		var token = mw.user.tokens.get('editToken');
 		var containComment = 0;
 		//var containComment = (pagetext.indexOf('----') != -1);
 		containComment = pagetext.indexOf('----');
@@ -802,7 +788,7 @@ function afcHelper_act(action) {
 					pagetext = pagetext.substring(0, endindex) + '\n' + newComment + '\n----\n' + pagetext.substring(endindex);
 				}
 			}
-			afcHelper_editPage(afcHelper_PageName, pagetext, token, "Commenting on [[Wikipedia:Articles for creation]] submission", false);
+			afcHelper_editPage(afcHelper_PageName, pagetext, "Commenting on [[Wikipedia:Articles for creation]] submission", false);
 		}
 	} else if (action === 'mark') {
 		var comment = $("#afcHelper_comments").val();
@@ -810,7 +796,6 @@ function afcHelper_act(action) {
 
 		displayMessage('<ul id="afcHelper_status"></ul><ul id="afcHelper_finish"></ul>');
 		document.getElementById('afcHelper_finish').innerHTML += '<span id="afcHelper_finished_wrapper"><span id="afcHelper_finished_main" style="display:none"><li id="afcHelper_done"><b>Done (<a href="' + wgArticlePath.replace("$1", encodeURI(afcHelper_PageName)) + '?action=purge" title="' + afcHelper_PageName + '">Reload page</a>)</b></li></span></span>';
-		var token = mw.user.tokens.get('editToken');
 		var containComment = (pagetext.indexOf('----') !== -1);
 		var newComment = "\{\{afc comment|1=" + comment + " \~\~\~\~\}\}";
 		if (comment !== '') {
@@ -834,7 +819,7 @@ function afcHelper_act(action) {
 			return;
 		}
 		pagetext = pagetext.replace(afc_re, "$1r\|$3");
-		afcHelper_editPage(afcHelper_PageName, pagetext, token, "Marking [[Wikipedia:Articles for creation]] submission as being reviewed", false);
+		afcHelper_editPage(afcHelper_PageName, pagetext, "Marking [[Wikipedia:Articles for creation]] submission as being reviewed", false);
 	} else if (action === 'unmark') {
 		displayMessage('<ul id="afcHelper_status"></ul><ul id="afcHelper_finish"></ul>');
 		document.getElementById('afcHelper_finish').innerHTML += '<span id="afcHelper_finished_wrapper"><span id="afcHelper_finished_main" style="display:none"><li id="afcHelper_done"><b>Done (<a href="' + wgArticlePath.replace("$1", encodeURI(afcHelper_PageName)) + '?action=purge" title="' + afcHelper_PageName + '">Reload page</a>)</b></li></span></span>';
@@ -843,22 +828,21 @@ function afcHelper_act(action) {
 			alert("Unable to locate AFC submission template or page is not marked as being reviewed, aborting...");
 			return;
 		}
-		var token = mw.user.tokens.get('editToken');
 		pagetext = pagetext.replace(/\{\{\s*afc submission\s*\|\s*r\s*\|\s*\|/i, "\{\{AFC submission\|\|");
-		afcHelper_editPage(afcHelper_PageName, pagetext, token, "Unmarking [[Wikipedia:Articles for creation]] submission as being reviewed", false);
+		afcHelper_editPage(afcHelper_PageName, pagetext, "Unmarking [[Wikipedia:Articles for creation]] submission as being reviewed", false);
 	} else if (action === 'cleanup') {
 		displayMessage('<ul id="afcHelper_status"></ul><ul id="afcHelper_finish"></ul>');
 		document.getElementById('afcHelper_finish').innerHTML += '<span id="afcHelper_finished_wrapper"><span id="afcHelper_finished_main" style="display:none"><li id="afcHelper_done"><b>Done (<a href="' + wgArticlePath.replace("$1", encodeURI(afcHelper_PageName)) + '?action=purge" title="' + afcHelper_PageName + '">Reload page</a>)</b></li></span></span>';
-		var token = mw.user.tokens.get('editToken');
 		var text = afcHelper_getPageText(afcHelper_PageName, true, false);
 		if (text === pagetext) document.getElementById('afcHelper_finish').innerHTML += '<span id="afcHelper_finished_wrapper"><span id="afcHelper_finished_main><li id="afcHelper_done"><b>This submission is already cleaned. Nothing changed. (<a href="' + wgArticlePath.replace("$1", encodeURI(afcHelper_PageName)) + '?action=purge" title="' + afcHelper_PageName + '">Reload page</a>)</b></li></span></span>';
-		else afcHelper_editPage(afcHelper_PageName, pagetext, token, "Cleaning the [[Wikipedia:Articles for creation]] submission.", false);
+		else afcHelper_editPage(afcHelper_PageName, pagetext, "Cleaning the [[Wikipedia:Articles for creation]] submission.", false);
 	}
 	$("#afcHelper_finished_main").css("display", "");
 	document.getElementById('afcHelper_finished_main').innerHTML += '<li id="afcHelper_load_Cat:Pend"><b>(<a href="' + wgArticlePath.replace("$1", encodeURI('Category:Pending AfC submissions')) + '" title="Category:Pending AfC submissions">Load Category:Pending AfC submissions</a>)</b></li>';
 }
 
-function afcHelper_movePage(oldtitle, newtitle, token, summary, callback, overwrite_redirect) {
+function afcHelper_movePage(oldtitle, newtitle, summary, callback, overwrite_redirect) {
+	var token = mw.user.tokens.get('editToken');
 	summary += afcHelper_advert;
 	$("#afcHelper_finished_wrapper").html('<span id="afcHelper_AJAX_finished_' + afcHelper_AJAXnumber + '" style="display:none">' + $("#afcHelper_finished_wrapper").html() + '</span>');
 	var func_id = afcHelper_AJAXnumber;
@@ -888,7 +872,7 @@ function afcHelper_movePage(oldtitle, newtitle, token, summary, callback, overwr
 								del = confirm("The target title, "+newtitle+", is a redirect. Would you like to automatically tag it for deletion under {{db-move}} to make way for the approved submission?");
 								if (del) {
 									rat = "{{db-move|1="+oldtitle+"|2=redirect preventing move of accepted [[WP:AFC|article submission]].}}\n";
-									afcHelper_editPage(newtitle, rat+text, mw.user.tokens.get('editToken'), "Tagging redirect in the way of [[Wikipedia:Articles for creation]] submission for deletion under {{[[Template:Db-move|db-move]]}}");
+									afcHelper_editPage(newtitle, rat+text, "Tagging redirect in the way of [[Wikipedia:Articles for creation]] submission for deletion under {{[[Template:Db-move|db-move]]}}");
 									window.overwrite_comment = 'This article submission has been approved, but a [[WP:REDIRECT|redirect]] is blocking it from being moved into the article space. An administrator should delete the redirect and move the article within the next few days. Thanks for your patience!';
 									document.getElementById('afcHelper_move' + escape(oldtitle)).innerHTML = '<div id="afcHelper_edit' + escape(oldtitle)+'"></div>'; // to allow for messages from the editor
 									afcHelper_act('mark') // We mark the submission as "under review"

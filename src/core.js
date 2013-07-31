@@ -81,7 +81,8 @@ function afcHelper_getPageText(title, show, redirectcheck) {
 		return newtext;
 }
 
-function afcHelper_editPage(title, newtext, token, summary, createonly) {
+function afcHelper_editPage(title, newtext, summary, createonly) {
+	var token = mw.user.tokens.get('editToken');
 	summary += afcHelper_advert;
 	$("#afcHelper_finished_wrapper").html('<span id="afcHelper_AJAX_finished_' + afcHelper_AJAXnumber + '" style="display:none">' + $("#afcHelper_finished_wrapper").html() + '</span>');
 	var func_id = afcHelper_AJAXnumber;

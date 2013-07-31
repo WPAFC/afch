@@ -262,13 +262,12 @@ function afcHelper_ffu_performActions() {
 			afcHelper_Submissions[i].notify = document.getElementById("afcHelper_ffu_notify_" + i).checked;
 		}
 	}
-	// Data loaded. Show progress screen and get edit token and WP:FFU page text.
+	// Data loaded. Show progress screen and get WP:FFU page text.
 	displayMessage('<ul><li><b>Now processing...</li></ul><ul id="afcHelper_status"></ul><ul id="afcHelper_finish"></ul>');
 	$("html, body").animate({
 		scrollTop: 0
 	}, "slow"); // Takes up back up to the top for the displayMessage() dialog, __slowly__
 	document.getElementById('afcHelper_finish').innerHTML += '<span id="afcHelper_finished_wrapper"><span id="afcHelper_finished_main" style="display:none"><li id="afcHelper_done"><b>Done (<a href="' + wgArticlePath.replace("$1", encodeURI(afcHelper_ffuPageName)) + '?action=purge" title="' + afcHelper_ffuPageName + '">Reload page</a>)</b></li></span></span>';
-	var token = mw.user.tokens.get('editToken');
 	pagetext = afcHelper_getPageText(afcHelper_ffuPageName, true);
 	var totalaccept = 0;
 	var totaldecline = 0;
@@ -300,12 +299,12 @@ function afcHelper_ffu_performActions() {
 					else if (sub_m.action == 'hold') userpagetext += '\n== Your request at \[\[WP:FFU|Files for upload\]\] ==\n\{\{subst:ffu talk|h\}\} \~\~\~\~\n';
 					else if (sub_m.action == 'accept') if (sub_m.to === '') userpagetext += '\n== Your request at \[\[WP:FFU|Files for upload\]\] ==\n\{\{subst:ffu|comment\}\} \~\~\~\~\n';
 					else userpagetext += '\n== Your request at \[\[WP:FFU|Files for upload\]\] ==\n\{\{subst:ffu talk|file=' + sub_m.to + '\}\} \~\~\~\~\n';
-					afcHelper_editPage('User talk:' + requestinguser, userpagetext, token, 'Notifying user about [[WP:FFU|FFU]] request', false);
+					afcHelper_editPage('User talk:' + requestinguser, userpagetext, 'Notifying user about [[WP:FFU|FFU]] request', false);
 				}
 				if (sub_m.action == 'accept') {
 					// create local file description talkpage
 					if ((sub_m.talkpage == true) && (sub_m.to != '')) {
-						afcHelper_editPage('File talk\:' + sub_m.to, '\{\{subst:WPAFCF\}\}\n' + sub_m.append, token, 'Placing [[WP:AFC|WPAFC]] project banner', true);
+						afcHelper_editPage('File talk\:' + sub_m.to, '\{\{subst:WPAFCF\}\}\n' + sub_m.append, 'Placing [[WP:AFC|WPAFC]] project banner', true);
 					}
 					// update text of the FFU page
 					var header = text.match(/==[^=]*==/)[0];
@@ -322,7 +321,7 @@ function afcHelper_ffu_performActions() {
 						var firstentry = recentpagetext.toLowerCase().indexOf("| file:");
 						recentpagetext = recentpagetext.substring(0, lastentry);
 						recentpagetext = recentpagetext.substring(0, firstentry) + newentry + recentpagetext.substring(firstentry) + '\n}}';
-						afcHelper_editPage("Wikipedia:Files for upload/recent", recentpagetext, token, 'Updating recently uploaded FFUs', false);
+						afcHelper_editPage("Wikipedia:Files for upload/recent", recentpagetext, 'Updating recently uploaded FFUs', false);
 					}
 				} else if (sub_m.action == 'decline') {
 					var header = text.match(/==[^=]*==/)[0];
@@ -370,7 +369,7 @@ function afcHelper_ffu_performActions() {
 	pagetext = pagetext.replace(/[\n\r]+==/g,"\n\n==");
 
 	// And now finally update the WP:FFU page
-	afcHelper_editPage(afcHelper_ffuPageName, pagetext, token, summary, false);
+	afcHelper_editPage(afcHelper_ffuPageName, pagetext, summary, false);
 	document.getElementById('afcHelper_finished_main').style.display = '';
 }
 
