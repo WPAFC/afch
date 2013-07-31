@@ -300,10 +300,12 @@ function afcHelper_prompt(type) {
 		 	+ '<div id="afcHelper_notify_Teahouse"><label for="afcHelper_notify_Teahouse">Notify author about <a href="' + wgArticlePath.replace("$1", 'Wikipedia:Teahouse') + '" title="Wikipedia:Teahouse" target="_blank">Wikipedia:Teahouse</a>:</label><input type="checkbox" name="afcHelper_Teahouse" id="afcHelper_Teahouse" /><br/></div><div id="afcHelper_extra_inline" name="afcHelper_extra_inline"></div><input type="button" id="afcHelper_prompt_button" name="afcHelper_prompt_button" value="Decline" onclick="afcHelper_act(\'decline\')" style="border-radius:3px; background-color:#ffcdd5" />';
 		$("#afcHelper_extra").html(text);
 	} else if (type === 'submit') {
-		var text = '<h3>Place a submission template on ' + afcHelper_PageName + '</h3><br />'+
-		'<input type="radio" name="afcHelper_submit" id="afcHelper_submit1" value="first" /> <label for="afcHelper_submit1">submit with the original submitter</label><br>'+
-		'<input type="radio" name="afcHelper_submit" id="afcHelper_submit2" value="self" checked /> <label for="afcHelper_submit2">submit with yourself as the submitter</label><br>'+
-		'<input type="radio" name="afcHelper_submit" id="afcHelper_submit3" value="custom" /> <label for="afcHelper_submit3">submit with a custom submitter:</label> <input type="text" name="afcHelper_custom_submitter" id="afcHelper_custom_submitter" /><br>'+
+		// !todo have "first" be pre-selected if submission template includes "t", else have "last" pre-selected
+		var text = '<h3>Place a submission template on ' + afcHelper_PageName + '</h3><br />';
+		text += '<input type="radio" name="afcHelper_submit" id="afcHelper_submit1" value="first" /> <label for="afcHelper_submit1">submit with the original submitter</label><br>' + 
+		'<input type="radio" name="afcHelper_submit" id="afcHelper_submit2" value="last" /> <label for="afcHelper_submit2">submit with the last non-bot editor as the submitter</label><br>'+
+		'<input type="radio" name="afcHelper_submit" id="afcHelper_submit3" value="self" checked /> <label for="afcHelper_submit3">submit with yourself as the submitter</label><br>'+
+		'<input type="radio" name="afcHelper_submit" id="afcHelper_submit4" value="custom" /> <label for="afcHelper_submit4">submit with a custom submitter:</label> <input type="text" name="afcHelper_custom_submitter" id="afcHelper_custom_submitter" /><br>'+
 		'<input type="button" id="afcHelper_submit_button" name="afcHelper_submit2_button" value="Place a submit template" onclick="afcHelper_act(\'submit\')" />';
 		$("#afcHelper_extra").html(text);
 	} else if (type === 'mark') {
@@ -360,42 +362,60 @@ function afcHelper_act(action) {
 			var token = mw.user.tokens.get('editToken');
 			afcHelper_editPage(usertalkpage, usertext, token, 'Notification: [[WP:G13|G13]] speedy deletion nomination of [['+afcHelper_PageName+']]', false);
 		}
-
 	} else if (action === 'submit') {
 		var typeofsubmit = $("input[name=afcHelper_submit]:checked").val();
 		var customuser = $("#afcHelper_custom_submitter").val();
 		displayMessage('<ul id="afcHelper_status"></ul><ul id="afcHelper_finish"></ul>');
 		document.getElementById('afcHelper_finish').innerHTML += '<span id="afcHelper_finished_wrapper"><span id="afcHelper_finished_main" style="display:none"><li id="afcHelper_done"><b>Done (<a href="' + wgArticlePath.replace("$1", encodeURI(afcHelper_PageName)) + '?action=purge" title="' + afcHelper_PageName + '">Reload page</a>)</b></li></span></span>';
-		if (typeofsubmit == 'first') {
-			var afc_re = /\{\{\s*afc submission\s*\|(?:\{\{[^\{\}]*\}\}|[^\}\{])*\}\}/i;
-			if (afc_re.test(pagetext)) {
-				var afctemplate = afc_re.exec(pagetext)[0];
-				var author_re = /\|\s*u=\s*[^\|]*\|/i;
-				if (author_re.test(afctemplate)) {
-					var user = author_re.exec(afctemplate)[0];
-					username = user.split(/=/)[1];
-					submitter = username.replace(/\|/g, '');
+
+		// First we handle "last", since this uses a different method than the others
+		if (typeofsubmit == 'last') {
+			// Get the last non-bot editor to the page
+			var submitinfo = afcHelper_last_nonbot(afcHelper_PageName);
+			if (submitinfo) {
+				dt = new Date(submitinfo['timestamp']);
+				// output the date in the correct format
+				date = dt.getUTCFullYear() + ('0' + (dt.getUTCMonth()+1)).slice(-2) + ('0' + dt.getUTCDate()).slice(-2) + ('0' + dt.getUTCHours()).slice(-2) + ('0' + dt.getUTCMinutes()).slice(-2) + ('0' + dt.getUTCSeconds()).slice(-2);
+				var submit = "{{AFC submission|||ts="+date+"|u="+submitinfo['user']+"|ns={{subst:NAMESPACENUMBER}}}}\n";
+				newtext = submit + pagetext;
+				newtext = newtext.replace(/\[\[:?Category:AfC[_ ]submissions[_ ]with[_ ]missing[_ ]AfC[_ ]template\]\]/,"");
+				var token = mw.user.tokens.get('editToken');
+				afcHelper_editPage(afcHelper_PageName, newtext, token, "Submitting [[Wikipedia:Articles for creation]] submission", false);		
+			} else {
+				alert("Unable to find a non-bot editor; please check the page history.");
+			}
+		} else {
+			if (typeofsubmit == 'first') {
+				var afc_re = /\{\{\s*afc submission\s*\|(?:\{\{[^\{\}]*\}\}|[^\}\{])*\}\}/i;
+				if (afc_re.test(pagetext)) {
+					var afctemplate = afc_re.exec(pagetext)[0];
+					var author_re = /\|\s*u=\s*[^\|]*\|/i;
+					if (author_re.test(afctemplate)) {
+						var user = author_re.exec(afctemplate)[0];
+						username = user.split(/=/)[1];
+						submitter = username.replace(/\|/g, '');
+					} else {
+						alert("Could not find the original submitter, aborting...");
+						return;
+					}
 				} else {
-					alert("Could not find the original submitter, aborting...");
+					alert("Could not find an AfC submission template, aborting...");
 					return;
 				}
+				var submit = "{{subst:submit|user="+submitter+"}}\n";
+			} else if (typeofsubmit == 'self') {
+				var submit = "{{subst:submit}}\n";
+			} else if (typeofsubmit == 'custom' && customuser != null && customuser != "" ) {
+				var submit = "{{subst:submit|user="+customuser+"}}\n";
 			} else {
-				alert("Could not find an AfC submission template, aborting...");
+				alert("No valid submitter was specified, aborting...");
 				return;
 			}
-			var submit = "{{subst:submit|user="+submitter+"}}\n";
-		} else if (typeofsubmit == 'self') {
-			var submit = "{{subst:submit}}\n";
-		} else if (typeofsubmit == 'custom' && customuser != null && customuser != "" ) {
-			var submit = "{{subst:submit|user="+customuser+"}}\n";
-		} else {
-			alert("No valid submitter was specified, aborting...");
-			return;
+			newtext = submit + pagetext;
+			newtext = afcHelper_cleanup(newtext);
+			var token = mw.user.tokens.get('editToken');
+			afcHelper_editPage(afcHelper_PageName, newtext, token, "Submitting [[Wikipedia:Articles for creation]] submission", false);
 		}
-		newtext = submit + pagetext;
-		newtext = afcHelper_cleanup(newtext);
-		var token = mw.user.tokens.get('editToken');
-		afcHelper_editPage(afcHelper_PageName, newtext, token, "Submitting [[Wikipedia:Articles for creation]] submission", false);
 	} else if (action === 'accept') {
 		var newtitle = $("#afcHelper_movetarget").val();
 		var assessment = $("#afcHelper_assessment").val();
@@ -1206,6 +1226,28 @@ function afcHelper_trigger(type) {
 	} else {
 		e.style.display = ((e.style.display !== 'none') ? 'none' : 'block');
 	}
+}
+
+// function to get the last non-bot editor to a page
+function afcHelper_last_nonbot(title) {
+	var params = "action=query&prop=revisions&rvprop=user%7Ctimestamp&format=json&rvdir=older&rvlimit=3&indexpageids=1&titles=" + encodeURIComponent(title);
+	var req = sajax_init_object();
+	req.open("POST", wgScriptPath + "/api.php", false);
+	req.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+	req.setRequestHeader("Content-length", params.length);
+	req.setRequestHeader("Connection", "close");
+	req.send(params);
+	var response = eval('(' + req.responseText + ')');
+	pageid = response['query']['pageids'][0];
+	revisions = response['query']['pages'][pageid]['revisions'];
+	for (var i = 0; i < revisions.length; i++) {
+		user = revisions[i]['user'];
+		if (user != "ArticlesForCreationBot")
+			return revisions[i];
+		else 
+			continue;
+	}
+	return false; // if we were unable to find the editor
 }
 
 //function to check if the submission is g13 eligible -- only checks timestamp
