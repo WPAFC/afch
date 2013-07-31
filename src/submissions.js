@@ -33,7 +33,6 @@ var afcHelper_reasonhash = {
 	'film': 'subject appears to be a non-notable film',
 	'corp': 'subject appears to be a non-notable company or organization',
 	'bio': 'subject appears to be a non-notable person',
-	'afd': 'subject previously deleted and prevented from recreation (SALTed)',
 	'ilc': 'submission does not contain minimum citations',
 	'reason': ''
 };
@@ -280,9 +279,6 @@ function afcHelper_prompt(type) {
 			label: 'Other',
 			value: 'Other',
 			disabled: true
-		}, {
-			label: 'afd - Article was previously deleted and prevented from recreation (SALTed)',
-			value: 'afd'
 		}, {
 			label: 'custom - Enter a decline reason in the box below, linking to relevent policies',
 			value: 'reason'
