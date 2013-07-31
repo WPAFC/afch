@@ -14,6 +14,10 @@ function afcHelper_generateSelect(title, options, onchange) {
 	return text;
 }
 
+function afcHelper_escapeHtmlChars(original) {
+	return original.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
+}
+
 function afcHelper_getPageText(title, show, redirectcheck) {
 	if (show) document.getElementById('afcHelper_status').innerHTML += '<li id="afcHelper_get' + escape(title) + '">Getting <a href="' + wgArticlePath.replace("$1", encodeURI(title)) + '" title="' + title + '">' + title + '</a></li>';
 	var req = sajax_init_object();
