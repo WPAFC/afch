@@ -62,19 +62,9 @@ function afcHelper_ffu_init() {
 					title: links[j],
 					action: ''
 				};
-				if (j == 0) {
-					submission.from.push(sub);
-					afcHelper_Submissions.push(sub);
-					afcHelper_numTotal++;
-				} else {
-					for (var k = 0; k < j; k++) {
-						if (links[j] != links[k]) {
-							submission.from.push(sub);
-							afcHelper_Submissions.push(sub);
-							afcHelper_numTotal++;
-						}
-					}
-				}
+				submission.from.push(sub);
+				afcHelper_Submissions.push(sub);
+				afcHelper_numTotal++;
 			}
 			afcHelper_ffuSubmissions.push(submission);
 		} else {
@@ -141,12 +131,12 @@ function afcHelper_ffu_init() {
 			text += '</ul></li>';
 			text += '</ul>';
 			text += '<input type="button" id="afcHelper_ffu_done_button" name="afcHelper_ffu_done_button" value="Done" onclick="afcHelper_ffu_performActions()" />';
-			displayMessage_inline(text, 'display-message' + afcHelper_ffuSubmissions[k].section);
+			displayMessage_inline(text, 'ffu-review-' + afcHelper_ffuSubmissions[k].section);
 		}
 	}
 	if (afcHelper_ffu_temp) {
 		for (m = 0; m < afcHelper_ffu_temp.length; m++)
-		afcHelper_ffu_onActionChange(afcHelper_ffu_temp[m]);
+			afcHelper_ffu_onActionChange(afcHelper_ffu_temp[m]);
 	}
 }
 
@@ -380,7 +370,7 @@ function add_review_links() {
 	sectionHeaders.each(function(index, element) {
 		var not_archived = $(element).next().html().indexOf('This is an archived discussion.') == -1;
 		if (index > 0) // Hack so we don't add display-messsage inside the TOC
-			var idtitle = "display-message" + (index - 1);
+			var idtitle = "ffu-review-" + (index - 1);
 		$('<div id="' + idtitle + '" style="display:none;"></div>').insertAfter(element);
 		var editSectionLink = $(element).children(".mw-editsection");
 		if ((editSectionLink.length > 0) && (not_archived)) {
