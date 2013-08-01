@@ -902,7 +902,7 @@ function afcHelper_movePage(oldtitle, newtitle, summary, callback, overwrite_red
 }
 
 // Create portlet link
-var afcportletLink = mw.util.addPortletLink('p-cactions', '#', 'Review', 'ca-afcHelper', 'Review', 'q');
+var afcportletLink = mw.util.addPortletLink('p-cactions', '#', 'Review', 'ca-afcHelper', 'Review', 'a');
 // Bind click handler
 $(afcportletLink).click(function(e) {
 	e.preventDefault();
