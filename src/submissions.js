@@ -574,7 +574,7 @@ function afcHelper_act(action) {
 
 				// automatic tagging of linkrot
 				// TODO: Use non-regex for html
-				var linkrotre = /((<\s*ref\s*(name\s*=|group\s*=)*\s*.*[\/]{1}>)|(<\s*ref\s*(name\s*=|group\s*=)*\s*[^\/]*>))+(?:(?:https?|ftp|file):\/\/|www\.|ftp\.)(?:\([-A-Z0-9+&@#/%=~_|$?!:,.]*\)|[-A-Z0-9+&@#/%=~_|$?!:,.])*(?:\([-A-Z0-9+&@#/%=~_|$?!:,.]*\)|[A-Z0-9+&@#/%=~_|$])+(\<\/ref\>)+/gi;
+				var linkrotre = /((<\s*ref\s*(name\s*=|group\s*=)*\s*.*[\/]{1}>)|(<\s*ref\s*(name\s*=|group\s*=)*\s*[^\/]*>))+\s*(?:(?:https?|ftp|file):\/\/|www\.|ftp\.)(?:\([-A-Z0-9+&@#/%=~_|$?!:,.]*\)|[-A-Z0-9+&@#/%=~_|$?!:,.])*(?:\([-A-Z0-9+&@#/%=~_|$?!:,.]*\)|[A-Z0-9+&@#/%=~_|$])+\s*(\<\/ref\>)+/gi;
 				if(linkrotre.test(pagetext)){	
 					pagetext = "{{subst:dated|Cleanup-bare URLs}}" + pagetext;
 				}
@@ -1020,9 +1020,7 @@ function afcHelper_cleanup(text) {
 	text = text.replace(/(?:<\s*references\s*>([\S\s]*)<\/references>|<\s*references\s*\/\s*>)/gi, "\n{{reflist|refs=$1}}");
 	text = text.replace("{{reflist|refs=}}", "{{reflist}}"); // hack to make sure we don't leave an unneeded |refs=
 	text = text.replace(/\{\{(userspacedraft|userspace draft|user sandbox)(?:\{\{[^{}]*\}\}|[^}{])*\}\}/ig, "");
-	text = text.replace(/<!--\s*-->/ig,""); // Remove empty HTML comments
-	text = text.replace(/^[-]{4,}$/igm, ""); // Removes horizontal rules
-
+	
 	var afc_re = /\{\{\s*afc submission\s*\|\s*[||h|r](?:\{\{[^\{\}]*\}\}|[^\}\{])*\}\}/i;
 	var afc_alt = /\{\{\s*afc submission\s*\|\s*[^t](?:\{\{[^\{\}]*\}\}|[^\}\{])*\}\}/i;
 	var afc_all = /\{\{\s*afc submission\s*\|\s*(?:\{\{[^\{\}]*\}\}|[^\}\{])*\}\}/i;
@@ -1052,10 +1050,19 @@ function afcHelper_cleanup(text) {
 		commentstemplates.push(afc_comment.exec(text));
 		text = text.replace(afc_comment.exec(text), "");
 	}
-	// Remove empty HTML comments
-	text = text.replace(/<!--\s*-->/ig,"");
-	//removal of unnecessary new lines, stars, "-", and whitespaces at the top of the page
+	
+	//detect URLs in ref-tags
+	var references_re = /((<\s*ref\s*(name\s*=|group\s*=)*\s*.*[\/]{1}>)|(<\s*ref\s*(name\s*=|group\s*=)*\s*[^\/]*>(?:\\<[^\<\>]*\>|[^><])*\<\/\s*ref\s*\>))/gim;
+	if (references_re.test(text)){
+		var reflist_re = /(?:<\s*references\s*>([\S\s]*)<\/references>|<\s*references\s*\/\s*>)/gi;
+		var linkrotre = /((<\s*ref\s*(name\s*=|group\s*=)*\s*.*[\/]{1}>)|(<\s*ref\s*(name\s*=|group\s*=)*\s*[^\/]*>))+(?:(?:https?|ftp|file):\/\/|www\.|ftp\.)(?:\([-A-Z0-9+&@#/%=~_|$?!:,.]*\)|[-A-Z0-9+&@#/%=~_|$?!:,.])*(?:\([-A-Z0-9+&@#/%=~_|$?!:,.]*\)|[A-Z0-9+&@#/%=~_|$])+(\<\/ref\>)+/gi;
+		
+	}
+	text = text.replace(/<!--\s*-->/ig,""); // Remove empty HTML comments
+	text = text.replace(/^[-]{4,}$/igm, ""); // Removes horizontal rules
+	//removal of unnecessary new lines, stars, "-", and whitespaces at the top and bottom of the page
 	text = text.replace(/[*\n\s]*/m, "");
+	
 	//adding back the submission templates and comment templates
 	if (commentstemplates.length > 0) {
 		text = '----\n' + text;
