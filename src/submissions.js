@@ -1008,14 +1008,13 @@ function afcHelper_cleanup(text) {
 	text = text.replace(/\<\!--- Enter the content and\/or code of the template here. ---\>/ig, "");
 	text = text.replace(/\<\!-- EDIT BELOW THIS LINE --\>/ig, "");
 	text = text.replace(/\<\!-- This will add a notice to the bottom of the page and won't blank it! The new template which says that your draft is waiting for a review will appear at the bottom; simply ignore the old \(grey\) drafted templates and the old \(red\) decline templates. A bot will update your article submission. Until then, please don't change anything in this text box\s*(and|.\s*Just)+ press "Save page". --\>/ig, "");	
-	text = text.replace(/\<\!--Do not include any categories - these don't need to be added until the article is accepted; They will just get removed by a bot!--\>/ig, "");
+	text = text.replace(/\<\!--\s*Do not include any categories - these don't need to be added until the article is accepted; They will just get removed by a bot! --\>/ig, "");
 	text = text.replace(/\<\!--- Categories ---\>/gi, '');
 	text = text.replace(/\<\!--- After listing your sources please cite them using inline citations and place them after the information they cite. Please see \[\[Wikipedia:REFB\]\] for instructions on how to add citations. ---\>/ig, "");
 	text = text.replace(/\<\!-- Be sure to cite all of your sources in \<ref\>...\<\/ref\> tags and they will automatically display when you hit save. The more reliable sources added the better! See \[\[Wikipedia:REFB\]\] for more information--\>/ig, "");
 	text = text.replace(/\<\!--- See \[\[Wikipedia:Footnotes\]\] on how to create references using \<ref\>\<\/ref\> tags which will then appear here automatically --\>/ig, "");
 	text = text.replace(/\<\!--Please don't change anything and press save --\>/ig, "");
 	text = text.replace(/\<\!-- Please leave this line alone! --\>/ig, "");
-	text = text.replace(/\<\!-- Do not include any categories - these don't need to be added until the article is accepted; They will just get removed by a bot! --\>/ig, "");
 	text = text.replace(/\<\!-{1,3}\s*Important, do not remove this line before article has been created.\s*-{1,3}\>/ig, "");
 	text = text.replace(/\<\!-- Just press the \"Save page\" button below without changing anything! Doing so will submit your article submission for review. Once you have saved this page you will find a new yellow 'Review waiting' box at the bottom of your submission page. If you have submitted your page previously, the old pink 'Submission declined' template or the old grey 'Draft' template will still appear at the top of your submission page, but you should ignore them. Again, please don't change anything in this text box. Just press the \"Save page\" button below. --\>/ig, "");
 	text = text.replace(/== Request review at \[\[WP:AFC\]\] ==\n/ig, "");
