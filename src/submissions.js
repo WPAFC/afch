@@ -1075,18 +1075,11 @@ function afcHelper_cleanup(text) {
 					}
 				}
 			}
-			//and finally remove the URLs from the real content
-			for(i = 0; i < ref_fullmatch.length; i++){{
-				text.replace(ref_fullmatch[i], "");
-			}}						if(.search[h	ref_fullmatch.push
-					}
-				}
-				
-			}
 		}
-		
-		var linkrotre = /((<\s*ref\s*(name\s*=|group\s*=)*\s*.*[\/]{1}>)|(<\s*ref\s*(name\s*=|group\s*=)*\s*[^\/]*>))+(?:(?:https?|ftp|file):\/\/|www\.|ftp\.)(?:\([-A-Z0-9+&@#/%=~_|$?!:,.]*\)|[-A-Z0-9+&@#/%=~_|$?!:,.])*(?:\([-A-Z0-9+&@#/%=~_|$?!:,.]*\)|[A-Z0-9+&@#/%=~_|$])+(\<\/ref\>)+/gi;
-		
+		//and finally remove the URLs from the real content
+		for(i = 0; i < ref_fullmatch.length; i++){
+			text.replace(ref_fullmatch[i], "");
+		}
 	}
 	text = text.replace(/<!--\s*-->/ig,""); // Remove empty HTML comments
 	text = text.replace(/^[-]{4,}$/igm, ""); // Removes horizontal rules
@@ -1291,5 +1284,3 @@ function afcHelper_turnvisible(type, bool) {
 	else $("#" + type).css("display", "none"); //document.getElementById("afcHelper_blank").removeAttribute("checked");		
 }
 //</nowiki>
-);
-	pagetext = pagetext.replace(/\{\{AFC submission\s*\}\}/gi, 
