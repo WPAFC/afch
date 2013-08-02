@@ -3,6 +3,7 @@
 var afcHelper_PageName = wgPageName.replace(/_/g, ' ');
 var afcHelper_AJAXnumber = 0;
 var afcHelper_submissionTitle = wgTitle.replace(/Articles for creation\//g, '');
+var first_reflist_re = /(\{\{reflist(?:\{\{[^\{\}]*\}\}|[^\}\{])*\}\})|(\<\s*references\s*\/\s*\>)/i;
 var afcHelper_reasonhash = {
 	'v': 'submission is unsourced or contains only unreliable sources',
 	'blank': 'submission is blank',
@@ -940,7 +941,7 @@ function afcHelper_onChange(select) {
 
 function afcHelper_cleanup(text) {
 	// Remove html comments (<!--) that surround categories
-	text = text.replace(/\<!--\s*((\[\[:{0,1}(Category:.*?)\]\]\s*)+)--\>/gi, "$1");
+	text = text.replace(/\<!--\s*((\[\[:?(Category:.*?)\]\]\s*)+)--\>/gi, "$1");
 	//Commenting out cats
 	text = text.replace(/\[\[Category:/gi, "\[\[:Category:");
 
@@ -1056,8 +1057,14 @@ function afcHelper_cleanup(text) {
 	var ref_re = /(<\s*ref\s*(name\s*=|group\s*=)*\s*.*[\/]{1}>)|(<\s*ref\s*(name\s*=|group\s*=)*\s*[^\/]*>(?:\\<[^\<\>]*\>|[^><])*(?:((?:https?|ftp|file):\/\/|www\.|ftp\.)(?:\([-A-Z0-9+&@#/%=~_|$?!:,.]*\)|[-A-Z0-9+&@#/%=~_|$?!:,.])*(?:\([-A-Z0-9+&@#/%=~_|$?!:,.]*\)|[A-Z0-9+&@#/%=~_|$])+)(?:\\<[^\<\>]*\>|[^><])*\<\/\s*ref\s*\>)/gim;
 	if (ref_re.test(text)){
 		var ref_matches = ref_re.exect(text);
+		var temptext = text;
+		if (first_reflist_re.test(temptext)){
+			var startindex = text.indexOf(first_reflist_re);
+			var endindex = text.indexOf(">", startindex);
+			pagetext = text.substring(0, startindex) + pagetext.substring(endindex + 1);
+			
+		}
 		
-		var reflist_re = /(?:<\s*references\s*>([\S\s]*)<\/references>|<\s*references\s*\/\s*>)/gi;
 		var linkrotre = /((<\s*ref\s*(name\s*=|group\s*=)*\s*.*[\/]{1}>)|(<\s*ref\s*(name\s*=|group\s*=)*\s*[^\/]*>))+(?:(?:https?|ftp|file):\/\/|www\.|ftp\.)(?:\([-A-Z0-9+&@#/%=~_|$?!:,.]*\)|[-A-Z0-9+&@#/%=~_|$?!:,.])*(?:\([-A-Z0-9+&@#/%=~_|$?!:,.]*\)|[A-Z0-9+&@#/%=~_|$])+(\<\/ref\>)+/gi;
 		
 	}
@@ -1156,7 +1163,6 @@ function afcHelper_blanking() {
 	// Special thanks to [[User:Betacommand]] for KISS
 	var rerefbegin = /\<\s*ref\s*(name\s*=|group\s*=)*\s*[^\/]*>/ig;
 	var rerefend = /\<\/\s*ref\s*\>/ig;
-	var reflistre = /(\{\{reflist(?:\{\{[^\{\}]*\}\}|[^\}\{])*\}\})|(\<\s*references\s*\/\s*\>)/i;
 	refbegin = texttest.match(rerefbegin);
 	refend = texttest.match(rerefend);
 	if (refbegin) { //Firefox workaround!
@@ -1169,7 +1175,7 @@ function afcHelper_blanking() {
 		}
 	}
 	//test if ref tags are used, but no reflist available
-	if ((!reflistre.test(pagetext)) && refbegin) {
+	if ((!first_reflist_re.test(pagetext)) && refbegin) {
 		errormsg += '<h3><div style="color:red">Be careful, there is a &lt;ref&gt; tag used, but no references list (reflist)! You might not see all references.</div></h3>';
 	}
 
