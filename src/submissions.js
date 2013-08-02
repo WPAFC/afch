@@ -46,38 +46,45 @@ function afcHelper_init() {
 	form += afcHelper_blanking();
 	form += '<h3>Reviewing ' + afcHelper_PageName + '</h3>';
 	var template_status_re =  /\{\{\s*afc submission\s*\|\s*(\S\s*)\s*\|/gi;
-	var template_status = template_status_re.exec(pagetext);
-	if (template_status) {
-		template_status = template_status[1].toLowerCase();
-		if(template_status === "|") template_status = "";
-	} else {
-		template_status = false; // if there is no template on page
+	var temp_statuses = new Array();
+	var match;
+	while (match = template_status_re.exec(pagetext)) {
+		temp_statuses.push(match[1]);
+	}
+	var template_statuses = new Array();
+	for (var i = 0; i < temp_statuses.length; i++) {
+		status = temp_statuses[i]
+		if(status ==="|") status = ""
+		template_statuses[i] = status.toLowerCase();
+	};
+	if (!template_statuses) {
+		template_statuses = false; // if there is no template on page
 	}
 
-	if (template_status === "" || template_status === "r") {
+	if ($.inArray("",template_statuses) != -1 || $.inArray("r",template_statuses) != -1) {
 		form += '<input type="button" id="afcHelper_accept_button" name="afcHelper_accept_button" value="Accept" onclick="afcHelper_prompt(\'accept\')" style="border-radius:3px; background-color:#adfcad" />';
 		form += '<input type="button" id="afcHelper_decline_button" name="afcHelper_decline_button" value="Decline" onclick="afcHelper_prompt(\'decline\')" style="border-radius:3px; background-color:#ffcdd5" />';
 	}
 
-	if (template_status === "" || template_status === "r" || template_status === "d")
+	if ($.inArray("",template_statuses) != -1 || $.inArray("r",template_statuses) != -1 || $.inArray("d",template_statuses) != -1)
 		form += '<input type="button" id="afcHelper_comment_button" name="afcHelper_comment_button" value="Comment" onclick="afcHelper_prompt(\'comment\')" style="border-radius:3px; background-color:#f3eba3" />';
 
-	if (template_status === false || template_status === "t")
+	if (template_statuses === false || $.inArray("t",template_statuses) != -1)
 		form += '<input type="button" id="afcHelper_submit_button" name="afcHelper_submit_button" value="Submit" onclick="afcHelper_prompt(\'submit\')" style="border-radius:3px; background-color:#66ccff" />';
 
-	if (template_status === false)
+	if (template_statuses === false)
 		form += '<input type="button" id="afcHelper_draft_button" name="afcHelper_draft_button" value="Mark as draft submission" onclick="afcHelper_act(\'draft\')" style="border-radius:3px; background-color:#4aa02c" />';
 
-	if (template_status === "r") {
+	if ($.inArray("r",template_statuses) != -1) {
 		form += '<input type="button" id="afcHelper_unmark_button" name="afcHelper_unmark_button" value="Unmark as reviewing" onclick="afcHelper_act(\'unmark\')" style="border-radius:3px; background-color:#b1dae8" />';
-	} else if (template_status === "") {
+	} else if ($.inArray("",template_statuses) != -1) {
 		form += '<input type="button" id="afcHelper_mark_button" name="afcHelper_mark_button" value="Mark as reviewing" onclick="afcHelper_prompt(\'mark\')" style="border-radius:3px; background-color:#b1dae8" />';
 	}
 
-	if (template_status === false || template_status === "" || template_status === "r" || template_status === "d" || template_status === "t")
+	if (template_statuses === false || $.inArray("",template_statuses) != -1 || $.inArray("r",template_statuses) != -1 || $.inArray("d",template_statuses) != -1 || $.inArray("t",template_statuses) != -1)
 		form += '<input type="button" id="afcHelper_cleanup_button" name="afcHelper_cleanup_button" value="Clean the submission" onclick="afcHelper_act(\'cleanup\')" style="border-radius:3px; background-color:#d2d3cc" />';
 
-	if (template_status === "d" && afcHelper_g13_eligible(afcHelper_PageName))
+	if ($.inArray("d",template_statuses) != -1 && afcHelper_g13_eligible(afcHelper_PageName))
 		form += '<input type="button" id="afcHelper_g13_button" name="afcHelper_g13_button" value="Tag the submission for G13 speedy deletion" onclick="afcHelper_act(\'g13\')" style="border-radius:3px; background-color:#ff3333" />';
 
 	form += '<div id="afcHelper_extra"></div>';
