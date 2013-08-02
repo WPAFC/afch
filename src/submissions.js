@@ -1059,7 +1059,7 @@ function afcHelper_cleanup(text) {
 		if (first_reflist_re.test(temptext)){
 			//first stip out the complete content stopping after {{reflist}}
 			var startindex = text.indexOf(first_reflist_re);
-			temptext.substring(0,startindex));
+			temptext.substring(0,startindex);
 			temptext.replace(first_reflist_re, "");
 			//now check if there are stars following the URLs in ref_matches
 			for (i = 0; i < ref_matches.length; i++){
