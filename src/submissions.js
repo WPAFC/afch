@@ -1063,12 +1063,16 @@ function afcHelper_cleanup(text) {
 			var startindex = text.indexOf(first_reflist_re);
 			temptext.substring(0,startindex));
 			temptext.replace(first_reflist_re, "");
+			var match_url_re = 
 			//now check if there are stars following the URLs in ref_matches
 			for (i = 0; i < ref_matches.length; i++){
 				//first find only URL
+				var match_re = /(*\s*(?:((?:https?|ftp|file):\/\/|www\.|ftp\.)(?:\([-A-Z0-9+&@#/%=~_|$?!:,.]*\)|[-A-Z0-9+&@#/%=~_|$?!:,.])*(?:\([-A-Z0-9+&@#/%=~_|$?!:,.]*\)|[A-Z0-9+&@#/%=~_|$])+)\s*)/gi;
 				if(temptext.search(ref_matches[i])){
-					var match_re = 
-					ref_fullmatch.push
+					var url = temptext.exec(match_re);
+					for(j = 0; j < url.length; j++){
+						if(.search[h	ref_fullmatch.push
+					}
 				}
 				
 			}
