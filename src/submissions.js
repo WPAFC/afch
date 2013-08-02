@@ -1057,11 +1057,21 @@ function afcHelper_cleanup(text) {
 	if (ref_re.test(text)){
 		var ref_matches = ref_re.exect(text);
 		var temptext = text;
+		var ref_fullmatch = new Array();
 		if (first_reflist_re.test(temptext)){
+			//first stip out the complete content stopping after {{reflist}}
 			var startindex = text.indexOf(first_reflist_re);
-			var endindex = text.indexOf(">", startindex);
-			pagetext = text.substring(0, startindex) + pagetext.substring(endindex + 1);
-			
+			temptext.substring(0,startindex));
+			temptext.replace(first_reflist_re, "");
+			//now check if there are stars following the URLs in ref_matches
+			for (i = 0; i < ref_matches.length; i++){
+				//first find only URL
+				if(temptext.search(ref_matches[i])){
+					var match_re = 
+					ref_fullmatch.push
+				}
+				
+			}
 		}
 		
 		var linkrotre = /((<\s*ref\s*(name\s*=|group\s*=)*\s*.*[\/]{1}>)|(<\s*ref\s*(name\s*=|group\s*=)*\s*[^\/]*>))+(?:(?:https?|ftp|file):\/\/|www\.|ftp\.)(?:\([-A-Z0-9+&@#/%=~_|$?!:,.]*\)|[-A-Z0-9+&@#/%=~_|$?!:,.])*(?:\([-A-Z0-9+&@#/%=~_|$?!:,.]*\)|[A-Z0-9+&@#/%=~_|$])+(\<\/ref\>)+/gi;
