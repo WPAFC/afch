@@ -575,10 +575,8 @@ function afcHelper_act(action) {
 
 				// automatic tagging of linkrot
 				// TODO: Use non-regex for html
-				  var linkrotre = /((<\s*ref\s*(name\s*=|group\s*=)*\s*.*[\/]{1}>)|(<\s*ref\s*(name\s*=|group\s*=)*\s*[^\/]*>))+\s*(?:(?:https?|ftp|file):\/\/|www\.|ftp\.)(?:\([-A-Z0-9+&@#/%=~_|$?!:,.]*\)|[-A-Z0-9+&@#/%=~_|$?!:,.])*(?:\([-A-Z0-9+&@#/%=~_|$?!:,.]*\)|[A-Z0-9+&@#/%=~_|$])+\s*(\<\s*\/\s*ref\s*\>)+/gi;
-		}, {
-			label: me\s*=|group\s*=)*\s*[^\/]*>))+\s*(?:(?:https?|ftp|file):\/\/|www\.|ftp\.)(?:\([-A-Z0-9+&@#/%=~_|$?!:,.]*\)|[-A-Z0-9+&@#/%=~_|$?!:,.])*(?:\([-A-Z0-9+&@#/%=~_|$?!:,.]*\)|[A-Z0-9+&@#/%=~_|$])+\s*(\<\/ref\>)+/gi;
-				if(linkrotre.test(pagetext)){	
+				var linkrotre = /((<\s*ref\s*(name\s*=|group\s*=)*\s*.*[\/]{1}>)|(<\s*ref\s*(name\s*=|group\s*=)*\s*[^\/]*>))+\s*(?:(?:https?|ftp|file):\/\/|www\.|ftp\.)(?:\([-A-Z0-9+&@#/%=~_|$?!:,.]*\)|[-A-Z0-9+&@#/%=~_|$?!:,.])*(?:\([-A-Z0-9+&@#/%=~_|$?!:,.]*\)|[A-Z0-9+&@#/%=~_|$])+\s*(\<\s*\/\s*ref\s*\>)+/gi;
+				if(linkrotre.test(pagetext)){
 					pagetext = "{{subst:dated|Cleanup-bare URLs}}" + pagetext;
 				}
 				//check if page is orphaned (mainspace) and tag it!
@@ -1063,7 +1061,6 @@ function afcHelper_cleanup(text) {
 			var startindex = text.indexOf(first_reflist_re);
 			temptext.substring(0,startindex));
 			temptext.replace(first_reflist_re, "");
-			var match_url_re = 
 			//now check if there are stars following the URLs in ref_matches
 			for (i = 0; i < ref_matches.length; i++){
 			//first find only URL
