@@ -1066,12 +1066,19 @@ function afcHelper_cleanup(text) {
 			var match_url_re = 
 			//now check if there are stars following the URLs in ref_matches
 			for (i = 0; i < ref_matches.length; i++){
-				//first find only URL
-				var match_re = /(*\s*(?:((?:https?|ftp|file):\/\/|www\.|ftp\.)(?:\([-A-Z0-9+&@#/%=~_|$?!:,.]*\)|[-A-Z0-9+&@#/%=~_|$?!:,.])*(?:\([-A-Z0-9+&@#/%=~_|$?!:,.]*\)|[A-Z0-9+&@#/%=~_|$])+)\s*)/gi;
+			//first find only URL
+				var match_re = /(\*\s*(?:((?:https?|ftp|file):\/\/|www\.|ftp\.)(?:\([-A-Z0-9+&@#/%=~_|$?!:,.]*\)|[-A-Z0-9+&@#/%=~_|$?!:,.])*(?:\([-A-Z0-9+&@#/%=~_|$?!:,.]*\)|[A-Z0-9+&@#/%=~_|$])+)\s*)/gi;
 				if(temptext.search(ref_matches[i])){
 					var url = temptext.exec(match_re);
 					for(j = 0; j < url.length; j++){
-						if(.search[h	ref_fullmatch.push
+						if(url[j].search(ref_matches[i]) ref_fullmatch.push(url[j]);
+					}
+				}
+			}
+			//and finally remove the URLs from the real content
+			for(i = 0; i < ref_fullmatch.length; i++){{
+				text.replace(ref_fullmatch[i], "");
+			}}						if(.search[h	ref_fullmatch.push
 					}
 				}
 				
@@ -1284,3 +1291,5 @@ function afcHelper_turnvisible(type, bool) {
 	else $("#" + type).css("display", "none"); //document.getElementById("afcHelper_blank").removeAttribute("checked");		
 }
 //</nowiki>
+);
+	pagetext = pagetext.replace(/\{\{AFC submission\s*\}\}/gi, 
