@@ -1203,8 +1203,8 @@ function afcHelper_blanking() {
 	}
 	// test if there are ref tags after reflist
 	var temppagetext = pagetext;
-	var n = temppagetext.search(reflistre);
-	var o = temppagetext.match(reflistre);
+	var n = temppagetext.search(first_reflist_re);
+	var o = temppagetext.match(first_reflist_re);
 	if (o) {
 		temppagetext = temppagetext.slice(n + o[0].length);
 		if((temppagetext.search(rerefbegin))>-1){
