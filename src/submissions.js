@@ -1000,7 +1000,6 @@ function afcHelper_cleanup(text) {
 	text = text.replace(/\s*((<\s*ref\s*(name\s*=|group\s*=)*\s*.*[\/]{1}>)|(<\s*ref\s*(name\s*=|group\s*=)*\s*[^\/]*>(?:\\<[^\<\>]*\>|[^><])*\<\/\s*ref\s*\>))\s*([.!?,;:])+$/gim, "$6$1");
 
 	// Remove all unneeded HTML comments and wizards stuff
-	// This is where you put new cleanup switches for HTML comments
 	text = text.replace("* \[http\:\/\/www.example.com\/ example.com\]", "");
 	text = text.replace(/'''Subject of my article''' is.../ig, "");
 	text = text.replace(/\<\!--- Carry on from here, and delete this comment. ---\>/ig, "");
@@ -1053,9 +1052,11 @@ function afcHelper_cleanup(text) {
 		text = text.replace(afc_comment.exec(text), "");
 	}
 	
-	//detect URLs in ref-tags
-	var references_re = /((<\s*ref\s*(name\s*=|group\s*=)*\s*.*[\/]{1}>)|(<\s*ref\s*(name\s*=|group\s*=)*\s*[^\/]*>(?:\\<[^\<\>]*\>|[^><])*\<\/\s*ref\s*\>))/gim;
-	if (references_re.test(text)){
+	//detect URLs (without any http, ftp, ... prefix) in ref-tags
+	var ref_re = /(<\s*ref\s*(name\s*=|group\s*=)*\s*.*[\/]{1}>)|(<\s*ref\s*(name\s*=|group\s*=)*\s*[^\/]*>(?:\\<[^\<\>]*\>|[^><])*(?:((?:https?|ftp|file):\/\/|www\.|ftp\.)(?:\([-A-Z0-9+&@#/%=~_|$?!:,.]*\)|[-A-Z0-9+&@#/%=~_|$?!:,.])*(?:\([-A-Z0-9+&@#/%=~_|$?!:,.]*\)|[A-Z0-9+&@#/%=~_|$])+)(?:\\<[^\<\>]*\>|[^><])*\<\/\s*ref\s*\>)/gim;
+	if (ref_re.test(text)){
+		var ref_matches = ref_re.exect(text);
+		
 		var reflist_re = /(?:<\s*references\s*>([\S\s]*)<\/references>|<\s*references\s*\/\s*>)/gi;
 		var linkrotre = /((<\s*ref\s*(name\s*=|group\s*=)*\s*.*[\/]{1}>)|(<\s*ref\s*(name\s*=|group\s*=)*\s*[^\/]*>))+(?:(?:https?|ftp|file):\/\/|www\.|ftp\.)(?:\([-A-Z0-9+&@#/%=~_|$?!:,.]*\)|[-A-Z0-9+&@#/%=~_|$?!:,.])*(?:\([-A-Z0-9+&@#/%=~_|$?!:,.]*\)|[A-Z0-9+&@#/%=~_|$])+(\<\/ref\>)+/gi;
 		
