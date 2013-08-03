@@ -7,7 +7,8 @@ mw.loader.load( 'mediawiki.api.edit' );
 var api = new mw.Api();
 
 importScript('User:Timotheus Canens/displaymessage.js');
-var afchelper_baseurl = mw.config.get('wgServer') + '/w/index.php?action=raw&ctype=text/javascript&title=MediaWiki:Gadget-afchelper.js';
+// !todo REMOVE -beta WHEN MERGING TO DEVELOP
+var afchelper_baseurl = mw.config.get('wgServer') + '/w/index.php?action=raw&ctype=text/javascript&title=MediaWiki:Gadget-afchelper-beta.js';
 
 var afcHelper_advert = ' ([[WP:AFCH|AFCH]])';
 var pagetext = '';
@@ -82,7 +83,7 @@ function afcHelper_getPageText(title, show, redirectcheck) {
 		return newtext;
 }
 
-function afcHelper_editPage(title, newtext, summary, createonly) {
+/*function afcHelper_editPage(title, newtext, summary, createonly) {
 	var token = mw.user.tokens.get('editToken');
 	summary += afcHelper_advert;
 	$("#afcHelper_finished_wrapper").html('<span id="afcHelper_AJAX_finished_' + afcHelper_AJAXnumber + '" style="display:none">' + $("#afcHelper_finished_wrapper").html() + '</span>');
@@ -115,8 +116,14 @@ function afcHelper_editPage(title, newtext, summary, createonly) {
 	};
 	req.send(params);
 }
+*/
 
-function afcHelper_editPage_new(title, newtext, summary, createonly) {
+function afcHelper_editPage(title, newtext, summary, createonly) {
+	summary += afcHelper_advert;
+	$("#afcHelper_finished_wrapper").html('<span id="afcHelper_AJAX_finished_' + afcHelper_AJAXnumber + '" style="display:none">' + $("#afcHelper_finished_wrapper").html() + '</span>');
+	var func_id = afcHelper_AJAXnumber;
+	afcHelper_AJAXnumber++;
+	document.getElementById('afcHelper_status').innerHTML += '<li id="afcHelper_edit' + escape(title) + '">Editing <a href="' + wgArticlePath.replace("$1", encodeURI(title)) + '" title="' + title + '">' + title + '</a></li>';
 	request = {
 				'action': 'edit',
 				'title': title,
@@ -124,17 +131,27 @@ function afcHelper_editPage_new(title, newtext, summary, createonly) {
 				'summary': summary,
 			}
 	if (createonly) request.createonly = true;
+	//request.createonly = true;
 
+	// !todo
+	//  - error handling is messed up; errors aren't raised...check what data variable actually is
+	//  - asynchronous loading makes "done" appear before it is actually done; .always() might fix?
 	api.postWithEditToken(request)
 			.done( function ( data ) {
+				//console.log(data);
 				if ( data && data.edit && data.edit.result && data.edit.result == 'Success' ) {
-					console.log('API result:', data );
-				 } else {
-				 	console.log('API returned an error:' + data);
-				 }
+					//console.log(data);
+					//console.log('success');
+					document.getElementById('afcHelper_edit' + escape(title)).innerHTML = 'Saved <a href="' + wgArticlePath.replace("$1", encodeURI(title)) + '" title="' + title + '">' + title + '</a>';
+				} else {
+					//console.log(data);
+					//console.log('error');
+					document.getElementById('afcHelper_edit' + escape(title)).innerHTML = '<div style="color:red"><b>Edit failed on <a href="' + wgArticlePath.replace("$1", encodeURI(title)) + '" title="' + title + '">' + title + '</a></b></div>. Error info:' + response['error']['code'] + ' : ' + response['error']['info'];
+				}
 			} )
 			.fail( function ( error ) {
-				console.log('API failed :(', error );
+				document.getElementById('afcHelper_edit' + escape(title)).innerHTML = '<div style="color:red"><b>Edit failed on <a href="' + wgArticlePath.replace("$1", encodeURI(title)) + '" title="' + title + '">' + title + '</a></b></div>. Error info:' + error;
 			});
+	$("#afcHelper_AJAX_finished_" + func_id).css("display", '');
 }
 //</nowiki>
