@@ -57,7 +57,7 @@ function afcHelper_init() {
 		if(status ==="|") status = ""
 		template_statuses[i] = status.toLowerCase();
 	};
-	if (!template_statuses) {
+	if (template_statuses.length == 0) {
 		template_statuses = false; // if there is no template on page
 	}
 
