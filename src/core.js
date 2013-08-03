@@ -1,5 +1,25 @@
 //<nowiki>
 // Script should be located at [[MediaWiki:Gadget-afchelper.js/core.js]]
+
+importScript('User:Timotheus Canens/displaymessage.js');
+var afchelper_baseurl = mw.config.get('wgServer') + '/w/index.php?action=raw&ctype=text/javascript&title=MediaWiki:Gadget-afchelper.js';
+
+var afcHelper_advert = ' ([[WP:AFCH|AFCH]])';
+var pagetext = '';
+var usertalkpage = '';
+
+if (wgPageName.indexOf('Wikipedia:Articles_for_creation/Redirects') !== -1) {
+	importScriptURI(afchelper_baseurl + '/redirects.js');
+} else if (wgPageName.indexOf('Wikipedia:Files_for_upload') !== -1) {
+	importScriptURI(afchelper_baseurl + '/ffu.js');		
+} else if ((wgPageName.indexOf('Wikipedia:Articles_for_creation/') !== -1)
+			|| (wgPageName.indexOf('Wikipedia_talk:Articles_for_creation/') !== -1)
+			|| (wgPageName.indexOf('User:') !== -1)
+			|| (wgPageName.indexOf('User_talk:') !== -1)
+			){
+	importScriptURI(afchelper_baseurl + '/submissions.js');				
+}
+
 function afcHelper_generateSelect(title, options, onchange) {
 	var text = '<select name="' + title + '" id="' + title + '" ';
 	if (onchange !== null) text += 'onchange = "' + onchange + '" ';
@@ -13,6 +33,10 @@ function afcHelper_generateSelect(title, options, onchange) {
 	}
 	text += "</select>";
 	return text;
+}
+
+function afcHelper_escapeHtmlChars(original) {
+	return original.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
 }
 
 function afcHelper_getPageText(title, show, redirectcheck) {
@@ -53,7 +77,8 @@ function afcHelper_getPageText(title, show, redirectcheck) {
 		return newtext;
 }
 
-function afcHelper_editPage(title, newtext, token, summary, createonly) {
+function afcHelper_editPage(title, newtext, summary, createonly) {
+	var token = mw.user.tokens.get('editToken');
 	summary += afcHelper_advert;
 	$("#afcHelper_finished_wrapper").html('<span id="afcHelper_AJAX_finished_' + afcHelper_AJAXnumber + '" style="display:none">' + $("#afcHelper_finished_wrapper").html() + '</span>');
 	var func_id = afcHelper_AJAXnumber;

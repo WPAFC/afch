@@ -33,7 +33,6 @@ var afcHelper_reasonhash = {
 	'film': 'subject appears to be a non-notable film',
 	'corp': 'subject appears to be a non-notable company or organization',
 	'bio': 'subject appears to be a non-notable person',
-	'afd': 'subject previously deleted through the Articles for Deletion process',
 	'ilc': 'submission does not contain minimum citations',
 	'reason': ''
 };
@@ -47,38 +46,45 @@ function afcHelper_init() {
 	form += afcHelper_blanking();
 	form += '<h3>Reviewing ' + afcHelper_PageName + '</h3>';
 	var template_status_re =  /\{\{\s*afc submission\s*\|\s*(\S\s*)\s*\|/gi;
-	var template_status = template_status_re.exec(pagetext);
-	if (template_status) {
-		template_status = template_status[1].toLowerCase();
-		if(template_status === "|") template_status = "";
-	} else {
-		template_status = false; // if there is no template on page
+	var temp_statuses = new Array();
+	var match;
+	while (match = template_status_re.exec(pagetext)) {
+		temp_statuses.push(match[1]);
+	}
+	var template_statuses = new Array();
+	for (var i = 0; i < temp_statuses.length; i++) {
+		status = temp_statuses[i]
+		if(status ==="|") status = ""
+		template_statuses[i] = status.toLowerCase();
+	};
+	if (template_statuses.length == 0) {
+		template_statuses = false; // if there is no template on page
 	}
 
-	if (template_status === "" || template_status === "r") {
+	if ($.inArray("",template_statuses) != -1 || $.inArray("r",template_statuses) != -1) {
 		form += '<input type="button" id="afcHelper_accept_button" name="afcHelper_accept_button" value="Accept" onclick="afcHelper_prompt(\'accept\')" style="border-radius:3px; background-color:#adfcad" />';
 		form += '<input type="button" id="afcHelper_decline_button" name="afcHelper_decline_button" value="Decline" onclick="afcHelper_prompt(\'decline\')" style="border-radius:3px; background-color:#ffcdd5" />';
 	}
 
-	if (template_status === "" || template_status === "r" || template_status === "d")
+	if ($.inArray("",template_statuses) != -1 || $.inArray("r",template_statuses) != -1 || $.inArray("d",template_statuses) != -1)
 		form += '<input type="button" id="afcHelper_comment_button" name="afcHelper_comment_button" value="Comment" onclick="afcHelper_prompt(\'comment\')" style="border-radius:3px; background-color:#f3eba3" />';
 
-	if (template_status === false || template_status === "t")
+	if (template_statuses === false || $.inArray("t",template_statuses) != -1)
 		form += '<input type="button" id="afcHelper_submit_button" name="afcHelper_submit_button" value="Submit" onclick="afcHelper_prompt(\'submit\')" style="border-radius:3px; background-color:#66ccff" />';
 
-	if (template_status === false)
+	if (template_statuses === false)
 		form += '<input type="button" id="afcHelper_draft_button" name="afcHelper_draft_button" value="Mark as draft submission" onclick="afcHelper_act(\'draft\')" style="border-radius:3px; background-color:#4aa02c" />';
 
-	if (template_status === "r") {
+	if ($.inArray("r",template_statuses) != -1) {
 		form += '<input type="button" id="afcHelper_unmark_button" name="afcHelper_unmark_button" value="Unmark as reviewing" onclick="afcHelper_act(\'unmark\')" style="border-radius:3px; background-color:#b1dae8" />';
-	} else if (template_status === "") {
+	} else if ($.inArray("",template_statuses) != -1) {
 		form += '<input type="button" id="afcHelper_mark_button" name="afcHelper_mark_button" value="Mark as reviewing" onclick="afcHelper_prompt(\'mark\')" style="border-radius:3px; background-color:#b1dae8" />';
 	}
 
-	if (template_status === false || template_status === "" || template_status === "r" || template_status === "d" || template_status === "t")
+	if (template_statuses === false || $.inArray("",template_statuses) != -1 || $.inArray("r",template_statuses) != -1 || $.inArray("d",template_statuses) != -1 || $.inArray("t",template_statuses) != -1)
 		form += '<input type="button" id="afcHelper_cleanup_button" name="afcHelper_cleanup_button" value="Clean the submission" onclick="afcHelper_act(\'cleanup\')" style="border-radius:3px; background-color:#d2d3cc" />';
 
-	if (template_status === "d" && afcHelper_g13_eligible(afcHelper_PageName))
+	if ($.inArray("d",template_statuses) != -1 && afcHelper_g13_eligible(afcHelper_PageName))
 		form += '<input type="button" id="afcHelper_g13_button" name="afcHelper_g13_button" value="Tag the submission for G13 speedy deletion" onclick="afcHelper_act(\'g13\')" style="border-radius:3px; background-color:#ff3333" />';
 
 	form += '<div id="afcHelper_extra"></div>';
@@ -131,8 +137,8 @@ function afcHelper_prompt(type) {
 		text += '<br /><label for="afcHelper_pagePrepend">Prepend to page (optional, e.g. maintain boxes, etc.): </label><textarea rows="3" cols="60" name="afcHelper_pagePrepend" id="afcHelper_pagePrepend"></textarea>'
 		+ '<br /><label for="afcHelper_pageAppend">Append to page (optional, e.g. categories, stub-tags, etc.): </label><textarea rows="3" cols="60" name="afcHelper_pageAppend" id="afcHelper_pageAppend"></textarea>'
 		+ '<br /><label for="afcHelper_talkAppend">Append to talk page (optional, e.g. WikiProjects): </label><textarea rows="3" cols="60" name="afcHelper_talkAppend" id="afcHelper_talkAppend"></textarea>'
-		+ '<br /><label for="afcHelper_reqphoto">Does the article needs a photo / image? (&#123;&#123;reqphoto&#125;&#125;) </label><input type="checkbox" name="afcHelper_reqphoto" id="afcHelper_reqphoto"/>'
-		+ '<br /><label for="afcHelper_reqinfobox">Does the article needs an infobox? (&#123;&#123;reqinfobox&#125;&#125;) </label><input type="checkbox" name="afcHelper_reqinfobox" id="afcHelper_reqinfobox"/>'
+		+ '<br /><label for="afcHelper_reqphoto">Does the article need a photo/image? (&#123;&#123;reqphoto&#125;&#125;) </label><input type="checkbox" name="afcHelper_reqphoto" id="afcHelper_reqphoto"/>'
+		+ '<br /><label for="afcHelper_reqinfobox">Does the article need an infobox? (&#123;&#123;reqinfobox&#125;&#125;) </label><input type="checkbox" name="afcHelper_reqinfobox" id="afcHelper_reqinfobox"/>'
 		+ '<br /><label for="afcHelper_biography">Is the article a biography? </label><input type="checkbox" name="afcHelper_biography" id="afcHelper_biography" onchange=afcHelper_trigger(\'afcHelper_biography_blp\') />' + '<div id="afcHelper_biography_blp" name="afcHelper_biography_blp" style="display:none"><br /><label for="afcHelper_dateofbirth">Date of birth (if known/given, e.g. <i>November 2</i>)? </label><input type="text" id="afcHelper_dateofbirth" name="afcHelper_dateofbirth" />'
 		+ '<br /><label for="afcHelper_yearofbirth">Year of birth (if known/given)? </label><input type="text" id="afcHelper_yearofbirth" name="afcHelper_yearofbirth" />' + '<br /><label for="afcHelper_listas">Surname, Name (if known/given, e.g. <i>Bush, George Walker</i>)? </label><input type="text" id="afcHelper_listas" name="afcHelper_listas" />'
 		+ '<br /><label for="afcHelper_shortdescription">A very short description (two words) about the person, see also <a href="' + wgArticlePath.replace("$1", 'Wikipedia:Persondata#Short_description') + '" title="Wikipedia:Persondata#Short_description" target="_blank">Wikipedia:Persondata</a>: </label><input type="text" id="afcHelper_shortdescription" name="afcHelper_shortdescription" />'
@@ -168,7 +174,7 @@ function afcHelper_prompt(type) {
 			label: 'Test edits',
 			value: 'Test edits',
 			disabled: true
-		},{
+		}, {
 			label: 'blank - Submission is blank',
 			value: 'blank'
 		}, {
@@ -178,7 +184,7 @@ function afcHelper_prompt(type) {
 			label: 'BLP/Vandalism',
 			value: 'BLP/Vandalism',
 			disabled: true
-		},{
+		}, {
 			label: 'blp - Blatant violation of BLP policies (please blank the page)',
 			value: 'blp'
 		}, {
@@ -191,14 +197,14 @@ function afcHelper_prompt(type) {
 			label: 'Merging',
 			value: 'Merging',
 			disabled: true
-		},{
+		}, {
 			label: 'mergeto - Submission should be merged into another article (type a comment with a link to the article below in the comment box)',
 			value: 'mergeto'
 		}, {
 			label: 'Blatant [[WP:NOT]] violations',
 			value: 'Blatant [[WP:NOT]] violations',
 			disabled: true
-		},{
+		}, {
 			label: 'joke - Submission appears to be a joke',
 			value: 'joke'
 		}, {
@@ -208,7 +214,7 @@ function afcHelper_prompt(type) {
 			label: 'Prose issues',
 			value: 'Prose issues',
 			disabled: true
-		},{
+		}, {
 			label: 'lang - Submission is not in English',
 			value: 'lang'
 		}, {
@@ -242,7 +248,7 @@ function afcHelper_prompt(type) {
 			label: 'Notability',
 			value: 'Notability',
 			disabled: true
-		},{
+		}, {
 			label: 'neo - Submission is  about a neologisim that does not meet notability guidelines',
 			value: 'neo'
 		}, {
@@ -273,14 +279,14 @@ function afcHelper_prompt(type) {
 			label: 'Sourcing',
 			value: 'Sourcing',
 			disabled: true
-		},{
+		}, {
 			label: 'v - Submission is improperly sourced',
 			value: 'v'
 		}, {
-			label: 'Custom',
-			value: 'Custom',
+			label: 'Other',
+			value: 'Other',
 			disabled: true
-		},{
+		}, {
 			label: 'custom - Enter a decline reason in the box below, linking to relevent policies',
 			value: 'reason'
 		}, {
@@ -297,14 +303,16 @@ function afcHelper_prompt(type) {
 		 	+ '<div id="afcHelper_notify_Teahouse"><label for="afcHelper_notify_Teahouse">Notify author about <a href="' + wgArticlePath.replace("$1", 'Wikipedia:Teahouse') + '" title="Wikipedia:Teahouse" target="_blank">Wikipedia:Teahouse</a>:</label><input type="checkbox" name="afcHelper_Teahouse" id="afcHelper_Teahouse" /><br/></div><div id="afcHelper_extra_inline" name="afcHelper_extra_inline"></div><input type="button" id="afcHelper_prompt_button" name="afcHelper_prompt_button" value="Decline" onclick="afcHelper_act(\'decline\')" style="border-radius:3px; background-color:#ffcdd5" />';
 		$("#afcHelper_extra").html(text);
 	} else if (type === 'submit') {
-		var text = '<h3>Place a submission template on ' + afcHelper_PageName + '</h3><br />'+
-		'<input type="radio" name="afcHelper_submit" id="afcHelper_submit1" value="first" /> <label for="afcHelper_submit1">submit with the original submitter</label><br>'+
-		'<input type="radio" name="afcHelper_submit" id="afcHelper_submit2" value="self" checked /> <label for="afcHelper_submit2">submit with yourself as the submitter</label><br>'+
-		'<input type="radio" name="afcHelper_submit" id="afcHelper_submit3" value="custom" /> <label for="afcHelper_submit3">submit with a custom submitter:</label> <input type="text" name="afcHelper_custom_submitter" id="afcHelper_custom_submitter" /><br>'+
+		// !todo have "first" be pre-selected if submission template includes "t", else have "last" pre-selected
+		var text = '<h3>Place a submission template on ' + afcHelper_PageName + '</h3><br />';
+		text += '<input type="radio" name="afcHelper_submit" id="afcHelper_submit1" value="first" /> <label for="afcHelper_submit1">submit with the original submitter</label><br>' + 
+		'<input type="radio" name="afcHelper_submit" id="afcHelper_submit2" value="last" /> <label for="afcHelper_submit2">submit with the last non-bot editor as the submitter</label><br>'+
+		'<input type="radio" name="afcHelper_submit" id="afcHelper_submit3" value="self" checked /> <label for="afcHelper_submit3">submit with yourself as the submitter</label><br>'+
+		'<input type="radio" name="afcHelper_submit" id="afcHelper_submit4" value="custom" /> <label for="afcHelper_submit4">submit with a custom submitter:</label> <input type="text" name="afcHelper_custom_submitter" id="afcHelper_custom_submitter" /><br>'+
 		'<input type="button" id="afcHelper_submit_button" name="afcHelper_submit2_button" value="Place a submit template" onclick="afcHelper_act(\'submit\')" />';
 		$("#afcHelper_extra").html(text);
 	} else if (type === 'mark') {
-		var text = '<h3>Marking submission ' + afcHelper_PageName + 'for reviewing</h3>' + '<br /><label for="afcHelper_comments">Additional comment (signature is automatically added): </label><textarea rows="3" cols="60" name="afcHelper_comments" id="afcHelper_comments"></textarea><br/><input type="button" id="afcHelper_prompt_button" style="padding:.2em .6em; border:1px solid; border-color:#aaa #555 #555 #aaa; border-radius:3px; background-color:#b1dae8" name="afcHelper_prompt_button" value="Place under review" onclick="afcHelper_act(\'mark\')" />';
+		var text = '<h3>Marking submission ' + afcHelper_PageName + 'for reviewing</h3>' + '<br /><label for="afcHelper_comments">Additional comment (signature is automatically added): </label><textarea rows="3" cols="60" name="afcHelper_comments" id="afcHelper_comments"></textarea><br/><input type="button" id="afcHelper_prompt_button" style="border-radius:3px; background-color:#b1dae8" name="afcHelper_prompt_button" value="Place under review" onclick="afcHelper_act(\'mark\')" />';
 		$("#afcHelper_extra").html(text);
 	} else if (type === 'comment') {
 		var text = '<h3>Commenting on ' + afcHelper_PageName + ' </h3>' + '<br /><label for="afcHelper_comments">Comment (signature is automatically added): </label><textarea rows="3" cols="60" name="afcHelper_comments" id="afcHelper_comments"></textarea><br/><input type="button" id="afcHelper_prompt_button" name="afcHelper_prompt_button" value="Add comment" onclick="afcHelper_act(\'comment\')" style="border-radius:3px; background-color:#f3eba3" />';
@@ -323,15 +331,14 @@ function afcHelper_act(action) {
 		document.getElementById('afcHelper_finish').innerHTML += '<span id="afcHelper_finished_wrapper"><span id="afcHelper_finished_main" style="display:none"><li id="afcHelper_done"><b>Done (<a href="' + wgArticlePath.replace("$1", encodeURI(afcHelper_PageName)) + '?action=purge" title="' + afcHelper_PageName + '">Reload page</a>)</b></li></span></span>';
 		newtext = template + pagetext;
 		newtext = afcHelper_cleanup(newtext);
-		var token = mw.user.tokens.get('editToken');
-		afcHelper_editPage(afcHelper_PageName, newtext, token, "Tagging [[Wikipedia:Articles for creation]] draft", false);
+		afcHelper_editPage(afcHelper_PageName, newtext, "Tagging [[Wikipedia:Articles for creation]] draft", false);
 	} else if (action === 'g13') {
 		displayMessage('<ul id="afcHelper_status"></ul><ul id="afcHelper_finish"></ul>');
 		document.getElementById('afcHelper_finish').innerHTML += '<span id="afcHelper_finished_wrapper"><span id="afcHelper_finished_main" style="display:none"><li id="afcHelper_done"><b>Done (<a href="' + wgArticlePath.replace("$1", encodeURI(afcHelper_PageName)) + '?action=purge" title="' + afcHelper_PageName + '">Reload page</a>)</b></li></span></span>';
 		// tag page with "{{db-g13}}"
 		newtext = "{{db-g13}}\n" + pagetext;
-		var token = mw.user.tokens.get('editToken');
-		afcHelper_editPage(afcHelper_PageName, newtext, token, "Tagging abandoned [[Wikipedia:Articles for creation]] draft for speedy deletion under [[WP:G13|G13]]", false);
+		
+		afcHelper_editPage(afcHelper_PageName, newtext, "Tagging abandoned [[Wikipedia:Articles for creation]] draft for speedy deletion under [[WP:G13|G13]]", false);
 		// notify users
 		var users = new Array();
 		var templates = pagetext.match(/\{\{\s*afc submission\s*\|(?:\{\{[^\{\}]*\}\}|[^\}\{])*\}\}/gi);
@@ -354,45 +361,60 @@ function afcHelper_act(action) {
 			usertalkpage = "User talk:" + username;
 			var usertext = afcHelper_getPageText(usertalkpage, true, true);
 			usertext += "\n{{subst:Db-afc-notice|"+afcHelper_PageName+"}} ~~~~";
-			var token = mw.user.tokens.get('editToken');
-			afcHelper_editPage(usertalkpage, usertext, token, 'Notification: [[WP:G13|G13]] speedy deletion nomination of [['+afcHelper_PageName+']]', false);
+			afcHelper_editPage(usertalkpage, usertext, 'Notification: [[WP:G13|G13]] speedy deletion nomination of [['+afcHelper_PageName+']]', false);
 		}
-
 	} else if (action === 'submit') {
 		var typeofsubmit = $("input[name=afcHelper_submit]:checked").val();
 		var customuser = $("#afcHelper_custom_submitter").val();
 		displayMessage('<ul id="afcHelper_status"></ul><ul id="afcHelper_finish"></ul>');
 		document.getElementById('afcHelper_finish').innerHTML += '<span id="afcHelper_finished_wrapper"><span id="afcHelper_finished_main" style="display:none"><li id="afcHelper_done"><b>Done (<a href="' + wgArticlePath.replace("$1", encodeURI(afcHelper_PageName)) + '?action=purge" title="' + afcHelper_PageName + '">Reload page</a>)</b></li></span></span>';
-		if (typeofsubmit == 'first') {
-			var afc_re = /\{\{\s*afc submission\s*\|(?:\{\{[^\{\}]*\}\}|[^\}\{])*\}\}/i;
-			if (afc_re.test(pagetext)) {
-				var afctemplate = afc_re.exec(pagetext)[0];
-				var author_re = /\|\s*u=\s*[^\|]*\|/i;
-				if (author_re.test(afctemplate)) {
-					var user = author_re.exec(afctemplate)[0];
-					username = user.split(/=/)[1];
-					submitter = username.replace(/\|/g, '');
+
+		// First we handle "last", since this uses a different method than the others
+		if (typeofsubmit == 'last') {
+			// Get the last non-bot editor to the page
+			var submitinfo = afcHelper_last_nonbot(afcHelper_PageName);
+			if (submitinfo) {
+				dt = new Date(submitinfo['timestamp']);
+				// output the date in the correct format
+				date = dt.getUTCFullYear() + ('0' + (dt.getUTCMonth()+1)).slice(-2) + ('0' + dt.getUTCDate()).slice(-2) + ('0' + dt.getUTCHours()).slice(-2) + ('0' + dt.getUTCMinutes()).slice(-2) + ('0' + dt.getUTCSeconds()).slice(-2);
+				var submit = "{{AFC submission|||ts="+date+"|u="+submitinfo['user']+"|ns={{subst:NAMESPACENUMBER}}}}\n";
+				newtext = submit + pagetext;
+				newtext = newtext.replace(/\[\[:?Category:AfC[_ ]submissions[_ ]with[_ ]missing[_ ]AfC[_ ]template\]\]/,"");
+				afcHelper_editPage(afcHelper_PageName, newtext, "Submitting [[Wikipedia:Articles for creation]] submission", false);		
+			} else {
+				alert("Unable to find a non-bot editor; please check the page history.");
+			}
+		} else {
+			if (typeofsubmit == 'first') {
+				var afc_re = /\{\{\s*afc submission\s*\|(?:\{\{[^\{\}]*\}\}|[^\}\{])*\}\}/i;
+				if (afc_re.test(pagetext)) {
+					var afctemplate = afc_re.exec(pagetext)[0];
+					var author_re = /\|\s*u=\s*[^\|]*\|/i;
+					if (author_re.test(afctemplate)) {
+						var user = author_re.exec(afctemplate)[0];
+						username = user.split(/=/)[1];
+						submitter = username.replace(/\|/g, '');
+					} else {
+						alert("Could not find the original submitter, aborting...");
+						return;
+					}
 				} else {
-					alert("Could not find the original submitter, aborting...");
+					alert("Could not find an AfC submission template, aborting...");
 					return;
 				}
+				var submit = "{{subst:submit|user="+submitter+"}}\n";
+			} else if (typeofsubmit == 'self') {
+				var submit = "{{subst:submit}}\n";
+			} else if (typeofsubmit == 'custom' && customuser != null && customuser != "" ) {
+				var submit = "{{subst:submit|user="+customuser+"}}\n";
 			} else {
-				alert("Could not find an AfC submission template, aborting...");
+				alert("No valid submitter was specified, aborting...");
 				return;
 			}
-			var submit = "{{subst:submit|user="+submitter+"}}\n";
-		} else if (typeofsubmit == 'self') {
-			var submit = "{{subst:submit}}\n";
-		} else if (typeofsubmit == 'custom' && customuser != null && customuser != "" ) {
-			var submit = "{{subst:submit|user="+customuser+"}}\n";
-		} else {
-			alert("No valid submitter was specified, aborting...");
-			return;
+			newtext = submit + pagetext;
+			newtext = afcHelper_cleanup(newtext);
+			afcHelper_editPage(afcHelper_PageName, newtext, "Submitting [[Wikipedia:Articles for creation]] submission", false);
 		}
-		newtext = submit + pagetext;
-		newtext = afcHelper_cleanup(newtext);
-		var token = mw.user.tokens.get('editToken');
-		afcHelper_editPage(afcHelper_PageName, newtext, token, "Submitting [[Wikipedia:Articles for creation]] submission", false);
 	} else if (action === 'accept') {
 		var newtitle = $("#afcHelper_movetarget").val();
 		var assessment = $("#afcHelper_assessment").val();
@@ -436,8 +458,7 @@ function afcHelper_act(action) {
 						var usertext = afcHelper_getPageText(usertalkpage, true, true);
 						usertext += "\n== Your submission at AfC \[\[" + wgPageName + "|" + newtitle + "\]\] was accepted ==";
 						usertext += "\n\{\{subst:afc talk|1=" + newtitle + "|class=" + assessment + "|sig=yes\}\}";
-						var token = mw.user.tokens.get('editToken');
-						afcHelper_editPage(usertalkpage, usertext, token, 'Your submission at \[\[WP:AFC|Articles for creation\]\]', false);
+						afcHelper_editPage(usertalkpage, usertext, 'Your submission at \[\[WP:AFC|Articles for creation\]\]', false);
 					}
 				}
 				var recenttext = afcHelper_getPageText("Wikipedia:Articles for creation/recent", true, false);
@@ -446,8 +467,7 @@ function afcHelper_act(action) {
 				var firstentry = recenttext.toLowerCase().indexOf("\{\{afc contrib");
 				recenttext = recenttext.substring(0, lastentry);
 				recenttext = recenttext.substring(0, firstentry) + newentry + recenttext.substring(firstentry);
-				var token = mw.user.tokens.get('editToken');
-				afcHelper_editPage("Wikipedia:Articles for creation/recent", recenttext, token, 'Updating recent AFC creations', false);
+				afcHelper_editPage("Wikipedia:Articles for creation/recent", recenttext, 'Updating recent AFC creations', false);
 
 				var talktext = "";
 				if (biography) {
@@ -486,8 +506,7 @@ function afcHelper_act(action) {
 					newtalktitle = newtitle.replace(/Portal:/i, '');
 					newtalktitle = 'Portal talk:' + newtalktitle;
 				} else newtalktitle = 'Talk:' + newtitle;
-				var token = mw.user.tokens.get('editToken');
-				afcHelper_editPage(newtalktitle, talktext, token, 'Placing [[Wikipedia:Articles for creation]] project banner', false);
+				afcHelper_editPage(newtalktitle, talktext, 'Placing [[Wikipedia:Articles for creation]] project banner', false);
 				
 				pagetext = pagetext.replace(/\{\{\s*afc\s*submission\s*\|(?:\{\{[^\{\}]*\}\}|[^\}\{])*\}\}/gim, "");
 				pagetext = pagetext.replace(/\{\{\s*afc\s*comment\s*\|(?:\{\{[^\{\}]*\}\}|[^\}\{])*\}\}/gim, "");
@@ -582,12 +601,10 @@ function afcHelper_act(action) {
 						$("#afcHelper_orphan").html("Page is orphaned, adding tag.");
 					}
 				}
-				var token = mw.user.tokens.get('editToken');
 				pagetext = afcHelper_cleanup(pagetext);
-				afcHelper_editPage(newtitle, pagetext, token, "Cleanup following [[Wikipedia:Articles for creation]] creation", false);
+				afcHelper_editPage(newtitle, pagetext, "Cleanup following [[Wikipedia:Articles for creation]] creation", false);
 			};
-		var token = mw.user.tokens.get('editToken');
-		afcHelper_movePage(afcHelper_PageName, newtitle, token, 'Created via \[\[WP:AFC|Articles for creation\]\] (\[\[WP:WPAFC|you can help!\]\])', callback, true);
+		afcHelper_movePage(afcHelper_PageName, newtitle, 'Created via \[\[WP:AFC|Articles for creation\]\] (\[\[WP:WPAFC|you can help!\]\])', callback, true);
 	} else if (action === 'decline') {
 		var code = $("#afcHelper_reason").val();
 		var reasontext = afcHelper_reasonhash[code];
@@ -608,8 +625,6 @@ function afcHelper_act(action) {
 
 		displayMessage('<ul id="afcHelper_status"></ul><ul id="afcHelper_finish"></ul>');
 		document.getElementById('afcHelper_finish').innerHTML += '<span id="afcHelper_finished_wrapper"><span id="afcHelper_finished_main" style="display:none"><li id="afcHelper_done"><b>Done (<a href="' + wgArticlePath.replace("$1", encodeURI(afcHelper_PageName)) + '?action=purge" title="' + afcHelper_PageName + '">Reload page</a>)</b></li></span></span>';
-		var token = mw.user.tokens.get('editToken');
-
 		// Find the first pending submission or marked as review on the page.
 		var afc_re = /\{\{\s*afc submission\s*\|\s*[||h|r](?:\{\{[^\{\}]*\}\}|[^\}\{])*\}\}/i;
 
@@ -715,8 +730,7 @@ function afcHelper_act(action) {
 						delete req;
 					}
 				} //end TH stuff
-				var token = mw.user.tokens.get('editToken');
-				afcHelper_editPage(usertalkpage, usertext, token, reason, false);
+				afcHelper_editPage(usertalkpage, usertext, reason, false);
 			} //exclude [[User:Example]]
 		}
 		if (!blank) {
@@ -745,14 +759,12 @@ function afcHelper_act(action) {
 
 		//first remove the multiple pending templates, otherwise one isn't recognized
 		pagetext = pagetext.replace(/\{\{\s*afc submission\s*\|\s*[||h|r](?:\{\{[^{}]*\}\}|[^}{])*\}\}/i, "");
-		var token = mw.user.tokens.get('editToken');
 		pagetext = afcHelper_cleanup(pagetext);
-		afcHelper_editPage(afcHelper_PageName, pagetext, token, summary, false);
+		afcHelper_editPage(afcHelper_PageName, pagetext, summary, false);
 	} else if (action === 'comment') {
 		var comment = $("#afcHelper_comments").val();
 		displayMessage('<ul id="afcHelper_status"></ul><ul id="afcHelper_finish"></ul>');
 		document.getElementById('afcHelper_finish').innerHTML += '<span id="afcHelper_finished_wrapper"><span id="afcHelper_finished_main" style="display:none"><li id="afcHelper_done"><b>Done (<a href="' + wgArticlePath.replace("$1", encodeURI(afcHelper_PageName)) + '?action=purge" title="' + afcHelper_PageName + '">Reload page</a>)</b></li></span></span>';
-		var token = mw.user.tokens.get('editToken');
 		var containComment = 0;
 		//var containComment = (pagetext.indexOf('----') != -1);
 		containComment = pagetext.indexOf('----');
@@ -783,7 +795,7 @@ function afcHelper_act(action) {
 					pagetext = pagetext.substring(0, endindex) + '\n' + newComment + '\n----\n' + pagetext.substring(endindex);
 				}
 			}
-			afcHelper_editPage(afcHelper_PageName, pagetext, token, "Commenting on [[Wikipedia:Articles for creation]] submission", false);
+			afcHelper_editPage(afcHelper_PageName, pagetext, "Commenting on [[Wikipedia:Articles for creation]] submission", false);
 		}
 	} else if (action === 'mark') {
 		var comment = $("#afcHelper_comments").val();
@@ -791,7 +803,6 @@ function afcHelper_act(action) {
 
 		displayMessage('<ul id="afcHelper_status"></ul><ul id="afcHelper_finish"></ul>');
 		document.getElementById('afcHelper_finish').innerHTML += '<span id="afcHelper_finished_wrapper"><span id="afcHelper_finished_main" style="display:none"><li id="afcHelper_done"><b>Done (<a href="' + wgArticlePath.replace("$1", encodeURI(afcHelper_PageName)) + '?action=purge" title="' + afcHelper_PageName + '">Reload page</a>)</b></li></span></span>';
-		var token = mw.user.tokens.get('editToken');
 		var containComment = (pagetext.indexOf('----') !== -1);
 		var newComment = "\{\{afc comment|1=" + comment + " \~\~\~\~\}\}";
 		if (comment !== '') {
@@ -815,7 +826,7 @@ function afcHelper_act(action) {
 			return;
 		}
 		pagetext = pagetext.replace(afc_re, "$1r\|$3");
-		afcHelper_editPage(afcHelper_PageName, pagetext, token, "Marking [[Wikipedia:Articles for creation]] submission as being reviewed", false);
+		afcHelper_editPage(afcHelper_PageName, pagetext, "Marking [[Wikipedia:Articles for creation]] submission as being reviewed", false);
 	} else if (action === 'unmark') {
 		displayMessage('<ul id="afcHelper_status"></ul><ul id="afcHelper_finish"></ul>');
 		document.getElementById('afcHelper_finish').innerHTML += '<span id="afcHelper_finished_wrapper"><span id="afcHelper_finished_main" style="display:none"><li id="afcHelper_done"><b>Done (<a href="' + wgArticlePath.replace("$1", encodeURI(afcHelper_PageName)) + '?action=purge" title="' + afcHelper_PageName + '">Reload page</a>)</b></li></span></span>';
@@ -824,22 +835,21 @@ function afcHelper_act(action) {
 			alert("Unable to locate AFC submission template or page is not marked as being reviewed, aborting...");
 			return;
 		}
-		var token = mw.user.tokens.get('editToken');
 		pagetext = pagetext.replace(/\{\{\s*afc submission\s*\|\s*r\s*\|\s*\|/i, "\{\{AFC submission\|\|");
-		afcHelper_editPage(afcHelper_PageName, pagetext, token, "Unmarking [[Wikipedia:Articles for creation]] submission as being reviewed", false);
+		afcHelper_editPage(afcHelper_PageName, pagetext, "Unmarking [[Wikipedia:Articles for creation]] submission as being reviewed", false);
 	} else if (action === 'cleanup') {
 		displayMessage('<ul id="afcHelper_status"></ul><ul id="afcHelper_finish"></ul>');
 		document.getElementById('afcHelper_finish').innerHTML += '<span id="afcHelper_finished_wrapper"><span id="afcHelper_finished_main" style="display:none"><li id="afcHelper_done"><b>Done (<a href="' + wgArticlePath.replace("$1", encodeURI(afcHelper_PageName)) + '?action=purge" title="' + afcHelper_PageName + '">Reload page</a>)</b></li></span></span>';
-		var token = mw.user.tokens.get('editToken');
 		var text = afcHelper_getPageText(afcHelper_PageName, true, false);
 		if (text === pagetext) document.getElementById('afcHelper_finish').innerHTML += '<span id="afcHelper_finished_wrapper"><span id="afcHelper_finished_main><li id="afcHelper_done"><b>This submission is already cleaned. Nothing changed. (<a href="' + wgArticlePath.replace("$1", encodeURI(afcHelper_PageName)) + '?action=purge" title="' + afcHelper_PageName + '">Reload page</a>)</b></li></span></span>';
-		else afcHelper_editPage(afcHelper_PageName, pagetext, token, "Cleaning the [[Wikipedia:Articles for creation]] submission.", false);
+		else afcHelper_editPage(afcHelper_PageName, pagetext, "Cleaning the [[Wikipedia:Articles for creation]] submission.", false);
 	}
 	$("#afcHelper_finished_main").css("display", "");
 	document.getElementById('afcHelper_finished_main').innerHTML += '<li id="afcHelper_load_Cat:Pend"><b>(<a href="' + wgArticlePath.replace("$1", encodeURI('Category:Pending AfC submissions')) + '" title="Category:Pending AfC submissions">Load Category:Pending AfC submissions</a>)</b></li>';
 }
 
-function afcHelper_movePage(oldtitle, newtitle, token, summary, callback, overwrite_redirect) {
+function afcHelper_movePage(oldtitle, newtitle, summary, callback, overwrite_redirect) {
+	var token = mw.user.tokens.get('editToken');
 	summary += afcHelper_advert;
 	$("#afcHelper_finished_wrapper").html('<span id="afcHelper_AJAX_finished_' + afcHelper_AJAXnumber + '" style="display:none">' + $("#afcHelper_finished_wrapper").html() + '</span>');
 	var func_id = afcHelper_AJAXnumber;
@@ -869,7 +879,7 @@ function afcHelper_movePage(oldtitle, newtitle, token, summary, callback, overwr
 								del = confirm("The target title, "+newtitle+", is a redirect. Would you like to automatically tag it for deletion under {{db-move}} to make way for the approved submission?");
 								if (del) {
 									rat = "{{db-move|1="+oldtitle+"|2=redirect preventing move of accepted [[WP:AFC|article submission]].}}\n";
-									afcHelper_editPage(newtitle, rat+text, mw.user.tokens.get('editToken'), "Tagging redirect in the way of [[Wikipedia:Articles for creation]] submission for deletion under {{[[Template:Db-move|db-move]]}}");
+									afcHelper_editPage(newtitle, rat+text, "Tagging redirect in the way of [[Wikipedia:Articles for creation]] submission for deletion under {{[[Template:Db-move|db-move]]}}");
 									window.overwrite_comment = 'This article submission has been approved, but a [[WP:REDIRECT|redirect]] is blocking it from being moved into the article space. An administrator should delete the redirect and move the article within the next few days. Thanks for your patience!';
 									document.getElementById('afcHelper_move' + escape(oldtitle)).innerHTML = '<div id="afcHelper_edit' + escape(oldtitle)+'"></div>'; // to allow for messages from the editor
 									afcHelper_act('mark') // We mark the submission as "under review"
@@ -922,7 +932,7 @@ function afcHelper_onChange(select) {
 		afcHelper_turnvisible("afcHelper_extra_afccleared", true);
 		afcHelper_turnvisible("afcHelper_afccleared", true);
 		// But don't if it's just a BLP vio
-	} else if (value === 'blp') {
+	} else if (value === 'blp' || value === 'van') {
 		$("#afcHelper_blank").attr("checked", false); // TODO: DOMobj.setAttribute() requires 2 args, so guessing here :S
 		afcHelper_turnvisible("afcHelper_afccleared", false);
 		afcHelper_turnvisible("afcHelper_extra_afccleared", false);
@@ -934,9 +944,9 @@ function afcHelper_onChange(select) {
 }
 
 function afcHelper_cleanup(text) {
-	//Commenting out cats
 	// Remove html comments (<!--) that surround categories
 	text = text.replace(/\<!--\s*((\[\[:{0,1}(Category:.*?)\]\]\s*)+)--\>/gi, "$1");
+	//Commenting out cats
 	text = text.replace(/\[\[Category:/gi, "\[\[:Category:");
 
 	// Fix {{afc comment}} when possible (takes rest of text on line and converts to a template parameter)
@@ -1001,7 +1011,7 @@ function afcHelper_cleanup(text) {
 	text = text.replace(/\<\!--- Enter template purpose and instructions here. ---\>/ig, "");
 	text = text.replace(/\<\!--- Enter the content and\/or code of the template here. ---\>/ig, "");
 	text = text.replace(/\<\!-- EDIT BELOW THIS LINE --\>/ig, "");
-	text = text.replace("<!-- This will add a notice to the bottom of the page and won't blank it! The new template which says that your draft is waiting for a review will appear at the bottom; simply ignore the old (grey) drafted templates and the old (red) decline templates. A bot will update your article submission. Until then, please don't change anything in this text box.  Just press \"Save page\". -->", "");
+	text = text.replace(/\<\!-- This will add a notice to the bottom of the page and won't blank it! The new template which says that your draft is waiting for a review will appear at the bottom; simply ignore the old \(grey\) drafted templates and the old \(red\) decline templates. A bot will update your article submission. Until then, please don't change anything in this text box\s*(and|.\s*Just)+ press "Save page". --\>/ig, "");	
 	text = text.replace(/\<\!--Do not include any categories - these don't need to be added until the article is accepted; They will just get removed by a bot!--\>/ig, "");
 	text = text.replace(/\<\!--- Categories ---\>/gi, '');
 	text = text.replace(/\<\!--- After listing your sources please cite them using inline citations and place them after the information they cite. Please see \[\[Wikipedia:REFB\]\] for instructions on how to add citations. ---\>/ig, "");
@@ -1010,8 +1020,7 @@ function afcHelper_cleanup(text) {
 	text = text.replace(/\<\!--Please don't change anything and press save --\>/ig, "");
 	text = text.replace(/\<\!-- Please leave this line alone! --\>/ig, "");
 	text = text.replace(/\<\!-- Do not include any categories - these don't need to be added until the article is accepted; They will just get removed by a bot! --\>/ig, "");
-	text = text.replace(/\<\!-{1,3} Important, do not remove this line before article has been created. -{1,3}\>/ig, "");
-	text = text.replace(/\<\!-- This will add a notice to the bottom of the page and won't blank it! The new template which says that your draft is waiting for a review will appear at the bottom; simply ignore the old \(grey\) drafted templates and the old \(red\) decline templates. A bot will update your article submission. Until then, please don't change anything in this text box and press "Save page". --\>/ig, "");
+	text = text.replace(/\<\!-{1,3}\s*Important, do not remove this line before article has been created.\s*-{1,3}\>/ig, "");
 	text = text.replace(/\<\!-- Just press the \"Save page\" button below without changing anything! Doing so will submit your article submission for review. Once you have saved this page you will find a new yellow 'Review waiting' box at the bottom of your submission page. If you have submitted your page previously, the old pink 'Submission declined' template or the old grey 'Draft' template will still appear at the top of your submission page, but you should ignore them. Again, please don't change anything in this text box. Just press the \"Save page\" button below. --\>/ig, "");
 	text = text.replace(/== Request review at \[\[WP:AFC\]\] ==\n/ig, "");
 	text = text.replace(/(?:<\s*references\s*>([\S\s]*)<\/references>|<\s*references\s*\/\s*>)/gi, "\n{{reflist|refs=$1}}");
@@ -1038,7 +1047,7 @@ function afcHelper_cleanup(text) {
 			break;
 		}
 	}
-	//create an array, strip the submission templates, then AFC comments and then add them back to the page, add then
+	//create an array, strip the submission templates, then AFC comments and then add them back to the page
 	var submissiontemplates = new Array();
 	var commentstemplates = new Array();
 	while (afc_all.test(text)) {
@@ -1049,7 +1058,7 @@ function afcHelper_cleanup(text) {
 		commentstemplates.push(afc_comment.exec(text));
 		text = text.replace(afc_comment.exec(text), "");
 	}
-	// Remove empty HTML comments -- fix for #16
+	// Remove empty HTML comments
 	text = text.replace(/<!--\s*-->/ig,"");
 	//removal of unnecessary new lines, stars, "-", and whitespaces at the top of the page
 	text = text.replace(/[*\n\s]*/m, "");
@@ -1089,10 +1098,6 @@ function afcHelper_blanking() {
 	pagetext = pagetext.replace(/\{\{AFC submission\s*\}\}/gi, "{{AFC submission|||ts={{subst:LOCALTIMESTAMP}}|u=|ns={{subst:AFC submission/namespace number}}}}");
 
 	pagetext = afcHelper_cleanup(pagetext);
-	//test for AFC submission templates with not enough parameter
-	//Nmespaces WP (4) and WT (5)
-	//var afc_alltemplates= /\{\{\s*afc submission(?:\{\{[^\{\}]*\}\}|[^\}\{])*\}\}/i;
-	//afc_all=text.match(afc_alltemplates);
 
 	//longer than 30 characters, but commonly added to the source code
 	texttest = pagetext.replace(/\<\!--  Bot generated title --\>/gi, "");
@@ -1113,7 +1118,7 @@ function afcHelper_blanking() {
 			}
 		}
 	}
-	//Check the deletion log and give and list it!
+	//Check the deletion log and list it!
 	var req = sajax_init_object();
 	req.open("GET", wgScriptPath + "/api.php?action=query&list=logevents&format=json&leprop=user%7Ctimestamp%7Ccomment&letype=delete&leaction=delete%2Fdelete&letitle=" + encodeURIComponent(afcHelper_submissionTitle) + "&lelimit=10", false);
 	req.send(null);
@@ -1208,6 +1213,21 @@ function afcHelper_trigger(type) {
 	} else {
 			e.style.display = ((e.style.display !== 'none') ? 'none' : 'block');
 	}
+}
+
+// function to get the last non-bot editor to a page
+function afcHelper_last_nonbot(title) {
+	var params = "action=query&prop=revisions&format=json&rvprop=user%7Ctimestamp&indexpageids=1&rvlimit=1&rvdir=older&rvexcludeuser=ArticlesForCreationBot&titles=" + encodeURIComponent(title);
+	var req = sajax_init_object();
+	req.open("POST", wgScriptPath + "/api.php", false);
+	req.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+	req.setRequestHeader("Content-length", params.length);
+	req.setRequestHeader("Connection", "close");
+	req.send(params);
+	var response = eval('(' + req.responseText + ')');
+	pageid = response['query']['pageids'][0];
+	revisions = response['query']['pages'][pageid]['revisions'];
+	return response['query']['pages'][pageid]['revisions'][0];
 }
 
 //function to check if the submission is g13 eligible -- only checks timestamp

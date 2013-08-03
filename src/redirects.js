@@ -4,7 +4,7 @@ var afcHelper_RedirectPageName = wgPageName.replace(/_/g, ' ');
 var afcHelper_RedirectSubmissions = new Array();
 var afcHelper_RedirectSections = new Array();
 var afcHelper_numTotal = 0;
-var afcHelper_Redirect_AJAXnumber = 0;
+var afcHelper_AJAXnumber = 0;
 var afcHelper_Submissions = new Array();
 var afcHelper_redirectDecline_reasonhash = {
 	'exists': 'The title you suggested already exists on Wikipedia',
@@ -276,10 +276,9 @@ function afcHelper_redirect_performActions() {
 		}
 		afcHelper_Submissions[i].comment = document.getElementById("afcHelper_redirect_comment_" + i).value;
 	}
-	// Data loaded. Show progress screen and get edit token and WP:AFC/R page text.
+	// Data loaded. Show progress screen and get WP:AFC/R page text.
 	displayMessage('<ul id="afcHelper_status"></ul><ul id="afcHelper_finish"></ul>');
 	document.getElementById('afcHelper_finish').innerHTML += '<span id="afcHelper_finished_wrapper"><span id="afcHelper_finished_main" style="display:none"><li id="afcHelper_done"><b>Done (<a href="' + wgArticlePath.replace("$1", encodeURI(afcHelper_RedirectPageName)) + '?action=purge" title="' + afcHelper_RedirectPageName + '">Reload page</a>)</b></li></span></span>';
-	var token = mw.user.tokens.get('editToken');
 	pagetext = afcHelper_getPageText(afcHelper_RedirectPageName, true);
 	var totalaccept = 0;
 	var totaldecline = 0;
@@ -301,10 +300,10 @@ function afcHelper_redirect_performActions() {
 			if (sub.action === 'accept') {
 				var cattext = '<!--Created by WP:AFC -->';
 				if (sub.parent !== '') cattext = '\[\[' + sub.parent + '\]\]';
-				afcHelper_editPage(sub.title, cattext, token, 'Created via \[\[WP:AFC|Articles for Creation\]\] (\[\[WP:WPAFC|you can help!\]\])', true);
+				afcHelper_editPage(sub.title, cattext, 'Created via \[\[WP:AFC|Articles for Creation\]\] (\[\[WP:WPAFC|you can help!\]\])', true);
 				var talktext = '\{\{subst:WPAFC/article|class=Cat\}\}';
 				var talktitle = sub.title.replace(/Category:/gi, 'Category talk:');
-				afcHelper_editPage(talktitle, talktext, token, 'Placing WPAFC project banner', true);
+				afcHelper_editPage(talktitle, talktext, 'Placing WPAFC project banner', true);
 				var header = text.match(/==[^=]*==/)[0];
 				text = header + "\n\{\{AfC-c|a\}\}\n" + text.substring(header.length);
 				if (sub.comment !== '') text += '\n*\{\{subst:afc category|accept|2=' + sub.comment + '\}\} \~\~\~\~\n';
@@ -342,10 +341,10 @@ function afcHelper_redirect_performActions() {
 				var redirect = sub.from[j];
 				if (redirect.action === 'accept') {
 					var redirecttext = '#REDIRECT \[\[' + redirect.to + '\]\]\n' + redirect.append;;
-					afcHelper_editPage(redirect.title, redirecttext, token, 'Redirected page to \[\[' + redirect.to + '\]\] via \[\[WP:AFC|Articles for Creation\]\] (\[\[WP:WPAFC|you can help!\]\])', true);
+					afcHelper_editPage(redirect.title, redirecttext, 'Redirected page to \[\[' + redirect.to + '\]\] via \[\[WP:AFC|Articles for Creation\]\] (\[\[WP:WPAFC|you can help!\]\])', true);
 					var talktext = '\{\{subst:WPAFC/redirect\}\}';
 					var talktitle = 'Talk:' + redirect.title;
-					afcHelper_editPage(talktitle, talktext, token, 'Placing WPAFC project banner', true);
+					afcHelper_editPage(talktitle, talktext, 'Placing WPAFC project banner', true);
 					acceptcomment += redirect.title + " &rarr; " + redirect.to;
 					if (redirect.comment !== '') {
 						acceptcomment += ': ' + redirect.comment + '; ';
@@ -405,7 +404,7 @@ function afcHelper_redirect_performActions() {
 		summary += " commenting on " + totalcomment + " request" + (totalcomment > 1 ? 's' : '');
 	}
 
-	afcHelper_editPage(afcHelper_RedirectPageName, pagetext, token, summary, false);
+	afcHelper_editPage(afcHelper_RedirectPageName, pagetext, summary, false);
 	document.getElementById('afcHelper_finished_main').style.display = '';
 }
 

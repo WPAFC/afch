@@ -62,19 +62,9 @@ function afcHelper_ffu_init() {
 					title: links[j],
 					action: ''
 				};
-				if (j == 0) {
-					submission.from.push(sub);
-					afcHelper_Submissions.push(sub);
-					afcHelper_numTotal++;
-				} else {
-					for (var k = 0; k < j; k++) {
-						if (links[j] != links[k]) {
-							submission.from.push(sub);
-							afcHelper_Submissions.push(sub);
-							afcHelper_numTotal++;
-						}
-					}
-				}
+				submission.from.push(sub);
+				afcHelper_Submissions.push(sub);
+				afcHelper_numTotal++;
 			}
 			afcHelper_ffuSubmissions.push(submission);
 		} else {
@@ -141,12 +131,12 @@ function afcHelper_ffu_init() {
 			text += '</ul></li>';
 			text += '</ul>';
 			text += '<input type="button" id="afcHelper_ffu_done_button" name="afcHelper_ffu_done_button" value="Done" onclick="afcHelper_ffu_performActions()" />';
-			displayMessage_inline(text, 'display-message' + afcHelper_ffuSubmissions[k].section);
+			displayMessage_inline(text, 'ffu-review-' + afcHelper_ffuSubmissions[k].section);
 		}
 	}
 	if (afcHelper_ffu_temp) {
 		for (m = 0; m < afcHelper_ffu_temp.length; m++)
-		afcHelper_ffu_onActionChange(afcHelper_ffu_temp[m]);
+			afcHelper_ffu_onActionChange(afcHelper_ffu_temp[m]);
 	}
 }
 
@@ -155,7 +145,14 @@ function afcHelper_ffu_onActionChange(id) {
 	var selectValue = document.getElementById("afcHelper_ffu_action_" + id).value;
 	if (selectValue == 'none') extra.innerHTML = '';
 	else if (selectValue == 'accept') {
-		extra.innerHTML = '<label for="afcHelper_ffu_to_' + id + '">Destination where you uploaded the file (without the <i>File:</i> part): </label><input type="text" ' + 'name="afcHelper_ffu_to_' + id + '" id="afcHelper_ffu_to_' + id + '" />' + '<br/><label for="afcHelper_ffu_comment_' + id + '">Comment:</label>' + '<input type="text" id="afcHelper_ffu_comment_' + id + '" name="afcHelper_ffu_comment_' + id + '"/>' + '<br/><label for="afcHelper_ffu_filetalkpage_' + id + '">Place {{subst:<a href="' + wgArticlePath.replace("$1", 'Template:WPAFCF') + '" title="Template:WPAFCF" target="_blank">WPAFCF</a>}} on the local files\'s decription\'s talk page: </label><input type="checkbox" id="afcHelper_ffu_filetalkpage_' + id + '" name="afcHelper_ffu_filetalkpage_' + id + '" checked="checked" />' + '<br/><label for="afcHelper_ffu_append_' + id + '">Additional wikicode to append on the local talk page file (e.g. other WikiProjects): </label><input type="text" id="afcHelper_ffu_append_' + id + '" name="afcHelper_ffu_append_' + id + '"/>' + '<br/><label for="afcHelper_ffu_recent_' + id + '">Update <a href="' + wgArticlePath.replace("$1", 'Wikipedia:Files for upload/recent') + '" title="Wikipedia:Files for upload/recent" target="_blank">Wikipedia:Files for upload/recent</a>: </label><input type="checkbox" id="afcHelper_ffu_recent_' + id + '" name="afcHelper_ffu_recent_' + id + '" checked="checked" />' + '<br/><label for="afcHelper_ffu_recenttext_' + id + '">File description for <a href="' + wgArticlePath.replace("$1", 'Wikipedia:Files for upload/recent') + '" title="Wikipedia:Files for upload/recent" target="_blank">Wikipedia:Files for upload/recent</a>: </label><input type="text" id="afcHelper_ffu_recenttext_' + id + '" name="afcHelper_ffu_recenttext_' + id + '"/>' + '<br/><label for="afcHelper_ffu_notify_' + id + '">Notify requestor: </label>' + '<input type="checkbox" id="afcHelper_ffu_notify_' + id + '" name="afcHelper_ffu_notify_' + id + '" checked="checked" />';
+		extra.innerHTML = '<label for="afcHelper_ffu_to_' + id + '">Destination where you uploaded the file (without the <i>File:</i> part): </label><input type="text" ' + 'name="afcHelper_ffu_to_' + id + '" id="afcHelper_ffu_to_' + id + '" />' +
+		'<br/><label for="afcHelper_ffu_comment_' + id + '">Comment:</label>' + '<input type="text" id="afcHelper_ffu_comment_' + id + '" name="afcHelper_ffu_comment_' + id + '"/>' +
+		'<br/><label for="afcHelper_ffu_filetalkpage_' + id + '">Place {{subst:<a href="' + wgArticlePath.replace("$1", 'Template:WPAFCF') + '" title="Template:WPAFCF" target="_blank">WPAFCF</a>}} on the local files\'s decription\'s talk page: </label><input type="checkbox" id="afcHelper_ffu_filetalkpage_' + id + '" name="afcHelper_ffu_filetalkpage_' + id + '" checked="checked" />' +
+		'<br/><label for="afcHelper_ffu_append_' + id + '">Additional wikicode to append on the local talk page file (e.g. other WikiProjects): </label><input type="text" id="afcHelper_ffu_append_' + id + '" name="afcHelper_ffu_append_' + id + '"/>' +
+		'<br/><label for="afcHelper_ffu_recent_' + id + '">Is the file freely licensed? (auto-update <a href="' + wgArticlePath.replace("$1", 'Wikipedia:Files for upload/recent') + '" title="Wikipedia:Files for upload/recent" target="_blank">Wikipedia:Files for upload/recent</a>): </label><input type="checkbox" id="afcHelper_ffu_recent_' + id + '" name="afcHelper_ffu_recent_' + id + '" />' +
+		'<br/><label for="afcHelper_ffu_recenttext_' + id + '">File description for <a href="' + wgArticlePath.replace("$1", 'Wikipedia:Files for upload/recent') + '" title="Wikipedia:Files for upload/recent" target="_blank">Wikipedia:Files for upload/recent</a>: </label><input type="text" id="afcHelper_ffu_recenttext_' + id + '" name="afcHelper_ffu_recenttext_' + id + '"/>' +
+		'<br/><label for="afcHelper_ffu_notify_' + id + '">Notify requestor: </label>' + '<input type="checkbox" id="afcHelper_ffu_notify_' + id + '" name="afcHelper_ffu_notify_' + id + '" checked="checked" />';
+		// !todo Only show the recenttext option if `recent` is checked
 	} else if (selectValue == 'decline') {
 		extra.innerHTML = '<label for="afcHelper_ffu_decline_' + id + '">Reason for decline: </label>' + afcHelper_generateSelect('afcHelper_ffu_decline_' + id, [{
 			label: 'Not a FFU request',
@@ -262,13 +259,12 @@ function afcHelper_ffu_performActions() {
 			afcHelper_Submissions[i].notify = document.getElementById("afcHelper_ffu_notify_" + i).checked;
 		}
 	}
-	// Data loaded. Show progress screen and get edit token and WP:FFU page text.
+	// Data loaded. Show progress screen and get WP:FFU page text.
 	displayMessage('<ul><li><b>Now processing...</li></ul><ul id="afcHelper_status"></ul><ul id="afcHelper_finish"></ul>');
 	$("html, body").animate({
 		scrollTop: 0
 	}, "slow"); // Takes up back up to the top for the displayMessage() dialog, __slowly__
 	document.getElementById('afcHelper_finish').innerHTML += '<span id="afcHelper_finished_wrapper"><span id="afcHelper_finished_main" style="display:none"><li id="afcHelper_done"><b>Done (<a href="' + wgArticlePath.replace("$1", encodeURI(afcHelper_ffuPageName)) + '?action=purge" title="' + afcHelper_ffuPageName + '">Reload page</a>)</b></li></span></span>';
-	var token = mw.user.tokens.get('editToken');
 	pagetext = afcHelper_getPageText(afcHelper_ffuPageName, true);
 	var totalaccept = 0;
 	var totaldecline = 0;
@@ -300,12 +296,12 @@ function afcHelper_ffu_performActions() {
 					else if (sub_m.action == 'hold') userpagetext += '\n== Your request at \[\[WP:FFU|Files for upload\]\] ==\n\{\{subst:ffu talk|h\}\} \~\~\~\~\n';
 					else if (sub_m.action == 'accept') if (sub_m.to === '') userpagetext += '\n== Your request at \[\[WP:FFU|Files for upload\]\] ==\n\{\{subst:ffu|comment\}\} \~\~\~\~\n';
 					else userpagetext += '\n== Your request at \[\[WP:FFU|Files for upload\]\] ==\n\{\{subst:ffu talk|file=' + sub_m.to + '\}\} \~\~\~\~\n';
-					afcHelper_editPage('User talk:' + requestinguser, userpagetext, token, 'Notifying user about [[WP:FFU|FFU]] request', false);
+					afcHelper_editPage('User talk:' + requestinguser, userpagetext, 'Notifying user about [[WP:FFU|FFU]] request', false);
 				}
 				if (sub_m.action == 'accept') {
 					// create local file description talkpage
 					if ((sub_m.talkpage == true) && (sub_m.to != '')) {
-						afcHelper_editPage('File talk\:' + sub_m.to, '\{\{subst:WPAFCF\}\}\n' + sub_m.append, token, 'Placing [[WP:AFC|WPAFC]] project banner', true);
+						afcHelper_editPage('File talk\:' + sub_m.to, '\{\{subst:WPAFCF\}\}\n' + sub_m.append, 'Placing [[WP:AFC|WPAFC]] project banner', true);
 					}
 					// update text of the FFU page
 					var header = text.match(/==[^=]*==/)[0];
@@ -322,7 +318,7 @@ function afcHelper_ffu_performActions() {
 						var firstentry = recentpagetext.toLowerCase().indexOf("| file:");
 						recentpagetext = recentpagetext.substring(0, lastentry);
 						recentpagetext = recentpagetext.substring(0, firstentry) + newentry + recentpagetext.substring(firstentry) + '\n}}';
-						afcHelper_editPage("Wikipedia:Files for upload/recent", recentpagetext, token, 'Updating recently uploaded FFUs', false);
+						afcHelper_editPage("Wikipedia:Files for upload/recent", recentpagetext, 'Updating recently uploaded FFUs', false);
 					}
 				} else if (sub_m.action == 'decline') {
 					var header = text.match(/==[^=]*==/)[0];
@@ -370,7 +366,7 @@ function afcHelper_ffu_performActions() {
 	pagetext = pagetext.replace(/[\n\r]+==/g,"\n\n==");
 
 	// And now finally update the WP:FFU page
-	afcHelper_editPage(afcHelper_ffuPageName, pagetext, token, summary, false);
+	afcHelper_editPage(afcHelper_ffuPageName, pagetext, summary, false);
 	document.getElementById('afcHelper_finished_main').style.display = '';
 }
 
@@ -381,7 +377,7 @@ function add_review_links() {
 	sectionHeaders.each(function(index, element) {
 		var not_archived = $(element).next().html().indexOf('This is an archived discussion.') == -1;
 		if (index > 0) // Hack so we don't add display-messsage inside the TOC
-			var idtitle = "display-message" + (index - 1);
+			var idtitle = "ffu-review-" + (index - 1);
 		$('<div id="' + idtitle + '" style="display:none;"></div>').insertAfter(element);
 		var editSectionLink = $(element).children(".mw-editsection");
 		if ((editSectionLink.length > 0) && (not_archived)) {
