@@ -1,6 +1,11 @@
 //<nowiki>
 // Script should be located at [[MediaWiki:Gadget-afchelper.js/core.js]]
 
+// This should be a dependency in the gadget
+mw.loader.load( 'mediawiki.api.edit' );
+// This loads the API
+var api = new mw.Api();
+
 importScript('User:Timotheus Canens/displaymessage.js');
 var afchelper_baseurl = mw.config.get('wgServer') + '/w/index.php?action=raw&ctype=text/javascript&title=MediaWiki:Gadget-afchelper.js';
 
@@ -109,5 +114,27 @@ function afcHelper_editPage(title, newtext, summary, createonly) {
 		}
 	};
 	req.send(params);
+}
+
+function afcHelper_editPage_new(title, newtext, summary, createonly) {
+	request = {
+				'action': 'edit',
+				'title': title,
+				'text': newtext,
+				'summary': summary,
+			}
+	if (createonly) request.createonly = true;
+
+	api.postWithEditToken(request)
+			.done( function ( data ) {
+				if ( data && data.edit && data.edit.result && data.edit.result == 'Success' ) {
+					console.log('API result:', data );
+				 } else {
+				 	console.log('API returned an error:' + data);
+				 }
+			} )
+			.fail( function ( error ) {
+				console.log('API failed :(', error );
+			});
 }
 //</nowiki>
