@@ -20,6 +20,12 @@ if (wgPageName.indexOf('Wikipedia:Articles_for_creation/Redirects') !== -1) {
 	importScriptURI(afchelper_baseurl + '/submissions.js');				
 }
 
+// This enables the beta notice for all uses except the official gadget
+if (afchelper_baseurl.indexOf('MediaWiki:Gadget-afchelper.js') == -1)
+	BETA = true;
+else
+	BETA = false;
+
 function afcHelper_generateSelect(title, options, onchange) {
 	var text = '<select name="' + title + '" id="' + title + '" ';
 	if (onchange !== null) text += 'onchange = "' + onchange + '" ';

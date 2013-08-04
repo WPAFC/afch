@@ -39,12 +39,16 @@ var afcHelper_reasonhash = {
 
 function afcHelper_init() {
 	if (!wfSupportsAjax()) {
-		displayMessage('<span style="color:red; font-size:120%">Uh oh. Your browser appears to be too old to handle this script or does not support AJAX. Please use the latest version of Mozilla Firefox, Apple Safari, or Opera for the best results. Sorry about that.</span>');
+		displayMessage('<span style="color:red; font-size:120%">Uh oh. Your browser appears to be too old to handle this script or does not support AJAX. Please use the latest version of Mozilla Firefox, Apple Safari, Google Chrome, or Opera for best results. Sorry about that.</span>');
 		return;
 	}
 	form = '<div id="afcHelper_initialform">';
 	form += afcHelper_blanking();
 	form += '<h3>Reviewing ' + afcHelper_PageName + '</h3>';
+
+	if (BETA)
+		form += '<div id="afcHelper_betanotice"><em>You are currently running a <b>beta version</b> of the Articles for creation helper script. Some features may not work as intended; please report errors <a href="https://en.wikipedia.org/wiki/Wikipedia_talk:WikiProject_Articles_for_creation/Helper_script" target="_blank">here</a>.</em></div>';
+
 	var template_status_re =  /\{\{\s*afc submission\s*\|\s*(\S\s*)\s*\|/gi;
 	var temp_statuses = new Array();
 	var match;
