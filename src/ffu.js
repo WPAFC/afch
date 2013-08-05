@@ -213,7 +213,7 @@ function afcHelper_ffu_onActionChange(id) {
 			value: 'nourl'
 		}]) + '<br/><label for="afcHelper_ffu_comment_' + id + '">Additional comment: </label>' + '<input type="text" id="afcHelper_ffu_comment_' + id + '" name="afcHelper_ffu_comment_' + id + '"/>' + '<br/><label for="afcHelper_ffu_notify_' + id + '">Notify requestor: </label>' + '<input type="checkbox" id="afcHelper_ffu_notify_' + id + '" name="afcHelper_ffu_notify_' + id + '" checked="checked" />';
 	} else if (selectValue == 'comment') {
-		extra.innerHTML = '<label for="afcHelper_ffu_prefmtcomment_' + id + '">Placing a comment: </label>' + afcHelper_generateSelect('afcHelper_ffu_prefmtcomment_' + id, [{
+		extra.innerHTML = '<label for="afcHelper_ffu_prefmtcomment_' + id + '">Adding a comment: </label>' + afcHelper_generateSelect('afcHelper_ffu_prefmtcomment_' + id, [{
 			label: 'No license',
 			value: 'license'
 		}, {
