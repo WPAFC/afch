@@ -1,0 +1,47 @@
+span.notice {
+  color: red;
+  font-size: 120%;
+}
+
+div#afcHelper_betanotice {
+  font-style: italic;
+}
+
+input.button {
+  border-radius: 3px;
+}
+
+#afcHelper_accept_button {
+  background-color: #adfcad;
+}
+#afcHelper_decline_button {
+  background-color: #ffcdd5;
+}
+
+#afcHelper_comment_button {
+  background-color: #f3eba3;
+}
+
+#afcHelper_submit_button {
+  background-color: #66ccff;
+}
+
+#afcHelper_draft_button {
+  background-color: #4aa02c;
+}
+
+#afcHelper_unmark_button, #afcHelper_mark_button {
+  background-color: #b1dae8;
+}
+
+#afcHelper_cleanup_button {
+  background-color: #d2d3cc;
+}
+
+#afcHelper_g13_button {
+  background-color: #ff3333;
+}
+
+#afcHelper_prompt_button {
+  background-color: #adfcad;
+}
