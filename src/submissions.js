@@ -566,7 +566,7 @@ function afcHelper_act(action) {
 						pagetext += '\{\{subst:dated|uncategorized\}\}';
 					}
 				}
-				var stub_re Notability= /stub\}\}/gi;
+				var stub_re = /stub\}\}/gi;
 				if ((assessment === 'stub') && (!stub_re.test(pagetext))) {
 					if (biography) {
 						pagetext += '\n\{\{bio-stub\}\}';
