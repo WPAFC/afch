@@ -566,7 +566,7 @@ function afcHelper_act(action) {
 						pagetext += '\{\{subst:dated|uncategorized\}\}';
 					}
 				}
-				var stub_re = /stub\}\}/gi;
+				var stub_re Notability= /stub\}\}/gi;
 				if ((assessment === 'stub') && (!stub_re.test(pagetext))) {
 					if (biography) {
 						pagetext += '\n\{\{bio-stub\}\}';
@@ -1037,6 +1037,9 @@ function afcHelper_cleanup(text) {
 	var afc_alt = /\{\{\s*afc submission\s*\|\s*[^t](?:\{\{[^\{\}]*\}\}|[^\}\{])*\}\}/i;
 	var afc_all = /\{\{\s*afc submission\s*\|\s*(?:\{\{[^\{\}]*\}\}|[^\}\{])*\}\}/i;
 	var afc_comment = /\{\{\s*afc comment(?:\{\{[^\{\}]*\}\}|[^\}\{])*\}\}/i;
+	if(afc_all.test(text)){
+		text = text.replace(/\[\[:?Category:AfC submissions with missing AfC template\]\]/gi, "");	
+	}
 	// Remove all draft templates
 	if (afc_alt.test(text)) text = text.replace(/\{\{\s*afc submission\s*\|\s*t(?:\{\{[^{}]*\}\}|[^}{])*\}\}/ig, "");
 	// Find the first pending submission or marked as review on the page.
