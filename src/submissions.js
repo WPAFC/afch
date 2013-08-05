@@ -291,7 +291,7 @@ function afcHelper_prompt(type) {
 			value: 'Other',
 			disabled: true
 		}, {
-			label: 'custom - Enter a decline reason in the box below, linking to relevent policies',
+			label: 'custom - Enter a decline reason in the box below, linking to relevant policies',
 			value: 'reason'
 		}, {
 			label: 'Select a reason for declining',
