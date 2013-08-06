@@ -8,6 +8,9 @@ var afcHelper_advert = ' ([[WP:AFCH|AFCH]])';
 var pagetext = '';
 var usertalkpage = '';
 
+// CSS stylesheet
+$('head').append($('<link rel="stylesheet" type="text/css" />').attr('href', mw.config.get('wgServer') + '/w/index.php?action=raw&ctype=text/css&title=MediaWiki:Gadget-afchelper.css'));
+
 if (wgPageName.indexOf('Wikipedia:Articles_for_creation/Redirects') !== -1) {
 	importScriptURI(afchelper_baseurl + '/redirects.js');
 } else if (wgPageName.indexOf('Wikipedia:Files_for_upload') !== -1) {
