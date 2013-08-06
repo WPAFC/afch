@@ -172,6 +172,9 @@ function afcHelper_prompt(type) {
 			value: 'Duplicate articles',
 			disabled: true
 		}, {
+			label: 'exists - Submission is duplicated by another article already in mainspace',
+			value: 'exists',
+		}, {			
 			label: 'dup - Submission is a duplicate of another existing submission',
 			value: 'dup'
 		}, {
