@@ -39,7 +39,7 @@ var afcHelper_reasonhash = {
 
 function afcHelper_init() {
 	if (!wfSupportsAjax()) {
-		displayMessage('<span class="notice" style="color:red; font-size:120%">Uh oh. Your browser appears to be too old to handle this script or does not support AJAX. Please use the latest version of Mozilla Firefox, Apple Safari, Google Chrome, or Opera for best results. Sorry about that.</span>');
+		displayMessage('<span class="notice">Uh oh. Your browser appears to be too old to handle this script or does not support AJAX. Please use the latest version of Mozilla Firefox, Apple Safari, Google Chrome, or Opera for best results. Sorry about that.</span>');
 		return;
 	}
 	form = '<div id="afcHelper_initialform">';
@@ -47,7 +47,7 @@ function afcHelper_init() {
 	form += '<h3>Reviewing ' + afcHelper_PageName + '</h3>';
 
 	if (BETA)
-		form += '<div id="afcHelper_betanotice"><em>You are currently running a <b>beta version</b> of the Articles for creation helper script. Some features may not work as intended; please report errors <a href="https://en.wikipedia.org/wiki/Wikipedia_talk:WikiProject_Articles_for_creation/Helper_script" target="_blank">here</a>.</em></div>';
+		form += '<div id="afcHelper_betanotice">You are currently running a <b>beta version</b> of the Articles for creation helper script. Some features may not work as intended; please report errors <a href="https://en.wikipedia.org/wiki/Wikipedia_talk:WikiProject_Articles_for_creation/Helper_script" target="_blank">here</a>.</div>';
 
 	var template_status_re =  /\{\{\s*afc submission\s*\|\s*(\S\s*)\s*\|/gi;
 	var temp_statuses = new Array();
@@ -66,30 +66,30 @@ function afcHelper_init() {
 	}
 
 	if ($.inArray("",template_statuses) != -1 || $.inArray("r",template_statuses) != -1) {
-		form += '<input type="button" id="afcHelper_accept_button" class="button" name="afcHelper_accept_button" value="Accept" onclick="afcHelper_prompt(\'accept\')" style="border-radius:3px; background-color:#adfcad" />';
-		form += '<input type="button" id="afcHelper_decline_button" class="button" name="afcHelper_decline_button" value="Decline" onclick="afcHelper_prompt(\'decline\')" style="border-radius:3px; background-color:#ffcdd5" />';
+		form += '<input type="button" id="afcHelper_accept_button" class="button" name="afcHelper_accept_button" value="Accept" onclick="afcHelper_prompt(\'accept\')" />';
+		form += '<input type="button" id="afcHelper_decline_button" class="button" name="afcHelper_decline_button" value="Decline" onclick="afcHelper_prompt(\'decline\')" />';
 	}
 
 	if ($.inArray("",template_statuses) != -1 || $.inArray("r",template_statuses) != -1 || $.inArray("d",template_statuses) != -1)
-		form += '<input type="button" id="afcHelper_comment_button" class="button" name="afcHelper_comment_button" value="Comment" onclick="afcHelper_prompt(\'comment\')" style="border-radius:3px; background-color:#f3eba3" />';
+		form += '<input type="button" id="afcHelper_comment_button" class="button" name="afcHelper_comment_button" value="Comment" onclick="afcHelper_prompt(\'comment\')" />';
 
 	if (template_statuses === false || $.inArray("t",template_statuses) != -1)
-		form += '<input type="button" id="afcHelper_submit_button" class="button" name="afcHelper_submit_button" value="Submit" onclick="afcHelper_prompt(\'submit\')" style="border-radius:3px; background-color:#66ccff" />';
+		form += '<input type="button" id="afcHelper_submit_button" class="button" name="afcHelper_submit_button" value="Submit" onclick="afcHelper_prompt(\'submit\')" />';
 
 	if (template_statuses === false)
-		form += '<input type="button" id="afcHelper_draft_button" class="button" name="afcHelper_draft_button" value="Mark as draft submission" onclick="afcHelper_act(\'draft\')" style="border-radius:3px; background-color:#4aa02c" />';
+		form += '<input type="button" id="afcHelper_draft_button" class="button" name="afcHelper_draft_button" value="Mark as draft submission" onclick="afcHelper_act(\'draft\')" />';
 
 	if ($.inArray("r",template_statuses) != -1) {
-		form += '<input type="button" id="afcHelper_unmark_button" class="button" name="afcHelper_unmark_button" value="Unmark as reviewing" onclick="afcHelper_act(\'unmark\')" style="border-radius:3px; background-color:#b1dae8" />';
+		form += '<input type="button" id="afcHelper_unmark_button" class="button" name="afcHelper_unmark_button" value="Unmark as reviewing" onclick="afcHelper_act(\'unmark\')" />';
 	} else if ($.inArray("",template_statuses) != -1) {
-		form += '<input type="button" id="afcHelper_mark_button" class="button" name="afcHelper_mark_button" value="Mark as reviewing" onclick="afcHelper_prompt(\'mark\')" style="border-radius:3px; background-color:#b1dae8" />';
+		form += '<input type="button" id="afcHelper_mark_button" class="button" name="afcHelper_mark_button" value="Mark as reviewing" onclick="afcHelper_prompt(\'mark\')" />';
 	}
 
 	if (template_statuses === false || $.inArray("",template_statuses) != -1 || $.inArray("r",template_statuses) != -1 || $.inArray("d",template_statuses) != -1 || $.inArray("t",template_statuses) != -1)
-		form += '<input type="button" id="afcHelper_cleanup_button" class="button" name="afcHelper_cleanup_button" value="Clean the submission" onclick="afcHelper_act(\'cleanup\')" style="border-radius:3px; background-color:#d2d3cc" />';
+		form += '<input type="button" id="afcHelper_cleanup_button" class="button" name="afcHelper_cleanup_button" value="Clean the submission" onclick="afcHelper_act(\'cleanup\')" />';
 
 	if ($.inArray("d",template_statuses) != -1 && afcHelper_g13_eligible(afcHelper_PageName))
-		form += '<input type="button" id="afcHelper_g13_button" class="button" name="afcHelper_g13_button" value="Tag the submission for G13 speedy deletion" onclick="afcHelper_act(\'g13\')" style="border-radius:3px; background-color:#ff3333" />';
+		form += '<input type="button" id="afcHelper_g13_button" class="button" name="afcHelper_g13_button" value="Tag the submission for G13 speedy deletion" onclick="afcHelper_act(\'g13\')" />';
 
 	form += '<div id="afcHelper_extra"></div>';
 
