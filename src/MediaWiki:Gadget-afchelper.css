@@ -11,6 +11,7 @@ div#afcHelper_betanotice {
 
 input.button {
   border-radius: 3px;
+  -moz-border-radius: 3px; /* Firefox compatibility */
 }
 
 #afcHelper_accept_button {
