@@ -331,7 +331,7 @@ function afcHelper_act(action) {
 		document.getElementById('afcHelper_finish').innerHTML += '<span id="afcHelper_finished_wrapper"><span id="afcHelper_finished_main" style="display:none"><li id="afcHelper_done"><b>Done (<a href="' + wgArticlePath.replace("$1", encodeURI(afcHelper_PageName)) + '?action=purge" title="' + afcHelper_PageName + '">Reload page</a>)</b></li></span></span>';
 		// tag page with "{{db-g13}}"
 		newtext = "{{db-g13}}\n" + pagetext;
-		
+
 		afcHelper_editPage(afcHelper_PageName, newtext, "Tagging abandoned [[Wikipedia:Articles for creation]] draft for speedy deletion under [[WP:G13|G13]]", false);
 		// notify users
 		var users = new Array();
@@ -501,10 +501,10 @@ function afcHelper_act(action) {
 					newtalktitle = 'Portal talk:' + newtalktitle;
 				} else newtalktitle = 'Talk:' + newtitle;
 				afcHelper_editPage(newtalktitle, talktext, 'Placing [[Wikipedia:Articles for creation]] project banner', false);
-				
+
 				pagetext = pagetext.replace(/\{\{\s*afc\s*submission\s*\|(?:\{\{[^\{\}]*\}\}|[^\}\{])*\}\}/gim, "");
 				pagetext = pagetext.replace(/\{\{\s*afc\s*comment\s*\|(?:\{\{[^\{\}]*\}\}|[^\}\{])*\}\}/gim, "");
-				
+
 				var afcindex = pagetext.search(/\{\{afc/i);
 				while (afcindex !== -1) {
 					var endindex = pagetext.indexOf("\}\}", afcindex + 2);
@@ -626,7 +626,7 @@ function afcHelper_act(action) {
 			alert("Unable to locate AFC submission template, aborting...");
 			return;
 		}
-		//TODO: removing after cleanup works
+		//TODO: removing after cleanup works (sorting decline templates, this is a bad workaround)
 		var afctemplate = afc_re.exec(pagetext)[0];
 		//moving the first hit to the top
 		pagetext = pagetext.replace(afctemplate, '');
@@ -1019,7 +1019,7 @@ function afcHelper_cleanup(text) {
 	text = text.replace(/(?:<\s*references\s*>([\S\s]*)<\/references>|<\s*references\s*\/\s*>)/gi, "\n{{reflist|refs=$1}}");
 	text = text.replace("{{reflist|refs=}}", "{{reflist}}"); // hack to make sure we don't leave an unneeded |refs=
 	text = text.replace(/\{\{(userspace\s*draft|user sandbox)(?:\{\{[^{}]*\}\}|[^}{])*\}\}/ig, "");
-	
+
 	var afc_re = /\{\{\s*afc submission\s*\|\s*[||h|r](?:\{\{[^\{\}]*\}\}|[^\}\{])*\}\}/i;
 	var afc_alt = /\{\{\s*afc submission\s*\|\s*[^t](?:\{\{[^\{\}]*\}\}|[^\}\{])*\}\}/i;
 	var afc_all = /\{\{\s*afc submission\s*\|\s*(?:\{\{[^\{\}]*\}\}|[^\}\{])*\}\}/i;
@@ -1049,11 +1049,14 @@ function afcHelper_cleanup(text) {
 		commentstemplates.push(afc_comment.exec(text));
 		text = text.replace(afc_comment.exec(text), "");
 	}
-	
+
 	//detect URLs (without any http, ftp, ... prefix) in ref-tags
 	var ref_re = /(<\s*ref\s*(name\s*=|group\s*=)*\s*.*[\/]{1}>)|(<\s*ref\s*(name\s*=|group\s*=)*\s*[^\/]*>(?:\\<[^\<\>]*\>|[^><])*(?:((?:https?|ftp|file):\/\/|www\.|ftp\.)(?:\([-A-Z0-9+&@#/%=~_|$?!:,.]*\)|[-A-Z0-9+&@#/%=~_|$?!:,.])*(?:\([-A-Z0-9+&@#/%=~_|$?!:,.]*\)|[A-Z0-9+&@#/%=~_|$])+)(?:\\<[^\<\>]*\>|[^><])*\<\/\s*ref\s*\>)/gim;
 	if (ref_re.test(text)){
-		var ref_matches = ref_re.exect(text);
+    var ref_matches = new Array(); 
+		while (ref_re.test(text)) {
+			ref_matches.push(ref_re.exec(text));
+		}
 		var temptext = text;
 		var ref_fullmatch = new Array();
 		if (first_reflist_re.test(temptext)){
@@ -1082,7 +1085,7 @@ function afcHelper_cleanup(text) {
 	text = text.replace(/^[-]{4,}$/igm, ""); // Removes horizontal rules
 	//removal of unnecessary new lines, stars, "-", and whitespaces at the top and bottom of the page
 	text = text.replace(/[*\n\s]*/m, "");
-	
+
 	//adding back the submission templates and comment templates
 	if (commentstemplates.length > 0) {
 		text = '----\n' + text;
