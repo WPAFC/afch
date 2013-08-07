@@ -1053,9 +1053,10 @@ function afcHelper_cleanup(text) {
 	//detect URLs (without any http, ftp, ... prefix) in ref-tags
 	var ref_re = /(<\s*ref\s*(name\s*=|group\s*=)*\s*.*[\/]{1}>)|(<\s*ref\s*(name\s*=|group\s*=)*\s*[^\/]*>(?:\\<[^\<\>]*\>|[^><])*(?:((?:https?|ftp|file):\/\/|www\.|ftp\.)(?:\([-A-Z0-9+&@#/%=~_|$?!:,.]*\)|[-A-Z0-9+&@#/%=~_|$?!:,.])*(?:\([-A-Z0-9+&@#/%=~_|$?!:,.]*\)|[A-Z0-9+&@#/%=~_|$])+)(?:\\<[^\<\>]*\>|[^><])*\<\/\s*ref\s*\>)/gim;
 	if (ref_re.test(text)){
-    var ref_matches = new Array(); 
-		while (ref_re.test(text)) {
-			ref_matches.push(ref_re.exec(text));
+		var ref_matches = new Array();
+		for (i = 0; i < ref_re.exec(text).length; i++) {
+			if((typeof(ref_re.exec(text)[i]) !== 'undefined')
+				ref_matches.push(ref_re.exec(text)[i]);
 		}
 		var temptext = text;
 		var ref_fullmatch = new Array();
@@ -1071,7 +1072,7 @@ function afcHelper_cleanup(text) {
 				if(temptext.search(ref_matches[i])){
 					var url = temptext.exec(match_re);
 					for(j = 0; j < url.length; j++){
-						if(url[j].search(ref_matches[i]) ref_fullmatch.push(url[j]);
+						if(url[j].search(ref_matches[i])) ref_fullmatch.push(url[j]);
 					}
 				}
 			}
