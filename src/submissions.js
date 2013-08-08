@@ -316,7 +316,7 @@ function afcHelper_prompt(type) {
 		'<input type="radio" name="afcHelper_submit" id="afcHelper_submit2" value="last" /> <label for="afcHelper_submit2">submit with the last non-bot editor as the submitter</label><br>'+
 		'<input type="radio" name="afcHelper_submit" id="afcHelper_submit3" value="self" checked /> <label for="afcHelper_submit3">submit with yourself as the submitter</label><br>'+
 		'<input type="radio" name="afcHelper_submit" id="afcHelper_submit4" value="custom" /> <label for="afcHelper_submit4">submit with a custom submitter:</label> <input type="text" name="afcHelper_custom_submitter" id="afcHelper_custom_submitter" /><br>'+
-		'<input type="button" id="afcHelper_submit_button" name="afcHelper_submit2_button" value="Place a submit template" onclick="afcHelper_act(\'submit\')" />';
+		'<button id="afcHelper_submit_button" name="afcHelper_submit2_button" value="Place a submit template" onclick="afcHelper_act(\'submit\')" />';
 		$("#afcHelper_extra").html(text);
 	} else if (type === 'mark') {
 		var text = '<h3>Marking submission ' + afcHelper_PageName + 'for reviewing</h3>' + '<br /><label for="afcHelper_comments">Additional comment (signature is automatically added): </label><textarea rows="3" cols="60" name="afcHelper_comments" id="afcHelper_comments"></textarea><br/><button class="mark" id="afcHelper_prompt_button" name="afcHelper_prompt_button" value="Place under review" onclick="afcHelper_act(\'mark\')" />';
