@@ -852,7 +852,7 @@ function afcHelper_act(action) {
 		else afcHelper_editPage(afcHelper_PageName, pagetext, "Cleaning the [[Wikipedia:Articles for creation]] submission.", false);
 	}
 	$("#afcHelper_finished_main").css("display", "");
-	document.getElementById('afcHelper_finished_main').innerHTML += '<li id="afcHelper_load_Cat:Pend"><b>(<a href="' + wgArticlePath.replace("$1", encodeURI('Category:Pending AfC submissions')) + '" title="Category:Pending AfC submissions">Load Category:Pending AfC submissions</a>)</b></li>';
+	document.getElementById('afcHelper_finished_main').innerHTML += '<li id="afcHelper_load_Cat:Pend"><b>(<a href="' + wgArticlePath.replace("$1", encodeURI('Category:Pending AfC submissions')) + '" title="Category:Pending AfC submissions">Go to Category:Pending AfC submissions</a>)</b></li>';
 }
 
 function afcHelper_movePage(oldtitle, newtitle, summary, callback, overwrite_redirect) {
@@ -1124,7 +1124,7 @@ function afcHelper_blanking() {
 		var testmatch = texttest.match(recomment);
 		for (var i = 0; i < testmatch.length; i++) {
 			if (testmatch[i].length > 34) {
-				if (errormsg === '') errormsg = '<h3><div style="color:red">Please check the source code! This page contains one or more long (30+ characters) HTML comment! (please report false positives)</div></h3><br/>';
+				if (errormsg === '') errormsg = '<h3><div class="notice">Please check the source code! This page contains one or more long (30+ characters) HTML comment! (please report false positives)</div></h3><br/>';
 				errormsg += 'The hidden text is: <i>' + testmatch[i].slice(4) + '</i><br/>';
 			}
 		}
@@ -1137,7 +1137,7 @@ function afcHelper_blanking() {
 	var deletionlog = response['query']['logevents'];
 	delete req;
 	if (deletionlog.length) {
-		errormsg += '<h3><div style="color:red">The page ' + afcHelper_escapeHtmlChars(afcHelper_submissionTitle) + ' was deleted ' + deletionlog.length + ' times. Here are the edit summary(s) of the <a href="' + wgScript + '?title=Special%3ALog&type=delete&page=' + afcHelper_submissionTitle + '" target="_blank">deletion log</a>:</div></h3><table border=1><tr><td>Timestamp</td><td>User</td><td>Reason</td></tr>';
+		errormsg += '<h3><div class="notice">The page ' + afcHelper_escapeHtmlChars(afcHelper_submissionTitle) + ' was deleted ' + deletionlog.length + ' times. Here are the edit summary(s) of the <a href="' + wgScript + '?title=Special%3ALog&type=delete&page=' + afcHelper_submissionTitle + '" target="_blank">deletion log</a>:</div></h3><table border=1><tr><td>Timestamp</td><td>User</td><td>Reason</td></tr>';
 		for (var i = 0; i < deletionlog.length; i++) {
 			var deletioncomment = deletionlog[i].comment;
 			var deletioncomment1_re = /\[\[([^\[\]]*?[^\]\|]*?)(\|([^\[\]]*?))\]\]/gi;
@@ -1169,15 +1169,15 @@ function afcHelper_blanking() {
 	if (refbegin) { //Firefox workaround!
 		if (refend) { //Firefox workaround!
 			if (refbegin.length !== refend.length) {
-				errormsg += '<h3><div style="color:red">Please check the source code! This page contains unclosed &lt;ref&gt; tags!</div></h3>';
+				errormsg += '<h3><div class="notice">Please check the source code! This page contains unclosed &lt;ref&gt; tags!</div></h3>';
 			}
 		} else {
-			errormsg += '<h3><div style="color:red">Please check the source code! This page contains unbalanced &lt;ref&gt; and &lt;/ref&gt; tags!</div></h3>';
+			errormsg += '<h3><div class="notice">Please check the source code! This page contains unbalanced &lt;ref&gt; and &lt;/ref&gt; tags!</div></h3>';
 		}
 	}
 	//test if ref tags are used, but no reflist available
 	if ((!reflistre.test(pagetext)) && refbegin) {
-		errormsg += '<h3><div style="color:red">Be careful, there is a &lt;ref&gt; tag used, but no references list (reflist)! You might not see all references.</div></h3>';
+		errormsg += '<h3><div class="notice">Be careful, there is a &lt;ref&gt; tag used, but no references list (reflist)! You might not see all references.</div></h3>';
 	}
 
 	// test if <ref> foo <ref> on the page and place the markup on the box
@@ -1196,7 +1196,7 @@ function afcHelper_blanking() {
 	if (o) {
 		temppagetext = temppagetext.slice(n + o[0].length);
 		if((temppagetext.search(rerefbegin))>-1){
-			errormsg += '<h3><div style="color:red">Be careful, there is a &lt;ref&gt; tag after the references list! You might not see all references.</div></h3>';
+			errormsg += '<h3><div class="notice">Be careful, there is a &lt;ref&gt; tag after the references list! You might not see all references.</div></h3>';
 		}
 	}
 	return errormsg;
