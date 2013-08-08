@@ -9,12 +9,12 @@ div#afcHelper_betanotice {
   font-style: italic;
 }
 
-input.button {
+button {
   border-radius: 3px;
   -moz-border-radius: 3px; /* Firefox compatibility */
 }
 
-input.button:hover {
+button:hover {
   border-radius: 2px;
   -moz-border-radius: 2px; /* Firefox compatibility */
 }
@@ -22,11 +22,11 @@ input.button:hover {
 #afcHelper_accept_button {
   background-color: #adfcad;
 }
-#afcHelper_decline_button {
+#afcHelper_decline_button, button.decline {
   background-color: #ffcdd5;
 }
 
-#afcHelper_comment_button {
+#afcHelper_comment_button, button.comment {
   background-color: #f3eba3;
 }
 
@@ -38,7 +38,7 @@ input.button:hover {
   background-color: #4aa02c;
 }
 
-#afcHelper_unmark_button, #afcHelper_mark_button {
+#afcHelper_unmark_button, #afcHelper_mark_button, button.mark {
   background-color: #b1dae8;
 }
 
