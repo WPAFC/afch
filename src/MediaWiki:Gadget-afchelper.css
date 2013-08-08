@@ -11,12 +11,16 @@ div#afcHelper_betanotice {
 
 button {
   border-radius: 3px;
-  -moz-border-radius: 3px; /* Firefox compatibility */
+  -moz-border-radius: 3px;
+  -webkit-border-radius: 3px;
+  -o-border-radius: 3px;
 }
 
 button:hover {
   border-radius: 2px;
-  -moz-border-radius: 2px; /* Firefox compatibility */
+  -moz-border-radius: 2px;
+  -webkit-border-radius: 2px;
+  -o-border-radius: 2px;
 }
 
 #afcHelper_accept_button, #afcHelper_prompt_button {
