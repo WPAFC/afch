@@ -1,7 +1,10 @@
 /* Stylesheet should be located at [[MediaWiki:Gadget-afchelper.css]] */
 
-span.notice {
+.notice {
   color: red;
+}
+
+span.notice {
   font-size: 120%;
 }
 
