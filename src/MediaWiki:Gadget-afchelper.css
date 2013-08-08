@@ -19,7 +19,7 @@ button:hover {
   -moz-border-radius: 2px; /* Firefox compatibility */
 }
 
-#afcHelper_accept_button {
+#afcHelper_accept_button, #afcHelper_prompt_button {
   background-color: #adfcad;
 }
 #afcHelper_decline_button, button.decline {
@@ -48,8 +48,4 @@ button:hover {
 
 #afcHelper_g13_button {
   background-color: #ff3333;
-}
-
-#afcHelper_prompt_button {
-  background-color: #adfcad;
 }
