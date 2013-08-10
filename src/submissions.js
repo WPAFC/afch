@@ -329,10 +329,12 @@ function afcHelper_prompt(type) {
 function afcHelper_act(action) {
 	if (action === 'draft') {
 		var username = prompt("Please enter the submitter username, or leave blank for yourself:")
-		if (username == "")
+		if (username)
+			template = "{{subst:AFC draft|"+username+"}}\n";
+		else if (username != null)
 			template = "{{subst:AFC draft}}\n";
 		else
-			template = "{{subst:AFC draft|"+username+"}}\n";
+			return;
 		displayMessage('<ul id="afcHelper_status"></ul><ul id="afcHelper_finish"></ul>');
 		document.getElementById('afcHelper_finish').innerHTML += '<span id="afcHelper_finished_wrapper"><span id="afcHelper_finished_main" style="display:none"><li id="afcHelper_done"><b>Done (<a href="' + wgArticlePath.replace("$1", encodeURI(afcHelper_PageName)) + '?action=purge" title="' + afcHelper_PageName + '">Reload page</a>)</b></li></span></span>';
 		newtext = template + pagetext;
