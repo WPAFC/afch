@@ -708,19 +708,23 @@ function afcHelper_act(action) {
 						var response = eval('(' + req.responseText + ')');
 						var pageid = response['query']['pageids'][0];
 						var foundTH = 0;
-						if (pageid !== "-1") {/*
-							var oldusername = response['query']['redirects'][0]['from'];
-							var newusername = response['query']['redirects'][0]['to'];
-							if ((typeof(oldusername) !== 'undefined') && (typeof(newusername) !== 'undefined') && (oldusername != newusername)){
+						if (pageid !== "-1") {
+		if(response['query']['redirects']){ /* If there is no redirect, this stops here from getting an error */
+			var oldusername  = response['query']['redirects'][0]['from'];
+			var newusername = response['query']['redirects'][0]['to'];
+			if ((typeof(oldusername) !== 'undefined') && (typeof(newusername) !== 'undefined') && (oldusername != newusername)){
 								document.getElementById('afcHelper_get_teahouse').innerHTML += '<li id="afcHelper_get_teahouse2">User talk page is redirect to <a href="' + wgArticlePath.replace("$1", encodeURI('User_talk:' + newusername)) + '" title="User talk:' + newusername + '">User talk:' + newusername + '</a> - checking there for TeaHouse invitations.</li>';
 								params = "action=query&prop=categories&format=json&indexpageids=1&titles=User_talk:" + encodeURIComponent(newusername);
 								req.send(params);
 								response = eval('(' + req.responseText + ')');
 								pageid = response['query']['pageids'][0];
-							}*/
+							}
+}
+if(pageid !== "-1") {
 							var pagecats = new Array();
 							pagecats = response['query']['pages'][pageid]['categories'];
-							if (typeof pagecats !== 'undefined') {
+}
+							if ((typeof pagecats !== 'undefined') && (pageid !== "-1")) {
 								for (var i = 0; i < pagecats.length; i++) {
 									if ((pagecats[i].title === ("Category:Wikipedians who have received a Teahouse invitation")) || (pagecats[i].title === ("Category:Wikipedians who have received a Teahouse invitation through AfC"))) {
 										foundTH = 1;
