@@ -211,7 +211,7 @@ function afcHelper_init() {
 		form += '<button type="button" id="afcHelper_submit_button" name="afcHelper_submit_button" onclick="afcHelper_prompt(\'submit\')">Submit</button>';
 
 	if (template_statuses === false)
-		form += '<button type="button" id="afcHelper_draft_button" name="afcHelper_draft_button" onclick="afcHelper_act(\'draft\')">Mark as draft submission</button>';
+		form += '<button type="button" id="afcHelper_draft_button" name="afcHelper_draft_button" onclick="afcHelper_prompt(\'draft\')">Mark as draft submission</button>';
 
 	if ($.inArray("r",template_statuses) != -1) {
 		form += '<button type="button" id="afcHelper_unmark_button" name="afcHelper_unmark_button" onclick="afcHelper_act(\'unmark\')">Unmark as reviewing</button>';
@@ -317,6 +317,13 @@ function afcHelper_prompt(type) {
 		'<input type="radio" name="afcHelper_submit" id="afcHelper_submit4" value="custom" /> <label for="afcHelper_submit4">submit with a custom submitter:</label> <input type="text" name="afcHelper_custom_submitter" id="afcHelper_custom_submitter" /><br>'+
 		'<button type="button" id="afcHelper_submit_button" name="afcHelper_submit2_button" onclick="afcHelper_act(\'submit\')">Place a submit template</button>';
 		$("#afcHelper_extra").html(text);
+	} else if (type === 'draft') {
+		var text = '<h3>Place a draft submission template on ' + afcHelper_PageName + '</h3><br />';
+		text += '<input type="radio" name="afcHelper_draft" id="afcHelper_draft1" value="self" checked /> <label for="afcHelper_submit1">submit with yourself as the submitter</label><br>' + 
+		'<input type="radio" name="afcHelper_draft" id="afcHelper_draft2" value="last" /> <label for="afcHelper_submit2">submit with the last non-bot editor as the submitter</label><br>'+
+		'<input type="radio" name="afcHelper_draft" id="afcHelper_draft3" value="custom" /> <label for="afcHelper_submit3">submit with a custom submitter:</label> <input type="text" name="afcHelper_draft_submitter" id="afcHelper_draft_submitter" /><br>'+
+		'<button type="button" id="afcHelper_draft_button" name="afcHelper_draft2_button" onclick="afcHelper_act(\'draft\')">Place {{AFC draft}} template</button>';
+		$("#afcHelper_extra").html(text);
 	} else if (type === 'mark') {
 		var text = '<h3>Marking submission ' + afcHelper_PageName + 'for reviewing</h3>' + '<br /><label for="afcHelper_comments">Additional comment (signature is automatically added): </label><textarea rows="3" cols="60" name="afcHelper_comments" id="afcHelper_comments"></textarea><br/><button type="button" class="mark" id="afcHelper_prompt_button" name="afcHelper_prompt_button" onclick="afcHelper_act(\'mark\')">Place under review</button>';
 		$("#afcHelper_extra").html(text);
@@ -328,16 +335,22 @@ function afcHelper_prompt(type) {
 
 function afcHelper_act(action) {
 	if (action === 'draft') {
-		var username = prompt("Please enter the submitter username, or leave blank for yourself:")
-		if (username)
-			template = "{{subst:AFC draft|"+username+"}}\n";
-		else if (username != null)
-			template = "{{subst:AFC draft}}\n";
-		else
-			return;
+		var typeofsubmit = $("input[name=afcHelper_draft]:checked").val();
+		var customuser = $("#afcHelper_draft_submitter").val();
 		displayMessage('<ul id="afcHelper_status"></ul><ul id="afcHelper_finish"></ul>');
 		document.getElementById('afcHelper_finish').innerHTML += '<span id="afcHelper_finished_wrapper"><span id="afcHelper_finished_main" style="display:none"><li id="afcHelper_done"><b>Done (<a href="' + wgArticlePath.replace("$1", encodeURI(afcHelper_PageName)) + '?action=purge" title="' + afcHelper_PageName + '">Reload page</a>)</b></li></span></span>';
-		newtext = template + pagetext;
+		if (typeofsubmit == "last") {
+			user = afcHelper_last_nonbot(afcHelper_PageName)['user'];
+			var submit = "{{subst:AFC draft|"+user+"}}\n";
+		} else if (typeofsubmit == 'self') {
+			var submit = "{{subst:AFC draft}}\n";
+		} else if (typeofsubmit == 'custom' && customuser != null && customuser != "" ) {
+			var submit = "{{subst:AFC draft|"+customuser+"}}\n";
+		} else {
+			alert("No valid submitter was specified, aborting...");
+			return;
+		}
+		newtext = submit + pagetext;
 		newtext = afcHelper_cleanup(newtext);
 		afcHelper_editPage(afcHelper_PageName, newtext, "Tagging [[Wikipedia:Articles for creation]] draft", false);
 	} else if (action === 'g13') {
