@@ -3,39 +3,173 @@
 var afcHelper_PageName = wgPageName.replace(/_/g, ' ');
 var afcHelper_AJAXnumber = 0;
 var afcHelper_submissionTitle = wgTitle.replace(/Articles for creation\//g, '');
-var afcHelper_reasonhash = {
-	'v': 'submission is unsourced or contains only unreliable sources',
-	'blank': 'submission is blank',
-	'lang': 'submission is not in English',
-	'cv': 'submission is a copyright violation',
-	'exists': 'submission already exists in main space',
-	'dup': 'submission is a duplicate of another submission',
-	'redirect': 'submission is a redirect request',
-	'test': 'submission is a test edit',
-	'news': 'submission appears to be a news report of a single event',
-	'dict': 'submission is a dictionary definition',
-	'joke': 'submission appears to be a joke',
-	'blp': 'submission does not conform to BLP',
-	'van': 'submission is vandalism, a negative unsourced BLP, or an attack page',
-	'neo': 'submission is a neologism',
-	'npov': 'submission is not written from a neutral point of view',
-	'adv': 'submission is written like an advertisement',
-	'context': 'submission provides insufficient context',
-	'mergeto': 'submission is too short but can be merged',
-	'plot': 'submission is a plot summary',
-	'essay': 'submission reads like an essay',
-	'not': 'submission is covered by WP:NOT',
-	'nn': 'subject appears to be non-notable',
-	'web': 'subject appears to be non-notable web content',
-	'prof': 'subject appears to be a non-notable academic',
-	'athlete': 'subject appears to be a non-notable athlete',
-	'music': 'subject appears to be a non-notable musical performer or work',
-	'film': 'subject appears to be a non-notable film',
-	'corp': 'subject appears to be a non-notable company or organization',
-	'bio': 'subject appears to be a non-notable person',
-	'ilc': 'submission does not contain minimum citations',
-	'reason': ''
-};
+var afcHelper_reasonhash = [{
+		label: 'Duplicate articles',
+		value: 'Duplicate articles',
+		disabled: true
+	}, {
+		label: 'exists - Submission is duplicated by another article already in mainspace',
+		value: 'exists',
+		reason: 'submission already exists in main space'
+	}, {			
+		label: 'dup - Submission is a duplicate of another existing submission',
+		value: 'dup',
+		reason: 'submission is a duplicate of another submission'
+	}, {
+		label: 'Test edits',
+		value: 'Test edits',
+		disabled: true
+	}, {
+		label: 'blank - Submission is blank',
+		value: 'blank',
+		reason: 'submission is blank'
+	}, {
+		label: 'test - Submission appears to be a test edit (please ensure that it is not a test of a tool before declining)',
+		value: 'test',
+		reason: 'submission is a test edit'
+	}, {
+		label: 'BLP/Vandalism',
+		value: 'BLP/Vandalism',
+		disabled: true
+	}, {
+		label: 'blp - Blatant violation of BLP policies (please blank the page)',
+		value: 'blp',
+		reason: 'submission does not conform to BLP'
+	}, {
+		label: 'ilc - BLP does not meet minimum inline citation requirements (WP:MINREF)',
+		value: 'ilc',
+		reason: 'submission does not contain minimum citations'
+	}, {
+		label: 'van - submission is vandalism, a negative unsourced BLP, or an attack page',
+		value: 'van',
+		reason: 'submission is vandalism, a negative unsourced BLP, or an attack page'
+	}, {
+		label: 'Merging',
+		value: 'Merging',
+		disabled: true
+	}, {
+		label: 'mergeto - Submission should be merged into another article (type a comment with a link to the article below in the comment box)',
+		value: 'mergeto',
+		reason: 'submission is too short but can be merged'
+	}, {
+		label: 'Blatant [[WP:NOT]] violations',
+		value: 'Blatant [[WP:NOT]] violations',
+		disabled: true
+	}, {
+		label: 'joke - Submission appears to be a joke',
+		value: 'joke',
+		reason: 'submission appears to be a joke'
+	}, {
+		label: 'not - Submission is covered under "What Wikipedia is not"',
+		value: 'not',
+		reason: 'submission is covered by WP:NOT'
+	}, {
+		label: 'Prose issues',
+		value: 'Prose issues',
+		disabled: true
+	}, {
+		label: 'lang - Submission is not in English',
+		value: 'lang',
+		reason: 'submission is not in English'
+	}, {
+		label: 'cv - Submission is a copyright violation (blank the article, enter links in the box below, and mark for deletion)',
+		value: 'cv',
+		reason: 'submission is a copyright violation'
+	}, {
+		label: 'redirect - Submission is a redirect request',
+		value: 'redirect',
+		reason: 'submission is a redirect request'
+	}, {
+		label: 'news - Submission appears to be a news story of a single event',
+		value: 'news',
+		reason: 'submission appears to be a news report of a single event'
+	}, {
+		label: 'dict - Submission is a dictionary definition',
+		value: 'dict',
+		reason: 'submission is a dictionary definition'
+	}, {
+		label: 'plot - Submission consists mostly of a plot summary',
+		value: 'plot',
+		reason: 'submission is a plot summary'
+	}, {
+		label: 'adv - Submission reads like an advertisement',
+		value: 'adv',
+		reason: 'submission is written like an advertisement'
+	}, {
+		label: 'context - Submission provides insufficient context',
+		value: 'context',
+		reason: 'submission provides insufficient context'
+	}, {
+		label: 'essay - Submission reads like an essay',
+		value: 'essay',
+		reason: 'submission reads like an essay'
+	}, {
+		label: 'npov - Submission does not read in an encyclopedic tone',
+		value: 'npov',
+		reason: 'submission is not written from a neutral point of view'
+	}, {
+		label: 'Notability',
+		value: 'Notability',
+		disabled: true
+	}, {
+		label: 'neo - Submission is  about a neologisim that does not meet notability guidelines',
+		value: 'neo',
+		reason: 'submission is a neologism'
+	}, {
+		label: 'web - Submission is about web content does not meet notability guidelines',
+		value: 'web',
+		reason: 'subject appears to be non-notable web content'
+	}, {
+		label: 'prof - Submission is about a professor does not meet notability guidelines',
+		value: 'prof',
+		reason: 'subject appears to be a non-notable academic'
+	}, {
+		label: 'athlete - Submission is about an athlete does not meet notability guidelines',
+		value: 'athlete',
+		reason: 'subject appears to be a non-notable athlete'
+	}, {
+		label: 'music - Submission is about a musician or musical work does not meet notability guidelines',
+		value: 'music',
+		reason: 'subject appears to be a non-notable musical performer or work'
+	}, {
+		label: 'film - Submission is about a film does not meet notability guidelines',
+		value: 'film',
+		reason: 'subject appears to be a non-notable film'
+	}, {
+		label: 'corp - Submission is about a company or organization does not meet notability guidelines',
+		value: 'corp',
+		reason: 'subject appears to be a non-notable company or organization'
+	}, {
+		label: 'bio - Submission is about a person does not meet notability guidelines',
+		value: 'bio',
+		reason: 'subject appears to be a non-notable person'
+	}, {
+		label: 'nn - Submission does not meet general notability guidelines (use a more specific reason if possible)',
+		value: 'nn',
+		reason: 'subject appears to be non-notable'
+	}, {
+		label: 'Sourcing',
+		value: 'Sourcing',
+		disabled: true
+	}, {
+		label: 'v - Submission is improperly sourced',
+		value: 'v',
+		reason: 'submission is unsourced or contains only unreliable sources'
+	}, {
+		label: 'Other',
+		value: 'Other',
+		disabled: true
+	}, {
+		label: 'custom - Enter a decline reason in the box below, linking to relevant policies',
+		value: 'reason',
+		reason: ''
+	}, {
+		label: 'Select a reason for declining',
+		selected: true,
+		value: 'reason',
+		disabled: true ,
+		reason: ''
+}];
 
 function afcHelper_init() {
 	if (!wfSupportsAjax()) {
@@ -166,142 +300,7 @@ function afcHelper_prompt(type) {
 		$("#afcHelper_extra").html(text);
 	} else if (type === 'decline') {
 		var text = '<h3>Declining ' + afcHelper_PageName + '</h3>' + '<label for="afcHelper_reason">Reason for ' + type + ': </label>';
-		var reasonSelect = afcHelper_generateSelect("afcHelper_reason",
-		[ {
-			label: 'Duplicate articles',
-			value: 'Duplicate articles',
-			disabled: true
-		}, {
-			label: 'exists - Submission is duplicated by another article already in mainspace',
-			value: 'exists',
-		}, {			
-			label: 'dup - Submission is a duplicate of another existing submission',
-			value: 'dup'
-		}, {
-			label: 'Test edits',
-			value: 'Test edits',
-			disabled: true
-		}, {
-			label: 'blank - Submission is blank',
-			value: 'blank'
-		}, {
-			label: 'test - Submission appears to be a test edit (please ensure that it is not a test of a tool before declining)',
-			value: 'test'
-		}, {
-			label: 'BLP/Vandalism',
-			value: 'BLP/Vandalism',
-			disabled: true
-		}, {
-			label: 'blp - Blatant violation of BLP policies (please blank the page)',
-			value: 'blp'
-		}, {
-			label: 'ilc - BLP does not meet minimum inline citation requirements (WP:MINREF)',
-			value: 'ilc'
-		}, {
-			label: 'van - submission is vandalism, a negative unsourced BLP, or an attack page',
-			value: 'van'
-		}, {
-			label: 'Merging',
-			value: 'Merging',
-			disabled: true
-		}, {
-			label: 'mergeto - Submission should be merged into another article (type a comment with a link to the article below in the comment box)',
-			value: 'mergeto'
-		}, {
-			label: 'Blatant [[WP:NOT]] violations',
-			value: 'Blatant [[WP:NOT]] violations',
-			disabled: true
-		}, {
-			label: 'joke - Submission appears to be a joke',
-			value: 'joke'
-		}, {
-			label: 'not - Submission is covered under "What Wikipedia is not"',
-			value: 'not'
-		}, {
-			label: 'Prose issues',
-			value: 'Prose issues',
-			disabled: true
-		}, {
-			label: 'lang - Submission is not in English',
-			value: 'lang'
-		}, {
-			label: 'cv - Submission is a copyright violation (blank the article, enter links in the box below, and mark for deletion)',
-			value: 'cv'
-		}, {
-			label: 'redirect - Submission is a redirect request',
-			value: 'redirect'
-		}, {
-			label: 'news - Submission appears to be a news story of a single event',
-			value: 'news'
-		}, {
-			label: 'dict - Submission is a dictionary definition',
-			value: 'dict'
-		}, {
-			label: 'plot - Submission consists mostly of a plot summary',
-			value: 'plot'
-		}, {
-			label: 'adv - Submission reads like an advertisement',
-			value: 'adv'
-		}, {
-			label: 'context - Submission provides insufficient context',
-			value: 'context'
-		}, {
-			label: 'essay - Submission reads like an essay',
-			value: 'essay'
-		}, {
-			label: 'npov - Submission does not read in an encyclopedic tone',
-			value: 'npov'
-		}, {
-			label: 'Notability',
-			value: 'Notability',
-			disabled: true
-		}, {
-			label: 'neo - Submission is  about a neologisim that does not meet notability guidelines',
-			value: 'neo'
-		}, {
-			label: 'web - Submission is about web content does not meet notability guidelines',
-			value: 'web'
-		}, {
-			label: 'prof - Submission is about a professor does not meet notability guidelines',
-			value: 'prof'
-		}, {
-			label: 'athlete - Submission is about an athlete does not meet notability guidelines',
-			value: 'athlete'
-		}, {
-			label: 'music - Submission is about a musician or musical work does not meet notability guidelines',
-			value: 'music'
-		}, {
-			label: 'film - Submission is about a film does not meet notability guidelines',
-			value: 'film'
-		}, {
-			label: 'corp - Submission is about a company or organization does not meet notability guidelines',
-			value: 'corp'
-		}, {
-			label: 'bio - Submission is about a person does not meet notability guidelines',
-			value: 'bio'
-		}, {
-			label: 'nn - Submission does not meet general notability guidelines (use a more specific reason if possible)',
-			value: 'nn'
-		}, {
-			label: 'Sourcing',
-			value: 'Sourcing',
-			disabled: true
-		}, {
-			label: 'v - Submission is improperly sourced',
-			value: 'v'
-		}, {
-			label: 'Other',
-			value: 'Other',
-			disabled: true
-		}, {
-			label: 'custom - Enter a decline reason in the box below, linking to relevant policies',
-			value: 'reason'
-		}, {
-			label: 'Select a reason for declining',
-			selected: true,
-			value: 'reason',
-			disabled: true
-		}], "afcHelper_onChange(this)");
+		var reasonSelect = afcHelper_generateSelect("afcHelper_reason", afcHelper_reasonhash, "afcHelper_onChange(this)");
 		text += reasonSelect;
 		text += '<br /><label for="afcHelper_comments">Additional comments (optional, signature is automatically added): </label><textarea rows="3" cols="60" name="afcHelper_comments" id="afcHelper_comments"></textarea>'
 			+ '<label for="afcHelper_blank">Blank the submission (replace the content with {{<a href="' + wgArticlePath.replace("$1", 'Template:Afc_cleared') + '" title="Template:Afc cleared" target="_blank">afc cleared</a>}}):</label><input type="checkbox" name="afcHelper_blank" id="afcHelper_blank" onchange=afcHelper_trigger(\'afcHelper_extra_afccleared\') /><br/>'
@@ -614,7 +613,10 @@ function afcHelper_act(action) {
 		afcHelper_movePage(afcHelper_PageName, newtitle, 'Created via \[\[WP:AFC|Articles for creation\]\] (\[\[WP:WPAFC|you can help!\]\])', callback, true);
 	} else if (action === 'decline') {
 		var code = $("#afcHelper_reason").val();
-		var reasontext = afcHelper_reasonhash[code];
+		for(i = 0; i < (afcHelper_reasonhash.length + 1); i++){
+			if((typeof(afcHelper_reasonhash[i]) !== 'undefined') && (afcHelper_reasonhash[i].value === code))
+				var reasontext = afcHelper_reasonhash[i].reason;
+		}
 		var customreason = $("#afcHelper_comments").val();
 		var append = false;
 		var keep = false;
