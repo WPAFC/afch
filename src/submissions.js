@@ -203,7 +203,7 @@ function afcHelper_init() {
 
 	if ($.inArray("", template_statuses) != -1 || $.inArray("r", template_statuses) != -1 || $.inArray("d", template_statuses) != -1) form += '<button type="button" id="afcHelper_comment_button" name="afcHelper_comment_button" onclick="afcHelper_prompt(\'comment\')">Comment</button>';
 
-	if (template_statuses === false || $.inArray("t", template_statuses) != -1) form += '<button type="button" id="afcHelper_submit_button" name="afcHelper_submit_button" onclick="afcHelper_prompt(\'submit\')">Submit</button>';
+	if (template_statuses === false || $.inArray("t", template_statuses) != -1 || $.inArray("d", template_statuses) != -1) form += '<button type="button" id="afcHelper_submit_button" name="afcHelper_submit_button" onclick="afcHelper_prompt(\'submit\')">Submit</button>';
 
 	if (template_statuses === false) form += '<button type="button" id="afcHelper_draft_button" name="afcHelper_draft_button" onclick="afcHelper_prompt(\'draft\')">Mark as draft submission</button>';
 
