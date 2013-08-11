@@ -2,7 +2,7 @@
 // Script should be located at [[MediaWiki:Gadget-afchelper.js/core.js]]
 
 // This should be a dependency in the gadget
-mw.loader.load( 'mediawiki.api.edit' );
+mw.loader.load( 'mediawiki.api' );
 // This loads the API
 var api = new mw.Api();
 
@@ -119,6 +119,7 @@ function afcHelper_getPageText(title, show, redirectcheck) {
 */
 
 function afcHelper_editPage(title, newtext, summary, createonly) {
+	var edittoken = mw.user.tokens.get( 'editToken' );
 	summary += afcHelper_advert;
 	$("#afcHelper_finished_wrapper").html('<span id="afcHelper_AJAX_finished_' + afcHelper_AJAXnumber + '" style="display:none">' + $("#afcHelper_finished_wrapper").html() + '</span>');
 	var func_id = afcHelper_AJAXnumber;
@@ -129,29 +130,26 @@ function afcHelper_editPage(title, newtext, summary, createonly) {
 				'title': title,
 				'text': newtext,
 				'summary': summary,
+				'token': edittoken
 			}
 	if (createonly) request.createonly = true;
-	//request.createonly = true;
 
-	// !todo
-	//  - error handling is messed up; errors aren't raised...check what data variable actually is
-	//  - asynchronous loading makes "done" appear before it is actually done; .always() might fix?
-	api.postWithEditToken(request)
-			.done( function ( data ) {
-				//console.log(data);
+	api.post(request)
+			.done(function ( data ) {
 				if ( data && data.edit && data.edit.result && data.edit.result == 'Success' ) {
-					//console.log(data);
-					//console.log('success');
 					document.getElementById('afcHelper_edit' + escape(title)).innerHTML = 'Saved <a href="' + wgArticlePath.replace("$1", encodeURI(title)) + '" title="' + title + '">' + title + '</a>';
 				} else {
-					//console.log(data);
-					//console.log('error');
-					document.getElementById('afcHelper_edit' + escape(title)).innerHTML = '<div style="color:red"><b>Edit failed on <a href="' + wgArticlePath.replace("$1", encodeURI(title)) + '" title="' + title + '">' + title + '</a></b></div>. Error info:' + response['error']['code'] + ' : ' + response['error']['info'];
+					document.getElementById('afcHelper_edit' + escape(title)).innerHTML = '<div style="color:red"><b>Edit failed on <a href="' + wgArticlePath.replace("$1", encodeURI(title)) + '" title="' + title + '">' + title + '</a></b></div>. Error info:' + error;
 				}
 			} )
 			.fail( function ( error ) {
-				document.getElementById('afcHelper_edit' + escape(title)).innerHTML = '<div style="color:red"><b>Edit failed on <a href="' + wgArticlePath.replace("$1", encodeURI(title)) + '" title="' + title + '">' + title + '</a></b></div>. Error info:' + error;
+				if (createonly && error == "articleexists")
+					document.getElementById('afcHelper_edit' + escape(title)).innerHTML = '<div style="color:red"><b>Edit failed on <a href="' + wgArticlePath.replace("$1", encodeURI(title)) + '" title="' + title + '">' + title + '</a></b></div>. Error info: The article already exists!';
+				else
+					document.getElementById('afcHelper_edit' + escape(title)).innerHTML = '<div style="color:red"><b>Edit failed on <a href="' + wgArticlePath.replace("$1", encodeURI(title)) + '" title="' + title + '">' + title + '</a></b></div>. Error info:' + error;
+			})
+			.always( function () {
+				$("#afcHelper_AJAX_finished_" + func_id).css("display", '');
 			});
-	$("#afcHelper_AJAX_finished_" + func_id).css("display", '');
-}
+}	
 //</nowiki>
