@@ -368,6 +368,7 @@ function afcHelper_act(action) {
 				var submit = "{{AFC submission|||ts=" + date + "|u=" + submitinfo['user'] + "|ns={{subst:NAMESPACENUMBER}}}}\n";
 				newtext = submit + pagetext;
 				newtext = newtext.replace(/\[\[:?Category:AfC[_ ]submissions[_ ]with[_ ]missing[_ ]AfC[_ ]template\]\]/, "");
+				newtext = afcHelper_cleanup(newtext);
 				afcHelper_editPage(afcHelper_PageName, newtext, "Submitting [[Wikipedia:Articles for creation]] submission", false);
 			} else {
 				alert("Unable to find a non-bot editor; please check the page history.");
@@ -1060,7 +1061,7 @@ function afcHelper_cleanup(text) {
 	// Remove empty HTML comments
 	text = text.replace(/<!--\s*-->/ig, "");
 	//removal of unnecessary new lines, stars, "-", and whitespaces at the top of the page
-	text = text.replace(/[*\n\s]*/m, "");
+	text = text.replace(/[\*\n\s]*/m, "");
 	//adding back the submission templates and comment templates
 	if (commentstemplates.length > 0) {
 		text = '----\n' + text;
