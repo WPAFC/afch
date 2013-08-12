@@ -1,4 +1,4 @@
-Visual Style Guide
+Style Guide
 ========
 
 ## CSS
