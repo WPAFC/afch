@@ -184,7 +184,7 @@ function afcHelper_init() {
 
 	if (BETA) form += '<div id="afcHelper_betanotice">You are currently running a <b>beta version</b> of the Articles for creation helper script. Some features may not work as intended; please report errors <a href="https://en.wikipedia.org/wiki/Wikipedia_talk:WikiProject_Articles_for_creation/Helper_script" target="_blank">here</a>.</div>';
 
-	var template_status_re = /\{\{\s*afc submission\s*\|\s*(\S\s*)\s*\|/gi;
+	var template_status_re = /\{\{\s*afc submission\s*\|\s*(\S|\s*)\s*\|/gi;
 	var temp_statuses = new Array();
 	var match;
 	while (match = template_status_re.exec(pagetext)) {
