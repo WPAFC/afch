@@ -4,6 +4,7 @@ var afcHelper_PageName = wgPageName.replace(/_/g, ' ');
 var afcHelper_AJAXnumber = 0;
 var afcHelper_submissionTitle = wgTitle.replace(/Articles for creation\//g, '');
 var disambig_re = /Disambig|Mil-unit-dis|Hndis|Geodis|Numberdis/gi;
+var typetemplate_re = /\{\{\s*documentation\s*(?:\{\{[^\{\}]*\}\}|[^\}\{])*\}\}/gi;
 var afcHelper_reasonhash = [{
 	label: 'Duplicate articles',
 	value: 'Duplicate articles',
@@ -242,11 +243,10 @@ function afcHelper_prompt(type) {
 			value: 'list'
 		}];
 		// checking for ANY submission template (doesn't matter if declined) for the type parameter
-// TODO: add {{documenation}} search and do the same as as afctemplate_re
-// TODO: use boolean variables and add the disambiguation check to the accept stuff deepeer
+		// TODO: use boolean variables and add the disambiguation check to the accept stuff deepeer
 		var afcdab_re = /\{\{\s*afc submission\s*\|(?:\{\{[^\{\}]*\}\}|[^\}\{])*\|\s*type\s*=\s*dab\s*(?:\{\{[^\{\}]*\}\}|[^\}\{])*\}\}/i;
 		var afctemplate_re = /\{\{\s*afc submission\s*\|(?:\{\{[^\{\}]*\}\}|[^\}\{])*\|\s*type\s*=\s*template\s*(?:\{\{[^\{\}]*\}\}|[^\}\{])*\}\}/i;
-		if ((afcdab_re.test(pagetext)) || ((disambig_re.test(pagetext))) {
+		if ((afcdab_re.test(pagetext)) || (disambig_re.test(pagetext))) {
 			afcHelper_assessment.push(
 				{
 				label: 'Disambig-class',
@@ -259,8 +259,8 @@ function afcHelper_prompt(type) {
 				label: 'Disambig-class',
 				value: 'disambig'
 				});
-    }
-    if (afctemplate_re.test(pagetext)) {
+		}
+		if ((afctemplate_re.test(pagetext)) || (typetemplate_re.test(pagetext))) {
 			afcHelper_assessment.push(
 				{
 				label: 'Template-class',
@@ -273,39 +273,38 @@ function afcHelper_prompt(type) {
 				label: 'Template-class',
 				value: 'template'
 				});
-    }
-
-    afcHelper_assessment.push(
-		{
-			label: 'Redirect-class',
-			value: 'redirect'
-		}, {
-			label: 'Portal-class',
-			value: 'portal'
-		}, {
-			label: 'Project-class',
-			value: 'project'
-		}, {
-			label: 'Template-class',
-			value: 'template'
-		}, {
-			label: 'NA-class',
-			value: 'na'
-		});
-	if ((afctemplate_re.test(pagetext)) || (disambig_re.test(pagetext)) || (afcdab_re.test(pagetext))){
+		}
 		afcHelper_assessment.push(
-		{
-			label: 'None',
-			value: ''
-		});
-	}else{
-		afcHelper_assessment.push(
-		{
-			label: 'None',
-			selected: true,
-			value: ''
-		});
-	}
+			{
+				label: 'Redirect-class',
+				value: 'redirect'
+			}, {
+				label: 'Portal-class',
+				value: 'portal'
+			}, {
+				label: 'Project-class',
+				value: 'project'
+			}, {
+				label: 'Template-class',
+				value: 'template'
+			}, {
+				label: 'NA-class',
+				value: 'na'
+			});
+		if ((afctemplate_re.test(pagetext)) || (disambig_re.test(pagetext)) || (afcdab_re.test(pagetext)) || (typetemplate_re.test(pagetext))){
+			afcHelper_assessment.push(
+			{
+				label: 'None',
+				value: ''
+			});
+		}else{
+			afcHelper_assessment.push(
+			{
+				label: 'None',
+				selected: true,
+				value: ''
+			});
+		}
 		var text = '<h3>Accepting ' + afcHelper_PageName + '</h3>' + '<label for="afcHelper_movetarget">Move submission to: </label><input type="text" id="afcHelper_movetarget" name="afcHelper_movetarget" value="' + afcHelper_escapeHtmlChars(afcHelper_submissionTitle) + '" />' + '<br /><label for="afcHelper_assessment">Assessment (optional): </label>';
 		var assessmentSelect = afcHelper_generateSelect("afcHelper_assessment", afcHelper_assessment, null);
 		text += assessmentSelect;
