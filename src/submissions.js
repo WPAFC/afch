@@ -469,13 +469,14 @@ function afcHelper_act(action) {
 					talktext += "\}\}\n";
 				}
 
-				talktext += "\{\{subst:WPAFC/article|class=" + assessment + "\}\}\n" + talkAppend;
+				talktext += "\{\{subst:WPAFC/article|class=" + assessment + "\}\}\n";
+        if (talkAppend) talktext += talkAppend + "\n"; 
 				// disambig check
 				if (assessment === 'disambig') {
-					talktext += '\n\{\{WikiProject Disambiguation\}\}';
+					talktext += '\{\{WikiProject Disambiguation\}\}\n';
 				}
-				if (reqinfobox && !biography) talktext += "\n\{\{Infobox requested\}\}";
-				if (reqphoto && !biography) talktext += "\n\{\{Image requested\}\}";
+				if (reqinfobox && !biography) talktext += "\{\{Infobox requested\}\}\n";
+				if (reqphoto && !biography) talktext += "\{\{Image requested\}\}\n";
 
 				var testtemplate = /Template:/i;
 				var testcat = /Category:/i;
