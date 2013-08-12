@@ -224,8 +224,7 @@ function afcHelper_init() {
 
 function afcHelper_prompt(type) {
 	if (type === 'accept') {
-		var text = '<h3>Accepting ' + afcHelper_PageName + '</h3>' + '<label for="afcHelper_movetarget">Move submission to: </label><input type="text" id="afcHelper_movetarget" name="afcHelper_movetarget" value="' + afcHelper_escapeHtmlChars(afcHelper_submissionTitle) + '" />' + '<br /><label for="afcHelper_assessment">Assessment (optional): </label>';
-		var assessmentSelect = afcHelper_generateSelect("afcHelper_assessment", [{
+		var afcHelper_assessment = [{
 			label: 'B-class',
 			value: 'B'
 		}, {
@@ -240,10 +239,41 @@ function afcHelper_prompt(type) {
 		}, {
 			label: 'List-class',
 			value: 'list'
-		}, {
-			label: 'Disambig-class',
-			value: 'disambig'
-		}, {
+		}];
+		// checking for ANY submission template (doesn't matter if declined) for the type parameter
+		var afcdab_re = /\{\{\s*afc submission\s*\|(?:\{\{[^\{\}]*\}\}|[^\}\{])*\|\s*type\s*=\s*dab\s*(?:\{\{[^\{\}]*\}\}|[^\}\{])*\}\}/i;
+		var afctemplate_re = /\{\{\s*afc submission\s*\|(?:\{\{[^\{\}]*\}\}|[^\}\{])*\|\s*type\s*=\s*template\s*(?:\{\{[^\{\}]*\}\}|[^\}\{])*\}\}/i;
+		if (afcdab_re.test(pagetext)) {
+			afcHelper_assessment.push(
+				{
+				label: 'Disambig-class',
+				value: 'disambig',
+				selected: true
+				});
+		}else{
+			afcHelper_assessment.push(
+				{
+				label: 'Disambig-class',
+				value: 'disambig'
+				});
+    }
+    if (afctemplate_re.test(pagetext)) {
+			afcHelper_assessment.push(
+				{
+				label: 'Template-class',
+				value: 'template',
+				selected: true
+				});
+		}else{
+			afcHelper_assessment.push(
+				{
+				label: 'Template-class',
+				value: 'template'
+				});
+    }
+
+    afcHelper_assessment.push(
+		{
 			label: 'Redirect-class',
 			value: 'redirect'
 		}, {
@@ -258,11 +288,25 @@ function afcHelper_prompt(type) {
 		}, {
 			label: 'NA-class',
 			value: 'na'
-		}, {
+		});
+    
+    if ((afctemplate_re.test(pagetext)) || (afcdab_re.test(pagetext))){
+    afcHelper_assessment.push(
+    {
+			label: 'None',
+		//	selected: true,
+			value: ''
+		});
+    }else{
+        afcHelper_assessment.push(
+    {
 			label: 'None',
 			selected: true,
 			value: ''
-		}], null);
+		});
+    }
+		var text = '<h3>Accepting ' + afcHelper_PageName + '</h3>' + '<label for="afcHelper_movetarget">Move submission to: </label><input type="text" id="afcHelper_movetarget" name="afcHelper_movetarget" value="' + afcHelper_escapeHtmlChars(afcHelper_submissionTitle) + '" />' + '<br /><label for="afcHelper_assessment">Assessment (optional): </label>';
+		var assessmentSelect = afcHelper_generateSelect("afcHelper_assessment", afcHelper_assessment, null);
 		text += assessmentSelect;
 		text += '<br /><label for="afcHelper_pagePrepend">Prepend to page (optional, e.g. maintain boxes, etc.): </label><textarea rows="3" cols="60" name="afcHelper_pagePrepend" id="afcHelper_pagePrepend"></textarea>' + '<br /><label for="afcHelper_pageAppend">Append to page (optional, e.g. categories, stub-tags, etc.): </label><textarea rows="3" cols="60" name="afcHelper_pageAppend" id="afcHelper_pageAppend"></textarea>' + '<br /><label for="afcHelper_talkAppend">Append to talk page (optional, e.g. WikiProjects): </label><textarea rows="3" cols="60" name="afcHelper_talkAppend" id="afcHelper_talkAppend"></textarea>' + '<br /><label for="afcHelper_reqphoto">Does the article need a photo/image? (&#123;&#123;reqphoto&#125;&#125;) </label><input type="checkbox" name="afcHelper_reqphoto" id="afcHelper_reqphoto"/>' + '<br /><label for="afcHelper_reqinfobox">Does the article need an infobox? (&#123;&#123;reqinfobox&#125;&#125;) </label><input type="checkbox" name="afcHelper_reqinfobox" id="afcHelper_reqinfobox"/>' + '<br /><label for="afcHelper_biography">Is the article a biography? </label><input type="checkbox" name="afcHelper_biography" id="afcHelper_biography" onchange=afcHelper_trigger(\'afcHelper_biography_blp\') />' + '<div id="afcHelper_biography_blp" name="afcHelper_biography_blp" style="display:none"><br /><label for="afcHelper_dateofbirth">Date of birth (if known/given, e.g. <i>November 2</i>)? </label><input type="text" id="afcHelper_dateofbirth" name="afcHelper_dateofbirth" />' + '<br /><label for="afcHelper_yearofbirth">Year of birth (if known/given)? </label><input type="text" id="afcHelper_yearofbirth" name="afcHelper_yearofbirth" />' + '<br /><label for="afcHelper_listas">Surname, Name (if known/given, e.g. <i>Bush, George Walker</i>)? </label><input type="text" id="afcHelper_listas" name="afcHelper_listas" />' + '<br /><label for="afcHelper_shortdescription">A very short description (two words) about the person, see also <a href="' + wgArticlePath.replace("$1", 'Wikipedia:Persondata#Short_description') + '" title="Wikipedia:Persondata#Short_description" target="_blank">Wikipedia:Persondata</a>: </label><input type="text" id="afcHelper_shortdescription" name="afcHelper_shortdescription" />' + '<br /><label for="afcHelper_alternativesname">Alternative names: </label><input type="text" id="afcHelper_alternativesname" name="afcHelper_alternativesname" />' + '<br /><label for="afcHelper_placeofbirth">The place of birth (if known): </label><input type="text" id="afcHelper_placeofbirth" name="afcHelper_placeofbirth" />' + '<br /><label for="afcHelper_biography_status">About a living person? </label>' + afcHelper_generateSelect('afcHelper_biography_status', [{
 			label: 'Living',
