@@ -246,7 +246,7 @@ function afcHelper_prompt(type) {
 // TODO: use boolean variables and add the disambiguation check to the accept stuff deepeer
 		var afcdab_re = /\{\{\s*afc submission\s*\|(?:\{\{[^\{\}]*\}\}|[^\}\{])*\|\s*type\s*=\s*dab\s*(?:\{\{[^\{\}]*\}\}|[^\}\{])*\}\}/i;
 		var afctemplate_re = /\{\{\s*afc submission\s*\|(?:\{\{[^\{\}]*\}\}|[^\}\{])*\|\s*type\s*=\s*template\s*(?:\{\{[^\{\}]*\}\}|[^\}\{])*\}\}/i;
-		if (afcdab_re.test(pagetext) || (disambig_re.test(pagetext)) {
+		if ((afcdab_re.test(pagetext)) || ((disambig_re.test(pagetext))) {
 			afcHelper_assessment.push(
 				{
 				label: 'Disambig-class',
@@ -292,7 +292,7 @@ function afcHelper_prompt(type) {
 			label: 'NA-class',
 			value: 'na'
 		});
-	if ((afctemplate_re.test(pagetext)) || (disambig_re.test(pagetext) || (afcdab_re.test(pagetext))){
+	if ((afctemplate_re.test(pagetext)) || (disambig_re.test(pagetext)) || (afcdab_re.test(pagetext))){
 		afcHelper_assessment.push(
 		{
 			label: 'None',
