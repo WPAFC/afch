@@ -329,11 +329,20 @@ function afcHelper_prompt(type) {
 	} else if (type === 'submit') {
 		// !todo have "first" be pre-selected if submission template includes "t", else have "last" pre-selected
 		var text = '<h3>Place a submission template on ' + afcHelper_PageName + '</h3><br />';
-		text += '<input type="radio" name="afcHelper_submit" id="afcHelper_submit1" value="first" /> <label for="afcHelper_submit1">submit with the original submitter</label><br>' + '<input type="radio" name="afcHelper_submit" id="afcHelper_submit2" value="last" /> <label for="afcHelper_submit2">submit with the last non-bot editor as the submitter</label><br>' + '<input type="radio" name="afcHelper_submit" id="afcHelper_submit3" value="self" checked /> <label for="afcHelper_submit3">submit with yourself as the submitter</label><br>' + '<input type="radio" name="afcHelper_submit" id="afcHelper_submit4" value="custom" /> <label for="afcHelper_submit4">submit with a custom submitter:</label> <input type="text" name="afcHelper_custom_submitter" id="afcHelper_custom_submitter" /><br>' + '<button type="button" id="afcHelper_submit_button" name="afcHelper_submit2_button" onclick="afcHelper_act(\'submit\')">Place a submit template</button>';
+		text += '<input type="radio" name="afcHelper_submit" id="afcHelper_submit1" value="first" /> <label for="afcHelper_submit1">submit with the original submitter</label><br>' +
+		'<input type="radio" name="afcHelper_submit" id="afcHelper_submit2" value="last" /> <label for="afcHelper_submit2">submit with the last non-bot editor as the submitter</label><br>' +
+		'<input type="radio" name="afcHelper_submit" id="afcHelper_submit3" value="creator" checked /> <label for="afcHelper_submit3">submit with the page creator as the submitter</label><br>' +
+		'<input type="radio" name="afcHelper_submit" id="afcHelper_submit4" value="self" checked /> <label for="afcHelper_submit3">submit with yourself as the submitter</label><br>' +
+		'<input type="radio" name="afcHelper_submit" id="afcHelper_submit5" value="custom" /> <label for="afcHelper_submit4">submit with a custom submitter:</label> <input type="text" name="afcHelper_custom_submitter" id="afcHelper_custom_submitter" /><br>' +
+		'<button type="button" id="afcHelper_submit_button" name="afcHelper_submit2_button" onclick="afcHelper_act(\'submit\')">Place a submit template</button>';
 		$("#afcHelper_extra").html(text);
 	} else if (type === 'draft') {
 		var text = '<h3>Place a draft submission template on ' + afcHelper_PageName + '</h3><br />';
-		text += '<input type="radio" name="afcHelper_draft" id="afcHelper_draft1" value="self" checked /> <label for="afcHelper_submit1">submit with yourself as the submitter</label><br>' + '<input type="radio" name="afcHelper_draft" id="afcHelper_draft2" value="last" /> <label for="afcHelper_submit2">submit with the last non-bot editor as the submitter</label><br>' + '<input type="radio" name="afcHelper_draft" id="afcHelper_draft3" value="custom" /> <label for="afcHelper_submit3">submit with a custom submitter:</label> <input type="text" name="afcHelper_draft_submitter" id="afcHelper_draft_submitter" /><br>' + '<button type="button" id="afcHelper_draft_button" name="afcHelper_draft2_button" onclick="afcHelper_act(\'draft\')">Place {{AFC draft}} template</button>';
+		text += '<input type="radio" name="afcHelper_draft" id="afcHelper_draft1" value="self" checked /> <label for="afcHelper_submit1">tag with yourself as the submitter</label><br>' +
+		'<input type="radio" name="afcHelper_draft" id="afcHelper_draft2" value="last" /> <label for="afcHelper_submit2">tag with the last non-bot editor as the submitter</label><br>' +
+		'<input type="radio" name="afcHelper_draft" id="afcHelper_draft3" value="creator" checked /> <label for="afcHelper_submit3">tag with the page creator as the submitter</label><br>' +
+		'<input type="radio" name="afcHelper_draft" id="afcHelper_draft4" value="custom" /> <label for="afcHelper_submit4">tag with a custom submitter:</label> <input type="text" name="afcHelper_draft_submitter" id="afcHelper_draft_submitter" /><br>' +
+		'<button type="button" id="afcHelper_draft_button" name="afcHelper_draft2_button" onclick="afcHelper_act(\'draft\')">Place {{AFC draft}} template</button>';
 		$("#afcHelper_extra").html(text);
 	} else if (type === 'mark') {
 		var text = '<h3>Marking submission ' + afcHelper_PageName + 'for reviewing</h3>' + '<br /><label for="afcHelper_comments">Additional comment (signature is automatically added): </label><textarea rows="3" cols="60" name="afcHelper_comments" id="afcHelper_comments"></textarea><br/><button type="button" class="mark" id="afcHelper_prompt_button" name="afcHelper_prompt_button" onclick="afcHelper_act(\'mark\')">Place under review</button>';
@@ -355,6 +364,8 @@ function afcHelper_act(action) {
 			var submit = "{{subst:AFC draft|" + user + "}}\n";
 		} else if (typeofsubmit == 'self') {
 			var submit = "{{subst:AFC draft}}\n";
+		} else if (typeofsubmit == 'creator') {
+			var submit = "{{subst:AFC draft|"+afcHelper_page_creator(afcHelper_PageName)+"}}\n";
 		} else if (typeofsubmit == 'custom' && customuser != null && customuser != "") {
 			var submit = "{{subst:AFC draft|" + customuser + "}}\n";
 		} else {
@@ -440,6 +451,8 @@ function afcHelper_act(action) {
 				var submit = "{{subst:submit}}\n";
 			} else if (typeofsubmit == 'custom' && customuser != null && customuser != "") {
 				var submit = "{{subst:submit|user=" + customuser + "}}\n";
+			} else if (typeofsubmit == 'creator') {
+				var submit = "{{subst:submit|user="+afcHelper_page_creator(afcHelper_PageName)+"}}\n";
 			} else {
 				alert("No valid submitter was specified, aborting...");
 				return;
