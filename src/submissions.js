@@ -596,7 +596,7 @@ function afcHelper_act(action) {
 
 				// Uncomment cats (after the cleanup commented them)
 				pagetext = pagetext.replace(/\[\[:Category/gi, "\[\[Category");
-				pagetext = pagetext.replace(/\{\{:DEFAULTSORT:/gi, "\{\{:DEFAULTSORT:"); //fixes upper and lowercase problems!
+				pagetext = pagetext.replace(/\{\{:?DEFAULTSORT:/gi, "\{\{DEFAULTSORT:"); //fixes upper and lowercase problems!
 				// Remove Doncram's category on accept per issue #39
 				pagetext = pagetext.replace(/\[\[:?Category:Submissions by Doncram ready for review\]\]/gi, "");
 
