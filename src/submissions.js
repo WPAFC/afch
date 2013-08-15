@@ -317,7 +317,7 @@ function afcHelper_prompt(type) {
 		'<br /><label for="afcHelper_reqphoto">Does the article need a photo/image? (&#123;&#123;reqphoto&#125;&#125;) </label><input type="checkbox" name="afcHelper_reqphoto" id="afcHelper_reqphoto"/>' +
 		'<br /><label for="afcHelper_reqinfobox">Does the article need an infobox? (&#123;&#123;reqinfobox&#125;&#125;) </label><input type="checkbox" name="afcHelper_reqinfobox" id="afcHelper_reqinfobox"/>' +
 		'<br /><label for="afcHelper_biography">Is the article a biography? </label><input type="checkbox" name="afcHelper_biography" id="afcHelper_biography" onchange=afcHelper_trigger(\'afcHelper_biography_blp\') />' +
-		'<div id="afcHelper_biography_blp" name="afcHelper_biography_blp" style="display:none"><br /><label for="afcHelper_dateofbirth">Date of birth (if known/given, e.g. <i>November 2</i>)? </label><input type="text" id="afcHelper_dateofbirth" name="afcHelper_dateofbirth" />' +
+		'<div id="afcHelper_biography_blp" name="afcHelper_biography_blp" style="display:none"><label for="afcHelper_dateofbirth">Date of birth (if known/given, e.g. <i>November 2</i>)? </label><input type="text" id="afcHelper_dateofbirth" name="afcHelper_dateofbirth" />' +
 		'<br /><label for="afcHelper_yearofbirth">Year of birth (if known/given)? </label><input type="text" id="afcHelper_yearofbirth" name="afcHelper_yearofbirth" />' +
 		'<br /><label for="afcHelper_listas">Surname, Name (if known/given, e.g. <i>Bush, George Walker</i>)? </label><input type="text" id="afcHelper_listas" name="afcHelper_listas" />' +
 		'<br /><label for="afcHelper_shortdescription">A very short description (two words) about the person, see also <a href="' + wgArticlePath.replace("$1", 'Wikipedia:Persondata#Short_description') + '" title="Wikipedia:Persondata#Short_description" target="_blank">Wikipedia:Persondata</a>: </label><input type="text" id="afcHelper_shortdescription" name="afcHelper_shortdescription" />' +
@@ -337,7 +337,7 @@ function afcHelper_prompt(type) {
 		'<br /><label for="afcHelper_yearofdeath">Year of death (if known/given)? </label><input type="text" id="afcHelper_yearofdeath" name="afcHelper_yearofdeath" />' +
 		'<br /><label for="afcHelper_dateofdeath">Date of death (if known/given; Month Day, e.g. <i>September 3</i>)? </label><input type="text" id="afcHelper_dateofdeath" name="afcHelper_dateofdeath" />' +
 		'</div></div><div id="afcHelper_extra_inline" name="afcHelper_extra_inline"></div>' +
-		'<br/><button type="button" id="afcHelper_prompt_button" name="afcHelper_prompt_button" onclick="afcHelper_act(\'accept\')">Accept and publish to mainspace</button>';
+		'<br><button type="button" id="afcHelper_accept_button" name="afcHelper_accept_button" onclick="afcHelper_act(\'accept\')">Accept and publish to mainspace</button>';
 		$("#afcHelper_extra").html(text);
 	} else if (type === 'decline') {
 		var text = '<h3>Declining ' + afcHelper_PageName + '</h3>' + '<label for="afcHelper_reason">Reason for ' + type + ': </label>';
@@ -351,7 +351,7 @@ function afcHelper_prompt(type) {
 		$("#afcHelper_extra").html(text);
 	} else if (type === 'submit') {
 		// !todo have "first" be pre-selected if submission template includes "t", else have "last" pre-selected
-		var text = '<h3>Place a submission template on ' + afcHelper_PageName + '</h3><br />';
+		var text = '<h3>Place a submission template on ' + afcHelper_PageName + '</h3>';
 		text += '<input type="radio" name="afcHelper_submit" id="afcHelper_submit1" value="first" /> <label for="afcHelper_submit1">submit with the original submitter</label><br>' +
 		'<input type="radio" name="afcHelper_submit" id="afcHelper_submit2" value="last" /> <label for="afcHelper_submit2">submit with the last non-bot editor as the submitter</label><br>' +
 		'<input type="radio" name="afcHelper_submit" id="afcHelper_submit3" value="creator" checked /> <label for="afcHelper_submit3">submit with the page creator as the submitter</label><br>' +
@@ -360,7 +360,7 @@ function afcHelper_prompt(type) {
 		'<button type="button" id="afcHelper_submit_button" name="afcHelper_submit2_button" onclick="afcHelper_act(\'submit\')">Place a submit template</button>';
 		$("#afcHelper_extra").html(text);
 	} else if (type === 'draft') {
-		var text = '<h3>Place a draft submission template on ' + afcHelper_PageName + '</h3><br />';
+		var text = '<h3>Place a draft submission template on ' + afcHelper_PageName + '</h3>';
 		text += '<input type="radio" name="afcHelper_draft" id="afcHelper_draft1" value="self" checked /> <label for="afcHelper_submit1">tag with yourself as the submitter</label><br>' +
 		'<input type="radio" name="afcHelper_draft" id="afcHelper_draft2" value="last" /> <label for="afcHelper_submit2">tag with the last non-bot editor as the submitter</label><br>' +
 		'<input type="radio" name="afcHelper_draft" id="afcHelper_draft3" value="creator" checked /> <label for="afcHelper_submit3">tag with the page creator as the submitter</label><br>' +
@@ -369,11 +369,11 @@ function afcHelper_prompt(type) {
 		$("#afcHelper_extra").html(text);
 	} else if (type === 'mark') {
 		var text = '<h3>Marking submission ' + afcHelper_PageName + 'for reviewing</h3>' +
-		'<br /><label for="afcHelper_comments">Additional comment (signature is automatically added): </label><textarea rows="3" cols="60" name="afcHelper_comments" id="afcHelper_comments"></textarea><br/><button type="button" class="mark" id="afcHelper_prompt_button" name="afcHelper_prompt_button" onclick="afcHelper_act(\'mark\')">Place under review</button>';
+		'<label for="afcHelper_comments">Additional comment (signature is automatically added): </label><textarea rows="3" cols="60" name="afcHelper_comments" id="afcHelper_comments"></textarea><br/><button type="button" class="mark" id="afcHelper_prompt_button" name="afcHelper_prompt_button" onclick="afcHelper_act(\'mark\')">Place under review</button>';
 		$("#afcHelper_extra").html(text);
 	} else if (type === 'comment') {
 		var text = '<h3>Commenting on ' + afcHelper_PageName + ' </h3>' +
-		'<br /><label for="afcHelper_comments">Comment (signature is automatically added): </label><textarea rows="3" cols="60" name="afcHelper_comments" id="afcHelper_comments"></textarea><br/><button type="button" class="comment" id="afcHelper_prompt_button" name="afcHelper_prompt_button" onclick="afcHelper_act(\'comment\')">Add comment</button>';
+		'<label for="afcHelper_comments">Comment (signature is automatically added): </label><textarea rows="3" cols="60" name="afcHelper_comments" id="afcHelper_comments"></textarea><br/><button type="button" class="comment" id="afcHelper_prompt_button" name="afcHelper_prompt_button" onclick="afcHelper_act(\'comment\')">Add comment</button>';
 		$("#afcHelper_extra").html(text);
 	}
 }
