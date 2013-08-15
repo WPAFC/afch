@@ -18,7 +18,6 @@ if (wgPageName.indexOf('Wikipedia:Articles_for_creation/Redirects') !== -1) {
 } else if ((wgPageName.indexOf('Wikipedia:Articles_for_creation/') !== -1)
 			|| (wgPageName.indexOf('Wikipedia_talk:Articles_for_creation/') !== -1)
 			|| (wgPageName.indexOf('User:') !== -1)
-			|| (wgPageName.indexOf('User_talk:') !== -1)
 			){
 	importScriptURI(afchelper_baseurl + '/submissions.js');				
 }
