@@ -45,7 +45,7 @@ button:active {
     box-shadow: inset 0 0 2px 0px #aaaaaa, 0 1px 0 0 #eeeeee;
 }
 
-#afcHelper_accept_button, #afcHelper_prompt_button {
+#afcHelper_accept_button {
     background-color: #adfcad;
     background-image: -moz-linear-gradient(center top, #B8FFB8, #A7F3A7);
 }
