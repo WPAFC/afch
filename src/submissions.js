@@ -5,6 +5,7 @@ var afcHelper_AJAXnumber = 0;
 var afcHelper_submissionTitle = wgTitle.replace(/Articles for creation\//g, '');
 var disambig_re = /Disambig|Mil-unit-dis|Hndis|Geodis|Numberdis/gi;
 var typetemplate_re = /\{\{\s*documentation\s*(?:\{\{[^\{\}]*\}\}|[^\}\{])*\}\}/gi;
+var missing_afc_template_re = /\[\[:?Category:AfC(_|\s*)+submissions(_|\s*)+with(_|\s*)+missing(_|\s*)+AfC(_|\s*)+template\]\]/gi;
 var afcHelper_reasonhash = [{
 	label: 'Duplicate articles',
 	value: 'Duplicate articles',
@@ -446,7 +447,7 @@ function afcHelper_act(action) {
 				date = dt.getUTCFullYear() + ('0' + (dt.getUTCMonth() + 1)).slice(-2) + ('0' + dt.getUTCDate()).slice(-2) + ('0' + dt.getUTCHours()).slice(-2) + ('0' + dt.getUTCMinutes()).slice(-2) + ('0' + dt.getUTCSeconds()).slice(-2);
 				var submit = "{{AFC submission|||ts=" + date + "|u=" + submitinfo['user'] + "|ns={{subst:NAMESPACENUMBER}}}}\n";
 				newtext = submit + pagetext;
-				newtext = newtext.replace(/\[\[:?Category:AfC[_ ]submissions[_ ]with[_ ]missing[_ ]AfC[_ ]template\]\]/, "");
+				newtext = newtext.replace(missing_afc_template_re, "");
 				newtext = afcHelper_cleanup(newtext);
 				afcHelper_editPage(afcHelper_PageName, newtext, "Submitting [[Wikipedia:Articles for creation]] submission", false);
 			} else {
@@ -1112,7 +1113,7 @@ function afcHelper_cleanup(text) {
 	var afc_all = /\{\{\s*afc submission\s*\|\s*(?:\{\{[^\{\}]*\}\}|[^\}\{])*\}\}/i;
 	var afc_comment = /\{\{\s*afc comment(?:\{\{[^\{\}]*\}\}|[^\}\{])*\}\}/i;
 	if (afc_all.test(text)) {
-		text = text.replace(/\[\[:?Category:AfC[_ ]+submissions[_ ]+with[_ ]+missing[_ ]+AfC[_ ]+template\]\]/gi, "");
+		text = text.replace(missing_afc_template_re, "");
 	}
 	// Remove all draft templates
 	if (afc_alt.test(text)) text = text.replace(/\{\{\s*afc submission\s*\|\s*t(?:\{\{[^{}]*\}\}|[^}{])*\}\}/ig, "");
