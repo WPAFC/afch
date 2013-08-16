@@ -581,7 +581,7 @@ function afcHelper_act(action) {
 				if (assessment === 'disambig') {
 					talktext += '\{\{WikiProject Disambiguation\}\}\n';
 				}
-				if (reqinfobox && !biography) talktext += "\{\{Infobox requested\}\}\n";
+				if (reqinfobox &&  id=!biography) talktext += "\{\{Infobox requested\}\}\n";
 				if (reqphoto && !biography) talktext += "\{\{Image requested\}\}\n";
 
 				var testtemplate = /Template:/i;
@@ -1371,4 +1371,3 @@ function afcHelper_turnvisible(type, bool) {
 	else $("#" + type).css("display", "none"); //document.getElementById("afcHelper_blank").removeAttribute("checked");		
 }
 //</nowiki>
-Submission declined
