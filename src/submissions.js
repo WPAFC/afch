@@ -1214,15 +1214,13 @@ function afcHelper_blanking() {
 			var deletioncomment1_re = /\[\[([^\[\]]*?[^\]\|]*?)(\|([^\[\]]*?))\]\]/gi;
 			var deletioncomment2_re = /\[\[((?:\[\[[^\[\]]*\]\]|[^\]\[[])*)\]\]/gi;
 			//first handle wikilinks with piped links
-			if (deletioncomment.match(deletioncomment1_re)) {
-				var dlmatch = deletioncomment1_re.exec(deletioncomment);
+			while (dlmatch = deletioncomment1_re.exec(deletioncomment)) {
 				deletioncomment = deletioncomment.replace(dlmatch[0], "<a href=\"" + wgArticlePath.replace("$1", encodeURIComponent(dlmatch[1])) + "\" target=\"_blank\" title=\"" + dlmatch[1] + "\"></a>");
 				deletioncomment = deletioncomment.replace("\"></a>", "\">" + dlmatch[3] + "</a>");
 				deletioncomment = deletioncomment.replace("</a>|" + dlmatch[3], "</a>");
 			}
 			//now the rest
-			if (deletioncomment.match(deletioncomment2_re)) {
-				var dlmatch = deletioncomment2_re.exec(deletioncomment);
+			while (dlmatch = deletioncomment2_re.exec(deletioncomment)) {
 				deletioncomment = deletioncomment.replace(dlmatch[0], "<a href=\"" + wgArticlePath.replace("$1", encodeURIComponent(dlmatch[1])) + "\" target=\"_blank\" title=\"" + dlmatch[1] + "\">" + dlmatch[1] + "</a>");
 			}
 			errormsg += '<tr><td>' + deletionlog[i].timestamp + '</td><td><a href="' + wgArticlePath.replace("$1", encodeURIComponent("User:" + deletionlog[i].user)) + '" target="_blank" title="User:' + deletionlog[i].user + '">' + deletionlog[i].user + '</a> (<a href="' + wgArticlePath.replace("$1", encodeURIComponent("User talk:" + deletionlog[i].user)) + '" target="_blank" title="User talk:' + deletionlog[i].user + '">talk</a>)</td><td>' + deletioncomment + '</td></tr>';
