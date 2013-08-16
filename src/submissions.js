@@ -411,12 +411,14 @@ function afcHelper_act(action) {
 		var users = new Array();
 		var templates = pagetext.match(/\{\{\s*afc submission\s*\|(?:\{\{[^\{\}]*\}\}|[^\}\{])*\}\}/gi);
 		var author_re = /\|\s*u=\s*[^\|]*\|/i;
-		for (var i = 0; i < templates.length; i++) {
-			if (author_re.test(templates[i])) {
-				user = author_re.exec(templates[i])[0];
-				username = user.split(/=/)[1];
-				username = username.replace(/\|/g, '');
-				users.push(username);
+		if (templates) {
+			for (var i = 0; i < templates.length; i++) {
+				if (author_re.test(templates[i])) {
+					user = author_re.exec(templates[i])[0];
+					username = user.split(/=/)[1];
+					username = username.replace(/\|/g, '');
+					users.push(username);
+				}
 			}
 		}
 		users.push(afcHelper_page_creator(afcHelper_PageName)); // page creator 
