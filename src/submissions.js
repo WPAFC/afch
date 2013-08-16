@@ -581,7 +581,7 @@ function afcHelper_act(action) {
 				if (assessment === 'disambig') {
 					talktext += '\{\{WikiProject Disambiguation\}\}\n';
 				}
-				if (reqinfobox &&  id=!biography) talktext += "\{\{Infobox requested\}\}\n";
+				if (reqinfobox && !biography) talktext += "\{\{Infobox requested\}\}\n";
 				if (reqphoto && !biography) talktext += "\{\{Image requested\}\}\n";
 
 				var testtemplate = /Template:/i;
