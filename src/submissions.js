@@ -584,24 +584,9 @@ function afcHelper_act(action) {
 				if (reqinfobox && !biography) talktext += "\{\{Infobox requested\}\}\n";
 				if (reqphoto && !biography) talktext += "\{\{Image requested\}\}\n";
 
-				var testtemplate = /Template:/i;
-				var testcat = /Category:/i;
-				var testwp = /Wikipedia:/i;
-				var testportal = /Portal:/i;
-				var newtalktitle;
-				if (testtemplate.test(newtitle)) {
-					newtalktitle = newtitle.replace(/Template:/i, '');
-					newtalktitle = 'Template talk:' + newtalktitle;
-				} else if (testcat.test(newtitle)) {
-					newtalktitle = newtitle.replace(/Category:/i, '');
-					newtalktitle = 'Category talk:' + newtalktitle;
-				} else if (testwp.test(newtitle)) {
-					newtalktitle = newtitle.replace(/Wikipedia:/i, '');
-					newtalktitle = 'Wikipedia talk:' + newtalktitle;
-				} else if (testportal.test(newtitle)) {
-					newtalktitle = newtitle.replace(/Portal:/i, '');
-					newtalktitle = 'Portal talk:' + newtalktitle;
-				} else newtalktitle = 'Talk:' + newtitle;
+				var newtalktitle = newtitle.replace(/(Template|Category|Wikipedia|Portal):/,"$1 talk:");
+				if (newtalktitle == newtitle) newtalktitle = 'Talk:' + newtitle;
+
 				afcHelper_editPage(newtalktitle, talktext, 'Placing [[Wikipedia:Articles for creation]] project banner', false);
 
 				pagetext = pagetext.replace(/\{\{\s*afc\s*submission\s*\|(?:\{\{[^\{\}]*\}\}|[^\}\{])*\}\}/gim, "");
