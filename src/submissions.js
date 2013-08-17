@@ -218,7 +218,7 @@ function afcHelper_init() {
 
 	if (template_statuses === false || $.inArray("", template_statuses) != -1 || $.inArray("r", template_statuses) != -1 || $.inArray("d", template_statuses) != -1 || $.inArray("t", template_statuses) != -1) form += '<button type="button" id="afcHelper_cleanup_button" onclick="afcHelper_act(\'cleanup\')">Clean the submission</button>';
 
-	if ($.inArray("d", template_statuses) != -1 && afcHelper_g13_eligible(afcHelper_PageName)) form += '<button type="button" id="afcHelper_g13_button" onclick="afcHelper_act(\'g13\')">Tag the submission for G13 speedy deletion</button>';
+	if (($.inArray("d", template_statuses) != -1 || $.inArray("t", template_statuses) != -1 || template_statuses === false) && afcHelper_g13_eligible(afcHelper_PageName)) form += '<button type="button" id="afcHelper_g13_button" onclick="afcHelper_act(\'g13\')">Tag the submission for G13 speedy deletion</button>';
 
 	form += '<div id="afcHelper_extra"></div>';
 
