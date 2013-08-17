@@ -16,7 +16,7 @@ On the English Wikipedia, several different scripts mirror different branches.
 
 To import a script, add it to [your common.js page](http://en.wikipedia.org/wiki/Special:MyPage/common.js) (example is for the `develop` script):
 
-    importScript('User:Theo\'s Little Bot/afch/afchelper.js'); // AFCH script development [[User:Theo's Little Bot/afch]]
+    importScript("User:Theo's Little Bot/afch/afchelper.js"); // AFCH script development [[User:Theo's Little Bot/afch]]
 
 The only exception to this is for the `master` script: to use it, you just need to check the box next to "Yet Another AFC Helper Script" in [your preferences](http://en.wikipedia.org/wiki/Special:Preferences#mw-prefsection-gadgets).
 
