@@ -200,25 +200,25 @@ function afcHelper_init() {
 	if (template_statuses.length == 0) template_statuses = false; // if there is no template on page
 
 	if ($.inArray("", template_statuses) != -1 || $.inArray("r", template_statuses) != -1) {
-		form += '<button type="button" id="afcHelper_accept_button" name="afcHelper_accept_button" onclick="afcHelper_prompt(\'accept\')">Accept</button>';
-		form += '<button type="button" id="afcHelper_decline_button" name="afcHelper_decline_button" onclick="afcHelper_prompt(\'decline\')">Decline</button>';
+		form += '<button type="button" id="afcHelper_accept_button" onclick="afcHelper_prompt(\'accept\')">Accept</button>';
+		form += '<button type="button" id="afcHelper_decline_button" onclick="afcHelper_prompt(\'decline\')">Decline</button>';
 	}
 
-	if ($.inArray("", template_statuses) != -1 || $.inArray("r", template_statuses) != -1 || $.inArray("d", template_statuses) != -1) form += '<button type="button" id="afcHelper_comment_button" name="afcHelper_comment_button" onclick="afcHelper_prompt(\'comment\')">Comment</button>';
+	if ($.inArray("", template_statuses) != -1 || $.inArray("r", template_statuses) != -1 || $.inArray("d", template_statuses) != -1) form += '<button type="button" id="afcHelper_comment_button" onclick="afcHelper_prompt(\'comment\')">Comment</button>';
 
-	if (template_statuses === false || $.inArray("t", template_statuses) != -1 || (($.inArray("d", template_statuses) != -1) && ($.inArray("", template_statuses) == -1))) form += '<button type="button" id="afcHelper_submit_button" name="afcHelper_submit_button" onclick="afcHelper_prompt(\'submit\')">Submit</button>';
+	if (template_statuses === false || $.inArray("t", template_statuses) != -1 || (($.inArray("d", template_statuses) != -1) && ($.inArray("", template_statuses) == -1))) form += '<button type="button" id="afcHelper_submit_button" onclick="afcHelper_prompt(\'submit\')">Submit</button>';
 
-	if (template_statuses === false) form += '<button type="button" id="afcHelper_draft_button" name="afcHelper_draft_button" onclick="afcHelper_prompt(\'draft\')">Mark as draft submission</button>';
+	if (template_statuses === false) form += '<button type="button" id="afcHelper_draft_button" onclick="afcHelper_prompt(\'draft\')">Mark as draft submission</button>';
 
 	if ($.inArray("r", template_statuses) != -1) {
-		form += '<button type="button" id="afcHelper_unmark_button" name="afcHelper_unmark_button" onclick="afcHelper_act(\'unmark\')">Unmark as reviewing</button>';
+		form += '<button type="button" id="afcHelper_unmark_button" onclick="afcHelper_act(\'unmark\')">Unmark as reviewing</button>';
 	} else if ($.inArray("", template_statuses) != -1) {
-		form += '<button type="button" id="afcHelper_mark_button" name="afcHelper_mark_button" onclick="afcHelper_prompt(\'mark\')">Mark as reviewing</button>';
+		form += '<button type="button" id="afcHelper_mark_button" onclick="afcHelper_prompt(\'mark\')">Mark as reviewing</button>';
 	}
 
-	if (template_statuses === false || $.inArray("", template_statuses) != -1 || $.inArray("r", template_statuses) != -1 || $.inArray("d", template_statuses) != -1 || $.inArray("t", template_statuses) != -1) form += '<button type="button" id="afcHelper_cleanup_button" name="afcHelper_cleanup_button" onclick="afcHelper_act(\'cleanup\')">Clean the submission</button>';
+	if (template_statuses === false || $.inArray("", template_statuses) != -1 || $.inArray("r", template_statuses) != -1 || $.inArray("d", template_statuses) != -1 || $.inArray("t", template_statuses) != -1) form += '<button type="button" id="afcHelper_cleanup_button" onclick="afcHelper_act(\'cleanup\')">Clean the submission</button>';
 
-	if ($.inArray("d", template_statuses) != -1 && afcHelper_g13_eligible(afcHelper_PageName)) form += '<button type="button" id="afcHelper_g13_button" name="afcHelper_g13_button" onclick="afcHelper_act(\'g13\')">Tag the submission for G13 speedy deletion</button>';
+	if ($.inArray("d", template_statuses) != -1 && afcHelper_g13_eligible(afcHelper_PageName)) form += '<button type="button" id="afcHelper_g13_button" onclick="afcHelper_act(\'g13\')">Tag the submission for G13 speedy deletion</button>';
 
 	form += '<div id="afcHelper_extra"></div>';
 
@@ -307,22 +307,22 @@ function afcHelper_prompt(type) {
 			});
 		}
 		var text = '<h3>Accepting ' + afcHelper_PageName + '</h3>' +
-		'<label for="afcHelper_movetarget">Move submission to: </label><input type="text" id="afcHelper_movetarget" name="afcHelper_movetarget" value="' + afcHelper_escapeHtmlChars(afcHelper_submissionTitle) + '" />' +
+		'<label for="afcHelper_movetarget">Move submission to: </label><input type="text" id="afcHelper_movetarget" value="' + afcHelper_escapeHtmlChars(afcHelper_submissionTitle) + '" />' +
 		'<br /><label for="afcHelper_assessment">Assessment (optional): </label>';
 		var assessmentSelect = afcHelper_generateSelect("afcHelper_assessment", afcHelper_assessment, null);
 		text += assessmentSelect;
-		text += '<br /><label for="afcHelper_pagePrepend">Prepend to page (optional, e.g. maintain boxes, etc.): </label><textarea rows="3" cols="60" name="afcHelper_pagePrepend" id="afcHelper_pagePrepend"></textarea>' +
-		'<br /><label for="afcHelper_pageAppend">Append to page (optional, e.g. categories, stub-tags, etc.): </label><textarea rows="3" cols="60" name="afcHelper_pageAppend" id="afcHelper_pageAppend"></textarea>' +
-		'<br /><label for="afcHelper_talkAppend">Append to talk page (optional, e.g. WikiProjects): </label><textarea rows="3" cols="60" name="afcHelper_talkAppend" id="afcHelper_talkAppend"></textarea>' +
-		'<br /><label for="afcHelper_reqphoto">Does the article need a photo/image? (&#123;&#123;reqphoto&#125;&#125;) </label><input type="checkbox" name="afcHelper_reqphoto" id="afcHelper_reqphoto"/>' +
-		'<br /><label for="afcHelper_reqinfobox">Does the article need an infobox? (&#123;&#123;reqinfobox&#125;&#125;) </label><input type="checkbox" name="afcHelper_reqinfobox" id="afcHelper_reqinfobox"/>' +
-		'<br /><label for="afcHelper_biography">Is the article a biography? </label><input type="checkbox" name="afcHelper_biography" id="afcHelper_biography" onchange=afcHelper_trigger(\'afcHelper_biography_blp\') />' +
-		'<div id="afcHelper_biography_blp" name="afcHelper_biography_blp" style="display:none"><label for="afcHelper_dateofbirth">Date of birth (if known/given, e.g. <i>November 2</i>)? </label><input type="text" id="afcHelper_dateofbirth" name="afcHelper_dateofbirth" />' +
-		'<br /><label for="afcHelper_yearofbirth">Year of birth (if known/given)? </label><input type="text" id="afcHelper_yearofbirth" name="afcHelper_yearofbirth" />' +
-		'<br /><label for="afcHelper_listas">Surname, Name (if known/given, e.g. <i>Bush, George Walker</i>)? </label><input type="text" id="afcHelper_listas" name="afcHelper_listas" />' +
-		'<br /><label for="afcHelper_shortdescription">A very short description (two words) about the person, see also <a href="' + wgArticlePath.replace("$1", 'Wikipedia:Persondata#Short_description') + '" title="Wikipedia:Persondata#Short_description" target="_blank">Wikipedia:Persondata</a>: </label><input type="text" id="afcHelper_shortdescription" name="afcHelper_shortdescription" />' +
-		'<br /><label for="afcHelper_alternativesname">Alternative names: </label><input type="text" id="afcHelper_alternativesname" name="afcHelper_alternativesname" />' +
-		'<br /><label for="afcHelper_placeofbirth">The place of birth (if known): </label><input type="text" id="afcHelper_placeofbirth" name="afcHelper_placeofbirth" />' +
+		text += '<br /><label for="afcHelper_pagePrepend">Prepend to page (optional, e.g. maintain boxes, etc.): </label><textarea rows="3" cols="60" id="afcHelper_pagePrepend"></textarea>' +
+		'<br /><label for="afcHelper_pageAppend">Append to page (optional, e.g. categories, stub-tags, etc.): </label><textarea rows="3" cols="60" id="afcHelper_pageAppend"></textarea>' +
+		'<br /><label for="afcHelper_talkAppend">Append to talk page (optional, e.g. WikiProjects): </label><textarea rows="3" cols="60" id="afcHelper_talkAppend"></textarea>' +
+		'<br /><label for="afcHelper_reqphoto">Does the article need a photo/image? (&#123;&#123;reqphoto&#125;&#125;) </label><input type="checkbox" id="afcHelper_reqphoto"/>' +
+		'<br /><label for="afcHelper_reqinfobox">Does the article need an infobox? (&#123;&#123;reqinfobox&#125;&#125;) </label><input type="checkbox" id="afcHelper_reqinfobox"/>' +
+		'<br /><label for="afcHelper_biography">Is the article a biography? </label><input type="checkbox" id="afcHelper_biography" onchange=afcHelper_trigger(\'afcHelper_biography_blp\') />' +
+		'<div id="afcHelper_biography_blp" style="display:none"><label for="afcHelper_dateofbirth">Date of birth (if known/given, e.g. <i>November 2</i>)? </label><input type="text" id="afcHelper_dateofbirth" />' +
+		'<br /><label for="afcHelper_yearofbirth">Year of birth (if known/given)? </label><input type="text" id="afcHelper_yearofbirth" />' +
+		'<br /><label for="afcHelper_listas">Surname, Name (if known/given, e.g. <i>Bush, George Walker</i>)? </label><input type="text" id="afcHelper_listas" />' +
+		'<br /><label for="afcHelper_shortdescription">A very short description (two words) about the person, see also <a href="' + wgArticlePath.replace("$1", 'Wikipedia:Persondata#Short_description') + '" title="Wikipedia:Persondata#Short_description" target="_blank">Wikipedia:Persondata</a>: </label><input type="text" id="afcHelper_shortdescription" />' +
+		'<br /><label for="afcHelper_alternativesname">Alternative names: </label><input type="text" id="afcHelper_alternativesname" />' +
+		'<br /><label for="afcHelper_placeofbirth">The place of birth (if known): </label><input type="text" id="afcHelper_placeofbirth" />' +
 		'<br /><label for="afcHelper_biography_status">About a living person? </label>' + afcHelper_generateSelect('afcHelper_biography_status', [{
 			label: 'Living',
 			value: 'live'
@@ -333,21 +333,21 @@ function afcHelper_prompt(type) {
 			label: 'Unknown',
 			selected: true,
 			value: 'unknown'
-		}], "afcHelper_trigger(\'afcHelper_biography_status_box\')") + '<div id="afcHelper_biography_status_box" name="afcHelper_biography_status_box" style="display:none"><label for="afcHelper_placeofdeath">Place of death (if known/given)? </label><input type="text" id="afcHelper_placeofdeath" name="afcHelper_placeofdeath" />' +
-		'<br /><label for="afcHelper_yearofdeath">Year of death (if known/given)? </label><input type="text" id="afcHelper_yearofdeath" name="afcHelper_yearofdeath" />' +
-		'<br /><label for="afcHelper_dateofdeath">Date of death (if known/given; Month Day, e.g. <i>September 3</i>)? </label><input type="text" id="afcHelper_dateofdeath" name="afcHelper_dateofdeath" />' +
-		'</div></div><div id="afcHelper_extra_inline" name="afcHelper_extra_inline"></div>' +
-		'<br><button type="button" id="afcHelper_accept_button" name="afcHelper_accept_button" onclick="afcHelper_act(\'accept\')">Accept and publish to mainspace</button>';
+		}], "afcHelper_trigger(\'afcHelper_biography_status_box\')") + '<div id="afcHelper_biography_status_box" style="display:none"><label for="afcHelper_placeofdeath">Place of death (if known/given)? </label><input type="text" id="afcHelper_placeofdeath" />' +
+		'<br /><label for="afcHelper_yearofdeath">Year of death (if known/given)? </label><input type="text" id="afcHelper_yearofdeath" />' +
+		'<br /><label for="afcHelper_dateofdeath">Date of death (if known/given; Month Day, e.g. <i>September 3</i>)? </label><input type="text" id="afcHelper_dateofdeath" />' +
+		'</div></div><div id="afcHelper_extra_inline"></div>' +
+		'<br><button type="button" id="afcHelper_accept_button" onclick="afcHelper_act(\'accept\')">Accept and publish to mainspace</button>';
 		$("#afcHelper_extra").html(text);
 	} else if (type === 'decline') {
 		var text = '<h3>Declining ' + afcHelper_PageName + '</h3>' + '<label for="afcHelper_reason">Reason for ' + type + ': </label>';
 		var reasonSelect = afcHelper_generateSelect("afcHelper_reason", afcHelper_reasonhash, "afcHelper_onChange(this)");
 		text += reasonSelect;
-		text += '<br /><label for="afcHelper_comments">Additional comments (optional, signature is automatically added): </label><textarea rows="3" cols="60" name="afcHelper_comments" id="afcHelper_comments"></textarea>' +
-		'<label for="afcHelper_blank">Blank the submission (replace the content with {{<a href="' + wgArticlePath.replace("$1", 'Template:Afc_cleared') + '" title="Template:Afc cleared" target="_blank">afc cleared</a>}}):</label><input type="checkbox" name="afcHelper_blank" id="afcHelper_blank" onchange=afcHelper_trigger(\'afcHelper_extra_afccleared\') /><br/>' +
-		'<div id="afcHelper_extra_afccleared" name="afcHelper_extra_afccleared" style="display:none"><label for="afcHelper_afccleared">Trigger the \'csd\' parameter and nominate the submission for CSD? (replace the content with {{<a href="' + wgArticlePath.replace("$1", 'Template:Afc_cleared') + '" title="Template:Afc cleared" target="_blank">afc cleared|csd</a>}}):</label><input type="checkbox" name="afcHelper_blank_csd" id="afcHelper_blank_csd" checked="checked" /><br/></div>' +
-		'<label for="afcHelper_notify">Notify author:</label><input type="checkbox" onchange=afcHelper_trigger(\'afcHelper_notify_Teahouse\') name="afcHelper_notify" id="afcHelper_notify" checked="checked" /><br/>' +
-		'<div id="afcHelper_notify_Teahouse"><label for="afcHelper_notify_Teahouse">Notify author about <a href="' + wgArticlePath.replace("$1", 'Wikipedia:Teahouse') + '" title="Wikipedia:Teahouse" target="_blank">Wikipedia:Teahouse</a>:</label><input type="checkbox" name="afcHelper_Teahouse" id="afcHelper_Teahouse" /><br/></div><div id="afcHelper_extra_inline" name="afcHelper_extra_inline"></div><button type="button" class="decline" id="afcHelper_prompt_button" name="afcHelper_prompt_button" onclick="afcHelper_act(\'decline\')">Decline</button>';
+		text += '<br /><label for="afcHelper_comments">Additional comments (optional, signature is automatically added): </label><textarea rows="3" cols="60" id="afcHelper_comments"></textarea>' +
+		'<label for="afcHelper_blank">Blank the submission (replace the content with {{<a href="' + wgArticlePath.replace("$1", 'Template:Afc_cleared') + '" title="Template:Afc cleared" target="_blank">afc cleared</a>}}):</label><input type="checkbox" id="afcHelper_blank" onchange=afcHelper_trigger(\'afcHelper_extra_afccleared\') /><br/>' +
+		'<div id="afcHelper_extra_afccleared" style="display:none"><label for="afcHelper_afccleared">Trigger the \'csd\' parameter and nominate the submission for CSD? (replace the content with {{<a href="' + wgArticlePath.replace("$1", 'Template:Afc_cleared') + '" title="Template:Afc cleared" target="_blank">afc cleared|csd</a>}}):</label><input type="checkbox" id="afcHelper_blank_csd" checked="checked" /><br/></div>' +
+		'<label for="afcHelper_notify">Notify author:</label><input type="checkbox" onchange=afcHelper_trigger(\'afcHelper_notify_Teahouse\') id="afcHelper_notify" checked="checked" /><br/>' +
+		'<div id="afcHelper_notify_Teahouse"><label for="afcHelper_notify_Teahouse">Notify author about <a href="' + wgArticlePath.replace("$1", 'Wikipedia:Teahouse') + '" title="Wikipedia:Teahouse" target="_blank">Wikipedia:Teahouse</a>:</label><input type="checkbox" id="afcHelper_Teahouse" /><br/></div><div id="afcHelper_extra_inline" ></div><button type="button" class="decline" id="afcHelper_prompt_button" onclick="afcHelper_act(\'decline\')">Decline</button>';
 		$("#afcHelper_extra").html(text);
 	} else if (type === 'submit') {
 		// !todo have "first" be pre-selected if submission template includes "t", else have "last" pre-selected
@@ -356,24 +356,24 @@ function afcHelper_prompt(type) {
 		'<input type="radio" name="afcHelper_submit" id="afcHelper_submit2" value="last" /> <label for="afcHelper_submit2">submit with the last non-bot editor as the submitter</label><br>' +
 		'<input type="radio" name="afcHelper_submit" id="afcHelper_submit3" value="creator" checked /> <label for="afcHelper_submit3">submit with the page creator as the submitter</label><br>' +
 		'<input type="radio" name="afcHelper_submit" id="afcHelper_submit4" value="self" checked /> <label for="afcHelper_submit3">submit with yourself as the submitter</label><br>' +
-		'<input type="radio" name="afcHelper_submit" id="afcHelper_submit5" value="custom" /> <label for="afcHelper_submit4">submit with a custom submitter:</label> <input type="text" name="afcHelper_custom_submitter" id="afcHelper_custom_submitter" /><br>' +
-		'<button type="button" id="afcHelper_submit_button" name="afcHelper_submit2_button" onclick="afcHelper_act(\'submit\')">Place a submit template</button>';
+		'<input type="radio" name="afcHelper_submit" id="afcHelper_submit5" value="custom" /> <label for="afcHelper_submit4">submit with a custom submitter:</label> <input type="text" id="afcHelper_custom_submitter" /><br>' +
+		'<button type="button" id="afcHelper_submit_button" onclick="afcHelper_act(\'submit\')">Place a submit template</button>';
 		$("#afcHelper_extra").html(text);
 	} else if (type === 'draft') {
 		var text = '<h3>Place a draft submission template on ' + afcHelper_PageName + '</h3>';
 		text += '<input type="radio" name="afcHelper_draft" id="afcHelper_draft1" value="self" checked /> <label for="afcHelper_submit1">tag with yourself as the submitter</label><br>' +
 		'<input type="radio" name="afcHelper_draft" id="afcHelper_draft2" value="last" /> <label for="afcHelper_submit2">tag with the last non-bot editor as the submitter</label><br>' +
 		'<input type="radio" name="afcHelper_draft" id="afcHelper_draft3" value="creator" checked /> <label for="afcHelper_submit3">tag with the page creator as the submitter</label><br>' +
-		'<input type="radio" name="afcHelper_draft" id="afcHelper_draft4" value="custom" /> <label for="afcHelper_submit4">tag with a custom submitter:</label> <input type="text" name="afcHelper_draft_submitter" id="afcHelper_draft_submitter" /><br>' +
-		'<button type="button" id="afcHelper_draft_button" name="afcHelper_draft2_button" onclick="afcHelper_act(\'draft\')">Place {{AFC draft}} template</button>';
+		'<input type="radio" name="afcHelper_draft" id="afcHelper_draft4" value="custom" /> <label for="afcHelper_submit4">tag with a custom submitter:</label> <input type="text" id="afcHelper_draft_submitter" /><br>' +
+		'<button type="button" id="afcHelper_draft_button" onclick="afcHelper_act(\'draft\')">Place {{AFC draft}} template</button>';
 		$("#afcHelper_extra").html(text);
 	} else if (type === 'mark') {
 		var text = '<h3>Marking submission ' + afcHelper_PageName + 'for reviewing</h3>' +
-		'<label for="afcHelper_comments">Additional comment (signature is automatically added): </label><textarea rows="3" cols="60" name="afcHelper_comments" id="afcHelper_comments"></textarea><br/><button type="button" class="mark" id="afcHelper_prompt_button" name="afcHelper_prompt_button" onclick="afcHelper_act(\'mark\')">Place under review</button>';
+		'<label for="afcHelper_comments">Additional comment (signature is automatically added): </label><textarea rows="3" cols="60" id="afcHelper_comments"></textarea><br/><button type="button" class="mark" id="afcHelper_prompt_button" onclick="afcHelper_act(\'mark\')">Place under review</button>';
 		$("#afcHelper_extra").html(text);
 	} else if (type === 'comment') {
 		var text = '<h3>Commenting on ' + afcHelper_PageName + ' </h3>' +
-		'<label for="afcHelper_comments">Comment (signature is automatically added): </label><textarea rows="3" cols="60" name="afcHelper_comments" id="afcHelper_comments"></textarea><br/><button type="button" class="comment" id="afcHelper_prompt_button" name="afcHelper_prompt_button" onclick="afcHelper_act(\'comment\')">Add comment</button>';
+		'<label for="afcHelper_comments">Comment (signature is automatically added): </label><textarea rows="3" cols="60" id="afcHelper_comments"></textarea><br/><button type="button" class="comment" id="afcHelper_prompt_button" onclick="afcHelper_act(\'comment\')">Add comment</button>';
 		$("#afcHelper_extra").html(text);
 	}
 }
@@ -1020,12 +1020,12 @@ $(afcportletLink).click(function(e) {
 
 function afcHelper_onChange(select) {
 	var value = select.options[select.selectedIndex].value;
-	if (value === 'cv') $("#afcHelper_extra_inline").html('<label for="afcHelper_extra">Please enter the URL if available: </label><input type="text" id="afcHelper_extra_inlinebox" name="afcHelper_extra_inlinebox" value="http://" size="100%"/>');
-	else if (value === 'dup') $("#afcHelper_extra_inline").html('<label for="afcHelper_extra_inline">Please enter the title of the duplicate submission, if possible. Do not enter the prefix (e.g., John Doe): </label><input type="text" id="afcHelper_extra_inlinebox" name="afcHelper_extra_inlinebox" value="" />');
-	else if (value === 'mergeto') $("#afcHelper_extra_inline").html('<label for="afcHelper_extra_inline">Please enter the title of the article to merge to, if possible: </label><input type="text" id="afcHelper_extra_inlinebox" name="afcHelper_extra_inlinebox" value="" />');
-	else if (value === 'lang') $("#afcHelper_extra_inline").html('<label for="afcHelper_extra_inline">Please enter the language the article is written in, if possible/known (e.g. German): </label><input type="text" id="afcHelper_extra_inlinebox" name="afcHelper_extra_inlinebox" value="" />');
-	else if (value === 'exists') $("#afcHelper_extra_inline").html('<label for="afcHelper_extra_inline">Please enter the title of the existing article, if possible: </label><input type="text" id="afcHelper_extra_inlinebox" name="afcHelper_extra_inlinebox" value="" />');
-	else if (value === 'plot') $("#afcHelper_extra_inline").html('<label for="afcHelper_extra_inline">Please enter the title of the existing article on the fiction, if there is one: </label><input type="text" id="afcHelper_extra_inlinebox" name="afcHelper_extra_inlinebox" value="" />');
+	if (value === 'cv') $("#afcHelper_extra_inline").html('<label for="afcHelper_extra">Please enter the URL if available: </label><input type="text" id="afcHelper_extra_inlinebox" value="http://" size="100%"/>');
+	else if (value === 'dup') $("#afcHelper_extra_inline").html('<label for="afcHelper_extra_inline">Please enter the title of the duplicate submission, if possible. Do not enter the prefix (e.g., John Doe): </label><input type="text" id="afcHelper_extra_inlinebox" value="" />');
+	else if (value === 'mergeto') $("#afcHelper_extra_inline").html('<label for="afcHelper_extra_inline">Please enter the title of the article to merge to, if possible: </label><input type="text" id="afcHelper_extra_inlinebox" value="" />');
+	else if (value === 'lang') $("#afcHelper_extra_inline").html('<label for="afcHelper_extra_inline">Please enter the language the article is written in, if possible/known (e.g. German): </label><input type="text" id="afcHelper_extra_inlinebox" value="" />');
+	else if (value === 'exists') $("#afcHelper_extra_inline").html('<label for="afcHelper_extra_inline">Please enter the title of the existing article, if possible: </label><input type="text" id="afcHelper_extra_inlinebox" value="" />');
+	else if (value === 'plot') $("#afcHelper_extra_inline").html('<label for="afcHelper_extra_inline">Please enter the title of the existing article on the fiction, if there is one: </label><input type="text" id="afcHelper_extra_inlinebox" value="" />');
 	else $("#afcHelper_extra_inline").html("");
 
 	// CSD it if it's a copyvio
