@@ -539,151 +539,151 @@ function afcHelper_act(action) {
 		displayMessage('<ul id="afcHelper_status"></ul><ul id="afcHelper_finish"></ul>');
 		document.getElementById('afcHelper_finish').innerHTML += '<span id="afcHelper_finished_wrapper"><span id="afcHelper_finished_main" style="display:none"><li id="afcHelper_done"><b>Done (<a href="' + wgArticlePath.replace("$1", encodeURI(afcHelper_PageName)) + '?action=purge" title="' + afcHelper_PageName + '">Reload page</a>)</b></li></span></span>';
 		var callback = function() {
-				var username = '';
-				// clean up page
-				var afc_re = /\{\{\s*afc submission\s*\|(?:\{\{[^\{\}]*\}\}|[^\}\{])*\}\}/i;
-				if (afc_re.test(pagetext)) {
-					var afctemplate = afc_re.exec(pagetext)[0];
-					var author_re = /\|\s*u=\s*[^\|]*\|/i;
-					if (author_re.test(afctemplate)) {
-						var user = author_re.exec(afctemplate)[0];
-						username = user.split(/=/)[1];
-						username = username.replace(/\|/g, '');
-						usertalkpage = "User talk:" + username;
-						var usertext = afcHelper_getPageText(usertalkpage, true, true);
-						usertext += "\n== Your submission at AfC \[\[" + wgPageName + "|" + newtitle + "\]\] was accepted ==";
-						usertext += "\n\{\{subst:afc talk|1=" + newtitle + "|class=" + assessment + "|sig=yes\}\}";
-						afcHelper_editPage(usertalkpage, usertext, 'Your submission at \[\[WP:AFC|Articles for creation\]\]', false);
-					}
+			var username = '';
+			// clean up page
+			var afc_re = /\{\{\s*afc submission\s*\|(?:\{\{[^\{\}]*\}\}|[^\}\{])*\}\}/i;
+			if (afc_re.test(pagetext)) {
+				var afctemplate = afc_re.exec(pagetext)[0];
+				var author_re = /\|\s*u=\s*[^\|]*\|/i;
+				if (author_re.test(afctemplate)) {
+					var user = author_re.exec(afctemplate)[0];
+					username = user.split(/=/)[1];
+					username = username.replace(/\|/g, '');
+					usertalkpage = "User talk:" + username;
+					var usertext = afcHelper_getPageText(usertalkpage, true, true);
+					usertext += "\n== Your submission at AfC \[\[" + wgPageName + "|" + newtitle + "\]\] was accepted ==";
+					usertext += "\n\{\{subst:afc talk|1=" + newtitle + "|class=" + assessment + "|sig=yes\}\}";
+					afcHelper_editPage(usertalkpage, usertext, 'Your submission at \[\[WP:AFC|Articles for creation\]\]', false);
 				}
-				var recenttext = afcHelper_getPageText("Wikipedia:Articles for creation/recent", true, false);
-				var newentry = "\{\{afc contrib|" + assessment + "|" + newtitle + "|" + username + "\}\}\n";
-				var lastentry = recenttext.toLowerCase().lastIndexOf("\{\{afc contrib");
-				var firstentry = recenttext.toLowerCase().indexOf("\{\{afc contrib");
-				recenttext = recenttext.substring(0, lastentry);
-				recenttext = recenttext.substring(0, firstentry) + newentry + recenttext.substring(firstentry);
-				afcHelper_editPage("Wikipedia:Articles for creation/recent", recenttext, 'Updating recent AFC creations', false);
+			}
+			var recenttext = afcHelper_getPageText("Wikipedia:Articles for creation/recent", true, false);
+			var newentry = "\{\{afc contrib|" + assessment + "|" + newtitle + "|" + username + "\}\}\n";
+			var lastentry = recenttext.toLowerCase().lastIndexOf("\{\{afc contrib");
+			var firstentry = recenttext.toLowerCase().indexOf("\{\{afc contrib");
+			recenttext = recenttext.substring(0, lastentry);
+			recenttext = recenttext.substring(0, firstentry) + newentry + recenttext.substring(firstentry);
+			afcHelper_editPage("Wikipedia:Articles for creation/recent", recenttext, 'Updating recent AFC creations', false);
 
-				var talktext = "";
+			var talktext = "";
+			if (biography) {
+				talktext += "\{\{WikiProject Biography|living=";
+				if (living === 'live') talktext += "yes";
+				else if (living === 'dead') talktext += "no";
+				talktext += "|class=" + assessment + "|listas=" + listas;
+				if (reqphoto) talktext += "|needs-photo=yes";
+				if (reqinfobox) talktext += "|needs-infobox=yes";
+				talktext += "\}\}\n";
+			}
+
+			talktext += "\{\{subst:WPAFC/article|class=" + assessment + "\}\}\n";
+			if (talkAppend) talktext += talkAppend + "\n"; 
+			// disambig check
+			if (assessment === 'disambig') {
+				talktext += '\{\{WikiProject Disambiguation\}\}\n';
+			}
+			if (reqinfobox && !biography) talktext += "\{\{Infobox requested\}\}\n";
+			if (reqphoto && !biography) talktext += "\{\{Image requested\}\}\n";
+
+			var newtalktitle = newtitle.replace(/(Template|Category|Wikipedia|Portal):/,"$1 talk:");
+			if (newtalktitle == newtitle) newtalktitle = 'Talk:' + newtitle;
+
+			afcHelper_editPage(newtalktitle, talktext, 'Placing [[Wikipedia:Articles for creation]] project banner', false);
+
+			pagetext = pagetext.replace(/\{\{\s*afc\s*submission\s*\|(?:\{\{[^\{\}]*\}\}|[^\}\{])*\}\}/gim, "");
+			pagetext = pagetext.replace(/\{\{\s*afc\s*comment\s*\|(?:\{\{[^\{\}]*\}\}|[^\}\{])*\}\}/gim, "");
+
+			var afcindex = pagetext.search(/\{\{afc/i);
+			while (afcindex !== -1) {
+				var endindex = pagetext.indexOf("\}\}", afcindex + 2);
+				pagetext = pagetext.substring(0, afcindex) + pagetext.substring(endindex + 2);
+				afcindex = pagetext.search(/\{\{afc/i);
+			}
+			if (pagetext.indexOf("\<\!--- Important, do not remove this line before article has been created. ---\>") !== -1) {
+				var startindex = pagetext.indexOf("\<\!--- Important, do not remove this line before article has been created. ---\>");
+				var endindex = pagetext.indexOf(">", startindex);
+				pagetext = pagetext.substring(0, startindex) + pagetext.substring(endindex + 1);
+			}
+
+			// Uncomment cats (after the cleanup commented them)
+			pagetext = pagetext.replace(/\[\[:Category/gi, "\[\[Category");
+			pagetext = pagetext.replace(/\{\{:?DEFAULTSORT:/gi, "\{\{DEFAULTSORT:"); //fixes upper and lowercase problems!
+			// Remove Doncram's category on accept per issue #39
+			pagetext = pagetext.replace(/\[\[:?Category:Submissions by Doncram ready for review\]\]/gi, "");
+
+			// [[Template:L]]
+			var templatel = '\n';
+			if (biography) {
+				templatel = '\n\{\{Persondata\n| NAME              =' + listas + '\n| ALTERNATIVE NAMES = ' + alternativesname + '\n| SHORT DESCRIPTION = ' + shortdescription + '\n| DATE OF BIRTH     = ' + dateofbirth + ', ' + yearofbirth + '\n| PLACE OF BIRTH    = ' + placeofbirth;
+				if (living === 'dead') {
+					templatel += '\n| DATE OF DEATH     = ' + dateofdeath + ', ' + yearofdeath + '\n| PLACE OF DEATH    = ' + placeofdeath + '\n\}\}';
+				} else {
+					templatel += '\n| DATE OF DEATH     = ' + '\n| PLACE OF DEATH    = \n\}\}';
+				}
+				templatel += '\n\{\{subst:L|';
+				if (yearofbirth === '') templatel += 'MISSING|';
+				else templatel += yearofbirth + '|';
+				if (living === 'dead') {
+					if (yearofdeath === '') templatel += 'MISSING|';
+					else templatel += yearofdeath + '|';
+				} else {
+					templatel += 'LIVING|';
+				}
+				templatel += '|' + listas + '\}\}\n';
+			}
+			//removal of unnecessary new lines, stars, "-", and whitespaces at the top of the page
+			pagetext = pagetext.replace(/^[-]{4,}$/igm, "");
+			pagetext = pagetext.replace(/[*\n\s]*/m, "");
+			pagetext = pagePrepend + '\n' + pagetext + templatel + pageAppend;
+			// test if the submission contains any category and if not, add {{uncategorized}}
+			cat_re = /\[\[Category/gi;
+			if (!cat_re.test(pagetext) && (assessment !== 'disambig') && (assessment !== 'redirect') && (assessment !== 'project') && (assessment !== 'portal') && (assessment !== 'template')) {
 				if (biography) {
-					talktext += "\{\{WikiProject Biography|living=";
-					if (living === 'live') talktext += "yes";
-					else if (living === 'dead') talktext += "no";
-					talktext += "|class=" + assessment + "|listas=" + listas;
-					if (reqphoto) talktext += "|needs-photo=yes";
-					if (reqinfobox) talktext += "|needs-infobox=yes";
-					talktext += "\}\}\n";
+					pagetext += '\{\{subst:dated|Improve categories\}\}';
+				} else {
+					pagetext += '\{\{subst:dated|uncategorized\}\}';
 				}
-
-				talktext += "\{\{subst:WPAFC/article|class=" + assessment + "\}\}\n";
-        if (talkAppend) talktext += talkAppend + "\n"; 
-				// disambig check
-				if (assessment === 'disambig') {
-					talktext += '\{\{WikiProject Disambiguation\}\}\n';
-				}
-				if (reqinfobox && !biography) talktext += "\{\{Infobox requested\}\}\n";
-				if (reqphoto && !biography) talktext += "\{\{Image requested\}\}\n";
-
-				var newtalktitle = newtitle.replace(/(Template|Category|Wikipedia|Portal):/,"$1 talk:");
-				if (newtalktitle == newtitle) newtalktitle = 'Talk:' + newtitle;
-
-				afcHelper_editPage(newtalktitle, talktext, 'Placing [[Wikipedia:Articles for creation]] project banner', false);
-
-				pagetext = pagetext.replace(/\{\{\s*afc\s*submission\s*\|(?:\{\{[^\{\}]*\}\}|[^\}\{])*\}\}/gim, "");
-				pagetext = pagetext.replace(/\{\{\s*afc\s*comment\s*\|(?:\{\{[^\{\}]*\}\}|[^\}\{])*\}\}/gim, "");
-
-				var afcindex = pagetext.search(/\{\{afc/i);
-				while (afcindex !== -1) {
-					var endindex = pagetext.indexOf("\}\}", afcindex + 2);
-					pagetext = pagetext.substring(0, afcindex) + pagetext.substring(endindex + 2);
-					afcindex = pagetext.search(/\{\{afc/i);
-				}
-				if (pagetext.indexOf("\<\!--- Important, do not remove this line before article has been created. ---\>") !== -1) {
-					var startindex = pagetext.indexOf("\<\!--- Important, do not remove this line before article has been created. ---\>");
-					var endindex = pagetext.indexOf(">", startindex);
-					pagetext = pagetext.substring(0, startindex) + pagetext.substring(endindex + 1);
-				}
-
-				// Uncomment cats (after the cleanup commented them)
-				pagetext = pagetext.replace(/\[\[:Category/gi, "\[\[Category");
-				pagetext = pagetext.replace(/\{\{:?DEFAULTSORT:/gi, "\{\{DEFAULTSORT:"); //fixes upper and lowercase problems!
-				// Remove Doncram's category on accept per issue #39
-				pagetext = pagetext.replace(/\[\[:?Category:Submissions by Doncram ready for review\]\]/gi, "");
-
-				// [[Template:L]]
-				var templatel = '\n';
+			}
+			var stub_re = /stub\}\}/gi;
+			if ((assessment === 'stub') && (!stub_re.test(pagetext))) {
 				if (biography) {
-					templatel = '\n\{\{Persondata\n| NAME              =' + listas + '\n| ALTERNATIVE NAMES = ' + alternativesname + '\n| SHORT DESCRIPTION = ' + shortdescription + '\n| DATE OF BIRTH     = ' + dateofbirth + ', ' + yearofbirth + '\n| PLACE OF BIRTH    = ' + placeofbirth;
-					if (living === 'dead') {
-						templatel += '\n| DATE OF DEATH     = ' + dateofdeath + ', ' + yearofdeath + '\n| PLACE OF DEATH    = ' + placeofdeath + '\n\}\}';
-					} else {
-						templatel += '\n| DATE OF DEATH     = ' + '\n| PLACE OF DEATH    = \n\}\}';
-					}
-					templatel += '\n\{\{subst:L|';
-					if (yearofbirth === '') templatel += 'MISSING|';
-					else templatel += yearofbirth + '|';
-					if (living === 'dead') {
-						if (yearofdeath === '') templatel += 'MISSING|';
-						else templatel += yearofdeath + '|';
-					} else {
-						templatel += 'LIVING|';
-					}
-					templatel += '|' + listas + '\}\}\n';
+					pagetext += '\n\{\{bio-stub\}\}';
+				} else {
+					pagetext += '\n\{\{stub\}\}';
 				}
-				//removal of unnecessary new lines, stars, "-", and whitespaces at the top of the page
-				pagetext = pagetext.replace(/^[-]{4,}$/igm, "");
-				pagetext = pagetext.replace(/[*\n\s]*/m, "");
-				pagetext = pagePrepend + '\n' + pagetext + templatel + pageAppend;
-				// test if the submission contains any category and if not, add {{uncategorized}}
-				cat_re = /\[\[Category/gi;
-				if (!cat_re.test(pagetext) && (assessment !== 'disambig') && (assessment !== 'redirect') && (assessment !== 'project') && (assessment !== 'portal') && (assessment !== 'template')) {
-					if (biography) {
-						pagetext += '\{\{subst:dated|Improve categories\}\}';
-					} else {
-						pagetext += '\{\{subst:dated|uncategorized\}\}';
-					}
-				}
-				var stub_re = /stub\}\}/gi;
-				if ((assessment === 'stub') && (!stub_re.test(pagetext))) {
-					if (biography) {
-						pagetext += '\n\{\{bio-stub\}\}';
-					} else {
-						pagetext += '\n\{\{stub\}\}';
-					}
-				}
-				// disambig check
-				if ((assessment === 'disambig') && (!disambig_re.test(pagetext))) {
-					pagetext += '\n\{\{disambig\}\}';
-				}
+			}
+			// disambig check
+			if ((assessment === 'disambig') && (!disambig_re.test(pagetext))) {
+				pagetext += '\n\{\{disambig\}\}';
+			}
 
-				// Template uncommenting -- covert {{tl}}'d templates to the real thing
-				pagetext = pagetext.replace(/\{\{(tl|tlx|tlg)\|(.*?)\}\}/ig, "\{\{$2\}\}");
+			// Template uncommenting -- covert {{tl}}'d templates to the real thing
+			pagetext = pagetext.replace(/\{\{(tl|tlx|tlg)\|(.*?)\}\}/ig, "\{\{$2\}\}");
 
-				// automatic tagging of linkrot
-				// TODO: Use non-regex for html
-				var linkrotre = /((<\s*ref\s*(name\s*=|group\s*=)*\s*.*[\/]{1}>)|(<\s*ref\s*(name\s*=|group\s*=)*\s*[^\/]*>))+(?:(?:https?|ftp|file):\/\/|www\.|ftp\.)(?:\([-A-Z0-9+&@#/%=~_|$?!:,.]*\)|[-A-Z0-9+&@#/%=~_|$?!:,.])*(?:\([-A-Z0-9+&@#/%=~_|$?!:,.]*\)|[A-Z0-9+&@#/%=~_|$])+(\<\/ref\>)+/gi;
-				if (linkrotre.test(pagetext)) {
-					pagetext = "{{subst:dated|Cleanup-bare URLs}}" + pagetext;
+			// automatic tagging of linkrot
+			// TODO: Use non-regex for html
+			var linkrotre = /((<\s*ref\s*(name\s*=|group\s*=)*\s*.*[\/]{1}>)|(<\s*ref\s*(name\s*=|group\s*=)*\s*[^\/]*>))+(?:(?:https?|ftp|file):\/\/|www\.|ftp\.)(?:\([-A-Z0-9+&@#/%=~_|$?!:,.]*\)|[-A-Z0-9+&@#/%=~_|$?!:,.])*(?:\([-A-Z0-9+&@#/%=~_|$?!:,.]*\)|[A-Z0-9+&@#/%=~_|$])+(\<\/ref\>)+/gi;
+			if (linkrotre.test(pagetext)) {
+				pagetext = "{{subst:dated|Cleanup-bare URLs}}" + pagetext;
+			}
+			//check if page is orphaned (mainspace) and tag it!
+			if ((assessment !== 'disambig') && (assessment !== 'redirect') && (assessment !== 'project') && (assessment !== 'portal') && (assessment !== 'template')) {
+				document.getElementById('afcHelper_status').innerHTML += '<li id="afcHelper_orphan">Checking if article is orphan...</li>';
+				var req = sajax_init_object();
+				req.open("GET", wgScriptPath + "/api.php?action=query&list=backlinks&format=json&bltitle=" + encodeURIComponent(newtitle) + "&blnamespace=0&bllimit=10", false);
+				req.send(null);
+				var response = eval('(' + req.responseText + ')');
+				var isorphaned = response['query']['backlinks'].length;
+				delete req;
+				if (isorphaned) {
+					$("#afcHelper_orphan").html("Orphan check: all ok. No tagging needed.");
+				} else {
+					pagetext = '\{\{subst:dated|Orphan\}\}' + pagetext;
+					$("#afcHelper_orphan").html("Page is orphaned, adding tag.");
 				}
-				//check if page is orphaned (mainspace) and tag it!
-				if ((assessment !== 'disambig') && (assessment !== 'redirect') && (assessment !== 'project') && (assessment !== 'portal') && (assessment !== 'template')) {
-					document.getElementById('afcHelper_status').innerHTML += '<li id="afcHelper_orphan">Checking if article is orphan...</li>';
-					var req = sajax_init_object();
-					req.open("GET", wgScriptPath + "/api.php?action=query&list=backlinks&format=json&bltitle=" + encodeURIComponent(newtitle) + "&blnamespace=0&bllimit=10", false);
-					req.send(null);
-					var response = eval('(' + req.responseText + ')');
-					var isorphaned = response['query']['backlinks'].length;
-					delete req;
-					if (isorphaned) {
-						$("#afcHelper_orphan").html("Orphan check: all ok. No tagging needed.");
-					} else {
-						pagetext = '\{\{subst:dated|Orphan\}\}' + pagetext;
-						$("#afcHelper_orphan").html("Page is orphaned, adding tag.");
-					}
-				}
-				pagetext = afcHelper_cleanup(pagetext);
-				afcHelper_editPage(newtitle, pagetext, "Cleanup following [[Wikipedia:Articles for creation]] creation", false);
-			};
+			}
+			pagetext = afcHelper_cleanup(pagetext);
+			afcHelper_editPage(newtitle, pagetext, "Cleanup following [[Wikipedia:Articles for creation]] creation", false);
+		};
 		afcHelper_movePage(afcHelper_PageName, newtitle, 'Created via \[\[WP:AFC|Articles for creation\]\] (\[\[WP:WPAFC|you can help!\]\])', callback, true);
 	} else if (action === 'decline') {
 		var code = $("#afcHelper_reason").val();
