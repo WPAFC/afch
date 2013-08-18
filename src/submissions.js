@@ -180,7 +180,7 @@ function afcHelper_init() {
 		return;
 	}
 	form = '<div id="afcHelper_initialform">';
-	form += afcHelper_blanking();
+	form += afcHelper_setup();
 	form += '<h3>Reviewing ' + afcHelper_PageName + '</h3>';
 
 	if (BETA) form += '<div id="afcHelper_betanotice">You are currently running a <b>beta version</b> of the Articles for creation helper script. Some features may not work as intended; please report errors <a href="https://en.wikipedia.org/wiki/Wikipedia_talk:WikiProject_Articles_for_creation/Helper_script" target="_blank">here</a>.</div>';
@@ -1182,7 +1182,8 @@ function afcHelper_cleanup(text) {
 	return text;
 }
 
-function afcHelper_blanking() {
+// Gets the pagetext, does some cleanup, lists previous deletions, and displays warnings about long comments and bad reference styles
+function afcHelper_setup() {
 	pagetext = afcHelper_getPageText(afcHelper_PageName, false, false);
 	// fix issue#1 before cleanup!
 	pagetext = pagetext.replace(/\{\{AFC submission(\s*\|){0,}ts\s*=\s*/gi, "{{AFC submission|||ts=");
