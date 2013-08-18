@@ -42,7 +42,20 @@ function afcHelper_init() {
 		displayMessage('<span style="color:red; font-size:120%">Uh oh. Your browser appears to be too old to handle this script or does not support AJAX. Please use the latest version of Mozilla Firefox, Apple Safari, or Opera for the best results. Sorry about that.</span>');
 		return;
 	}
+
+	// !todo
+	// This is WRONG because getPageText is NOT a promise
+	// So it is ALWAYS true
+	// But `when` might be useful if we return a .promise() instead
+	$.when(afcHelper_getPageText(afcHelper_PageName, false, false)).done(
+		function(result) {
+			console.log(result);
+			var pagetext = result;
+			return true; } /* alerts "123" */
+	);
+
 	form = '<div id="afcHelper_initialform">';
+
 	form += afcHelper_blanking();
 	form += '<h3>Reviewing ' + afcHelper_PageName + '</h3>';
 	var template_status_re =  /\{\{\s*afc submission\s*\|\s*(\S\s*)\s*\|/gi;
@@ -1093,7 +1106,8 @@ function afcHelper_cleanup(text) {
 }
 
 function afcHelper_blanking() {
-	pagetext = afcHelper_getPageText(afcHelper_PageName, false, false);
+	console.log('yay!');
+	console.log(pagetext);
 	// fix issue#1 before cleanup!
 	pagetext = pagetext.replace(/\{\{AFC submission(\s*\|){0,}ts\s*=\s*/gi, "{{AFC submission|||ts=");
 	pagetext = pagetext.replace(/\{\{AFC submission\s*\}\}/gi, "{{AFC submission|||ts={{subst:LOCALTIMESTAMP}}|u=|ns={{subst:AFC submission/namespace number}}}}");
