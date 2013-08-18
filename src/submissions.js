@@ -1218,7 +1218,7 @@ function afcHelper_setup() {
 	var deletionlog = response['query']['logevents'];
 	delete req;
 	if (deletionlog.length) {
-		errormsg += '<h3><div class="notice">The page ' + afcHelper_escapeHtmlChars(afcHelper_submissionTitle) + ' was deleted ' + deletionlog.length + ' times. Here are the edit summary(s) of the <a href="' + wgScript + '?title=Special%3ALog&type=delete&page=' + afcHelper_submissionTitle + '" target="_blank">deletion log</a>:</div></h3><table border=1><tr><td>Timestamp</td><td>User</td><td>Reason</td></tr>';
+		errormsg += '<h3><div class="notice">The page ' + afcHelper_escapeHtmlChars(afcHelper_submissionTitle) + ' was deleted ' + deletionlog.length + ' times. Here are the edit summary(s) from the <a href="' + wgScript + '?title=Special%3ALog&type=delete&page=' + afcHelper_submissionTitle + '" target="_blank">deletion log</a>:</div></h3><table border=1><tr><td>Timestamp</td><td>User</td><td>Reason</td></tr>';
 		for (var i = 0; i < deletionlog.length; i++) {
 			var deletioncomment = deletionlog[i].comment;
 			var deletioncomment1_re = /\[\[([^\[\]]*?[^\]\|]*?)(\|([^\[\]]*?))\]\]/gi;
@@ -1353,7 +1353,7 @@ function afcHelper_page_creator(title) {
 }
 
 function afcHelper_turnvisible(type, bool) {
-	if (bool) $("#" + type).css("display", "block"); //setAttribute("checked", "checked");
-	else $("#" + type).css("display", "none"); //document.getElementById("afcHelper_blank").removeAttribute("checked");		
+	if (bool) $("#" + type).css("display", "block");
+	else $("#" + type).css("display", "none");
 }
 //</nowiki>
