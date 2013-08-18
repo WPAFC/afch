@@ -1198,18 +1198,16 @@ function afcHelper_setup() {
 	texttest = texttest.replace(/\<\!-- Metadata\: see \[\[Wikipedia\:Persondata\]\]. --\>/gi, "");
 	// Bad workaround to fix the error message; will be removed later in cleanup()
 	texttest = texttest.replace(/\<\!-- Be sure to cite all of your sources in \<ref\>...\<\/ref\> tags and they will automatically display when you hit save. The more reliable sources added the better! See \[\[Wikipedia:REFB\]\] for more information--\>/ig, "");
-	var recomment = /(\<\!--)([^((\<\!--)|(--\>))]*)(--\>)*/gim;
 	var errormsg = '';
-	// test if too long (30+ characters) HTML comments are still in the page text
-	if (recomment.test(texttest)) {
-		var testmatch = texttest.match(recomment);
-		for (var i = 0; i < testmatch.length; i++) {
-			if (testmatch[i].length > 34) {
-				if (errormsg === '') errormsg = '<h3><div class="notice">Please check the source code! This page contains one or more long (30+ characters) HTML comment! (please report false positives)</div></h3><br/>';
-				errormsg += 'The hidden text is: <i>' + testmatch[i].slice(4) + '</i><br/>';
-			}
-		}
+
+	// test if there are 30+ character html comments in the page text
+	var recomment = /(?:\<\!--)([^((\<\!--)|(--\>))]{30,})(?:--\>)?/gim;
+	var matched;
+	while (matched = recomment.exec(texttest)) {
+		if (errormsg == '') errormsg += '<h3><div class="notice">Please check the source code! This page contains one or more long (30+ characters) HTML comments! <em>(please report false positives)</em></div></h3>';
+		errormsg += 'The hidden text is: <i>' + matched[1] + '</i><br/>';
 	}
+
 	//Check the deletion log and list it!
 	var req = sajax_init_object();
 	req.open("GET", wgScriptPath + "/api.php?action=query&list=logevents&format=json&leprop=user%7Ctimestamp%7Ccomment&letype=delete&leaction=delete%2Fdelete&letitle=" + encodeURIComponent(afcHelper_submissionTitle) + "&lelimit=10", false);
