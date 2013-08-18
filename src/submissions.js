@@ -368,7 +368,7 @@ function afcHelper_prompt(type) {
 		'<button type="button" id="afcHelper_draft_button" onclick="afcHelper_act(\'draft\')">Place {{AFC draft}} template</button>';
 		$("#afcHelper_extra").html(text);
 	} else if (type === 'mark') {
-		var text = '<h3>Marking submission ' + afcHelper_PageName + 'for reviewing</h3>' +
+		var text = '<h3>Marking submission ' + afcHelper_PageName + ' as under review</h3>' +
 		'<label for="afcHelper_comments">Additional comment (signature is automatically added): </label><textarea rows="3" cols="60" id="afcHelper_comments"></textarea><br/><button type="button" class="mark" id="afcHelper_prompt_button" onclick="afcHelper_act(\'mark\')">Place under review</button>';
 		$("#afcHelper_extra").html(text);
 	} else if (type === 'comment') {
