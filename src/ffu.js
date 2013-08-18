@@ -213,7 +213,7 @@ function afcHelper_ffu_onActionChange(id) {
 			value: 'nourl'
 		}]) + '<br/><label for="afcHelper_ffu_comment_' + id + '">Additional comment: </label>' + '<input type="text" id="afcHelper_ffu_comment_' + id + '" name="afcHelper_ffu_comment_' + id + '"/>' + '<br/><label for="afcHelper_ffu_notify_' + id + '">Notify requestor: </label>' + '<input type="checkbox" id="afcHelper_ffu_notify_' + id + '" name="afcHelper_ffu_notify_' + id + '" checked="checked" />';
 	} else if (selectValue == 'comment') {
-		extra.innerHTML = '<label for="afcHelper_ffu_prefmtcomment_' + id + '">Placing a comment: </label>' + afcHelper_generateSelect('afcHelper_ffu_prefmtcomment_' + id, [{
+		extra.innerHTML = '<label for="afcHelper_ffu_prefmtcomment_' + id + '">Adding a comment: </label>' + afcHelper_generateSelect('afcHelper_ffu_prefmtcomment_' + id, [{
 			label: 'No license',
 			value: 'license'
 		}, {
@@ -334,15 +334,15 @@ function afcHelper_ffu_performActions() {
 					totaldecline++;
 				} else if (sub_m.action == 'comment') {
 					if ((sub_m.prefmtcomment != '') && (sub_m.prefmtcomment != 'custom')) {
-						if (sub_m.comment == '') text += '\n\{\{subst:ffu|' + sub_m.prefmtcomment + '\}\} \~\~\~\~\n';
-						else text += '\n\{\{subst:ffu|' + sub_m.prefmtcomment + '\}\} ' + sub_m.comment + ' \~\~\~\~\n';
+						if (sub_m.comment == '') text += '\n:\{\{subst:ffu|' + sub_m.prefmtcomment + '\}\} \~\~\~\~\n';
+						else text += '\n:\{\{subst:ffu|' + sub_m.prefmtcomment + '\}\} ' + sub_m.comment + ' \~\~\~\~\n';
 					} else if (sub_m.comment != '') {
-						text += '\n\{\{subst:ffu|c\}\} ' + sub_m.comment + ' \~\~\~\~\n';
+						text += '\n:\{\{subst:ffu|c\}\} ' + sub_m.comment + ' \~\~\~\~\n';
 					}
 					totalcomment++;
 				} else if (sub_m.action == 'hold') {
-					if (sub_m.comment == '') text += '\n\{\{subst:ffu|' + sub_m.holdrat + '\}\} \~\~\~\~\n';
-					else text += '\n\{\{subst:ffu|' + sub_m.holdrat + '\}\} ' + sub_m.comment + ' \~\~\~\~\n';
+					if (sub_m.comment == '') text += '\n:\{\{subst:ffu|' + sub_m.holdrat + '\}\} \~\~\~\~\n';
+					else text += '\n:\{\{subst:ffu|' + sub_m.holdrat + '\}\} ' + sub_m.comment + ' \~\~\~\~\n';
 					totalcomment++; // a "hold" is basically equal to a comment
 				}
 				pagetext = pagetext.substring(0, startindex) + text + pagetext.substring(endindex);
