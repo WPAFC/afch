@@ -592,12 +592,8 @@ function afcHelper_act(action) {
 			pagetext = pagetext.replace(/\{\{\s*afc\s*submission\s*\|(?:\{\{[^\{\}]*\}\}|[^\}\{])*\}\}/gim, "");
 			pagetext = pagetext.replace(/\{\{\s*afc\s*comment\s*\|(?:\{\{[^\{\}]*\}\}|[^\}\{])*\}\}/gim, "");
 
-			var afcindex = pagetext.search(/\{\{afc/i);
-			while (afcindex !== -1) {
-				var endindex = pagetext.indexOf("\}\}", afcindex + 2);
-				pagetext = pagetext.substring(0, afcindex) + pagetext.substring(endindex + 2);
-				afcindex = pagetext.search(/\{\{afc/i);
-			}
+			// remove all other afc templates
+			pagetext = pagetext.replace(/\{\{\s*afc.*?\}\}/ig,"");
 
 			// Uncomment cats (after the cleanup commented them)
 			pagetext = pagetext.replace(/\[\[:Category/gi, "\[\[Category");
