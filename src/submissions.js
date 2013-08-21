@@ -598,11 +598,6 @@ function afcHelper_act(action) {
 				pagetext = pagetext.substring(0, afcindex) + pagetext.substring(endindex + 2);
 				afcindex = pagetext.search(/\{\{afc/i);
 			}
-			if (pagetext.indexOf("\<\!--- Important, do not remove this line before article has been created. ---\>") !== -1) {
-				var startindex = pagetext.indexOf("\<\!--- Important, do not remove this line before article has been created. ---\>");
-				var endindex = pagetext.indexOf(">", startindex);
-				pagetext = pagetext.substring(0, startindex) + pagetext.substring(endindex + 1);
-			}
 
 			// Uncomment cats (after the cleanup commented them)
 			pagetext = pagetext.replace(/\[\[:Category/gi, "\[\[Category");
