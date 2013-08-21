@@ -630,9 +630,6 @@ function afcHelper_act(action) {
 				}
 				templatel += '|' + listas + '\}\}\n';
 			}
-			//removal of unnecessary new lines, stars, "-", and whitespaces at the top of the page
-			pagetext = pagetext.replace(/^[-]{4,}$/igm, "");
-			pagetext = pagetext.replace(/[*\n\s]*/m, "");
 			pagetext = pagePrepend + '\n' + pagetext + templatel + pageAppend;
 			// test if the submission contains any category and if not, add {{uncategorized}}
 			cat_re = /\[\[Category/gi;
