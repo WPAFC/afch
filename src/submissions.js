@@ -595,6 +595,9 @@ function afcHelper_act(action) {
 			// remove all other afc templates
 			pagetext = pagetext.replace(/\{\{\s*afc.*?\}\}/ig,"");
 
+			// first clean up the page
+			pagetext = afcHelper_cleanup(pagetext);
+
 			// Uncomment cats (after the cleanup commented them)
 			pagetext = pagetext.replace(/\[\[:Category/gi, "\[\[Category");
 			pagetext = pagetext.replace(/\{\{:?DEFAULTSORT:/gi, "\{\{DEFAULTSORT:"); //fixes upper and lowercase problems!
@@ -669,7 +672,6 @@ function afcHelper_act(action) {
 					$("#afcHelper_orphan").html("Page is orphaned, adding tag.");
 				}
 			}
-			pagetext = afcHelper_cleanup(pagetext);
 			afcHelper_editPage(newtitle, pagetext, "Cleanup following [[Wikipedia:Articles for creation]] creation", false);
 		};
 		afcHelper_movePage(afcHelper_PageName, newtitle, 'Created via \[\[WP:AFC|Articles for creation\]\] (\[\[WP:WPAFC|you can help!\]\])', callback, true);
