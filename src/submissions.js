@@ -592,9 +592,6 @@ function afcHelper_act(action) {
 			pagetext = pagetext.replace(/\{\{\s*afc\s*submission\s*\|(?:\{\{[^\{\}]*\}\}|[^\}\{])*\}\}/gim, "");
 			pagetext = pagetext.replace(/\{\{\s*afc\s*comment\s*\|(?:\{\{[^\{\}]*\}\}|[^\}\{])*\}\}/gim, "");
 
-			// remove all other afc templates
-			pagetext = pagetext.replace(/\{\{\s*afc.*?\}\}/ig,"");
-
 			// first clean up the page
 			pagetext = afcHelper_cleanup(pagetext);
 
