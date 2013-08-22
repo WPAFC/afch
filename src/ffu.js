@@ -289,14 +289,20 @@ function afcHelper_ffu_performActions() {
 				// todo list: if more files in one request were handled, only notify once (would require change in structure of program)
 				if ((sub_m.action != 'none') && (sub_m.notify == true)) {
 					// assuming the first User/IP is the requester
-					var requestinguser = /\[\[(User[_ ]talk:|User:|Special:Contributions\/)([^\||\]\]]*)([^\]]*?)\]\]/i.exec(text)[2];
-					var userpagetext = afcHelper_getPageText('User talk:' + requestinguser, true);
-					if (sub_m.action == 'decline') userpagetext += '\n== Your request at \[\[WP:FFU|Files for upload\]\] ==\n\{\{subst:ffu talk|decline\}\} \~\~\~\~\n';
-					else if (sub_m.action == 'comment') userpagetext += '\n== Your request at \[\[WP:FFU|Files for upload\]\] ==\n\{\{subst:ffu talk|comment\}\} \~\~\~\~\n';
-					else if (sub_m.action == 'hold') userpagetext += '\n== Your request at \[\[WP:FFU|Files for upload\]\] ==\n\{\{subst:ffu talk|h\}\} \~\~\~\~\n';
-					else if (sub_m.action == 'accept') if (sub_m.to === '') userpagetext += '\n== Your request at \[\[WP:FFU|Files for upload\]\] ==\n\{\{subst:ffu|comment\}\} \~\~\~\~\n';
-					else userpagetext += '\n== Your request at \[\[WP:FFU|Files for upload\]\] ==\n\{\{subst:ffu talk|file=' + sub_m.to + '\}\} \~\~\~\~\n';
-					afcHelper_editPage('User talk:' + requestinguser, userpagetext, 'Notifying user about [[WP:FFU|FFU]] request', false);
+					match = /\[\[(?:User[_ ]talk:|User:|Special:Contributions\/)([^\||\]\]]*)([^\]]*?)\]\]/i.exec(text)
+					// only notify if we can find a user to notify
+					if (match) {
+						var requestinguser = match[1];
+						var userpagetext = afcHelper_getPageText('User talk:' + requestinguser, true);
+						if (sub_m.action == 'decline') userpagetext += '\n== Your request at \[\[WP:FFU|Files for upload\]\] ==\n\{\{subst:ffu talk|decline\}\} \~\~\~\~\n';
+						else if (sub_m.action == 'comment') userpagetext += '\n== Your request at \[\[WP:FFU|Files for upload\]\] ==\n\{\{subst:ffu talk|comment\}\} \~\~\~\~\n';
+						else if (sub_m.action == 'hold') userpagetext += '\n== Your request at \[\[WP:FFU|Files for upload\]\] ==\n\{\{subst:ffu talk|h\}\} \~\~\~\~\n';
+						else if (sub_m.action == 'accept') if (sub_m.to === '') userpagetext += '\n== Your request at \[\[WP:FFU|Files for upload\]\] ==\n\{\{subst:ffu|comment\}\} \~\~\~\~\n';
+						else userpagetext += '\n== Your request at \[\[WP:FFU|Files for upload\]\] ==\n\{\{subst:ffu talk|file=' + sub_m.to + '\}\} \~\~\~\~\n';
+						afcHelper_editPage('User talk:' + requestinguser, userpagetext, 'Notifying user about [[WP:FFU|FFU]] request', false);
+					} else {
+						document.getElementById('afcHelper_status').innerHTML += '<li>Unable to notify user for ' + sub.title + ': Could not find a username to notify!</li>';
+					}
 				}
 				if (sub_m.action == 'accept') {
 					// create local file description talkpage
