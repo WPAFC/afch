@@ -40,9 +40,9 @@ div#afcHelper_betanotice {
 .afcHelper_button:active {
     border: 1px solid #aaa;
     border-bottom: 1px solid #888;
-    -webkit-box-shadow: inset 0 0 0px 3px #aaaaaa, 0 1px 0 0 #eeeeee;
-    -moz-box-shadow: inset 0 0 0px 3px #aaaaaa, 0 1px 0 0 #eeeeee;
-    box-shadow: inset 0 0 0px 3px #aaaaaa, 0 1px 0 0 #eeeeee;
+    -moz-box-shadow: inset 0 0 3px 3px #888;
+    -webkit-box-shadow: inset 0 0 3px 3px#888;
+    box-shadow: inset 0 0 3px 3px #888;
 }
 
 #afcHelper_accept_button {
