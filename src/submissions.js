@@ -218,7 +218,7 @@ function afcHelper_init() {
 
 	if (template_statuses === false || $.inArray("", template_statuses) != -1 || $.inArray("r", template_statuses) != -1 || $.inArray("d", template_statuses) != -1 || $.inArray("t", template_statuses) != -1) form += '<button class="afcHelper_button" type="button" id="afcHelper_cleanup_button" onclick="afcHelper_act(\'cleanup\')">Clean the submission</button>';
 
-	if (afcHelper_g13_eligible(afcHelper_PageName)) form += '<button class="afcHelper_button" type="button" id="afcHelper_g13_button" onclick="afcHelper_act(\'g13\')">Tag the submission for G13 speedy deletion</button>';
+	if (afcHelper_g13_eligible(afcHelper_PageName)) form += '<button class="afcHelper_button" type="button" id="afcHelper_g13_button" onclick="afcHelper_act(\'g13\')">Tag the submission for G13 speedy deletion</button> <button class="afcHelper_button" type="button" id="afcHelper_postpone_g13_button" onclick="afcHelper_act(\'postpone_g13\')">Postpone G13 deletion</button>';
 
 	form += '<div id="afcHelper_extra"></div>';
 
@@ -400,6 +400,22 @@ function afcHelper_act(action) {
 		newtext = submit + pagetext;
 		newtext = afcHelper_cleanup(newtext);
 		afcHelper_editPage(afcHelper_PageName, newtext, "Tagging [[Wikipedia:Articles for creation]] draft", false);
+	} else if (action === 'postpone_g13') {
+		displayMessage('<ul id="afcHelper_status"></ul><ul id="afcHelper_finish"></ul>');
+		document.getElementById('afcHelper_finish').innerHTML += '<span id="afcHelper_finished_wrapper"><span id="afcHelper_finished_main" style="display:none"><li id="afcHelper_done"><b>Done (<a href="' + wgArticlePath.replace("$1", encodeURI(afcHelper_PageName)) + '?action=purge" title="' + afcHelper_PageName + '">Reload page</a>)</b></li></span></span>';
+		postpone_re = /\{\{AfC postpone G13\s*(?:\|\s*(\d*)\s*)?\}\}/ig;
+		var match = postpone_re.exec(pagetext);
+		if (match) {
+			if (match[1] != undefined) {
+				addition = "{{AfC postpone G13|"+(parseInt(match[1])+1)+"}}";
+			} else {
+				addition = "{{AfC postpone G13|2}}";
+			}
+			newtext = pagetext.replace(match[0],addition);
+		} else {
+			newtext = pagetext+"\n{{AfC postpone G13|1}}";
+		}
+		afcHelper_editPage(afcHelper_PageName, newtext, "Postponing [[WP:G13|G13]] speedy deletion", false);
 	} else if (action === 'g13') {
 		displayMessage('<ul id="afcHelper_status"></ul><ul id="afcHelper_finish"></ul>');
 		document.getElementById('afcHelper_finish').innerHTML += '<span id="afcHelper_finished_wrapper"><span id="afcHelper_finished_main" style="display:none"><li id="afcHelper_done"><b>Done (<a href="' + wgArticlePath.replace("$1", encodeURI(afcHelper_PageName)) + '?action=purge" title="' + afcHelper_PageName + '">Reload page</a>)</b></li></span></span>';
@@ -453,8 +469,6 @@ function afcHelper_act(action) {
 			appendText += " ~~~~~\n";
 			afcHelper_editPage(speedyLogPageName,CSDlogtext + appendText,"Logging speedy deletion nomination of [[" + afcHelper_PageName + "]]")
 		}
-
-
 	} else if (action === 'submit') {
 		var typeofsubmit = $("input[name=afcHelper_submit]:checked").val();
 		var customuser = $("#afcHelper_custom_submitter").val();
