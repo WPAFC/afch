@@ -1188,7 +1188,7 @@ function afcHelper_setup() {
 	var errormsg = '';
 
 	// test if there are 30+ character html comments in the page text
-	var recomment = /<!--([\s\S]{30,}?)($|-->)/gi;
+	var recomment = /\<![ \r\n\t]*(--([^\-]|[\r\n]|-[^\-]){30,})(--[ \r\n\t]*\>|$)/gi;
 	var matched;
 	while (matched = recomment.exec(texttest)) {
 		if (errormsg == '') errormsg += '<h3><div class="notice">Please check the source code! This page contains one or more long (30+ characters) HTML comments! <em>(please report false positives)</em></div></h3>';
