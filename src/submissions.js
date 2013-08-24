@@ -875,57 +875,60 @@ function afcHelper_movePage(oldtitle, newtitle, summary, callback, overwrite_red
 	var func_id = afcHelper_AJAXnumber;
 	afcHelper_AJAXnumber++;
 	document.getElementById('afcHelper_status').innerHTML += '<li id="afcHelper_move' + escape(oldtitle) + '">Moving <a href="' + wgArticlePath.replace("$1", encodeURI(oldtitle)) + '" title="' + oldtitle + '">' + oldtitle + '</a> to <a href="' + wgArticlePath.replace("$1", encodeURI(newtitle)) + '" title="' + newtitle + '">' + newtitle + '</a></li>';
-	var req = sajax_init_object();
-	var params = "action=move&format=json&token=" + encodeURIComponent(token) + "&from=" + encodeURIComponent(oldtitle) + "&to=" + encodeURIComponent(newtitle) + "&reason=" + encodeURIComponent(summary);
-	url = wgScriptPath + "/api.php";
-	req.open("POST", url, true);
-	req.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-	req.setRequestHeader("Content-length", params.length);
-	req.setRequestHeader("Connection", "close");
-	req.onreadystatechange = function() {
-		if (req.readyState === 4 && req.status === 200) {
-			var error = true;
-			response = eval('(' + req.responseText + ')');
-			try {
-				if (typeof(response['move']) !== "undefined") {
-					document.getElementById('afcHelper_move' + escape(oldtitle)).innerHTML = 'Moved <a href="' + wgArticlePath.replace("$1", encodeURI(oldtitle)) + '" title="' + oldtitle + '">' + oldtitle + '</a>';
-					error = false;
-				} else {
-					if (overwrite_redirect) {
-						if (response['error']['code'] == "articleexists") {
-							text = afcHelper_getPageText(newtitle);
-							if (text.search(/#redirect\s*\[\[/gi) != -1) { // Should probably use &redirects= to check if it's a redirect, rather than this hack...but this seemed simpler and more concise, rather than yet another API call
-								// !todo check if a user is an admin and give them one-click delete
-								del = confirm("The target title, "+newtitle+", is a redirect. Would you like to automatically tag it for deletion under {{db-move}} to make way for the approved submission?");
-								if (del) {
-									rat = "{{db-move|1="+oldtitle+"|2=redirect preventing move of accepted [[WP:AFC|article submission]].}}\n";
-									afcHelper_editPage(newtitle, rat+text, "Tagging redirect in the way of [[Wikipedia:Articles for creation]] submission for deletion under {{[[Template:Db-move|db-move]]}}");
-									window.overwrite_comment = 'This article submission has been approved, but a [[WP:REDIRECT|redirect]] is blocking it from being moved into the article space. An administrator should delete the redirect and move the article within the next few days. Thanks for your patience!';
-									document.getElementById('afcHelper_move' + escape(oldtitle)).innerHTML = '<div id="afcHelper_edit' + escape(oldtitle)+'"></div>'; // to allow for messages from the editor
-									afcHelper_act('mark') // We mark the submission as "under review"
-									document.getElementById('afcHelper_move' + escape(oldtitle)).innerHTML += '<div><b>Successfully tagged redirect page <a href="' + wgArticlePath.replace("$1", encodeURI(newtitle)) + '" title="' + newtitle + '">' + newtitle + '</a> for deletion</b> under {{db-move}}. The article should be moved by the administrator who deletes the redirect.</div>';
-								} else {
-									document.getElementById('afcHelper_move' + escape(oldtitle)).innerHTML = '<div style="color:red"><b>Move failed on <a href="' + wgArticlePath.replace("$1", encodeURI(oldtitle)) + '" title="' + oldtitle + '">' + oldtitle + '</a></b></div>. Error info: User canceled automatically tagging the target for deletion';
-								}
-							} else {
-								document.getElementById('afcHelper_move' + escape(oldtitle)).innerHTML = '<div style="color:red"><b>Move failed on <a href="' + wgArticlePath.replace("$1", encodeURI(oldtitle)) + '" title="' + oldtitle + '">' + oldtitle + '</a></b></div>. Error info:' + response['error']['code'] + ' : ' + response['error']['info'];
-							}
+	request = {
+				'action': 'move',
+				'from': oldtitle,
+				'to': newtitle,
+				'reason': summary,
+				'format': 'json',
+				'token': token
+			};
+	var response = JSON.parse(
+		$.ajax({
+			type: "POST",
+			url: mw.util.wikiScript('api'),
+			data: request,
+			async: false
+		})
+		.responseText
+	);
+	error = true;
+	try {
+		if (typeof(response['move']) !== "undefined") {
+			document.getElementById('afcHelper_move' + escape(oldtitle)).innerHTML = 'Moved <a href="' + wgArticlePath.replace("$1", encodeURI(oldtitle)) + '" title="' + oldtitle + '">' + oldtitle + '</a>';
+			error = false;
+		} else {
+			if (overwrite_redirect) {
+				if (response['error']['code'] == "articleexists") {
+					text = afcHelper_getPageText(newtitle);
+					if (text.search(/#redirect\s*\[\[/gi) != -1) { // Should probably use &redirects= to check if it's a redirect, rather than this hack...but this seemed simpler and more concise, rather than yet another API call
+						// !todo check if a user is an admin and give them one-click delete
+						del = confirm("The target title, "+newtitle+", is a redirect. Would you like to automatically tag it for deletion under {{db-move}} to make way for the approved submission?");
+						if (del) {
+							rat = "{{db-move|1="+oldtitle+"|2=redirect preventing move of accepted [[WP:AFC|article submission]].}}\n";
+							afcHelper_editPage(newtitle, rat+text, "Tagging redirect in the way of [[Wikipedia:Articles for creation]] submission for deletion under {{[[Template:Db-move|db-move]]}}");
+							window.overwrite_comment = 'This article submission has been approved, but a [[WP:REDIRECT|redirect]] is blocking it from being moved into the article space. An administrator should delete the redirect and move the article within the next few days. Thanks for your patience!';
+							document.getElementById('afcHelper_move' + escape(oldtitle)).innerHTML = '<div id="afcHelper_edit' + escape(oldtitle)+'"></div>'; // to allow for messages from the editor
+							afcHelper_act('mark') // We mark the submission as "under review"
+							document.getElementById('afcHelper_move' + escape(oldtitle)).innerHTML += '<div><b>Successfully tagged redirect page <a href="' + wgArticlePath.replace("$1", encodeURI(newtitle)) + '" title="' + newtitle + '">' + newtitle + '</a> for deletion</b> under {{db-move}}. The article should be moved by the administrator who deletes the redirect.</div>';
+						} else {
+							document.getElementById('afcHelper_move' + escape(oldtitle)).innerHTML = '<div style="color:red"><b>Move failed on <a href="' + wgArticlePath.replace("$1", encodeURI(oldtitle)) + '" title="' + oldtitle + '">' + oldtitle + '</a></b></div>. Error info: User canceled automatically tagging the target for deletion';
 						}
 					} else {
 						document.getElementById('afcHelper_move' + escape(oldtitle)).innerHTML = '<div style="color:red"><b>Move failed on <a href="' + wgArticlePath.replace("$1", encodeURI(oldtitle)) + '" title="' + oldtitle + '">' + oldtitle + '</a></b></div>. Error info:' + response['error']['code'] + ' : ' + response['error']['info'];
 					}
 				}
-			} catch (err) {
-				document.getElementById('afcHelper_move' + escape(oldtitle)).innerHTML = '<div style="color:red"><b>Move failed on <a href="' + wgArticlePath.replace("$1", encodeURI(oldtitle)) + '" title="' + oldtitle + '">' + oldtitle + '</a></b></div>';
+			} else {
+				document.getElementById('afcHelper_move' + escape(oldtitle)).innerHTML = '<div style="color:red"><b>Move failed on <a href="' + wgArticlePath.replace("$1", encodeURI(oldtitle)) + '" title="' + oldtitle + '">' + oldtitle + '</a></b></div>. Error info:' + response['error']['code'] + ' : ' + response['error']['info'];
 			}
-			if (!error) {
-				if (callback !== null) callback();
-			}
-			document.getElementById('afcHelper_AJAX_finished_' + func_id).style.display = '';
-			delete req;
 		}
-	};
-	req.send(params);
+	} catch (err) {
+		document.getElementById('afcHelper_move' + escape(oldtitle)).innerHTML = '<div style="color:red"><b>Move failed on <a href="' + wgArticlePath.replace("$1", encodeURI(oldtitle)) + '" title="' + oldtitle + '">' + oldtitle + '</a></b></div>';
+	}
+	if (!error) {
+		if (callback !== null) callback();
+	}
+	$("#afcHelper_AJAX_finished_" + func_id).css("display", '');
 }
 
 // Create portlet link
@@ -1138,12 +1141,27 @@ function afcHelper_blanking() {
 	}
 
 	//Check the deletion log and list it!
-	var req = sajax_init_object();
-	req.open("GET", wgScriptPath + "/api.php?action=query&list=logevents&format=json&leprop=user%7Ctimestamp%7Ccomment&letype=delete&leaction=delete%2Fdelete&letitle=" + encodeURIComponent(afcHelper_submissionTitle) + "&lelimit=10", false);
-	req.send(null);
-	var response = eval('(' + req.responseText + ')');
+	request = {
+				'action': 'query',
+				'list': 'logevents',
+				'format': 'json',
+				'leprop': 'user|timestamp|comment',
+				'leaction': 'delete/delete',
+				'letype': 'delete',
+				'lelimit': 10,
+				'leprop': 'user|timestamp|comment',
+				'letitle': afcHelper_submissionTitle,
+				'letitle': mw.user.tokens.get('editToken')
+			};
+	var response = JSON.parse(
+		$.ajax({
+			url: mw.util.wikiScript('api'),
+			data: request,
+			async: false
+		})
+		.responseText
+	);
 	var deletionlog = response['query']['logevents'];
-	delete req;
 	if (deletionlog.length) {
 		errormsg += '<h3><div class="notice">The page ' + afcHelper_escapeHtmlChars(afcHelper_submissionTitle) + ' was deleted ' + deletionlog.length + ' times. Here are the edit summary(s) from the <a href="' + wgScript + '?title=Special%3ALog&type=delete&page=' + afcHelper_submissionTitle + '" target="_blank">deletion log</a>:</div></h3><table border=1><tr><td>Timestamp</td><td>User</td><td>Reason</td></tr>';
 		for (var i = 0; i < deletionlog.length; i++) {
@@ -1235,7 +1253,7 @@ function afcHelper_last_nonbot(title) {
 				'rvdir': 'older',
 				'rvexcludeuser': 'ArticlesForCreationBot',
 				'indexpageids': true,
-				'titles' : encodeURIComponent(title)
+				'titles' : title
 			};
 
 	var response = JSON.parse(
@@ -1259,7 +1277,7 @@ function afcHelper_g13_eligible(title) {
 				'rvprop': 'timestamp',
 				'format': 'json',
 				'indexpageids': true,
-				'titles' : encodeURIComponent(title)
+				'titles' : title
 			};
 	var response = JSON.parse(
 		$.ajax({
@@ -1288,7 +1306,7 @@ function afcHelper_page_creator(title) {
 				'rvdir': 'newer',
 				'rvlimit': 1,
 				'indexpageids': true,
-				'titles' : encodeURIComponent(title)
+				'titles' : title
 			};
 	var response = JSON.parse(
 		$.ajax({
