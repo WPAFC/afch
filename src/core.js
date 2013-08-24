@@ -9,7 +9,7 @@ var pagetext = '';
 var usertalkpage = '';
 
 // CSS stylesheet
-importStylesheetURI( mw.config.get( 'wgServer' ) + '/w/index.php?action=raw&ctype=text/css&title=MediaWiki:Gadget-afchelper.css');
+importStylesheetURI(mw.config.get('wgServer') + '/w/index.php?action=raw&ctype=text/css&title=MediaWiki:Gadget-afchelper.css');
 
 if (wgPageName.indexOf('Wikipedia:Articles_for_creation/Redirects') !== -1) {
 	importScriptURI(afchelper_baseurl + '/redirects.js');
@@ -24,9 +24,9 @@ if (wgPageName.indexOf('Wikipedia:Articles_for_creation/Redirects') !== -1) {
 
 // This enables the beta notice for all uses except the official gadget
 if (afchelper_baseurl.indexOf('MediaWiki:Gadget-afchelper.js') == -1)
-	BETA = true;
+	var BETA = true;
 else
-	BETA = false;
+	var BETA = false;
 
 function afcHelper_generateSelect(title, options, onchange) {
 	var text = '<select name="' + title + '" id="' + title + '" ';
