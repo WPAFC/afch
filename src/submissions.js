@@ -43,19 +43,7 @@ function afcHelper_init() {
 		return;
 	}
 
-	// !todo
-	// This is WRONG because getPageText is NOT a promise
-	// So it is ALWAYS true
-	// But `when` might be useful if we return a .promise() instead
-	$.when(afcHelper_getPageText(afcHelper_PageName, false, false)).done(
-		function(result) {
-			console.log(result);
-			var pagetext = result;
-			return true; } /* alerts "123" */
-	);
-
 	form = '<div id="afcHelper_initialform">';
-
 	form += afcHelper_blanking();
 	form += '<h3>Reviewing ' + afcHelper_PageName + '</h3>';
 	var template_status_re =  /\{\{\s*afc submission\s*\|\s*(\S\s*)\s*\|/gi;
@@ -1106,8 +1094,7 @@ function afcHelper_cleanup(text) {
 }
 
 function afcHelper_blanking() {
-	console.log('yay!');
-	console.log(pagetext);
+	pagetext = afcHelper_getPageText(afcHelper_PageName, false, false);
 	// fix issue#1 before cleanup!
 	pagetext = pagetext.replace(/\{\{AFC submission(\s*\|){0,}ts\s*=\s*/gi, "{{AFC submission|||ts=");
 	pagetext = pagetext.replace(/\{\{AFC submission\s*\}\}/gi, "{{AFC submission|||ts={{subst:LOCALTIMESTAMP}}|u=|ns={{subst:AFC submission/namespace number}}}}");
@@ -1121,18 +1108,16 @@ function afcHelper_blanking() {
 	texttest = texttest.replace(/\<\!-- Metadata\: see \[\[Wikipedia\:Persondata\]\]. --\>/gi, "");
 	// Bad workaround to fix the error message; will be removed later in cleanup()
 	texttest = texttest.replace(/\<\!-- Be sure to cite all of your sources in \<ref\>...\<\/ref\> tags and they will automatically display when you hit save. The more reliable sources added the better! See \[\[Wikipedia:REFB\]\] for more information--\>/ig, "");
-	var recomment = /(\<\!--)([^((\<\!--)|(--\>))]*)(--\>)*/gim;
 	var errormsg = '';
-	// test if too long (30+ characters) HTML comments are still in the page text
-	if (recomment.test(texttest)) {
-		var testmatch = texttest.match(recomment);
-		for (var i = 0; i < testmatch.length; i++) {
-			if (testmatch[i].length > 34) {
-				if (errormsg === '') errormsg = '<h3><div style="color:red">Please check the source code! This page contains one or more long (30+ characters) HTML comment! (please report false positives)</div></h3><br/>';
-				errormsg += 'The hidden text is: <i>' + testmatch[i].slice(4) + '</i><br/>';
-			}
-		}
+
+	// test if there are 30+ character html comments in the page text
+	var recomment = /\<![ \r\n\t]*(--([^\-]|[\r\n]|-[^\-]){30,})(--[ \r\n\t]*\>|$)/gi;
+	var matched;
+	while (matched = recomment.exec(texttest)) {
+		if (errormsg == '') errormsg += '<h3><div class="notice">Please check the source code! This page contains one or more long (30+ characters) HTML comments! <em>(please report false positives)</em></div></h3>';
+		errormsg += 'The hidden text is: <i>' + matched[1] + '</i><br/>';
 	}
+
 	//Check the deletion log and list it!
 	var req = sajax_init_object();
 	req.open("GET", wgScriptPath + "/api.php?action=query&list=logevents&format=json&leprop=user%7Ctimestamp%7Ccomment&letype=delete&leaction=delete%2Fdelete&letitle=" + encodeURIComponent(afcHelper_submissionTitle) + "&lelimit=10", false);
@@ -1141,22 +1126,20 @@ function afcHelper_blanking() {
 	var deletionlog = response['query']['logevents'];
 	delete req;
 	if (deletionlog.length) {
-		errormsg += '<h3><div style="color:red">The page ' + afcHelper_escapeHtmlChars(afcHelper_submissionTitle) + ' was deleted ' + deletionlog.length + ' times. Here are the edit summary(s) of the <a href="' + wgScript + '?title=Special%3ALog&type=delete&page=' + afcHelper_submissionTitle + '" target="_blank">deletion log</a>:</div></h3><table border=1><tr><td>Timestamp</td><td>User</td><td>Reason</td></tr>';
+		errormsg += '<h3><div class="notice">The page ' + afcHelper_escapeHtmlChars(afcHelper_submissionTitle) + ' was deleted ' + deletionlog.length + ' times. Here are the edit summary(s) from the <a href="' + wgScript + '?title=Special%3ALog&type=delete&page=' + afcHelper_submissionTitle + '" target="_blank">deletion log</a>:</div></h3><table border=1><tr><td>Timestamp</td><td>User</td><td>Reason</td></tr>';
 		for (var i = 0; i < deletionlog.length; i++) {
 			var deletioncomment = deletionlog[i].comment;
 			var deletioncomment1_re = /\[\[([^\[\]]*?[^\]\|]*?)(\|([^\[\]]*?))\]\]/gi;
 			var deletioncomment2_re = /\[\[((?:\[\[[^\[\]]*\]\]|[^\]\[[])*)\]\]/gi;
 			//first handle wikilinks with piped links
-			if (deletioncomment.match(deletioncomment1_re)){
-				var dlmatch = deletioncomment1_re.exec(deletioncomment);
-				deletioncomment = deletioncomment.replace(dlmatch[0], "<a href=\"" + wgArticlePath.replace("$1", encodeURIComponent(dlmatch[1])) + "\" target=\"_blank\" title=\""+dlmatch[1]+"\"></a>");
+			while (dlmatch = deletioncomment1_re.exec(deletioncomment)) {
+				deletioncomment = deletioncomment.replace(dlmatch[0], "<a href=\"" + wgArticlePath.replace("$1", encodeURIComponent(dlmatch[1])) + "\" target=\"_blank\" title=\"" + dlmatch[1] + "\"></a>");
 				deletioncomment = deletioncomment.replace("\"></a>", "\">" + dlmatch[3] + "</a>");
-				deletioncomment = deletioncomment.replace("</a>|"+ dlmatch[3], "</a>");
+				deletioncomment = deletioncomment.replace("</a>|" + dlmatch[3], "</a>");
 			}
 			//now the rest
-			if (deletioncomment.match(deletioncomment2_re)){
-				var dlmatch = deletioncomment2_re.exec(deletioncomment);
-				deletioncomment = deletioncomment.replace(dlmatch[0], "<a href=\"" + wgArticlePath.replace("$1", encodeURIComponent(dlmatch[1])) + "\" target=\"_blank\" title=\""+dlmatch[1]+"\">"+dlmatch[1]+"</a>");
+			while (dlmatch = deletioncomment2_re.exec(deletioncomment)) {
+				deletioncomment = deletioncomment.replace(dlmatch[0], "<a href=\"" + wgArticlePath.replace("$1", encodeURIComponent(dlmatch[1])) + "\" target=\"_blank\" title=\"" + dlmatch[1] + "\">" + dlmatch[1] + "</a>");
 			}
 			errormsg += '<tr><td>' + deletionlog[i].timestamp + '</td><td><a href="' + wgArticlePath.replace("$1", encodeURIComponent("User:" + deletionlog[i].user)) + '" target="_blank" title="User:' + deletionlog[i].user + '">' + deletionlog[i].user + '</a> (<a href="' + wgArticlePath.replace("$1", encodeURIComponent("User talk:" + deletionlog[i].user)) + '" target="_blank" title="User talk:' + deletionlog[i].user + '">talk</a>)</td><td>' + deletioncomment + '</td></tr>';
 		}
@@ -1173,15 +1156,15 @@ function afcHelper_blanking() {
 	if (refbegin) { //Firefox workaround!
 		if (refend) { //Firefox workaround!
 			if (refbegin.length !== refend.length) {
-				errormsg += '<h3><div style="color:red">Please check the source code! This page contains unclosed &lt;ref&gt; tags!</div></h3>';
+				errormsg += '<h3><div class="notice">Please check the source code! This page contains unclosed &lt;ref&gt; tags!</div></h3>';
 			}
 		} else {
-			errormsg += '<h3><div style="color:red">Please check the source code! This page contains unbalanced &lt;ref&gt; and &lt;/ref&gt; tags!</div></h3>';
+			errormsg += '<h3><div class="notice">Please check the source code! This page contains unbalanced &lt;ref&gt; and &lt;/ref&gt; tags!</div></h3>';
 		}
 	}
 	//test if ref tags are used, but no reflist available
 	if ((!reflistre.test(pagetext)) && refbegin) {
-		errormsg += '<h3><div style="color:red">Be careful, there is a &lt;ref&gt; tag used, but no references list (reflist)! You might not see all references.</div></h3>';
+		errormsg += '<h3><div class="notice">Be careful, there is a &lt;ref&gt; tag used, but no references list (reflist)! You might not see all references.</div></h3>';
 	}
 
 	// test if <ref> foo <ref> on the page and place the markup on the box
@@ -1199,8 +1182,8 @@ function afcHelper_blanking() {
 	var o = temppagetext.match(reflistre);
 	if (o) {
 		temppagetext = temppagetext.slice(n + o[0].length);
-		if((temppagetext.search(rerefbegin))>-1){
-			errormsg += '<h3><div style="color:red">Be careful, there is a &lt;ref&gt; tag after the references list! You might not see all references.</div></h3>';
+		if ((temppagetext.search(rerefbegin)) > -1) {
+			errormsg += '<h3><div class="notice">Be careful, there is a &lt;ref&gt; tag after the references list! You might not see all references.</div></h3>';
 		}
 	}
 	return errormsg;
@@ -1224,14 +1207,26 @@ function afcHelper_trigger(type) {
 
 // function to get the last non-bot editor to a page
 function afcHelper_last_nonbot(title) {
-	var params = "action=query&prop=revisions&format=json&rvprop=user%7Ctimestamp&indexpageids=1&rvlimit=1&rvdir=older&rvexcludeuser=ArticlesForCreationBot&titles=" + encodeURIComponent(title);
-	var req = sajax_init_object();
-	req.open("POST", wgScriptPath + "/api.php", false);
-	req.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-	req.setRequestHeader("Content-length", params.length);
-	req.setRequestHeader("Connection", "close");
-	req.send(params);
-	var response = eval('(' + req.responseText + ')');
+	request = {
+				'action': 'query',
+				'prop': 'revisions',
+				'format': 'json',
+				'rvprop': 'user%7Ctimestamp',
+				'rvlimit': 1,
+				'rvdir': 'older',
+				'rvexcludeuser': 'ArticlesForCreationBot',
+				'indexpageids': true,
+				'titles' : encodeURIComponent(title)
+			};
+
+	var response = JSON.parse(
+		$.ajax({
+			url: mw.util.wikiScript('api'),
+			data: request,
+			async: false
+		})
+		.responseText
+	);
 	pageid = response['query']['pageids'][0];
 	revisions = response['query']['pages'][pageid]['revisions'];
 	return response['query']['pages'][pageid]['revisions'][0];
@@ -1239,14 +1234,22 @@ function afcHelper_last_nonbot(title) {
 
 //function to check if the submission is g13 eligible -- only checks timestamp
 function afcHelper_g13_eligible(title) {
-	var params = "action=query&prop=revisions&rvprop=timestamp&format=json&indexpageids=1&titles=" + encodeURIComponent(title);
-	var req = sajax_init_object();
-	req.open("POST", wgScriptPath + "/api.php", false);
-	req.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-	req.setRequestHeader("Content-length", params.length);
-	req.setRequestHeader("Connection", "close");
-	req.send(params);
-	var response = eval('(' + req.responseText + ')');
+	request = {
+				'action': 'query',
+				'prop': 'revisions',
+				'rvprop': 'timestamp',
+				'format': 'json',
+				'indexpageids': true,
+				'titles' : encodeURIComponent(title)
+			};
+	var response = JSON.parse(
+		$.ajax({
+			url: mw.util.wikiScript('api'),
+			data: request,
+			async: false
+		})
+		.responseText
+	);
 	pageid = response['query']['pageids'][0];
 	timestamp = response['query']['pages'][pageid]['revisions'][0]['timestamp'];
 	var SIX_MONTHS = 15778500000; // six months in milliseconds, gracias google
@@ -1258,14 +1261,24 @@ function afcHelper_g13_eligible(title) {
 }
 
 function afcHelper_page_creator(title) {
-	var params = "action=query&prop=revisions&rvprop=user&format=json&rvdir=newer&rvlimit=1&indexpageids=1&titles=" + encodeURIComponent(title);
-	var req = sajax_init_object();
-	req.open("POST", wgScriptPath + "/api.php", false);
-	req.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-	req.setRequestHeader("Content-length", params.length);
-	req.setRequestHeader("Connection", "close");
-	req.send(params);
-	var response = eval('(' + req.responseText + ')');
+	request = {
+				'action': 'query',
+				'prop': 'revisions',
+				'rvprop': 'user',
+				'format': 'json',
+				'rvdir': 'newer',
+				'rvlimit': 1,
+				'indexpageids': true,
+				'titles' : encodeURIComponent(title)
+			};
+	var response = JSON.parse(
+		$.ajax({
+			url: mw.util.wikiScript('api'),
+			data: request,
+			async: false
+		})
+		.responseText
+	);
 	pageid = response['query']['pageids'][0];
 	user = response['query']['pages'][pageid]['revisions'][0]['user'];
 	return user;

@@ -3,8 +3,6 @@
 
 // This should be a dependency in the gadget
 mw.loader.load( 'mediawiki.api' );
-// This loads the API
-var api = new mw.Api();
 
 importScript('User:Timotheus Canens/displaymessage.js');
 // !todo REMOVE -beta WHEN MERGING TO DEVELOP
@@ -59,35 +57,37 @@ function afcHelper_getPageText(title, show, redirectcheck) {
 
 	if (redirectcheck) request.redirects = true;
 
-	api.get(request)
-		.done( function ( response ) {
-			pageid = response['query']['pageids'][0];
-			if (pageid === "-1") {
-				if (show) document.getElementById('afcHelper_get' + escape(title)).innerHTML = 'The page <a class="new" href="' + wgArticlePath.replace("$1", encodeURI(title)) + '" title="' + title + '">' + title + '</a> does not exist';
-				newtext = '';
+	var response = JSON.parse(
+		$.ajax({
+			url: mw.util.wikiScript('api'),
+			data: request,
+			async: false
+		})
+		.responseText
+	);
+
+	pageid = response['query']['pageids'][0];
+	if (pageid === "-1") {
+		if (show) document.getElementById('afcHelper_get' + escape(title)).innerHTML = 'The page <a class="new" href="' + wgArticlePath.replace("$1", encodeURI(title)) + '" title="' + title + '">' + title + '</a> does not exist';
+		return '';
+	}
+	var newtext = response['query']['pages'][pageid]['revisions'][0]['*'];
+	if (redirectcheck && response['query']['redirects'] /* If &redirects if specified but there is no redirect, this stops us from getting an error */){
+		var oldusername = response['query']['redirects'][0]['from'];
+		var newusername = response['query']['redirects'][0]['to'];
+		if ((typeof(oldusername) !== 'undefined') && (typeof(newusername) !== 'undefined') && (oldusername != newusername)){
+			usertalkpage = newusername;
+			if (show) {
+				document.getElementById('afcHelper_status').innerHTML += '<li id="afcHelper_get' + escape(title) + '">Got <a href="' + wgArticlePath.replace("$1", encodeURI(title)) + '" title="' + newusername + '">' + newusername + '</a> (page was renamed from ' + oldusername + ')</li>';
 			}
-			var newtext = response['query']['pages'][pageid]['revisions'][0]['*'];
-			if(redirectcheck && response['query']['redirects'] /* If &redirects if specified but there is no redirect, this stops us from getting an error */){
-				var oldusername  = response['query']['redirects'][0]['from'];
-				var newusername = response['query']['redirects'][0]['to'];
-				if ((typeof(oldusername) !== 'undefined') && (typeof(newusername) !== 'undefined') && (oldusername != newusername)){
-					usertalkpage = newusername;
-					if (show){
-						document.getElementById('afcHelper_status').innerHTML += '<li id="afcHelper_get' + escape(title) + '">Got <a href="' + wgArticlePath.replace("$1", encodeURI(title)) + '" title="' + newusername + '">' + newusername + '</a> (page was renamed from ' + oldusername + ')</li>';
-					}
-				}else{
-					redirectcheck = false;
-				}
-			}else{
-					redirectcheck = false;
-			}		
-			if (show && !redirectcheck)	document.getElementById('afcHelper_status').innerHTML += '<li id="afcHelper_get' + escape(title) + '">Got <a href="' + wgArticlePath.replace("$1", encodeURI(title)) + '" title="' + title + '">' + title + '</a></li>';
-			return newtext
-			} )
-		.fail( function ( error ) {
-			// Just return depressing emptiness
-			return '';
-		});
+		} else {
+			redirectcheck = false;
+		}
+	} else {
+			redirectcheck = false;
+	}		
+	if (show && !redirectcheck)	document.getElementById('afcHelper_status').innerHTML += '<li id="afcHelper_get' + escape(title) + '">Got <a href="' + wgArticlePath.replace("$1", encodeURI(title)) + '" title="' + title + '">' + title + '</a></li>';
+	return newtext;
 }
 
 function afcHelper_editPage(title, newtext, summary, createonly) {
@@ -106,6 +106,7 @@ function afcHelper_editPage(title, newtext, summary, createonly) {
 			}
 	if (createonly) request.createonly = true;
 
+	var api = new mw.Api();
 	api.post(request)
 			.done(function ( data ) {
 				if ( data && data.edit && data.edit.result && data.edit.result == 'Success' ) {
