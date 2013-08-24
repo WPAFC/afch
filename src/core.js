@@ -1,9 +1,6 @@
 //<nowiki>
 // Script should be located at [[MediaWiki:Gadget-afchelper.js/core.js]]
 
-// !todo This should be a dependency
-
-
 importScript('User:Timotheus Canens/displaymessage.js');
 var afchelper_baseurl = mw.config.get('wgServer') + '/w/index.php?action=raw&ctype=text/javascript&title=MediaWiki:Gadget-afchelper.js';
 
