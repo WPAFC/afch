@@ -1,12 +1,11 @@
 //<nowiki>
 // Script should be located at [[MediaWiki:Gadget-afchelper.js/core.js]]
 
-// This should be a dependency in the gadget
-mw.loader.load( 'mediawiki.api' );
+// !todo This should be a dependency
+mw.loader.load('mediawiki.api');
 
 importScript('User:Timotheus Canens/displaymessage.js');
-// !todo REMOVE -beta WHEN MERGING TO DEVELOP
-var afchelper_baseurl = mw.config.get('wgServer') + '/w/index.php?action=raw&ctype=text/javascript&title=MediaWiki:Gadget-afchelper-beta.js';
+var afchelper_baseurl = mw.config.get('wgServer') + '/w/index.php?action=raw&ctype=text/javascript&title=MediaWiki:Gadget-afchelper.js';
 
 var afcHelper_advert = ' ([[WP:AFCH|AFCH]])';
 var pagetext = '';
@@ -54,7 +53,6 @@ function afcHelper_getPageText(title, show, redirectcheck) {
 				'indexpageids': true,
 				'titles' : title
 			};
-
 	if (redirectcheck) request.redirects = true;
 
 	var response = JSON.parse(
@@ -91,7 +89,7 @@ function afcHelper_getPageText(title, show, redirectcheck) {
 }
 
 function afcHelper_editPage(title, newtext, summary, createonly) {
-	var edittoken = mw.user.tokens.get( 'editToken' );
+	var edittoken = mw.user.tokens.get('editToken');
 	summary += afcHelper_advert;
 	$("#afcHelper_finished_wrapper").html('<span id="afcHelper_AJAX_finished_' + afcHelper_AJAXnumber + '" style="display:none">' + $("#afcHelper_finished_wrapper").html() + '</span>');
 	var func_id = afcHelper_AJAXnumber;
