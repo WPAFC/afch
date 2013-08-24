@@ -23,7 +23,7 @@ if (wgPageName.indexOf('Wikipedia:Articles_for_creation/Redirects') !== -1) {
 }
 
 // This enables the beta notice for all uses except the official gadget
-if (afchelper_baseurl.indexOf('MediaWiki:Gadget-afchelper.js') == -1)
+if (afchelper_baseurl.indexOf('MediaWiki:'+'Gadget-afchelper.js' /* hack to stop upload scripts from find+replacing this */) == -1)
 	var BETA = true;
 else
 	var BETA = false;
