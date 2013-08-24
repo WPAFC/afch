@@ -12,7 +12,7 @@ div#afcHelper_betanotice {
   font-style: italic;
 }
 
-button {
+.afcHelper_button {
     background-repeat: repeat-x;
     border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
     display: inline-block;
@@ -37,12 +37,12 @@ button {
     margin-right: 2px;
 }
 
-button:active {
+.afcHelper_button:active {
     border: 1px solid #aaa;
     border-bottom: 1px solid #888;
-    -webkit-box-shadow: inset 0 0 0px 2px #aaaaaa, 0 1px 0 0 #eeeeee;
-    -moz-box-shadow: inset 0 0 0px 2px #aaaaaa, 0 1px 0 0 #eeeeee;
-    box-shadow: inset 0 0 2px 0px #aaaaaa, 0 1px 0 0 #eeeeee;
+    -moz-box-shadow: inset 0 0 3px 3px #888;
+    -webkit-box-shadow: inset 0 0 3px 3px#888;
+    box-shadow: inset 0 0 3px 3px #888;
 }
 
 #afcHelper_accept_button {
@@ -50,11 +50,11 @@ button:active {
     background-image: -moz-linear-gradient(center top, #B8FFB8, #A7F3A7);
 }
 
-#afcHelper_decline_button, button.decline {
+#afcHelper_decline_button, .afcHelper_button.decline {
   background-color: #ffcdd5;
 }
 
-#afcHelper_comment_button, button.comment {
+#afcHelper_comment_button, .afcHelper_button.comment {
   background-color: #f3eba3;
 }
 
@@ -66,7 +66,7 @@ button:active {
   background-color: #4aa02c;
 }
 
-#afcHelper_unmark_button, #afcHelper_mark_button, button.mark {
+#afcHelper_unmark_button, #afcHelper_mark_button, .afcHelper_button.mark {
   background-color: #b1dae8;
 }
 
