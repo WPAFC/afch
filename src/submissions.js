@@ -1242,8 +1242,7 @@ function afcHelper_setup() {
 				'letype': 'delete',
 				'lelimit': 10,
 				'leprop': 'user|timestamp|comment',
-				'letitle': afcHelper_submissionTitle,
-				'letitle': mw.user.tokens.get('editToken')
+				'letitle': afcHelper_submissionTitle
 			};
 	var response = JSON.parse(
 		$.ajax({
