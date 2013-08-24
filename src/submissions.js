@@ -589,12 +589,24 @@ function afcHelper_act(action) {
 				//check if page is orphaned (mainspace) and tag it!
 				if ((assessment !== 'disambig') && (assessment !== 'redirect') && (assessment !== 'project') && (assessment !== 'portal') && (assessment !== 'template')) {
 					document.getElementById('afcHelper_status').innerHTML += '<li id="afcHelper_orphan">Checking if article is orphan...</li>';
-					var req = sajax_init_object();
-					req.open("GET", wgScriptPath + "/api.php?action=query&list=backlinks&format=json&bltitle=" + encodeURIComponent(newtitle) + "&blnamespace=0&bllimit=10", false);
-					req.send(null);
-					var response = eval('(' + req.responseText + ')');
+					request = {
+						'action': 'query',
+						'list': 'backlinks',
+						'format': 'json',
+						'blnamespace': 0,
+						'bllimit': 10,
+						'bltitle' : newtitle
+					};
+					var response = JSON.parse(
+						$.ajax({
+							url: mw.util.wikiScript('api'),
+							data: request,
+							async: false
+						})
+						.responseText
+					);
+					console.log(response);
 					var isorphaned = response['query']['backlinks'].length;
-					delete req;
 					if (isorphaned) {
 						$("#afcHelper_orphan").html("Orphan check: all ok. No tagging needed.");
 					} else {
@@ -690,14 +702,22 @@ function afcHelper_act(action) {
 					if (teahouse) {
 						document.getElementById('afcHelper_status').innerHTML += '<div id="afcHelper_get_teahouse"></div>';
 						$("#afcHelper_get_teahouse").html('<li id="afcHelper_get_teahouse">Checking for existing Teahouse Invitation for <a href="' + wgArticlePath.replace("$1", encodeURI('User_talk:' + username)) + '" title="User talk:' + username + '">User talk:' + username + '</a></li>');
-						var req = sajax_init_object();
-						var params = "action=query&prop=categories&format=json&indexpageids=1&titles=" + encodeURIComponent(usertalkpage) + "&redirects=";
-						req.open("POST", wgScriptPath + "/api.php", false);
-						req.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-						req.setRequestHeader("Content-length", params.length);
-						req.setRequestHeader("Connection", "close");
-						req.send(params);
-						var response = eval('(' + req.responseText + ')');
+						request = {
+							'action': 'query',
+							'prop': 'categories',
+							'format': 'json',
+							'indexpageids': true,
+							'redirects': true,
+							'titles' : usertalkpage
+						};
+						var response = JSON.parse(
+							$.ajax({
+								url: mw.util.wikiScript('api'),
+								data: request,
+								async: false
+							})
+							.responseText
+						);
 						var pageid = response['query']['pageids'][0];
 						var foundTH = 0;
 						if (pageid !== "-1") {/*
@@ -728,7 +748,6 @@ function afcHelper_act(action) {
 						} else {
 							$("#afcHelper_get_teahouse").html('<a href="' + wgArticlePath.replace("$1", encodeURI('User talk:' + username)) + '" title="User talk:' + username + '">' + username + '</a> already has an invitation.');
 						}
-						delete req;
 					}
 				} //end TH stuff
 				afcHelper_editPage(usertalkpage, usertext, reason, false);
