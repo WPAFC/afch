@@ -2,7 +2,7 @@
 // Script should be located at [[MediaWiki:Gadget-afchelper.js/core.js]]
 
 // !todo This should be a dependency
-mw.loader.load('mediawiki.api');
+
 
 importScript('User:Timotheus Canens/displaymessage.js');
 var afchelper_baseurl = mw.config.get('wgServer') + '/w/index.php?action=raw&ctype=text/javascript&title=MediaWiki:Gadget-afchelper.js';
@@ -30,6 +30,9 @@ if (afchelper_baseurl.indexOf('MediaWiki:Gadget-afchelper.js') == -1)
 	var BETA = true;
 else
 	var BETA = false;
+
+// Manually load mw.api() only if we're not using the gadget...with the gadget, it's already a dependency
+if (BETA) mw.loader.load('mediawiki.api');
 
 function afcHelper_generateSelect(title, options, onchange) {
 	var text = '<select name="' + title + '" id="' + title + '" ';
