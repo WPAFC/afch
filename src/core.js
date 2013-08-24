@@ -11,6 +11,9 @@ var afcHelper_advert = ' ([[WP:AFCH|AFCH]])';
 var pagetext = '';
 var usertalkpage = '';
 
+// CSS stylesheet
+importStylesheetURI(mw.config.get('wgServer') + '/w/index.php?action=raw&ctype=text/css&title=MediaWiki:Gadget-afchelper.css');
+
 if (wgPageName.indexOf('Wikipedia:Articles_for_creation/Redirects') !== -1) {
 	importScriptURI(afchelper_baseurl + '/redirects.js');
 } else if (wgPageName.indexOf('Wikipedia:Files_for_upload') !== -1) {
@@ -18,10 +21,15 @@ if (wgPageName.indexOf('Wikipedia:Articles_for_creation/Redirects') !== -1) {
 } else if ((wgPageName.indexOf('Wikipedia:Articles_for_creation/') !== -1)
 			|| (wgPageName.indexOf('Wikipedia_talk:Articles_for_creation/') !== -1)
 			|| (wgPageName.indexOf('User:') !== -1)
-			|| (wgPageName.indexOf('User_talk:') !== -1)
 			){
 	importScriptURI(afchelper_baseurl + '/submissions.js');				
 }
+
+// This enables the beta notice for all uses except the official gadget
+if (afchelper_baseurl.indexOf('MediaWiki:Gadget-afchelper.js') == -1)
+	var BETA = true;
+else
+	var BETA = false;
 
 function afcHelper_generateSelect(title, options, onchange) {
 	var text = '<select name="' + title + '" id="' + title + '" ';
