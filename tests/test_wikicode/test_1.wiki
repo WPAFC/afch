@@ -1,0 +1,6 @@
+pagename = "User:Theopolisme"
+checkpagecreator = "Theopolisme"
+
+$$$$$$$$
+
+This is a test.
