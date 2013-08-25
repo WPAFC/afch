@@ -1212,12 +1212,18 @@ function afcHelper_cleanup(text) {
 // Gets the pagetext, does some cleanup, lists previous deletions, and displays warnings about long comments and bad reference styles
 function afcHelper_setup() {
 	pagetext = afcHelper_getPageText(afcHelper_PageName, false, false);
-	// fix issue#1 before cleanup!
+
+	// Fix utterly invalid templates so cleanup doesn't mangle them
 	pagetext = pagetext.replace(/\{\{AFC submission(\s*\|){0,}ts\s*=\s*/gi, "{{AFC submission|||ts=");
 	pagetext = pagetext.replace(/\{\{AFC submission\s*\}\}/gi, "{{AFC submission|||ts={{subst:LOCALTIMESTAMP}}|u=|ns={{subst:AFC submission/namespace number}}}}");
-
 	pagetext = afcHelper_cleanup(pagetext);
 
+	warnings = afcHelper_warnings(pagetext); // Warn about problems with given pagetext
+
+	return warnings; // Prepends the warnings
+}
+
+function afcHelper_warnings(pagetext) {
 	//longer than 30 characters, but commonly added to the source code
 	texttest = pagetext.replace(/\<\!--  Bot generated title --\>/gi, "");
 	texttest = texttest.replace(/\<\!-- See Wikipedia\:WikiProject Musicians --\>/gi, "");
