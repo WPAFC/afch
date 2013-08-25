@@ -51,7 +51,7 @@ function afcHelper_escapeHtmlChars(original) {
 	return original.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
 }
 
-function afcHelper_getPageText(title, show, redirectcheck) {
+function afcHelper_getPageText(title, show, redirectcheck, timestamp) {
 	if (show) document.getElementById('afcHelper_status').innerHTML += '<li id="afcHelper_get' + escape(title) + '">Getting <a href="' + wgArticlePath.replace("$1", encodeURI(title)) + '" title="' + title + '">' + title + '</a></li>';
 
 	request = {
@@ -63,6 +63,7 @@ function afcHelper_getPageText(title, show, redirectcheck) {
 				'titles' : title
 			};
 	if (redirectcheck) request.redirects = true;
+	if (timestamp) request.rvprop = 'content|timestamp';
 
 	var response = JSON.parse(
 		$.ajax({
@@ -94,7 +95,8 @@ function afcHelper_getPageText(title, show, redirectcheck) {
 			redirectcheck = false;
 	}		
 	if (show && !redirectcheck)	document.getElementById('afcHelper_status').innerHTML += '<li id="afcHelper_get' + escape(title) + '">Got <a href="' + wgArticlePath.replace("$1", encodeURI(title)) + '" title="' + title + '">' + title + '</a></li>';
-	return newtext;
+	if (!timestamp) return newtext;
+	else return {'pagetext':newtext,'timestamp':response['query']['pages'][pageid]['revisions'][0]['timestamp']}
 }
 
 function afcHelper_editPage(title, newtext, summary, createonly) {

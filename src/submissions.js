@@ -3,7 +3,7 @@
 var afcHelper_PageName = wgPageName.replace(/_/g, ' ');
 var afcHelper_AJAXnumber = 0;
 var afcHelper_submissionTitle = wgTitle.replace(/Articles for creation\//g, '');
-var afcHelper_page_creator_cache = {};
+var afcHelper_cache = {};
 var disambig_re = /Disambig|Mil-unit-dis|Hndis|Geodis|Numberdis/gi;
 var typetemplate_re = /\{\{\s*documentation\s*(?:\{\{[^\{\}]*\}\}|[^\}\{])*\}\}/gi;
 var missing_afc_template_re = /\[\[:?Category:AfC(_|\s*)+submissions(_|\s*)+with(_|\s*)+missing(_|\s*)+AfC(_|\s*)+template\]\]/gi;
@@ -1211,7 +1211,9 @@ function afcHelper_cleanup(text) {
 
 // Gets the pagetext, does some cleanup, lists previous deletions, and displays warnings about long comments and bad reference styles
 function afcHelper_setup() {
-	pagetext = afcHelper_getPageText(afcHelper_PageName, false, false);
+	textdata = afcHelper_getPageText(afcHelper_PageName, false, false, true); // get page text AND timestamp to save API calls
+	pagetext = textdata.pagetext;
+	afcHelper_cache.afcHelper_lastedited = textdata.timestamp; // Store the last edited date to the cache
 
 	// Fix utterly invalid templates so cleanup doesn't mangle them
 	pagetext = pagetext.replace(/\{\{AFC submission(\s*\|){0,}ts\s*=\s*/gi, "{{AFC submission|||ts=");
@@ -1384,24 +1386,7 @@ function afcHelper_last_nonbot(title) {
 
 //function to check if the submission is g13 eligible -- only checks timestamp
 function afcHelper_g13_eligible(title) {
-	request = {
-				'action': 'query',
-				'prop': 'revisions',
-				'rvprop': 'timestamp',
-				'format': 'json',
-				'indexpageids': true,
-				'titles' : title
-			};
-	var response = JSON.parse(
-		$.ajax({
-			url: mw.util.wikiScript('api'),
-			data: request,
-			async: false
-		})
-		.responseText
-	);
-	pageid = response['query']['pageids'][0];
-	timestamp = response['query']['pages'][pageid]['revisions'][0]['timestamp'];
+	timestamp = afcHelper_cache.afcHelper_lastedited;
 	var SIX_MONTHS = 15778500000; // six months in milliseconds, gracias google
 	var lastedited = new Date(timestamp);
 	if (((new Date) - lastedited) > SIX_MONTHS) return true;
@@ -1409,7 +1394,7 @@ function afcHelper_g13_eligible(title) {
 }
 
 function afcHelper_page_creator(title) {
-	if (afcHelper_page_creator_cache[title]) return afcHelper_page_creator_cache[title];
+	if (afcHelper_cache[title]) return afcHelper_cache[title];
 	request = {
 				'action': 'query',
 				'prop': 'revisions',
@@ -1430,7 +1415,7 @@ function afcHelper_page_creator(title) {
 	);
 	pageid = response['query']['pageids'][0];
 	user = response['query']['pages'][pageid]['revisions'][0]['user'];
-	afcHelper_page_creator_cache[title] = user;
+	afcHelper_cache[title] = user;
 	return user;
 }
 
