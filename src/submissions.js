@@ -1235,11 +1235,6 @@ function afcHelper_warnings(pagetext) {
 	texttest = texttest.replace(/\<\!-- Be sure to cite all of your sources in \<ref\>...\<\/ref\> tags and they will automatically display when you hit save. The more reliable sources added the better! See \[\[Wikipedia:REFB\]\] for more information--\>/ig, "");
 	var errormsg = '';
 
-	// Please don't review your own submission!
-	if (afcHelper_page_creator(afcHelper_PageName) == mw.user.getName()) {
-		errormsg += '<h3><div class="notice"><b>Stop!</b> Please do not review your own submission unless you have a very good reason to do so.</div></h3> '
-	}
-
 	// test if there are 30+ character html comments in the page text
 	var recomment = /\<![ \r\n\t]*(--([^\-]|[\r\n]|-[^\-]){30,})(--[ \r\n\t]*\>|$)/gi;
 	var matched;
