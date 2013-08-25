@@ -176,6 +176,8 @@ var afcHelper_reasonhash = [{
 }];
 
 function afcHelper_init() {
+	displayMessage('<div id="afcHelper_loadingmsg">Loading the Article for creation helper script...</div>');
+
 	if (!wfSupportsAjax()) {
 		displayMessage('<span class="notice">Uh oh. Your browser appears to be too old to handle this script or does not support AJAX. Please use the latest version of Mozilla Firefox, Apple Safari, Google Chrome, or Opera for best results. Sorry about that.</span>');
 		return;
