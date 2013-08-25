@@ -32,18 +32,19 @@ else
 if (BETA) mw.loader.load('mediawiki.api');
 
 function afcHelper_generateSelect(title, options, onchange) {
-	var text = '<select name="' + title + '" id="' + title + '" ';
-	if (onchange !== null) text += 'onchange = "' + onchange + '" ';
-	text += '>';
+	var menu = []; // use an array for speed
+	menu.push('<select name="' + title + '" id="' + title + '" ');
+	if (onchange !== null) menu.push('onchange = "' + onchange + '" ');
+	menu.push('>');
 	for (var i = 0; i < options.length; i++) {
 		var o = options[i];
-		text += '<option value="' + afcHelper_escapeHtmlChars(o.value) + '" ';
-		if (o.selected) text += 'selected="selected" ';
-		if (o.disabled) text += 'disabled ';
-		text += '>' + o.label + '</option>';
+		menu.push('<option value="' + afcHelper_escapeHtmlChars(o.value) + '" ');
+		if (o.selected) menu.push('selected="selected" ');
+		if (o.disabled) menu.push('disabled ');
+		menu.push('>' + o.label + '</option>');
 	}
-	text += "</select>";
-	return text;
+	menu.push("</select>");
+	return menu.join();
 }
 
 function afcHelper_escapeHtmlChars(original) {
