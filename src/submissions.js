@@ -3,6 +3,7 @@
 var afcHelper_PageName = wgPageName.replace(/_/g, ' ');
 var afcHelper_AJAXnumber = 0;
 var afcHelper_submissionTitle = wgTitle.replace(/Articles for creation\//g, '');
+var afcHelper_page_creator_cache = {};
 var disambig_re = /Disambig|Mil-unit-dis|Hndis|Geodis|Numberdis/gi;
 var typetemplate_re = /\{\{\s*documentation\s*(?:\{\{[^\{\}]*\}\}|[^\}\{])*\}\}/gi;
 var missing_afc_template_re = /\[\[:?Category:AfC(_|\s*)+submissions(_|\s*)+with(_|\s*)+missing(_|\s*)+AfC(_|\s*)+template\]\]/gi;
@@ -1395,6 +1396,7 @@ function afcHelper_g13_eligible(title) {
 }
 
 function afcHelper_page_creator(title) {
+	if (afcHelper_page_creator_cache[title]) return afcHelper_page_creator_cache[title];
 	request = {
 				'action': 'query',
 				'prop': 'revisions',
@@ -1415,6 +1417,7 @@ function afcHelper_page_creator(title) {
 	);
 	pageid = response['query']['pageids'][0];
 	user = response['query']['pages'][pageid]['revisions'][0]['user'];
+	afcHelper_page_creator_cache[title] = user;
 	return user;
 }
 
