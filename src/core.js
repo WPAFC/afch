@@ -49,15 +49,14 @@ function afcHelper_generateSelect(title, options, onchange) {
 	return text;
 }
 
-function afcHelper_generateChzn(title,placeholder,options) {
-	var menu = [];
-	menu.push('<select data-placeholder="' + placeholder + '" id="' + title + '" style="width:350px;" class="chzn-select" multiple>');
-	for (var i = 0; i < options.length; i++) {
-		var o = options[i];
-		menu.push('<option value="' + afcHelper_escapeHtmlChars(o.value) + '" >' + o.label + '</option>');
-	}
-	menu.push("</select>");
-	return menu.join();
+function afcHelper_generateChzn(title,placeholder,optionsdict) {
+	// given a dictionary of "title","value"
+	var text = '<select data-placeholder="' + placeholder + '" id="' + title + '" style="width:350px;" class="chzn-select" multiple>';
+	$.each(optionsdict, function(k, v){
+		text += '<option value="' + afcHelper_escapeHtmlChars(v) + '" >' + k + '</option>';
+	});
+	text += "</select>";
+	return text;
 }
 
 function afcHelper_escapeHtmlChars(original) {
