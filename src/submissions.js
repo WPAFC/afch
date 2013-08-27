@@ -526,6 +526,7 @@ function afcHelper_act(action) {
 			}
 			newtext = submit + pagetext;
 			newtext = afcHelper_cleanup(newtext);
+			newtext = newtext.replace(missing_afc_template_re, "");
 			afcHelper_editPage(afcHelper_PageName, newtext, "Submitting [[Wikipedia:Articles for creation]] submission", false);
 		}
 	} else if (action === 'accept') {
