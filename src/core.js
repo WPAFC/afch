@@ -28,9 +28,11 @@ if (afchelper_baseurl.indexOf('MediaWiki:'+'Gadget-afchelper.js' /* hack to stop
 else
 	var BETA = false;
 
-// Manually load mw.api() and chozen only if we're not using the gadget...with the gadget, it's already a dependency
-if (BETA) mw.loader.load('mediawiki.api');
-if (BETA) mw.loader.load('jquery.chosen'); // Is  this correct??
+// Manually load mw.api() and chosen only if we're not using the gadget...with the gadget, they are already dependencies
+if (BETA) {
+	mw.loader.load('mediawiki.api');
+	mw.loader.load('jquery.chosen');
+}
 
 function afcHelper_generateSelect(title, options, onchange) {
 	var menu = []; // use an array for speed
