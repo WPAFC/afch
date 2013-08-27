@@ -780,7 +780,7 @@ function afcHelper_act(action) {
 					var usertext = afcHelper_getPageText(usertalkpage, true, true);
 					var reason = 'Your submission at \[\[Wikipedia:Articles for creation|Articles for creation\]\]';
 					var SubmissionName = afcHelper_PageName.replace(/(Wikipedia( talk)*:Articles for creation\/)+/i, '');
-					usertext += "\n== Your submission at AfC \[\[" + afcHelper_PageName + "|" + SubmissionName + "\]\] ({{subst:CURRENTMONTHNAME}} {{subst:CURRENTDAY}}) ==";
+					usertext += "\n== Your submission at \[\[Wikipedia:Articles for creation|Articles for creation\]\]: \[\[" + afcHelper_PageName + "|" + SubmissionName + "\]\] ({{subst:CURRENTMONTHNAME}} {{subst:CURRENTDAY}}) ==";
 					var newnewnewtitle = afcHelper_submissionTitle.replace(" ", "{{subst:Sp}}");
 					usertext += "\n\{\{subst:" + notifytemplate + "|1=" + newnewnewtitle;
 					if (code === 'cv') usertext += "|cv=yes";
