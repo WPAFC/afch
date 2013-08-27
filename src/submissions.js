@@ -315,6 +315,18 @@ function afcHelper_prompt(type) {
 		'<br /><label for="afcHelper_assessment">Assessment (optional): </label>';
 		var assessmentSelect = afcHelper_generateSelect("afcHelper_assessment", afcHelper_assessment, null);
 		text += assessmentSelect;
+
+		// First load the list of wikiprojects and stores it to afcHelper_wikiprojectindex
+		$.ajax({
+			url: "//en.wikipedia.org/w/index.php?title=User:Theo%27s_Little_Bot/afchwikiproject.js&action=raw",
+			dataType: "json",
+			success: function (data) { afcHelper_wikiprojectindex = data; },
+			async: false
+		});
+		// Then generate a dynamic menu for them
+		var wikiprojectSelect = afcHelper_generateChzn("afcHelper_wikiproject_selection",afcHelper_wikiprojectindex,null,true,'Start typing the WikiProject names...');
+
+		text += '<br /><label for="afcHelper_wikiproject_selection">Choose associated WikiProjects: </label>' + wikiprojectSelect;
 		text += '<br /><label for="afcHelper_pagePrepend">Prepend wikicode to page (optional, e.g. maintenance boxes): </label><textarea rows="3" cols="60" id="afcHelper_pagePrepend"></textarea>' +
 		'<br /><label for="afcHelper_pageAppend">Append wikicode to page (optional, e.g. categories or stub templates): </label><textarea rows="3" cols="60" id="afcHelper_pageAppend"></textarea>' +
 		'<br /><label for="afcHelper_talkAppend">Append wikicode to talk page (optional, e.g. WikiProject templates): </label><textarea rows="3" cols="60" id="afcHelper_talkAppend"></textarea>' +

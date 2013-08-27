@@ -28,8 +28,9 @@ if (afchelper_baseurl.indexOf('MediaWiki:'+'Gadget-afchelper.js' /* hack to stop
 else
 	var BETA = false;
 
-// Manually load mw.api() only if we're not using the gadget...with the gadget, it's already a dependency
+// Manually load mw.api() and chozen only if we're not using the gadget...with the gadget, it's already a dependency
 if (BETA) mw.loader.load('mediawiki.api');
+if (BETA) mw.loader.load('jquery.chosen'); // Is  this correct??
 
 function afcHelper_generateSelect(title, options, onchange) {
 	var menu = []; // use an array for speed
@@ -42,6 +43,17 @@ function afcHelper_generateSelect(title, options, onchange) {
 		if (o.selected) menu.push('selected="selected" ');
 		if (o.disabled) menu.push('disabled ');
 		menu.push('>' + o.label + '</option>');
+	}
+	menu.push("</select>");
+	return menu.join();
+}
+
+function afcHelper_generateChzn(title,placeholder,options) {
+	var menu = [];
+	menu.push('<select data-placeholder="' + placeholder + '" id="' + title + '" style="width:350px;" class="chzn-select" multiple>');
+	for (var i = 0; i < options.length; i++) {
+		var o = options[i];
+		menu.push('<option value="' + afcHelper_escapeHtmlChars(o.value) + '" >' + o.label + '</option>');
 	}
 	menu.push("</select>");
 	return menu.join();
