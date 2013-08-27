@@ -35,19 +35,18 @@ if (BETA) {
 }
 
 function afcHelper_generateSelect(title, options, onchange) {
-	var menu = []; // use an array for speed
-	menu.push('<select name="' + title + '" id="' + title + '" ');
-	if (onchange !== null) menu.push('onchange = "' + onchange + '" ');
-	menu.push('>');
+	var text = '<select name="' + title + '" id="' + title + '" ';
+	if (onchange !== null) text += 'onchange = "' + onchange + '" ';
+	text += '>';
 	for (var i = 0; i < options.length; i++) {
 		var o = options[i];
-		menu.push('<option value="' + afcHelper_escapeHtmlChars(o.value) + '" ');
-		if (o.selected) menu.push('selected="selected" ');
-		if (o.disabled) menu.push('disabled ');
-		menu.push('>' + o.label + '</option>');
+		text += '<option value="' + afcHelper_escapeHtmlChars(o.value) + '" ';
+		if (o.selected) text += 'selected="selected" ';
+		if (o.disabled) text += 'disabled ';
+		text += '>' + o.label + '</option>';
 	}
-	menu.push("</select>");
-	return menu.join();
+	text += "</select>";
+	return text;
 }
 
 function afcHelper_generateChzn(title,placeholder,options) {
