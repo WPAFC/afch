@@ -762,9 +762,15 @@ function afcHelper_act(action) {
 		if (code !== 'reason' && customreason !== '') {
 			newcomment = "*\{\{afc comment|1=" + customreason + " \~\~\~\~\}\}";
 		}
+
 		summary = "Declining submission";
-		if (code === 'reason') summary += ': see comment therein';
-		else summary += ': ' + reasontext;
+		if (code === 'reason') {
+			summarycustom = customreason.match(/[^\s]+/g).slice(0,5).join(" "); // Get the first five words of the custom decline rationale
+			if (summarycustom != customreason) summarycustom += "..."; // Add an ellipsis if the rationale if >5 words
+			summary += ': ' + summarycustom;
+		} else {
+			summary += ': ' + reasontext;
+		}
 
 		if (notify) {
 			var author_re = /\|\s*u=\s*[^\|]*\|/i;
