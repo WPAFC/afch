@@ -39,7 +39,7 @@ var afcHelper_reasonhash = [{
 	value: 'blp',
 	reason: 'submission does not conform to BLP'
 }, {
-	label: 'ilc - BLP does not meet minimum inline citation requirements (WP:MINREF)',
+	label: 'ilc - Submission is a BLP that does not meet minimum inline citation requirements (WP:MINREF)',
 	value: 'ilc',
 	reason: 'submission does not contain minimum citations'
 }, {
@@ -59,11 +59,11 @@ var afcHelper_reasonhash = [{
 	value: 'Blatant [[WP:NOT]] violations',
 	disabled: true
 }, {
-	label: 'joke - Submission appears to be a joke',
+	label: 'joke - Submission appears to be a joke or hoax',
 	value: 'joke',
 	reason: 'submission appears to be a joke'
 }, {
-	label: 'not - Submission is covered under "What Wikipedia is not"',
+	label: 'not - Submission fails [[Wikipedia:What Wikipedia is not]]',
 	value: 'not',
 	reason: 'submission is covered by WP:NOT'
 }, {
@@ -107,15 +107,15 @@ var afcHelper_reasonhash = [{
 	value: 'essay',
 	reason: 'submission reads like an essay'
 }, {
-	label: 'npov - Submission does not read in an encyclopedic tone',
+	label: 'npov - Submission is not written in a formal, neutral encyclopedic tone',
 	value: 'npov',
-	reason: 'submission is not written from a neutral point of view'
+	reason: 'submission is not written from a formal, neutral point of view'
 }, {
 	label: 'Notability',
 	value: 'Notability',
 	disabled: true
 }, {
-	label: 'neo - Submission is  about a neologisim that does not meet notability guidelines',
+	label: 'neo - Submission is about a neologisim that does not meet notability guidelines',
 	value: 'neo',
 	reason: 'submission is a neologism'
 }, {
