@@ -35,17 +35,17 @@ var afcHelper_reasonhash = [{
 	value: 'BLP/Vandalism',
 	disabled: true
 }, {
-	label: 'blp - Blatant violation of BLP policies (please blank the page)',
-	value: 'blp',
-	reason: 'submission does not conform to BLP'
+	label: 'van - Submission is vandalism, a negative unsourced BLP, or an attack page (please blank the page and mark it for deletion)',
+	value: 'van',
+	reason: 'submission is vandalism, a negative unsourced BLP, or an attack page'
 }, {
 	label: 'ilc - Submission is a BLP that does not meet minimum inline citation requirements (WP:MINREF)',
 	value: 'ilc',
 	reason: 'submission does not contain minimum citations'
 }, {
-	label: 'van - submission is vandalism, a negative unsourced BLP, or an attack page',
-	value: 'van',
-	reason: 'submission is vandalism, a negative unsourced BLP, or an attack page'
+	label: 'blp - Submission contains unsourced, possibly defamatory claims violating BLP, but WP:AGF and wait for sources (please blank the page but do not CSD it)',
+	value: 'blp',
+	reason: 'submission does not conform to BLP'
 }, {
 	label: 'Merging',
 	value: 'Merging',
