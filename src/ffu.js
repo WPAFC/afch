@@ -96,13 +96,14 @@ function afcHelper_ffu_init() {
 						value: 'decline'
 					}, {
 						label: 'Set on hold',
-						selected: true,
+						selected: ((afcHelper_ffuSections[k].indexOf('on hold') == -1) ? true : false),
 						value: 'hold'
 					}, {
 						label: 'Comment',
 						value: 'comment'
 					}, {
 						label: 'None/ignore this URL',
+						selected: ((afcHelper_ffuSections[k].indexOf('on hold') == -1) ? false : true),
 						value: 'none'
 					}];
 				} else {
