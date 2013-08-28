@@ -348,7 +348,7 @@ function afcHelper_prompt(type) {
 		text += reasonSelect;
 		text += '<div id="afcHelper_extra_inline"></div>'; 
 		text += '<label for="afcHelper_comments">Additional comments (optional, signature is automatically added): </label><textarea rows="3" cols="60" id="afcHelper_comments"></textarea>' +
-		'<label for="afcHelper_blank">Blank the submission (replace the content with {{<a href="' + wgArticlePath.replace("$1", 'Template:Afc_cleared') + '" title="Template:Afc cleared" target="_blank">afc cleared</a>}}):</label><input type="checkbox" id="afcHelper_blank" onchange=afcHelper_trigger(\'afcHelper_extra_afccleared\') /><br/>' +
+		'<label for="afcHelper_blank">Blank the submission (replace the content with {{<a href="' + wgArticlePath.replace("$1", 'Template:Afc_cleared') + '" title="Template:Afc cleared" target="_blank">afc cleared</a>}}):</label><input type="checkbox" id="afcHelper_blank" onchange=afcHelper_trigger(\'afcHelper_afcccleared\') /><br/>' +
 		'<div id="afcHelper_extra_afccleared" style="display:none"><label for="afcHelper_afccleared">Trigger the \'csd\' parameter and nominate the submission for CSD? (replace the content with {{<a href="' + wgArticlePath.replace("$1", 'Template:Afc_cleared') + '" title="Template:Afc cleared" target="_blank">afc cleared|csd</a>}}):</label><input type="checkbox" id="afcHelper_blank_csd" checked="checked" /><br/></div>' +
 		'<label for="afcHelper_notify">Notify author:</label><input type="checkbox" onchange=afcHelper_trigger(\'afcHelper_notify_Teahouse\') id="afcHelper_notify" checked="checked" /><br/>' +
 		'<div id="afcHelper_notify_Teahouse"><label for="afcHelper_notify_Teahouse">Notify author about <a href="' + wgArticlePath.replace("$1", 'Wikipedia:Teahouse') + '" title="Wikipedia:Teahouse" target="_blank">Wikipedia:Teahouse</a>:</label><input type="checkbox" id="afcHelper_Teahouse" /><br/></div><button type="button" class="afcHelper_button decline" id="afcHelper_prompt_button" onclick="afcHelper_act(\'decline\')">Decline</button>';
@@ -689,7 +689,6 @@ function afcHelper_act(action) {
 					})
 					.responseText
 				);
-				console.log(response);
 				var isorphaned = response['query']['backlinks'].length;
 				if (isorphaned) {
 					$("#afcHelper_orphan").html("Orphan check: all ok. No tagging needed.");
@@ -1043,18 +1042,22 @@ function afcHelper_onChange(select) {
 	else if (value === 'plot') $("#afcHelper_extra_inline").html('<label for="afcHelper_extra_inline">Please enter the title of the existing article on the fiction, if there is one: </label><input type="text" id="afcHelper_extra_inlinebox" value="" />');
 	else $("#afcHelper_extra_inline").html("");
 
-	// CSD it if it's a copyvio
-	if (value === 'cv') {
+	if (value === 'cv' || value === 'van') {
+		// If it is a copyvio or vandalism, display the blank and csd options
 		$("#afcHelper_blank").attr("checked", "checked");
+		$("#afcHelper_blank").attr("data-typeof", "cv_van");
 		afcHelper_turnvisible("afcHelper_extra_afccleared", true);
 		afcHelper_turnvisible("afcHelper_afccleared", true);
-		// But don't if it's just a BLP vio
-	} else if (value === 'blp' || value === 'van') {
-		$("#afcHelper_blank").attr("checked", false); // TODO: DOMobj.setAttribute() requires 2 args, so guessing here :S
-		afcHelper_turnvisible("afcHelper_afccleared", false);
+	} else if (value === 'blp') {
+		// If it is just a BLP violation only display the blank option; do NOT csd
+		$("#afcHelper_blank").attr("checked", "checked");
+		$("#afcHelper_blank").attr("data-typeof", "blp");
+		afcHelper_turnvisible("afcHelper_afccleared", true);
 		afcHelper_turnvisible("afcHelper_extra_afccleared", false);
 	} else {
+		// Otherwise leave these empty
 		$("#afcHelper_blank").attr("checked", false);
+		$("#afcHelper_blank").attr("data-typeof", "other");
 		afcHelper_turnvisible("afcHelper_extra_afccleared", false);
 		afcHelper_turnvisible("afcHelper_afccleared", false);
 	}
@@ -1343,11 +1346,12 @@ function afcHelper_trigger(type) {
 		}
 	} else if (type === "afcHelper_afcccleared") {
 		//dr
-		var f = document.getElementById("afcHelper_extra_afccleared");
-		if (f.value === "cv") {
-			e.style.display = 'block';
-		} else {
-			e.style.display = 'none';
+		if ($("#afcHelper_blank").attr("data-typeof") == "cv_van" && $('#afcHelper_blank').attr("checked")) {
+			var f = document.getElementById("afcHelper_extra_afccleared");
+			f.style.display = 'block';
+		} else if (!$('#afcHelper_blank').attr("checked")) {
+			var f = document.getElementById("afcHelper_extra_afccleared");
+			f.style.display = 'none';
 		}
 	} else {
 		e.style.display = ((e.style.display !== 'none') ? 'none' : 'block');
