@@ -346,11 +346,12 @@ function afcHelper_prompt(type) {
 		var text = '<h3>Declining ' + afcHelper_PageName + '</h3>' + '<label for="afcHelper_reason">Reason for ' + type + ': </label>';
 		var reasonSelect = afcHelper_generateSelect("afcHelper_reason", afcHelper_reasonhash, "afcHelper_onChange(this)");
 		text += reasonSelect;
-		text += '<br /><label for="afcHelper_comments">Additional comments (optional, signature is automatically added): </label><textarea rows="3" cols="60" id="afcHelper_comments"></textarea>' +
+		text += '<div id="afcHelper_extra_inline"></div>'; 
+		text += '<label for="afcHelper_comments">Additional comments (optional, signature is automatically added): </label><textarea rows="3" cols="60" id="afcHelper_comments"></textarea>' +
 		'<label for="afcHelper_blank">Blank the submission (replace the content with {{<a href="' + wgArticlePath.replace("$1", 'Template:Afc_cleared') + '" title="Template:Afc cleared" target="_blank">afc cleared</a>}}):</label><input type="checkbox" id="afcHelper_blank" onchange=afcHelper_trigger(\'afcHelper_extra_afccleared\') /><br/>' +
 		'<div id="afcHelper_extra_afccleared" style="display:none"><label for="afcHelper_afccleared">Trigger the \'csd\' parameter and nominate the submission for CSD? (replace the content with {{<a href="' + wgArticlePath.replace("$1", 'Template:Afc_cleared') + '" title="Template:Afc cleared" target="_blank">afc cleared|csd</a>}}):</label><input type="checkbox" id="afcHelper_blank_csd" checked="checked" /><br/></div>' +
 		'<label for="afcHelper_notify">Notify author:</label><input type="checkbox" onchange=afcHelper_trigger(\'afcHelper_notify_Teahouse\') id="afcHelper_notify" checked="checked" /><br/>' +
-		'<div id="afcHelper_notify_Teahouse"><label for="afcHelper_notify_Teahouse">Notify author about <a href="' + wgArticlePath.replace("$1", 'Wikipedia:Teahouse') + '" title="Wikipedia:Teahouse" target="_blank">Wikipedia:Teahouse</a>:</label><input type="checkbox" id="afcHelper_Teahouse" /><br/></div><div id="afcHelper_extra_inline" ></div><button type="button" class="afcHelper_button decline" id="afcHelper_prompt_button" onclick="afcHelper_act(\'decline\')">Decline</button>';
+		'<div id="afcHelper_notify_Teahouse"><label for="afcHelper_notify_Teahouse">Notify author about <a href="' + wgArticlePath.replace("$1", 'Wikipedia:Teahouse') + '" title="Wikipedia:Teahouse" target="_blank">Wikipedia:Teahouse</a>:</label><input type="checkbox" id="afcHelper_Teahouse" /><br/></div><button type="button" class="afcHelper_button decline" id="afcHelper_prompt_button" onclick="afcHelper_act(\'decline\')">Decline</button>';
 		$("#afcHelper_extra").html(text);
 	} else if (type === 'submit') {
 		// !todo have "first" be pre-selected if submission template includes "t", else have "last" pre-selected
