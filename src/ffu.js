@@ -96,13 +96,14 @@ function afcHelper_ffu_init() {
 						value: 'decline'
 					}, {
 						label: 'Set on hold',
-						selected: true,
+						selected: ((afcHelper_ffuSections[k].indexOf('on hold') == -1) ? true : false),
 						value: 'hold'
 					}, {
 						label: 'Comment',
 						value: 'comment'
 					}, {
 						label: 'None/ignore this URL',
+						selected: ((afcHelper_ffuSections[k].indexOf('on hold') == -1) ? false : true),
 						value: 'none'
 					}];
 				} else {
@@ -319,7 +320,7 @@ function afcHelper_ffu_performActions() {
 					// update [[Wikipedia:Files for upload/recent]]
 					if (sub_m.recent == true) {
 						recentpagetext = afcHelper_getPageText('Wikipedia:Files_for_upload/recent', true)
-						var newentry = "\|File:" + sub_m.to + " | " + (typeof sub_m.recenttext !== "undefined" ? sub_m.recenttext : "") + "\n";
+						var newentry = "\| File:" + sub_m.to + " | " + (typeof sub_m.recenttext !== "undefined" ? sub_m.recenttext : "") + "\n";
 						var lastentry = recentpagetext.toLowerCase().lastIndexOf("| file:");
 						var firstentry = recentpagetext.toLowerCase().indexOf("| file:");
 						recentpagetext = recentpagetext.substring(0, lastentry);
