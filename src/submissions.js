@@ -862,13 +862,21 @@ function afcHelper_act(action) {
 			} else pagetext = pagetext.substring(0, startindex) + newtemplate + pagetext.substring(endindex);
 		} else {
 			if (blank_csd) {
-				if (extra !== "http://" || extra !== "") {
-					pagetext = "\{\{Db-g12|url=" + extra + "\}\}\n" + newtemplate + "\n" + pagetext;
+				if (code === 'cv') {
+					// If article is a copyvio add db-g13 to the top
+					if (extra != "http://" || extra != "") {
+						pagetext = "\{\{Db-g12|url=" + extra + "\}\}\n" + newtemplate + '\n\{\{afc cleared\}\}';
+					} else {
+						pagetext = "\{\{Db-g12\}\}\n" + newtemplate + '\n\{\{afc cleared\}\}';
+					}
 				} else {
-					pagetext = "\{\{Db-g12\}\}\n" + pagetext;
+					// Just add {{afc cleared|csd}}
+					pagetext = newtemplate + '\n' + newcomment + '\n\{\{afc cleared|csd\}\}';
 				}
+			} else {
+				// If we just need to blank the submission, *just blank it*
+				pagetext = newtemplate + '\n' + newcomment + '\n\{\{afc cleared\}\}';
 			}
-			pagetext = newtemplate + '\n' + newcomment + '\n\{\{afc cleared\}\}';
 		}
 
 		//first remove the multiple pending templates, otherwise one isn't recognized
@@ -1053,18 +1061,21 @@ function afcHelper_onChange(select) {
 		$("#afcHelper_blank").attr("data-typeof", "cv_van");
 		afcHelper_turnvisible("afcHelper_extra_afccleared", true);
 		afcHelper_turnvisible("afcHelper_afccleared", true);
+		$("#afcHelper_blank_csd").attr("checked","checked"); // check the checkbox automagically
 	} else if (value === 'blp') {
 		// If it is just a BLP violation only display the blank option; do NOT csd
 		$("#afcHelper_blank").attr("checked", "checked");
 		$("#afcHelper_blank").attr("data-typeof", "blp");
 		afcHelper_turnvisible("afcHelper_afccleared", true);
 		afcHelper_turnvisible("afcHelper_extra_afccleared", false);
+		$("#afcHelper_blank_csd").attr("checked",false); // so (!blank_csd) works correctly
 	} else {
 		// Otherwise leave these empty
 		$("#afcHelper_blank").attr("checked", false);
 		$("#afcHelper_blank").attr("data-typeof", "other");
 		afcHelper_turnvisible("afcHelper_extra_afccleared", false);
 		afcHelper_turnvisible("afcHelper_afccleared", false);
+		$("#afcHelper_blank_csd").attr("checked",false); // so (!blank_csd) works correctly
 	}
 }
 
