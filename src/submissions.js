@@ -349,7 +349,7 @@ function afcHelper_prompt(type) {
 		text += '<div id="afcHelper_extra_inline"></div>'; 
 		text += '<label for="afcHelper_comments">Additional comments (optional, signature is automatically added): </label><textarea rows="3" cols="60" id="afcHelper_comments"></textarea>' +
 		'<label for="afcHelper_blank">Blank the submission (replace the content with {{<a href="' + wgArticlePath.replace("$1", 'Template:Afc_cleared') + '" title="Template:Afc cleared" target="_blank">afc cleared</a>}}):</label><input type="checkbox" id="afcHelper_blank" onchange=afcHelper_trigger(\'afcHelper_afcccleared\') /><br/>' +
-		'<div id="afcHelper_extra_afccleared" style="display:none"><label for="afcHelper_afccleared">Trigger the \'csd\' parameter and nominate the submission for speedy deletion?</label> <input type="checkbox" id="afcHelper_blank_csd"/><br/></div>' +
+		'<div id="afcHelper_extra_afccleared" style="display:none"><label for="afcHelper_afccleared">Trigger the \'csd\' parameter and nominate the submission for CSD? (replace the content with {{<a href="' + wgArticlePath.replace("$1", 'Template:Afc_cleared') + '" title="Template:Afc cleared" target="_blank">afc cleared|csd</a>}}):</label><input type="checkbox" id="afcHelper_blank_csd" checked="checked" /><br/></div>' +
 		'<label for="afcHelper_notify">Notify author:</label><input type="checkbox" onchange=afcHelper_trigger(\'afcHelper_notify_Teahouse\') id="afcHelper_notify" checked="checked" /><br/>' +
 		'<div id="afcHelper_notify_Teahouse"><label for="afcHelper_notify_Teahouse">Notify author about <a href="' + wgArticlePath.replace("$1", 'Wikipedia:Teahouse') + '" title="Wikipedia:Teahouse" target="_blank">Wikipedia:Teahouse</a>:</label><input type="checkbox" id="afcHelper_Teahouse" /><br/></div><button type="button" class="afcHelper_button decline" id="afcHelper_prompt_button" onclick="afcHelper_act(\'decline\')">Decline</button>';
 		$("#afcHelper_extra").html(text);
@@ -862,21 +862,13 @@ function afcHelper_act(action) {
 			} else pagetext = pagetext.substring(0, startindex) + newtemplate + pagetext.substring(endindex);
 		} else {
 			if (blank_csd) {
-				if (code === 'cv') {
-					// If article is a copyvio add db-g13 to the top
-					if (extra != "http://" || extra != "") {
-						pagetext = "\{\{Db-g12|url=" + extra + "\}\}\n" + newtemplate + '\n\{\{afc cleared\}\}';
-					} else {
-						pagetext = "\{\{Db-g12\}\}\n" + newtemplate + '\n\{\{afc cleared\}\}';
-					}
+				if (extra !== "http://" || extra !== "") {
+					pagetext = "\{\{Db-g12|url=" + extra + "\}\}\n" + newtemplate + "\n" + pagetext;
 				} else {
-					// Just add {{afc cleared|csd}}
-					pagetext = newtemplate + '\n' + newcomment + '\n\{\{afc cleared|csd\}\}';
+					pagetext = "\{\{Db-g12\}\}\n" + pagetext;
 				}
-			} else {
-				// If we just need to blank the submission, *just blank it*
-				pagetext = newtemplate + '\n' + newcomment + '\n\{\{afc cleared\}\}';
 			}
+			pagetext = newtemplate + '\n' + newcomment + '\n\{\{afc cleared\}\}';
 		}
 
 		//first remove the multiple pending templates, otherwise one isn't recognized
@@ -1061,21 +1053,18 @@ function afcHelper_onChange(select) {
 		$("#afcHelper_blank").attr("data-typeof", "cv_van");
 		afcHelper_turnvisible("afcHelper_extra_afccleared", true);
 		afcHelper_turnvisible("afcHelper_afccleared", true);
-		$("#afcHelper_blank_csd").attr("checked","checked"); // check the checkbox automagically
 	} else if (value === 'blp') {
 		// If it is just a BLP violation only display the blank option; do NOT csd
 		$("#afcHelper_blank").attr("checked", "checked");
 		$("#afcHelper_blank").attr("data-typeof", "blp");
 		afcHelper_turnvisible("afcHelper_afccleared", true);
 		afcHelper_turnvisible("afcHelper_extra_afccleared", false);
-		$("#afcHelper_blank_csd").attr("checked",false); // so (!blank_csd) works correctly
 	} else {
 		// Otherwise leave these empty
 		$("#afcHelper_blank").attr("checked", false);
 		$("#afcHelper_blank").attr("data-typeof", "other");
 		afcHelper_turnvisible("afcHelper_extra_afccleared", false);
 		afcHelper_turnvisible("afcHelper_afccleared", false);
-		$("#afcHelper_blank_csd").attr("checked",false); // so (!blank_csd) works correctly
 	}
 }
 
