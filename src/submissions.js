@@ -453,26 +453,8 @@ function afcHelper_act(action) {
 			usertext += "\n{{subst:Db-afc-notice|" + afcHelper_PageName + "}} ~~~~";
 			afcHelper_editPage(usertalkpage, usertext, 'Notification: [[WP:G13|G13]] speedy deletion nomination of [[' + afcHelper_PageName + ']]', false);
 		}
-
-		// Update the user's Twinkle CSD log if they have one
-		var speedyLogPageName = "User:" + mw.config.get('wgUserName') + "/" + (Twinkle.getPref('speedyLogPageName') || "CSD log");
-		CSDlogtext = afcHelper_getPageText(speedyLogPageName);
-		if (CSDlogtext) { // Only update the log if it exists
-			var appendText = "";
-			// Add header for new month if necessary (this `date` bit is directly from the Twinkle source code)
-			var date = new Date();
-			var headerRe = new RegExp("^==+\\s*" + date.getUTCMonthName() + "\\s+" + date.getUTCFullYear() + "\\s*==+", "m");
-			if (!headerRe.exec(CSDlogtext)) {
-				appendText += "\n\n=== " + date.getUTCMonthName() + " " + date.getUTCFullYear() + " ===";
-			}
-			appendText += "\n# [[:" + afcHelper_PageName + "]]: [[WP:CSD#G13|CSD G13]] ({{tl|db-afc}}); notified ";
-			$.each(uniqueUsers, function(index, user) {
-				if (index > 0) appendText += ", ";
-				appendText += "{{user|1=" + user + "}}";
-			});
-			appendText += " ~~~~~\n";
-			afcHelper_editPage(speedyLogPageName,CSDlogtext + appendText,"Logging speedy deletion nomination of [[" + afcHelper_PageName + "]]")
-		}
+		// Log the CSD nomination
+		afcHelper_logcsd(afcHelper_PageName,"[[WP:CSD#G13|CSD G13]] ({{tl|db-afc}})",uniqueUsers);
 	} else if (action === 'submit') {
 		var typeofsubmit = $("input[name=afcHelper_submit]:checked").val();
 		var customuser = $("#afcHelper_custom_submitter").val();
@@ -875,9 +857,13 @@ function afcHelper_act(action) {
 					} else {
 						pagetext = "\{\{Db-g12\}\}\n" + newtemplate + '\n\{\{afc cleared\}\}';
 					}
+					// And for good measure log the CSD nomination
+					afcHelper_logcsd(afcHelper_PageName,"[[WP:CSD#G12|CSD G12]] ({{tl|db-copyvio}})",[afcHelper_authorusername]);
 				} else {
 					// Just add {{afc cleared|csd}}
 					pagetext = newtemplate + '\n' + newcomment + '\n\{\{afc cleared|csd\}\}';
+					// Log the CSD nomination, but use db-reason since we don't know specifics
+					afcHelper_logcsd(afcHelper_PageName,"{{tl|db-reason}} ([[WP:AFC|Articles for creation]])",[afcHelper_authorusername]);
 				}
 			} else {
 				// If we just need to blank the submission, *just blank it*
@@ -1405,6 +1391,29 @@ function afcHelper_last_nonbot(title) {
 	pageid = response['query']['pageids'][0];
 	revisions = response['query']['pages'][pageid]['revisions'];
 	return response['query']['pages'][pageid]['revisions'][0];
+}
+
+function afcHelper_logcsd(title,reason,usersnotified) {
+	// Update the user's Twinkle CSD log if they have one
+	var speedyLogPageName = "User:" + mw.config.get('wgUserName') + "/" + (Twinkle.getPref('speedyLogPageName') || "CSD log");
+	CSDlogtext = afcHelper_getPageText(speedyLogPageName);
+	if (CSDlogtext) { // Only update the log if it exists
+		var appendText = "";
+		// Add header for new month if necessary (this `date` bit is directly from the Twinkle source code)
+		var date = new Date();
+		var headerRe = new RegExp("^==+\\s*" + date.getUTCMonthName() + "\\s+" + date.getUTCFullYear() + "\\s*==+", "m");
+		if (!headerRe.exec(CSDlogtext)) {
+			appendText += "\n\n=== " + date.getUTCMonthName() + " " + date.getUTCFullYear() + " ===";
+		}
+		appendText += "\n# [[:" + title + "]]: " + reason;
+		if (usersnotified) appendText += "; notified ";
+		$.each(usersnotified, function(index, user) {
+			if (index > 0) appendText += ", ";
+			appendText += "{{user|1=" + user + "}}";
+		});
+		appendText += " ~~~~~\n";
+		afcHelper_editPage(speedyLogPageName,CSDlogtext + appendText,"Logging speedy deletion nomination of [[" + title + "]]")
+	}
 }
 
 //function to check if the submission is g13 eligible -- only checks timestamp
