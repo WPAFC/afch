@@ -772,80 +772,86 @@ function afcHelper_act(action) {
 			summary += ': ' + reasontext;
 		}
 
-		if (notify) {
-			var author_re = /\|\s*u=\s*[^\|]*\|/i;
-			if (author_re.test(afctemplate)) {
-				var user = author_re.exec(afctemplate)[0];
-				var username = user.split(/=/)[1];
-				username = username.replace(/[\|]/g, '');
-				if (username !== 'Example') {
-					usertalkpage = "User talk:" + username;
-					var usertext = afcHelper_getPageText(usertalkpage, true, true);
-					var reason = 'Your submission at \[\[Wikipedia:Articles for creation|Articles for creation\]\]';
-					var SubmissionName = afcHelper_PageName.replace(/(Wikipedia( talk)*:Articles for creation\/)+/i, '');
-					usertext += "\n== Your submission at \[\[Wikipedia:Articles for creation|Articles for creation\]\]: \[\[" + afcHelper_PageName + "|" + SubmissionName + "\]\] ({{subst:CURRENTMONTHNAME}} {{subst:CURRENTDAY}}) ==";
-					var newnewnewtitle = afcHelper_submissionTitle.replace(" ", "{{subst:Sp}}");
-					usertext += "\n\{\{subst:" + notifytemplate + "|1=" + newnewnewtitle;
-					if (code === 'cv') usertext += "|cv=yes";
-					usertext += "|sig=yes\}\}";
+		// Stores the author of the submission to afcHelper_authorusername
+		var author_re = /\|\s*u\s*=\s*(.*?)\|/i;
+		if (author_re.test(afctemplate)) {
+			var username = author_re.exec(afctemplate)[1];
+			if (username !== 'Example') {
+				afcHelper_authorusername = username;
+			} else {
+				afcHelper_authorusername = afcHelper_page_creator(afcHelper_PageName);
+			}
+		} else {
+			afcHelper_authorusername = afcHelper_page_creator(afcHelper_PageName);
+		}
 
-					if (teahouse) {
-						document.getElementById('afcHelper_status').innerHTML += '<div id="afcHelper_get_teahouse"></div>';
-						$("#afcHelper_get_teahouse").html('<li id="afcHelper_get_teahouse">Checking for existing Teahouse Invitation for <a href="' + wgArticlePath.replace("$1", encodeURI('User_talk:' + username)) + '" title="User talk:' + username + '">User talk:' + username + '</a></li>');
-						request = {
-							'action': 'query',
-							'prop': 'categories',
-							'format': 'json',
-							'indexpageids': true,
-							'redirects': true,
-							'titles' : usertalkpage
-						};
-						var response = JSON.parse(
-							$.ajax({
-								url: mw.util.wikiScript('api'),
-								data: request,
-								async: false
-							})
-							.responseText
-						);
-						var pageid = response['query']['pageids'][0];
-						var foundTH = 0;
-						if (pageid !== "-1") {
-							if (response['query']['redirects']) { /* If there is no redirect, this stops here from getting an error */
-								var oldusername = response['query']['redirects'][0]['from'];
-								var newusername = response['query']['redirects'][0]['to'];
-								if ((typeof(oldusername) !== 'undefined') && (typeof(newusername) !== 'undefined') && (oldusername != newusername)) {
-									document.getElementById('afcHelper_get_teahouse').innerHTML += '<li id="afcHelper_get_teahouse2">User talk page is redirect to <a href="' + wgArticlePath.replace("$1", encodeURI('User_talk:' + newusername)) + '" title="User talk:' + newusername + '">User talk:' + newusername + '</a> - checking there for TeaHouse invitations.</li>';
-									params = "action=query&prop=categories&format=json&indexpageids=1&titles=User_talk:" + encodeURIComponent(newusername);
-									req.send(params);
-									response = eval('(' + req.responseText + ')');
-									pageid = response['query']['pageids'][0];
-								}
-							}
-							if (pageid !== "-1") {
-								var pagecats = new Array();
-								pagecats = response['query']['pages'][pageid]['categories'];
-							}
-							if ((typeof pagecats !== 'undefined') && (pageid !== "-1")) {
-								for (var i = 0; i < pagecats.length; i++) {
-									if ((pagecats[i].title === ("Category:Wikipedians who have received a Teahouse invitation")) || (pagecats[i].title === ("Category:Wikipedians who have received a Teahouse invitation through AfC"))) {
-										foundTH = 1;
-										break;
-									}
-								}
-							}
-						}
-						if (foundTH === 0) {
-							$("#afcHelper_get_teahouse").html('<li id="afcHelper_get_teahouse">Sent <a href="' + wgArticlePath.replace("$1", encodeURI('User talk:' + username)) + '" title="User talk:' + username + '">User talk:' + username + '</a> an invitation.</li>');
-							usertext += "\n\n\n\{\{subst:Wikipedia:Teahouse/AFC_invitation\}\}";
-							reason += '; adding invitation for the \[\[Wikipedia:Teahouse|Teahouse\]\]!';
-						} else {
-							$("#afcHelper_get_teahouse").html('<a href="' + wgArticlePath.replace("$1", encodeURI('User talk:' + username)) + '" title="User talk:' + username + '">' + username + '</a> already has an invitation.');
+
+		if (notify) {
+			usertalkpage = "User talk:" + afcHelper_authorusername;
+			var usertext = afcHelper_getPageText(usertalkpage, true, true);
+			var reason = 'Your submission at \[\[Wikipedia:Articles for creation|Articles for creation\]\]';
+			var SubmissionName = afcHelper_PageName.replace(/(Wikipedia( talk)*:Articles for creation\/)+/i, '');
+			usertext += "\n== Your submission at \[\[Wikipedia:Articles for creation|Articles for creation\]\]: \[\[" + afcHelper_PageName + "|" + SubmissionName + "\]\] ({{subst:CURRENTMONTHNAME}} {{subst:CURRENTDAY}}) ==";
+			var newnewnewtitle = afcHelper_submissionTitle.replace(" ", "{{subst:Sp}}");
+			usertext += "\n\{\{subst:" + notifytemplate + "|1=" + newnewnewtitle;
+			if (code === 'cv') usertext += "|cv=yes";
+			usertext += "|sig=yes\}\}";
+
+			if (teahouse) {
+				document.getElementById('afcHelper_status').innerHTML += '<div id="afcHelper_get_teahouse"></div>';
+				$("#afcHelper_get_teahouse").html('<li id="afcHelper_get_teahouse">Checking for existing Teahouse Invitation for <a href="' + wgArticlePath.replace("$1", encodeURI('User_talk:' + username)) + '" title="User talk:' + username + '">User talk:' + username + '</a></li>');
+				request = {
+					'action': 'query',
+					'prop': 'categories',
+					'format': 'json',
+					'indexpageids': true,
+					'redirects': true,
+					'titles' : usertalkpage
+				};
+				var response = JSON.parse(
+					$.ajax({
+						url: mw.util.wikiScript('api'),
+						data: request,
+						async: false
+					})
+					.responseText
+				);
+				var pageid = response['query']['pageids'][0];
+				var foundTH = 0;
+				if (pageid !== "-1") {
+					if (response['query']['redirects']) { /* If there is no redirect, this stops here from getting an error */
+						var oldusername = response['query']['redirects'][0]['from'];
+						var newusername = response['query']['redirects'][0]['to'];
+						if ((typeof(oldusername) !== 'undefined') && (typeof(newusername) !== 'undefined') && (oldusername != newusername)) {
+							document.getElementById('afcHelper_get_teahouse').innerHTML += '<li id="afcHelper_get_teahouse2">User talk page is redirect to <a href="' + wgArticlePath.replace("$1", encodeURI('User_talk:' + newusername)) + '" title="User talk:' + newusername + '">User talk:' + newusername + '</a> - checking there for TeaHouse invitations.</li>';
+							params = "action=query&prop=categories&format=json&indexpageids=1&titles=User_talk:" + encodeURIComponent(newusername);
+							req.send(params);
+							response = eval('(' + req.responseText + ')');
+							pageid = response['query']['pageids'][0];
 						}
 					}
-				} //end TH stuff
-				afcHelper_editPage(usertalkpage, usertext, reason, false);
-			} //exclude [[User:Example]]
+					if (pageid !== "-1") {
+						var pagecats = new Array();
+						pagecats = response['query']['pages'][pageid]['categories'];
+					}
+					if ((typeof pagecats !== 'undefined') && (pageid !== "-1")) {
+						for (var i = 0; i < pagecats.length; i++) {
+							if ((pagecats[i].title === ("Category:Wikipedians who have received a Teahouse invitation")) || (pagecats[i].title === ("Category:Wikipedians who have received a Teahouse invitation through AfC"))) {
+								foundTH = 1;
+								break;
+							}
+						}
+					}
+				}
+				if (foundTH === 0) {
+					$("#afcHelper_get_teahouse").html('<li id="afcHelper_get_teahouse">Sent <a href="' + wgArticlePath.replace("$1", encodeURI('User talk:' + username)) + '" title="User talk:' + username + '">User talk:' + username + '</a> an invitation.</li>');
+					usertext += "\n\n\n\{\{subst:Wikipedia:Teahouse/AFC_invitation\}\}";
+					reason += '; adding invitation to the \[\[Wikipedia:Teahouse|Teahouse\]\]!';
+				} else {
+					$("#afcHelper_get_teahouse").html('<a href="' + wgArticlePath.replace("$1", encodeURI('User talk:' + username)) + '" title="User talk:' + username + '">' + username + '</a> already has an invitation.');
+				}
+			} //end TH stuff
+			afcHelper_editPage(usertalkpage, usertext, reason, false);
 		}
 		if (!blank) {
 			var containComment = 0;
