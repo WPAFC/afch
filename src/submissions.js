@@ -550,6 +550,12 @@ function afcHelper_act(action) {
 		var biography = $("#afcHelper_biography").attr("checked");
 		var reqinfobox = $("#afcHelper_reqinfobox").attr("checked");
 		var reqphoto = $("#afcHelper_reqphoto").attr("checked");
+
+		var selectedwikiprojects = new Array();
+		$("#afcHelper_wikiproject_selection option:selected").each(function() {
+			selectedwikiprojects.push($(this).val());
+		});
+
 		if (biography) {
 			var living = $("#afcHelper_biography_status").val(); //dropdown menu
 			var yearofbirth = $("#afcHelper_yearofbirth").val();
@@ -607,6 +613,13 @@ function afcHelper_act(action) {
 			}
 
 			talktext += "\{\{subst:WPAFC/article|class=" + assessment + "\}\}\n";
+
+			// For each selected WikiProject, append it to the talk page
+			for (var i = 0; i < selectedwikiprojects.length; i++) {
+				var project = selectedwikiprojects[i];
+				talktext += "{{"+project+"|class="+assessment+"}}\n";
+			};
+
 			if (talkAppend) talktext += talkAppend + "\n"; 
 			// disambig check
 			if (assessment === 'disambig') {
