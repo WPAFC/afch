@@ -318,11 +318,12 @@ function afcHelper_prompt(type) {
 
 		// First load the list of wikiprojects and stores it to afcHelper_wikiprojectindex
 		$.ajax({
-			url: "//en.wikipedia.org/w/index.php?title=User:Theo%27s_Little_Bot/afchwikiproject.js&action=raw",
+			url: "//en.wikipedia.org/w/index.php?title=User:Theo%27s_Little_Bot/afchwikiproject.js&action=raw&ctype=text/javascript",
 			dataType: "json",
 			success: function (data) { afcHelper_wikiprojectindex = data; },
 			async: false
 		});
+
 		// Then generate a dynamic menu for them
 		var wikiprojectSelect = afcHelper_generateChzn("afcHelper_wikiproject_selection",'Start typing...',afcHelper_wikiprojectindex);
 		text += '<br /><label for="afcHelper_wikiproject_selection">Choose associated WikiProjects to be added to the talk page: </label>' + wikiprojectSelect;
