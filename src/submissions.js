@@ -314,9 +314,20 @@ function afcHelper_prompt(type) {
 		'<br /><label for="afcHelper_assessment">Assessment (optional): </label>';
 		var assessmentSelect = afcHelper_generateSelect("afcHelper_assessment", afcHelper_assessment, null);
 		text += assessmentSelect;
-		text += '<br /><label for="afcHelper_pagePrepend">Prepend wikicode to page (optional, e.g. maintenance boxes): </label><textarea rows="3" cols="60" id="afcHelper_pagePrepend"></textarea>' +
-		'<br /><label for="afcHelper_pageAppend">Append wikicode to page (optional, e.g. categories or stub templates): </label><textarea rows="3" cols="60" id="afcHelper_pageAppend"></textarea>' +
-		'<br /><label for="afcHelper_talkAppend">Append wikicode to talk page (optional, e.g. WikiProject templates): </label><textarea rows="3" cols="60" id="afcHelper_talkAppend"></textarea>' +
+
+		// First load the list of wikiprojects and stores it to afcHelper_wikiprojectindex
+		$.ajax({
+			url: "//en.wikipedia.org/w/index.php?title=User:Theo%27s_Little_Bot/afchwikiproject.js&action=raw&ctype=text/javascript",
+			dataType: "json",
+			success: function (data) { afcHelper_wikiprojectindex = data; },
+			async: false
+		});
+		// Then generate a dynamic menu for them
+		var wikiprojectSelect = afcHelper_generateChzn("afcHelper_wikiproject_selection",'Start typing the name of a related topic...',afcHelper_wikiprojectindex);
+		text += '<br /><label for="afcHelper_wikiproject_selection">Choose associated WikiProjects to be automatically be added to the talk page: </label><br>' + wikiprojectSelect;
+		text += '<br /><label for="afcHelper_pagePrepend">Prepend wikicode to page (optional, e.g. maintenance boxes): </label><br><textarea class="afcHelper_expand" rows="1" cols="60" id="afcHelper_pagePrepend"></textarea>' +
+		'<br /><label for="afcHelper_pageAppend">Append wikicode to page (optional, e.g. categories or stub templates): </label><br><textarea class="afcHelper_expand" rows="1" cols="60" id="afcHelper_pageAppend"></textarea>' +
+		'<br /><label for="afcHelper_talkAppend">Append wikicode to talk page (optional, e.g. WikiProject templates): </label><br><textarea class="afcHelper_expand" rows="1" cols="60" id="afcHelper_talkAppend"></textarea>' +
 		'<br /><label for="afcHelper_reqphoto">Does the article need a photo/image? (add &#123;&#123;<a href="'+ wgArticlePath.replace("$1", 'Template:Reqphoto') + '" title="Template:Reqphoto" target="_blank">reqphoto</a>&#125;&#125; to talk page) </label><input type="checkbox" id="afcHelper_reqphoto"/>' +
 		'<br /><label for="afcHelper_reqinfobox">Does the article need an infobox? (add &#123;&#123;<a href="'+ wgArticlePath.replace("$1", 'Template:Reqinfobox') + '" title="Template:Reqinfobox" target="_blank">reqinfobox</a>&#125;&#125; to talk page) </label><input type="checkbox" id="afcHelper_reqinfobox"/>' +
 		'<br /><label for="afcHelper_biography">Is the article a biography? </label><input type="checkbox" id="afcHelper_biography" onchange=afcHelper_trigger(\'afcHelper_biography_blp\') />' +
@@ -342,6 +353,12 @@ function afcHelper_prompt(type) {
 		'</div></div><div id="afcHelper_extra_inline"></div>' +
 		'<button class="afcHelper_button" type="button" id="afcHelper_accept_button" onclick="afcHelper_act(\'accept\')">Accept and publish to mainspace</button>';
 		$("#afcHelper_extra").html(text);
+		// Set up chosen wikiproject menu
+		$("#afcHelper_wikiproject_selection").chosen({no_results_text: "Oops, couldn't find any WikiProjects matching your input!"}); 
+		// Expand textareas on click so they don't take up space
+		$('textarea.afcHelper_expand').focus(function () {
+			$(this).animate({ height: "4em" }, 500);
+		});
 	} else if (type === 'decline') {
 		var text = '<h3>Declining ' + afcHelper_PageName + '</h3>' + '<label for="afcHelper_reason">Reason for ' + type + ': </label>';
 		var reasonSelect = afcHelper_generateSelect("afcHelper_reason", afcHelper_reasonhash, "afcHelper_onChange(this)");
@@ -518,6 +535,12 @@ function afcHelper_act(action) {
 		var biography = $("#afcHelper_biography").attr("checked");
 		var reqinfobox = $("#afcHelper_reqinfobox").attr("checked");
 		var reqphoto = $("#afcHelper_reqphoto").attr("checked");
+
+		var selectedwikiprojects = new Array();
+		$("#afcHelper_wikiproject_selection option:selected").each(function() {
+			selectedwikiprojects.push($(this).val());
+		});
+
 		if (biography) {
 			var living = $("#afcHelper_biography_status").val(); //dropdown menu
 			var yearofbirth = $("#afcHelper_yearofbirth").val();
@@ -575,6 +598,13 @@ function afcHelper_act(action) {
 			}
 
 			talktext += "\{\{subst:WPAFC/article|class=" + assessment + "\}\}\n";
+
+			// For each selected WikiProject, append it to the talk page
+			for (var i = 0; i < selectedwikiprojects.length; i++) {
+				var project = selectedwikiprojects[i];
+				talktext += "{{"+project+"|class="+assessment+"}}\n";
+			};
+
 			if (talkAppend) talktext += talkAppend + "\n"; 
 			// disambig check
 			if (assessment === 'disambig') {

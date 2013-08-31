@@ -77,3 +77,13 @@ div#afcHelper_betanotice {
 #afcHelper_g13_button {
   background-color: #ff3333;
 }
+
+.afcHelper_expand {
+  height: 1em;
+  width: 50%;
+  padding: 3px;
+}
+
+#afcHelper_extra select {
+  vertical-align: middle;
+}

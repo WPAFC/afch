@@ -28,8 +28,11 @@ if (afchelper_baseurl.indexOf('MediaWiki:'+'Gadget-afchelper.js' /* hack to stop
 else
 	var BETA = false;
 
-// Manually load mw.api() only if we're not using the gadget...with the gadget, it's already a dependency
-if (BETA) mw.loader.load('mediawiki.api');
+// Manually load mw.api() and chosen only if we're not using the gadget...with the gadget, they are already dependencies
+if (BETA) {
+	mw.loader.load('mediawiki.api');
+	mw.loader.load('jquery.chosen');
+}
 
 function afcHelper_generateSelect(title, options, onchange) {
 	var text = '<select name="' + title + '" id="' + title + '" ';
@@ -42,6 +45,16 @@ function afcHelper_generateSelect(title, options, onchange) {
 		if (o.disabled) text += 'disabled ';
 		text += '>' + o.label + '</option>';
 	}
+	text += "</select>";
+	return text;
+}
+
+function afcHelper_generateChzn(title,placeholder,optionsdict) {
+	// given a dictionary of "title","value"
+	var text = '<select data-placeholder="' + placeholder + '" id="' + title + '" style="width:350px;" class="chzn-select" multiple>';
+	$.each(optionsdict, function(k, v){
+		text += '<option value="' + afcHelper_escapeHtmlChars(v) + '" >' + k + '</option>';
+	});
 	text += "</select>";
 	return text;
 }
