@@ -20,5 +20,7 @@ To import a script, add it to [your common.js page](http://en.wikipedia.org/wiki
 
 The only exception to this is for the `master` script: to use it, you just need to check the box next to "Yet Another AFC Helper Script" in [your preferences](http://en.wikipedia.org/wiki/Special:Preferences#mw-prefsection-gadgets).
 
+If the script isn't showing up (for `beta` and `develop`), try clearing your cache first.
+
 ## License
 The script is licensed under the [Creative Commons Attribution-ShareAlike 3.0 Unported License](http://en.wikipedia.org/wiki/Wikipedia:Text_of_Creative_Commons_Attribution-ShareAlike_3.0_Unported_License) and the [GNU Free Documentation License](http://en.wikipedia.org/wiki/Wikipedia:Text_of_the_GNU_Free_Documentation_License).
