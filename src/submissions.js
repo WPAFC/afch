@@ -355,9 +355,13 @@ function afcHelper_prompt(type) {
 		$("#afcHelper_extra").html(text);
 		// Set up chosen wikiproject menu
 		$("#afcHelper_wikiproject_selection").chosen({no_results_text: "Oops, couldn't find any WikiProjects matching your input!"}); 
-		// Expand textareas on click so they don't take up space
+		// Expand textareas on click so they don't take up space, and then...
 		$('textarea.afcHelper_expand').focus(function () {
 			$(this).animate({ height: "4em" }, 500);
+		});
+		// ...shrink them back on blur if they have no content
+		$('textarea.afcHelper_expand').blur(function () {
+			if (!this.value) $(this).animate({ height: "1em" }, 500);
 		});
 	} else if (type === 'decline') {
 		var text = '<h3>Declining ' + afcHelper_PageName + '</h3>' + '<label for="afcHelper_reason">Reason for ' + type + ': </label>';
