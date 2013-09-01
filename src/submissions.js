@@ -323,7 +323,7 @@ function afcHelper_prompt(type) {
 			async: false
 		});
 		// Then generate a dynamic menu for them
-		var wikiprojectSelect = afcHelper_generateChzn("afcHelper_wikiproject_selection",'Start typing the name of a related topic...',afcHelper_wikiprojectindex);
+		var wikiprojectSelect = afcHelper_generateChzn("afcHelper_wikiproject_selection",'Start typing to filter the list of WikiProjects...',afcHelper_wikiprojectindex);
 		text += '<br /><label for="afcHelper_wikiproject_selection">Choose associated WikiProjects to be automatically be added to the talk page: </label><br>' + wikiprojectSelect;
 		text += '<br /><label for="afcHelper_pagePrepend">Prepend wikicode to page (optional, e.g. maintenance boxes): </label><br><textarea class="afcHelper_expand" rows="1" cols="60" id="afcHelper_pagePrepend"></textarea>' +
 		'<br /><label for="afcHelper_pageAppend">Append wikicode to page (optional, e.g. categories or stub templates): </label><br><textarea class="afcHelper_expand" rows="1" cols="60" id="afcHelper_pageAppend"></textarea>' +
