@@ -210,6 +210,9 @@ function afcHelper_ffu_onActionChange(id) {
 			label: 'Article is at AfD',
 			value: 'afd'
 		}, {
+			label: 'Non-free file for use in still-pending AfC submission',
+			value: 'afc'
+		}, {
 			label: 'No URL',
 			value: 'nourl'
 		}]) + '<br/><label for="afcHelper_ffu_comment_' + id + '">Additional comment: </label>' + '<input type="text" id="afcHelper_ffu_comment_' + id + '" name="afcHelper_ffu_comment_' + id + '"/>' + '<br/><label for="afcHelper_ffu_notify_' + id + '">Notify requestor: </label>' + '<input type="checkbox" id="afcHelper_ffu_notify_' + id + '" name="afcHelper_ffu_notify_' + id + '" checked="checked" />';
