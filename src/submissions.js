@@ -4,7 +4,7 @@ var afcHelper_PageName = wgPageName.replace(/_/g, ' ');
 var afcHelper_AJAXnumber = 0;
 var afcHelper_submissionTitle = wgTitle.replace(/Articles for creation\//g, '');
 var afcHelper_cache = {};
-var disambig_re = /Disambig|Mil-unit-dis|Hndis|Geodis|Numberdis/gi;
+var disambig_re = /Disambig|Mil-unit-dis|Hndis|Geodis|Numberdis/i;
 var typetemplate_re = /\{\{\s*documentation\s*(?:\{\{[^\{\}]*\}\}|[^\}\{])*\}\}/gi;
 var afcHelper_reasonhash = [{
 	label: 'Duplicate articles',
