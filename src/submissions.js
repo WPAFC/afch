@@ -766,8 +766,8 @@ function afcHelper_act(action) {
 		var summary = '';
 		var newcomment = '';
 		// overwrite any reason that was there.
-		newtemplate += '|d|' + code;
-		if (code === 'reason') {
+		newtemplate += '|d|' + (code || 'reason');
+		if (code === 'reason' || code === null) {
 			newtemplate += '|3=' + customreason;
 		} else if (extra !== '') {
 			newtemplate += '|3=' + extra;
@@ -775,12 +775,12 @@ function afcHelper_act(action) {
 		newtemplate += '|declinets=\{\{subst:CURRENTTIMESTAMP\}\}|decliner=\{\{subst:REVISIONUSER\}\}' + afctemplate.substring(endpipe);
 		//correcting namespace number after page moves mostly from userspace
 		newtemplate = newtemplate.replace(/\s*\|\s*ns\s*=\s*[0-9]{0,2}\s*/gi, '\|ns=\{\{subst:NAMESPACENUMBER\}\}');
-		if (code !== 'reason' && customreason !== '') {
+		if (code !== null && code !== 'reason' && customreason !== '') {
 			newcomment = "*\{\{afc comment|1=" + customreason + " \~\~\~\~\}\}";
 		}
 
 		summary = "Declining submission";
-		if (code === 'reason') {
+		if (code === 'reason' || code === null) {
 			summarycustom = customreason.match(/[^\s]+/g).slice(0,5).join(" "); // Get the first five words of the custom decline rationale
 			if (summarycustom != customreason) summarycustom += "..."; // Add an ellipsis if the rationale if >5 words
 			summary += ': ' + summarycustom;
