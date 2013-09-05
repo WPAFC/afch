@@ -618,7 +618,7 @@ function afcHelper_act(action) {
 			if (reqphoto && !biography) talktext += "\{\{Image requested\}\}\n";
 
 			var newtalktitle = newtitle.replace(/(Template|Category|Wikipedia|Portal):/,"$1 talk:");
-			if (newtalktitle == newtitle) newtalktitle = 'Talk:' + newtitle;
+			if (neinput type=wtalktitle == newtitle) newtalktitle = 'Talk:' + newtitle;
 
 			afcHelper_editPage(newtalktitle, talktext, 'Placing [[Wikipedia:Articles for creation]] project banner', false);
 
@@ -1060,7 +1060,7 @@ function afcHelper_movePage(oldtitle, newtitle, summary, callback, overwrite_red
 	if (!error) {
 		if (callback !== null) callback();
 	}
-	$("#afcHelper_AJAX_finished_" + func_id).css("display", '');
+	$("#afcHelper_AJAX_finished_" + func_id).css("display", "block");
 }
 
 // Create portlet link
