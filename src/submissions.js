@@ -476,7 +476,7 @@ function afcHelper_act(action) {
 			afcHelper_editPage(usertalkpage, usertext, 'Notification: [[WP:G13|G13]] speedy deletion nomination of [[' + afcHelper_PageName + ']]', false);
 		}
 		// Log the CSD nomination
-		afcHelper_logcsd(afcHelper_PageName,"[[WP:CSD#G13|CSD G13]] ({{tl|db-afc}})",uniqueUsers);
+		afcHelper_logcsd(afcHelper_PageName,"[[CSD:G13]] ({{tl|db-afc}})",uniqueUsers);
 	} else if (action === 'submit') {
 		var typeofsubmit = $("input[name=afcHelper_submit]:checked").val();
 		var customuser = $("#afcHelper_custom_submitter").val();
@@ -886,14 +886,14 @@ function afcHelper_act(action) {
 		} else {
 			if (blank_csd) {
 				if (code === 'cv') {
-					// If article is a copyvio add db-g13 to the top
+					// If article is a copyvio add db-g12 to the top
 					if (extra != "http://" || extra != "") {
 						pagetext = "\{\{Db-g12|url=" + extra + "\}\}\n" + newtemplate + '\n\{\{afc cleared\}\}';
 					} else {
 						pagetext = "\{\{Db-g12\}\}\n" + newtemplate + '\n\{\{afc cleared\}\}';
 					}
 					// And for good measure log the CSD nomination
-					afcHelper_logcsd(afcHelper_PageName,"[[WP:CSD#G12|CSD G12]] ({{tl|db-copyvio}})",[afcHelper_authorusername]);
+					afcHelper_logcsd(afcHelper_PageName,"[[CSD:G12]] ({{tl|db-copyvio}})",[afcHelper_authorusername]);
 				} else {
 					// Just add {{afc cleared|csd}}
 					pagetext = newtemplate + '\n' + newcomment + '\n\{\{afc cleared|csd\}\}';
