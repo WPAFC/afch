@@ -1481,6 +1481,7 @@ function afcHelper_g13_eligible(title) {
 	} else {
 		return false;
 	}
+}
 
 function afcHelper_page_creator(title) {
 	if (afcHelper_cache[title]) return afcHelper_cache[title];
