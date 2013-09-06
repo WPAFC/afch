@@ -888,9 +888,9 @@ function afcHelper_act(action) {
 				if (code === 'cv') {
 					// If article is a copyvio add db-g12 to the top
 					if (extra != "http://" || extra != "") {
-						pagetext = "\{\{Db-g12|url=" + extra + "\}\}\n" + newtemplate + '\n\{\{afc cleared\}\}';
+						pagetext = "\{\{Db-g12|url=" + extra + "\}\}\n" + newtemplate + '\n' + newcomment + '\n\{\{afc cleared\}\}';
 					} else {
-						pagetext = "\{\{Db-g12\}\}\n" + newtemplate + '\n\{\{afc cleared\}\}';
+						pagetext = "\{\{Db-g12\}\}\n" + newtemplate + '\n' + newcomment + '\n\{\{afc cleared\}\}';
 					}
 					// And for good measure log the CSD nomination
 					afcHelper_logcsd(afcHelper_PageName,"[[CSD:G12]] ({{tl|db-copyvio}})",[afcHelper_authorusername]);
