@@ -445,7 +445,8 @@ function afcHelper_act(action) {
 		displayMessage('<ul id="afcHelper_status"></ul><ul id="afcHelper_finish"></ul>');
 		afcHelper_displaymessagehelper('done','standard');
 		// tag page with "{{db-g13}}"
-		newtext = "{{db-g13}}\n" + pagetext;
+		timestamp = afcHelper_cache.afcHelper_lastedited;
+		newtext = "{{Db-g13|ts=" + timestamp + "}}\n" + pagetext;
 
 		afcHelper_editPage(afcHelper_PageName, newtext, "Tagging abandoned [[Wikipedia:Articles for creation]] draft for speedy deletion under [[WP:G13|G13]]", false);
 		// notify users
@@ -1470,12 +1471,16 @@ function afcHelper_logcsd(title,reason,usersnotified) {
 
 //function to check if the submission is g13 eligible -- only checks timestamp
 function afcHelper_g13_eligible(title) {
-	timestamp = afcHelper_cache.afcHelper_lastedited;
-	var SIX_MONTHS = 15778500000; // six months in milliseconds, gracias google
-	var lastedited = new Date(timestamp);
-	if (((new Date) - lastedited) > SIX_MONTHS) return true;
-	else return false;
-}
+	var timeNow = new Date();
+	var timeNowMonth = timeNow.getMonth();
+	var sixMonthsAgo = new Date();
+	sixMonthsAgo.setMonth(timeNowMonth - 6);
+	var lastEdited = new Date(afcHelper_cache.afcHelper_lastedited);
+	if ((timeNow.getTime() - lastEdited.getTime()) > (timeNow.getTime() - sixMonthsAgo.getTime())){
+		return true;
+	} else {
+		return false;
+	}
 
 function afcHelper_page_creator(title) {
 	if (afcHelper_cache[title]) return afcHelper_cache[title];
