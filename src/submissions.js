@@ -1226,8 +1226,6 @@ function afcHelper_cleanup(text) {
 	}
 	// Remove empty HTML comments
 	text = text.replace(/<!--\s*-->/ig, "");
-	//removal of unnecessary new lines, stars, "-", and whitespaces at the top of the page
-	text = text.replace(/[\*\n\s]*/m, "");
 	//adding back the submission templates and comment templates
 	if (commentstemplates.length > 0) {
 		text = '----\n' + text;
