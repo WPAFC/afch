@@ -1021,7 +1021,6 @@ function afcHelper_act(action) {
 
 function afcHelper_movePage(oldtitle, newtitle, summary, callback, overwrite_redirect) {
 	var token = mw.user.tokens.get('editToken');
-	summary += afcHelper_advert;
 	$("#afcHelper_finished_wrapper").html('<span id="afcHelper_AJAX_finished_' + afcHelper_AJAXnumber + '" style="display:none">' + $("#afcHelper_finished_wrapper").html() + '</span>');
 	var func_id = afcHelper_AJAXnumber;
 	afcHelper_AJAXnumber++;
@@ -1030,7 +1029,7 @@ function afcHelper_movePage(oldtitle, newtitle, summary, callback, overwrite_red
 				'action': 'move',
 				'from': oldtitle,
 				'to': newtitle,
-				'reason': summary,
+				'reason': summary + afcHelper_advert,
 				'format': 'json',
 				'token': token
 			};
