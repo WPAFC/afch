@@ -221,7 +221,7 @@ function afcHelper_init() {
 
 	if (template_statuses === false || $.inArray("", template_statuses) != -1 || $.inArray("r", template_statuses) != -1 || $.inArray("d", template_statuses) != -1 || $.inArray("t", template_statuses) != -1) form += '<button class="afcHelper_button" type="button" id="afcHelper_cleanup_button" onclick="afcHelper_act(\'cleanup\')">Clean the submission</button>';
 
-	if (afcHelper_g13_eligible(afcHelper_PageName)) form += '<button class="afcHelper_button" type="button" id="afcHelper_g13_button" onclick="afcHelper_act(\'g13\')">Tag the submission for G13 speedy deletion</button> <button class="afcHelper_button" type="button" id="afcHelper_postpone_g13_button" onclick="afcHelper_act(\'postpone_g13\')">Postpone G13 deletion</button>';
+	if (afcHelper_g13_eligible(afcHelper_PageName)) form += '<button class="afcHelper_button" type="button" id="afcHelper_g13_button" onclick="afcHelper_act(\'g13\')">Tag the submission for G13 speedy deletion</button> <button class="afcHelper_button" type="button" id="afcHelper_postpone_g13_button" onclick="afcHelper_prompt(\'postpone_g13\')">Postpone G13 deletion</button>';
 
 	form += '<div id="afcHelper_extra"></div>';
 
@@ -400,6 +400,10 @@ function afcHelper_prompt(type) {
 		var text = '<h3>Commenting on ' + afcHelper_PageName + ' </h3>' +
 		'<label for="afcHelper_comments">Comment (signature is automatically added): </label><textarea rows="3" cols="60" id="afcHelper_comments" spellcheck="true"></textarea><br/><button type="button" class="afcHelper_button comment" id="afcHelper_prompt_button" onclick="afcHelper_act(\'comment\')">Add comment</button>';
 		$("#afcHelper_extra").html(text);
+	} else if (type === 'postpone_g13') {
+		var text = '<h3>Additional comment when marking as "postponed"</h3>' +
+		'<label for="afcHelper_comments">Comment (signature is automatically added): </label><textarea rows="3" cols="60" id="afcHelper_comments" spellcheck="true"></textarea><br/><button type="button" class="afcHelper_button comment" id="afcHelper_prompt_button" onclick="afcHelper_act(\'postpone_g13\')">Add comment</button>';
+		$("#afcHelper_extra").html(text);
 	}
 }
 
@@ -426,8 +430,22 @@ function afcHelper_act(action) {
 		newtext = afcHelper_cleanup(newtext);
 		afcHelper_editPage(afcHelper_PageName, newtext, "Tagging [[Wikipedia:Articles for creation]] draft", false);
 	} else if (action === 'postpone_g13') {
+		var comment = $("#afcHelper_comments").val();
 		displayMessage('<ul id="afcHelper_status"></ul><ul id="afcHelper_finish"></ul>');
 		afcHelper_displaymessagehelper('done','standard');
+//todo
+		var containComment = 0;
+		if (comment !== '') {
+			var newComment = "\{\{afc comment|1=" + comment + " \~\~\~\~\}\}";
+			var afc_re = /\{\{\s*afc submission\s*\|\s*[||h|r|d](?:\{\{[^\{\}]*\}\}|[^\}\{])*\}\}/i;
+			if (!afc_re.test(pagetext)) {
+				alert("Unable to locate AFC submission template, aborting...");
+				return;
+			}
+			var afctemplate = afc_re.exec(pagetext)[0];
+			var endindex = pagetext.indexOf(afctemplate) + afctemplate.length;
+			pagetext = pagetext.substring(0, endindex) + '\n' + newComment + '\n----\n' + pagetext.substring(endindex);
+		}
 		postpone_re = /\{\{AfC postpone G13\s*(?:\|\s*(\d*)\s*)?\}\}/ig;
 		var match = postpone_re.exec(pagetext);
 		if (match) {
