@@ -1,6 +1,10 @@
 //<nowiki>
 // Script should be located at [[MediaWiki:Gadget-afchelper.js/core.js]]
 
+function jqEsc(expression) {
+	return expression.replace(/[!"#$%&'()*+,.\/:;<=>?@\[\\\]^`{|}~]/g, '\\$&'); 
+}
+
 importScript('User:Timotheus Canens/displaymessage.js');
 var afchelper_baseurl = mw.config.get('wgServer') + '/w/index.php?action=raw&ctype=text/javascript&title=MediaWiki:Gadget-afchelper.js';
 
@@ -64,7 +68,7 @@ function afcHelper_escapeHtmlChars(original) {
 }
 
 function afcHelper_getPageText(title, show, redirectcheck, timestamp) {
-	if (show) document.getElementById('afcHelper_status').innerHTML += '<li id="afcHelper_get' + escape(title) + '">Getting <a href="' + wgArticlePath.replace("$1", encodeURI(title)) + '" title="' + title + '">' + title + '</a></li>';
+	if (show) $('#afcHelper_status').html($('#afcHelper_status').html() + '<li id="afcHelper_get' + jqEsc(title) + '">Getting <a href="' + wgArticlePath.replace("$1", encodeURI(title)) + '" title="' + title + '">' + title + '</a></li>');
 
 	request = {
 				'action': 'query',
@@ -88,7 +92,7 @@ function afcHelper_getPageText(title, show, redirectcheck, timestamp) {
 
 	pageid = response['query']['pageids'][0];
 	if (pageid === "-1") {
-		if (show) document.getElementById('afcHelper_get' + escape(title)).innerHTML = 'The page <a class="new" href="' + wgArticlePath.replace("$1", encodeURI(title)) + '" title="' + title + '">' + title + '</a> does not exist';
+		if (show) $('#afcHelper_get' +jqEsc(title)).html('The page <a class="new" href="' + wgArticlePath.replace("$1", encodeURI(title)) + '" title="' + title + '">' + title + '</a> does not exist');
 		return '';
 	}
 	var newtext = response['query']['pages'][pageid]['revisions'][0]['*'];
@@ -98,7 +102,7 @@ function afcHelper_getPageText(title, show, redirectcheck, timestamp) {
 		if ((typeof(oldusername) !== 'undefined') && (typeof(newusername) !== 'undefined') && (oldusername != newusername)){
 			usertalkpage = newusername;
 			if (show) {
-				document.getElementById('afcHelper_status').innerHTML += '<li id="afcHelper_get' + escape(title) + '">Got <a href="' + wgArticlePath.replace("$1", encodeURI(title)) + '" title="' + newusername + '">' + newusername + '</a> (page was renamed from ' + oldusername + ')</li>';
+				$('#afcHelper_status').html($('#afcHelper_status').html() + '<li id="afcHelper_get' + jqEsc(title) + '">Got <a href="' + wgArticlePath.replace("$1", encodeURI(title)) + '" title="' + newusername + '">' + newusername + '</a> (page was renamed from ' + oldusername + ')</li>');
 			}
 		} else {
 			redirectcheck = false;
@@ -106,7 +110,7 @@ function afcHelper_getPageText(title, show, redirectcheck, timestamp) {
 	} else {
 			redirectcheck = false;
 	}		
-	if (show && !redirectcheck)	document.getElementById('afcHelper_status').innerHTML += '<li id="afcHelper_get' + escape(title) + '">Got <a href="' + wgArticlePath.replace("$1", encodeURI(title)) + '" title="' + title + '">' + title + '</a></li>';
+	if (show && !redirectcheck)	$('#afcHelper_status').html($('#afcHelper_status').html() + '<li id="afcHelper_get' + jqEsc(title) + '">Got <a href="' + wgArticlePath.replace("$1", encodeURI(title)) + '" title="' + title + '">' + title + '</a></li>');
 	if (!timestamp) return newtext;
 	else return {'pagetext':newtext,'timestamp':response['query']['pages'][pageid]['revisions'][0]['timestamp']}
 }
@@ -117,7 +121,7 @@ function afcHelper_editPage(title, newtext, summary, createonly) {
 	$("#afcHelper_finished_wrapper").html('<span id="afcHelper_AJAX_finished_' + afcHelper_AJAXnumber + '" style="display:none">' + $("#afcHelper_finished_wrapper").html() + '</span>');
 	var func_id = afcHelper_AJAXnumber;
 	afcHelper_AJAXnumber++;
-	document.getElementById('afcHelper_status').innerHTML += '<li id="afcHelper_edit' + escape(title) + '">Editing <a href="' + wgArticlePath.replace("$1", encodeURI(title)) + '" title="' + title + '">' + title + '</a></li>';
+	$('#afcHelper_status').html($('#afcHelper_status').html() + '<li id="afcHelper_edit' + jqEsc(title) + '">Editing <a href="' + wgArticlePath.replace("$1", encodeURI(title)) + '" title="' + title + '">' + title + '</a></li>');
 	request = {
 				'action': 'edit',
 				'title': title,
@@ -131,16 +135,16 @@ function afcHelper_editPage(title, newtext, summary, createonly) {
 	api.post(request)
 			.done(function ( data ) {
 				if ( data && data.edit && data.edit.result && data.edit.result == 'Success' ) {
-					document.getElementById('afcHelper_edit' + escape(title)).innerHTML = 'Saved <a href="' + wgArticlePath.replace("$1", encodeURI(title)) + '" title="' + title + '">' + title + '</a>';
+					$('#afcHelper_edit' + jqEsc(title)).html('Saved <a href="' + wgArticlePath.replace("$1", encodeURI(title)) + '" title="' + title + '">' + title + '</a>');
 				} else {
-					document.getElementById('afcHelper_edit' + escape(title)).innerHTML = '<div style="color:red"><b>Edit failed on <a href="' + wgArticlePath.replace("$1", encodeURI(title)) + '" title="' + title + '">' + title + '</a></b></div>. Error info:' + error;
+					$('#afcHelper_edit' + jqEsc(title)).html('<div class="notice"><b>Edit failed on <a href="' + wgArticlePath.replace("$1", encodeURI(title)) + '" title="' + title + '">' + title + '</a></b></div>. Error info:' + response['error']['code'] + ' : ' + response['error']['info']);
 				}
 			} )
 			.fail( function ( error ) {
 				if (createonly && error == "articleexists")
-					document.getElementById('afcHelper_edit' + escape(title)).innerHTML = '<div style="color:red"><b>Edit failed on <a href="' + wgArticlePath.replace("$1", encodeURI(title)) + '" title="' + title + '">' + title + '</a></b></div>. Error info: The article already exists!';
+					$('#afcHelper_edit' + jqEsc(title)).html('<div class="notice"><b>Edit failed on <a href="' + wgArticlePath.replace("$1", encodeURI(title)) + '" title="' + title + '">' + title + '</a></b></div>. Error info: The article already exists!');
 				else
-					document.getElementById('afcHelper_edit' + escape(title)).innerHTML = '<div style="color:red"><b>Edit failed on <a href="' + wgArticlePath.replace("$1", encodeURI(title)) + '" title="' + title + '">' + title + '</a></b></div>. Error info:' + error;
+					$('#afcHelper_edit' + jqEsc(title)).html('<div class="notice"><b>Edit failed on <a href="' + wgArticlePath.replace("$1", encodeURI(title)) + '" title="' + title + '">' + title + '</a></b></div>. Error info: ' + error); 
 			})
 			.always( function () {
 				$("#afcHelper_AJAX_finished_" + func_id).css("display", '');
