@@ -115,6 +115,61 @@ function afcHelper_getPageText(title, show, redirectcheck, timestamp) {
 	else return {'pagetext':newtext,'timestamp':response['query']['pages'][pageid]['revisions'][0]['timestamp']}
 }
 
+function afcHelper_deletePage(title,reason) {
+	// First set up the status log
+	$("#afcHelper_finished_wrapper").html('<span id="afcHelper_AJAX_finished_' + afcHelper_AJAXnumber + '" style="display:none">' + $("#afcHelper_finished_wrapper").html() + '</span>');
+	var func_id = afcHelper_AJAXnumber;
+	afcHelper_AJAXnumber++;
+	document.getElementById('afcHelper_status').innerHTML += '<li id="afcHelper_delete' + escape(title) + '">Deleting <a href="' + wgArticlePath.replace("$1", encodeURI(title)) + '" title="' + title + '">' + title + '</a></li>';
+
+	// Then get the deletion token
+	tokenrequest = {
+				'action': 'query',
+				'prop': 'info',
+				'format': 'json',
+				'intoken': 'delete',
+				'indexpageids': true,
+				'titles' : title
+			};
+	var tokenresponse = JSON.parse(
+		$.ajax({
+			url: mw.util.wikiScript('api'),
+			data: tokenrequest,
+			async: false
+		})
+		.responseText
+	);
+
+	pageid = tokenresponse['query']['pageids'][0];
+	token = tokenresponse['query']['pages'][pageid]['deletetoken'];
+
+	// And finally delete the page
+	delrequest = {
+				'action': 'delete',
+				'reason': reason + afcHelper_advert,
+				'format': 'json',
+				'token': token,
+				'title' : title
+			}
+	var delresponse = JSON.parse(
+		$.ajax({
+			type: "POST",
+			url: mw.util.wikiScript('api'),
+			data: delrequest,
+			async: false
+		})
+		.responseText
+	);
+
+	if (delresponse && delresponse.delete) {
+		document.getElementById('afcHelper_delete' + escape(title)).innerHTML = 'Deleted <a href="' + wgArticlePath.replace("$1", encodeURI(title)) + '" title="' + title + '">' + title + '</a>';
+		return true;
+	} else {
+		document.getElementById('afcHelper_delete' + escape(title)).innerHTML = '<div style="color:red"><b>Deletion failed on <a href="' + wgArticlePath.replace("$1", encodeURI(title)) + '" title="' + title + '">' + title + '</a></b></div>. Error info:' + error;
+		return false;
+	}
+}
+
 function afcHelper_editPage(title, newtext, summary, createonly) {
 	var edittoken = mw.user.tokens.get('editToken');
 	summary += afcHelper_advert;
