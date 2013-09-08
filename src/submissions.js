@@ -325,18 +325,18 @@ function afcHelper_prompt(type) {
 		// Then generate a dynamic menu for them
 		var wikiprojectSelect = afcHelper_generateChzn("afcHelper_wikiproject_selection",'Start typing to filter the list of WikiProjects...',afcHelper_wikiprojectindex);
 		text += '<br /><label for="afcHelper_wikiproject_selection">Choose associated WikiProjects to be automatically be added to the talk page: </label><br>' + wikiprojectSelect;
-		text += '<br /><label for="afcHelper_pagePrepend">Prepend wikicode to page (optional, e.g. maintenance boxes): </label><br><textarea class="afcHelper_expand" rows="1" cols="60" id="afcHelper_pagePrepend"></textarea>' +
-		'<br /><label for="afcHelper_pageAppend">Append wikicode to page (optional, e.g. categories or stub templates): </label><br><textarea class="afcHelper_expand" rows="1" cols="60" id="afcHelper_pageAppend"></textarea>' +
-		'<br /><label for="afcHelper_talkAppend">Append wikicode to talk page (optional, e.g. WikiProject templates): </label><br><textarea class="afcHelper_expand" rows="1" cols="60" id="afcHelper_talkAppend"></textarea>' +
+		text += '<br /><label for="afcHelper_pagePrepend">Prepend wikicode to page (optional, e.g. maintenance boxes): </label><br><textarea class="afcHelper_expand" rows="1" cols="60" id="afcHelper_pagePrepend" spellcheck="true"></textarea>' +
+		'<br /><label for="afcHelper_pageAppend">Append wikicode to page (optional, e.g. categories or stub templates): </label><br><textarea class="afcHelper_expand" rows="1" cols="60" id="afcHelper_pageAppend" spellcheck="true"></textarea>' +
+		'<br /><label for="afcHelper_talkAppend">Append wikicode to talk page (optional, e.g. WikiProject templates): </label><br><textarea class="afcHelper_expand" rows="1" cols="60" id="afcHelper_talkAppend" spellcheck="true"></textarea>' +
 		'<br /><label for="afcHelper_reqphoto">Does the article need a photo/image? (will add &#123;&#123;<a href="'+ wgArticlePath.replace("$1", 'Template:Reqphoto') + '" title="Template:Reqphoto" target="_blank">reqphoto</a>&#125;&#125; to talk page) </label><input type="checkbox" id="afcHelper_reqphoto"/>' +
 		'<br /><label for="afcHelper_reqinfobox">Does the article need an infobox? (will add &#123;&#123;<a href="'+ wgArticlePath.replace("$1", 'Template:Reqinfobox') + '" title="Template:Reqinfobox" target="_blank">reqinfobox</a>&#125;&#125; to talk page) </label><input type="checkbox" id="afcHelper_reqinfobox"/>' +
 		'<br /><label for="afcHelper_biography">Is the article a biography? </label><input type="checkbox" id="afcHelper_biography" onchange=afcHelper_trigger(\'afcHelper_biography_blp\') />' +
-		'<div id="afcHelper_biography_blp" style="display:none"><label for="afcHelper_dateofbirth">Month and day of birth (if known/given, e.g. <i>November 2</i>): </label><input type="text" id="afcHelper_dateofbirth" />' +
+		'<div id="afcHelper_biography_blp" style="display:none"><label for="afcHelper_dateofbirth">Month and day of birth (if known/given, e.g. <i>November 2</i>): </label><input type="text" id="afcHelper_dateofbirth" spellcheck="true"/>' +
 		'<br /><label for="afcHelper_yearofbirth">Year of birth (if known/given, e.g. <i>1901</i>): </label><input type="text" id="afcHelper_yearofbirth" />' +
 		'<br /><label for="afcHelper_listas">Surname, Name (if known/given, for <a href="' + wgArticlePath.replace("$1", 'Wikipedia:Listas') + '" title="Wikipedia:Listas" target="_blank">LISTAS</a> &ndash; e.g. <i>Magellan, Ferdinand</i>): </label><input type="text" id="afcHelper_listas" />' +
-		'<br /><label for="afcHelper_shortdescription">A very short description about the person (e.g. <i>sea explorer</i> &ndash; <a href="' + wgArticlePath.replace("$1", 'Wikipedia:Persondata#Short_description') + '" title="Wikipedia:Persondata#Short_description" target="_blank">more details</a>): </label><input type="text" id="afcHelper_shortdescription" />' +
+		'<br /><label for="afcHelper_shortdescription">A very short description about the person (e.g. <i>sea explorer</i> &ndash; <a href="' + wgArticlePath.replace("$1", 'Wikipedia:Persondata#Short_description') + '" title="Wikipedia:Persondata#Short_description" target="_blank">more details</a>): </label><input type="text" id="afcHelper_shortdescription" spellcheck="true"/>' +
 		'<br /><label for="afcHelper_alternativesname">Alternative names (e.g. <i>Magallanes, Fernando de</i>): </label><input type="text" id="afcHelper_alternativesname" />' +
-		'<br /><label for="afcHelper_placeofbirth">Place of birth (if known/given): </label><input type="text" id="afcHelper_placeofbirth" />' +
+		'<br /><label for="afcHelper_placeofbirth">Place of birth (if known/given): </label><input type="text" id="afcHelper_placeofbirth" spellcheck="true"/>' +
 		'<br /><label for="afcHelper_biography_status">Is the article about a living person? </label>' + afcHelper_generateSelect('afcHelper_biography_status', [{
 			label: 'Living',
 			value: 'live'
@@ -347,8 +347,8 @@ function afcHelper_prompt(type) {
 			label: 'Unknown',
 			selected: true,
 			value: 'unknown'
-		}], "afcHelper_trigger(\'afcHelper_biography_status_box\')") + '<div id="afcHelper_biography_status_box" style="display:none"><label for="afcHelper_placeofdeath">Place of death (if known/given): </label><input type="text" id="afcHelper_placeofdeath" />' +
-		'<br /><label for="afcHelper_dateofdeath">Month and day of death (if known/given, e.g. <i>September 3</i>): </label><input type="text" id="afcHelper_dateofdeath" />' +
+		}], "afcHelper_trigger(\'afcHelper_biography_status_box\')") + '<div id="afcHelper_biography_status_box" style="display:none"><label for="afcHelper_placeofdeath">Place of death (if known/given): </label><input type="text" id="afcHelper_placeofdeath" spellcheck="true"/>' +
+		'<br /><label for="afcHelper_dateofdeath">Month and day of death (if known/given, e.g. <i>September 3</i>): </label><input type="text" id="afcHelper_dateofdeath" spellcheck="true"/>' +
 		'<br /><label for="afcHelper_yearofdeath">Year of death (if known/given): </label><input type="text" id="afcHelper_yearofdeath" />' +
 		'</div></div><div id="afcHelper_extra_inline"></div>' +
 		'<button class="afcHelper_button" type="button" id="afcHelper_accept_button" onclick="afcHelper_act(\'accept\')">Accept and publish to mainspace</button>';
@@ -368,7 +368,7 @@ function afcHelper_prompt(type) {
 		var reasonSelect = afcHelper_generateSelect("afcHelper_reason", afcHelper_reasonhash, "afcHelper_onChange(this)");
 		text += reasonSelect;
 		text += '<div id="afcHelper_extra_inline"></div>'; 
-		text += '<label for="afcHelper_comments">Additional comments (optional, signature is automatically added): </label><textarea rows="3" cols="60" id="afcHelper_comments"></textarea>' +
+		text += '<label for="afcHelper_comments">Additional comments (optional, signature is automatically added): </label><textarea rows="3" cols="60" id="afcHelper_comments" spellcheck="true"></textarea>' +
 		'<label for="afcHelper_blank">Blank the submission (replace the content with {{<a href="' + wgArticlePath.replace("$1", 'Template:Afc_cleared') + '" title="Template:Afc cleared" target="_blank">afc cleared</a>}}):</label><input type="checkbox" id="afcHelper_blank" onchange=afcHelper_trigger(\'afcHelper_afcccleared\') /><br/>' +
 		'<div id="afcHelper_extra_afccleared" style="display:none"><label for="afcHelper_afccleared">Trigger the \'csd\' parameter and nominate the submission for speedy deletion?</label> <input type="checkbox" id="afcHelper_blank_csd"/><br/></div>' +
 		'<label for="afcHelper_notify">Notify author:</label><input type="checkbox" onchange=afcHelper_trigger(\'afcHelper_notify_Teahouse\') id="afcHelper_notify" checked="checked" /><br/>' +
@@ -394,11 +394,11 @@ function afcHelper_prompt(type) {
 		$("#afcHelper_extra").html(text);
 	} else if (type === 'mark') {
 		var text = '<h3>Marking submission ' + afcHelper_PageName + ' as under review</h3>' +
-		'<label for="afcHelper_comments">Additional comment (signature is automatically added): </label><textarea rows="3" cols="60" id="afcHelper_comments"></textarea><br/><button type="button" class="afcHelper_button mark" id="afcHelper_prompt_button" onclick="afcHelper_act(\'mark\')">Place under review</button>';
+		'<label for="afcHelper_comments">Additional comment (signature is automatically added): </label><textarea rows="3" cols="60" id="afcHelper_comments" spellcheck="true"></textarea><br/><button type="button" class="afcHelper_button mark" id="afcHelper_prompt_button" onclick="afcHelper_act(\'mark\')">Place under review</button>';
 		$("#afcHelper_extra").html(text);
 	} else if (type === 'comment') {
 		var text = '<h3>Commenting on ' + afcHelper_PageName + ' </h3>' +
-		'<label for="afcHelper_comments">Comment (signature is automatically added): </label><textarea rows="3" cols="60" id="afcHelper_comments"></textarea><br/><button type="button" class="afcHelper_button comment" id="afcHelper_prompt_button" onclick="afcHelper_act(\'comment\')">Add comment</button>';
+		'<label for="afcHelper_comments">Comment (signature is automatically added): </label><textarea rows="3" cols="60" id="afcHelper_comments" spellcheck="true"></textarea><br/><button type="button" class="afcHelper_button comment" id="afcHelper_prompt_button" onclick="afcHelper_act(\'comment\')">Add comment</button>';
 		$("#afcHelper_extra").html(text);
 	}
 }
@@ -1077,7 +1077,7 @@ function afcHelper_onChange(select) {
 	if (value === 'cv') $("#afcHelper_extra_inline").html('<label for="afcHelper_extra">Please enter the URL if available: </label><input type="text" id="afcHelper_extra_inlinebox" value="http://" size="100%"/>');
 	else if (value === 'dup') $("#afcHelper_extra_inline").html('<label for="afcHelper_extra_inline">Please enter the title of the duplicate submission, if possible. Do not enter the prefix (e.g., John Doe): </label><input type="text" id="afcHelper_extra_inlinebox" value="" />');
 	else if (value === 'mergeto') $("#afcHelper_extra_inline").html('<label for="afcHelper_extra_inline">Please enter the title of the article to merge to, if possible: </label><input type="text" id="afcHelper_extra_inlinebox" value="" />');
-	else if (value === 'lang') $("#afcHelper_extra_inline").html('<label for="afcHelper_extra_inline">Please enter the language the article is written in, if possible/known (e.g. German): </label><input type="text" id="afcHelper_extra_inlinebox" value="" />');
+	else if (value === 'lang') $("#afcHelper_extra_inline").html('<label for="afcHelper_extra_inline">Please enter the language the article is written in, if possible/known (e.g. German): </label><input type="text" id="afcHelper_extra_inlinebox" value="" spellcheck="true"/>');
 	else if (value === 'exists') $("#afcHelper_extra_inline").html('<label for="afcHelper_extra_inline">Please enter the title of the existing article, if possible: </label><input type="text" id="afcHelper_extra_inlinebox" value="" />');
 	else if (value === 'plot') $("#afcHelper_extra_inline").html('<label for="afcHelper_extra_inline">Please enter the title of the existing article on the fiction, if there is one: </label><input type="text" id="afcHelper_extra_inlinebox" value="" />');
 	else $("#afcHelper_extra_inline").html("");
