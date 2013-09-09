@@ -603,7 +603,7 @@ function afcHelper_act(action) {
 			var lastentry = recenttext.toLowerCase().lastIndexOf("\{\{afc contrib");
 			var firstentry = recenttext.toLowerCase().indexOf("\{\{afc contrib");
 			recenttext = recenttext.substring(0, lastentry);
-			recenttext = recenttext.substring(0, firstentry) + newentry + recenttext.substring(firstenafcHelper_talkAppendtry);
+			recenttext = recenttext.substring(0, firstentry) + newentry + recenttext.substring(firstenafcHelper_talkAppendafcHelper_talkAppendtry);
 			afcHelper_editPage("Wikipedia:Articles for creation/recent", recenttext, 'Updating recent AFC creations', false);
 
 			var talktext = "";
@@ -1542,7 +1542,7 @@ function regex(search,replace,repeat) {
 	}
 		/* perform */
 	for(var i=0; i<repeat; i++) {
-		page text = pagetext.replace(search,replace);
+		text = text.replace(search,replace);
 	}
 }
 
