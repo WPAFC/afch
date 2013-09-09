@@ -1232,7 +1232,7 @@ function afcHelper_cleanup(text) {
 	text = text.replace("{{reflist|refs=}}", "{{reflist}}"); // hack to make sure we don't leave an unneeded |refs=
 	text = text.replace(/\{\{(userspacedraft|userspace draft|user sandbox)(?:\{\{[^{}]*\}\}|[^}{])*\}\}/ig, "");
 	text = text.replace(/<!--\s*-->/ig, ""); // Remove empty HTML comments
-	text = text.replace(/^[-]{4,}$/igm, ""); // Removes horizontal rules
+	text = text.replace(/^----+$/igm, ""); // Removes horizontal rules
 	text = text.replace(/\[\[:Category:Articles created via the Article Wizard\]\]/gi, "[[Category:Articles created via the Article Wizard]]");
 	text = text.replace(/\[\[:?Category:AfC(_|\s*)+submissions(_|\s*)+with(_|\s*)+missing(_|\s*)+AfC(_|\s*)+template\]\]/gi, ""); // Remove "AfC submission with missing AfC template" maintenace category
 
