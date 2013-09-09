@@ -247,7 +247,7 @@ function afcHelper_prompt(type) {
 			value: 'list'
 		}];
 		// checking for ANY submission template (doesn't matter if declined) for the type parameter
-		// TODO: use boolean variables and add the disambiguation check to the accept stuff deepeer
+		// TODO: use boolean variables and add the disambiguation check to the accept stuff deeper
 		var afcdab_re = /\{\{\s*afc submission\s*\|(?:\{\{[^\{\}]*\}\}|[^\}\{])*\|\s*type\s*=\s*dab\s*(?:\{\{[^\{\}]*\}\}|[^\}\{])*\}\}/i;
 		var afctemplate_re = /\{\{\s*afc submission\s*\|(?:\{\{[^\{\}]*\}\}|[^\}\{])*\|\s*type\s*=\s*template\s*(?:\{\{[^\{\}]*\}\}|[^\}\{])*\}\}/i;
 		if ((afcdab_re.test(pagetext)) || (disambig_re.test(pagetext))) {
@@ -433,7 +433,6 @@ function afcHelper_act(action) {
 		var comment = $("#afcHelper_comments").val();
 		displayMessage('<ul id="afcHelper_status"></ul><ul id="afcHelper_finish"></ul>');
 		afcHelper_displaymessagehelper('done','standard');
-//todo
 		var containComment = 0;
 		if (comment !== '') {
 			var newComment = "\{\{afc comment|1=" + comment + " \~\~\~\~\}\}";
@@ -462,7 +461,6 @@ function afcHelper_act(action) {
 	} else if (action === 'g13') {
 		displayMessage('<ul id="afcHelper_status"></ul><ul id="afcHelper_finish"></ul>');
 		afcHelper_displaymessagehelper('done','standard');
-		// tag page with "{{db-g13}}"
 		timestamp = afcHelper_cache.afcHelper_lastedited;
 		newtext = "{{Db-g13|ts=" + timestamp + "}}\n" + pagetext;
 
@@ -483,7 +481,7 @@ function afcHelper_act(action) {
 		}
 		users.push(afcHelper_page_creator(afcHelper_PageName)); // page creator 
 		var uniqueUsers = [];
-		$.each(users, function(i, l) { // we use jquery for better cross-browser support
+		$.each(users, function(i, l) {
 			if ($.inArray(l, uniqueUsers) === -1) uniqueUsers.push(l);
 		});
 		for (var i = 0; i < uniqueUsers.length; i++) {
@@ -493,7 +491,6 @@ function afcHelper_act(action) {
 			usertext += "\n{{subst:Db-afc-notice|" + afcHelper_PageName + "}} ~~~~";
 			afcHelper_editPage(usertalkpage, usertext, 'Notification: [[WP:G13|G13]] speedy deletion nomination of [[' + afcHelper_PageName + ']]', false);
 		}
-		// Log the CSD nomination
 		afcHelper_logcsd(afcHelper_PageName,"[[CSD:G13]] ({{tl|db-afc}})",uniqueUsers);
 	} else if (action === 'submit') {
 		var typeofsubmit = $("input[name=afcHelper_submit]:checked").val();
@@ -629,7 +626,6 @@ function afcHelper_act(action) {
 			};
 
 			if (talkAppend) talktext += talkAppend + "\n"; 
-			// disambig check
 			if (assessment === 'disambig') {
 				talktext += '\{\{WikiProject Disambiguation\}\}\n';
 			}
@@ -890,7 +886,6 @@ function afcHelper_act(action) {
 		}
 		if (!blank) {
 			var containComment = 0;
-			//var containComment = (pagetext.indexOf('----') != -1);
 			containComment = pagetext.indexOf('----');
 			if (newcomment !== '') {
 				if (containComment !== 0) {
@@ -913,9 +908,7 @@ function afcHelper_act(action) {
 					// And for good measure log the CSD nomination
 					afcHelper_logcsd(afcHelper_PageName,"[[CSD:G12]] ({{tl|db-copyvio}})",[afcHelper_authorusername]);
 				} else {
-					// Just add {{afc cleared|csd}}
 					pagetext = newtemplate + '\n' + newcomment + '\n\{\{afc cleared|csd\}\}';
-					// Log the CSD nomination, but use db-reason since we don't know specifics
 					afcHelper_logcsd(afcHelper_PageName,"{{tl|db-reason}} ([[WP:AFC|Articles for creation]])",[afcHelper_authorusername]);
 				}
 			} else {
@@ -933,7 +926,6 @@ function afcHelper_act(action) {
 		displayMessage('<ul id="afcHelper_status"></ul><ul id="afcHelper_finish"></ul>');
 		afcHelper_displaymessagehelper('done','standard');
 		var containComment = 0;
-		//var containComment = (pagetext.indexOf('----') != -1);
 		containComment = pagetext.indexOf('----');
 		if (containComment === -1) containComment = 0;
 
@@ -1096,7 +1088,6 @@ function afcHelper_movePage(oldtitle, newtitle, summary, callback, overwrite_red
 	$("#afcHelper_AJAX_finished_" + func_id).css("display", '');
 }
 
-// Create portlet link
 var afcportletLink = mw.util.addPortletLink('p-cactions', '#', 'Review', 'ca-afcHelper', 'Review', 'a');
 // Bind click handler
 $(afcportletLink).click(function(e) {
@@ -1141,7 +1132,6 @@ function afcHelper_onChange(select) {
 function afcHelper_cleanup(text) {
 	// Remove html comments (<!--) that surround categories
 	text = text.replace(/\<!--\s*((\[\[:{0,1}(Category:.*?)\]\]\s*)+)--\>/gi, "$1");
-	//Commenting out cats
 	text = text.replace(/\[\[Category:/gi, "\[\[:Category:");
 
 	// Fix {{afc comment}} when possible (takes rest of text on line and converts to a template parameter)
@@ -1156,7 +1146,6 @@ function afcHelper_cleanup(text) {
 	text = text.replace(/[\s\n]*(={2,})\s*(?:\s*<big>|\s*''')*\s*(.*?)\s*(?:\s*<\/big>|\s*''')*\s*?(={2,})[\n\s]*/gi, "\n\n$1 $2 $1\n\n");
 	// Run AutoEd automatically
 	var AutoEd_baseurl = '//en.wikipedia.org/w/index.php?action=raw&ctype=text/javascript&title=Wikipedia:AutoEd/';
-	//Import individual modules for use
 	importScriptURI(AutoEd_baseurl + 'unicodify.js', function() {
 		text = autoEdUnicodify(text);
 	});
@@ -1366,7 +1355,6 @@ function afcHelper_warnings(pagetext) {
 	}
 
 	// count <ref> and </ref> and check if it fits
-	// Special thanks to [[User:Betacommand]] for KISS
 	var rerefbegin = /\<\s*ref\s*(name\s*=|group\s*=)*\s*[^\/]*>/ig;
 	var rerefend = /\<\/\s*ref\s*\>/ig;
 	var reflistre = /(\{\{reflist(?:\{\{[^\{\}]*\}\}|[^\}\{])*\}\})|(\<\s*references\s*\/\s*\>)/i;
@@ -1410,7 +1398,6 @@ function afcHelper_warnings(pagetext) {
 
 //function to add afc cleared (csd) checkbox if afc cleared is checked
 function afcHelper_trigger(type) {
-	// TODO: jQuery-ify this part, but I don't have internet or local documentation...
 	var e = document.getElementById(type);
 	if (type === "afcHelper_biography_status_box") {
 		var f = document.getElementById("afcHelper_biography_status");
