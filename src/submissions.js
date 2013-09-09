@@ -603,7 +603,7 @@ function afcHelper_act(action) {
 			var lastentry = recenttext.toLowerCase().lastIndexOf("\{\{afc contrib");
 			var firstentry = recenttext.toLowerCase().indexOf("\{\{afc contrib");
 			recenttext = recenttext.substring(0, lastentry);
-			recenttext = recenttext.substring(0, firstentry) + newentry + recenttext.substring(firstenafcHelper_talkAp id=pendtry);
+			recenttext = recenttext.substring(0, firstentry) + newentry + recenttext.substring(firstenafcHelper_talkAppendtry);
 			afcHelper_editPage("Wikipedia:Articles for creation/recent", recenttext, 'Updating recent AFC creations', false);
 
 			var talktext = "";
@@ -1182,6 +1182,12 @@ function afcHelper_cleanup(text) {
 	importScriptURI(AutoEd_baseurl + 'links.js', function() {
 		text = autoEdLinks(text);
 	});
+
+//TODO: run formatgenerell… just a test
+	importScriptURI(afchelper_baseurl + '/formatgenerell.js', function() {
+		Ohc_formatgeneral();
+	});
+
 	//Ref tag correction part #1: remove whitespaces and commas between the ref tags and whitespaces before ref tags
 	text = text.replace(/\s*(\<\/\s*ref\s*\>)\s*[,]*\s*(<\s*ref\s*(name\s*=|group\s*=)*\s*[^\/]*>)\s*$/gim, "$1$2");
 	text = text.replace(/\s*(<\s*ref\s*(name\s*=|group\s*=)*\s*.*[^\/]+>)\s*$/gim, "$1");
@@ -1526,6 +1532,18 @@ function afcHelper_page_creator(title) {
 	user = response['query']['pages'][pageid]['revisions'][0]['user'];
 	afcHelper_cache[title] = user;
 	return user;
+}
+
+/* search & replace */
+function regex(search,replace,repeat) {
+	/* define how many times to perform */
+	if(!repeat || repeat<0) {
+		var repeat = 1;
+	}
+		/* perform */
+	for(var i=0; i<repeat; i++) {
+		page text = pagetext.replace(search,replace);
+	}
 }
 
 function afcHelper_turnvisible(type, bool) {
