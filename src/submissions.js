@@ -1144,6 +1144,7 @@ function afcHelper_cleanup(text) {
 	text = text.replace(/https?:\/\/(en.wikipedia.org\/wiki|enwp.org)\/([^\s\<]+)/gi, "\[\[$2\]\]");
 	//remove boldings and big-tags from headlines; ignore level 1 headlines for not breaking URLs and other stuff!
 	text = text.replace(/[\s\n]*(={2,})\s*(?:\s*<big>|\s*''')*\s*(.*?)\s*(?:\s*<\/big>|\s*''')*\s*?(={2,})[\n\s]*/gi, "\n\n$1 $2 $1\n\n");
+
 	// Run AutoEd automatically
 	var AutoEd_baseurl = '//en.wikipedia.org/w/index.php?action=raw&ctype=text/javascript&title=Wikipedia:AutoEd/';
 	importScriptURI(AutoEd_baseurl + 'unicodify.js', function() {
@@ -1183,9 +1184,10 @@ function afcHelper_cleanup(text) {
 		text = autoEdLinks(text);
 	});
 
+	// Run formatgeneral.js automatically
 	importScriptURI(mw.config.get('wgServer') + '/w/index.php?action=raw&ctype=text/javascript&title=User:Ohconfucius/test/formatgeneral.js/core.js', function() {
-	//function stolen from [[meta:User:Pathoschild/Scripts/Regex_menu_framework.js]]
 		function regex(search,replace,repeat) {
+			// regex() function stolen from [[meta:User:Pathoschild/Scripts/Regex_menu_framework.js]]
 			if(!repeat || repeat<0)	var repeat = 1;
 			for(var i=0; i<repeat; i++) {
 				text = text.replace(search,replace);
@@ -1396,7 +1398,7 @@ function afcHelper_warnings(pagetext) {
 	var rerefdouble = /\<\s*ref\s*(name\s*=|group\s*=)*\s*[^\/]*\>?(\<\s*[^\/]*\s*ref\s*(name\s*=|group\s*=)*)/ig;
 	var refdouble = texttest.match(rerefdouble);
 	if (refdouble) {
-		errormsg += 'The script found following bad lines:<br/><i>';
+		errormsg += 'The script found following malformed references:<br/><i>';
 		for (i = 0; i < refdouble.length; i++)
 		errormsg += afcHelper_escapeHtmlChars(refdouble[i].toString()) + '&gt;<br/>';
 		errormsg += '</i>';
