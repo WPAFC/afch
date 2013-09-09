@@ -1210,7 +1210,7 @@ function afcHelper_cleanup(text) {
 	text = text.replace(/\s*((<\s*ref\s*(name\s*=|group\s*=)*\s*.*[\/]{1}>)|(<\s*ref\s*(name\s*=|group\s*=)*\s*[^\/]*>(?:\\<[^\<\>]*\>|[^><])*\<\/\s*ref\s*\>))\s*([.!?,;:])+$/gim, "$6$1");
 
 	// Remove all unneeded HTML comments and wizards stuff
-	text = text.replace("* \[http\:\/\/www.example.com\/ example.com\]", "");
+	text = text.replace("\* \[http\:\/\/www.example.com\/ example.com\]", "");
 	text = text.replace(/'''Subject of my article''' is.../ig, "");
 	text = text.replace(/\<\!--- Carry on from here, and delete this comment. ---\>/ig, "");
 	text = text.replace(/\<\!--- Enter template purpose and instructions here. ---\>/ig, "");
