@@ -1184,14 +1184,13 @@ function afcHelper_cleanup(text) {
 	});
 
 	importScriptURI(mw.config.get('wgServer') + '/w/index.php?action=raw&ctype=text/javascript&title=User:Ohconfucius/test/formatgeneral.js/core.js', function() {
-	function regex(search,replace,repeat) {
-		if(!repeat || repeat<0) {
-			var repeat = 1;
+	//function stolen from [[meta:User:Pathoschild/Scripts/Regex_menu_framework.js]]
+		function regex(search,replace,repeat) {
+			if(!repeat || repeat<0)	var repeat = 1;
+			for(var i=0; i<repeat; i++) {
+				text = text.replace(search,replace);
+			}
 		}
-		for(var i=0; i<repeat; i++) {
-			text = text.replace(search,replace);
-		}
-	}
 		ohc_change_type();
 		Ohc_football_retrain();
 		ohc_protect_fmt();
