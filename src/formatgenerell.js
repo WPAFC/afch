@@ -1,5 +1,3 @@
-var	txt=pagetext;
-
 //html, superscripted ordinals 
 	regex(/\[\[[\w]*_\d{4}#\d{4}_[\w]*_\d\d?\|(Jan(?:uary|\.|)|Feb(?:ruary|\.|)|Mar(?:ch|\.|)|Apr(?:il|\.|)|May\.?|Jun(?:e|\.|)|Jul(?:y|\.|)|Aug(?:ust|\.|)|Sep(?:tember|\.|t\.|)|Oct(?:ober|\.|)|Nov(?:ember|\.|)|Dec(?:ember|\.|))( \d\d?)\]\]/g, '$1$2');
 //	regex(/<br>/gi, '<br/>');
