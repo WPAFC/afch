@@ -24,3 +24,6 @@ If the script isn't showing up (for `beta` and `develop`), try clearing your cac
 
 ## License
 The script is licensed under the [Creative Commons Attribution-ShareAlike 3.0 Unported License](http://en.wikipedia.org/wiki/Wikipedia:Text_of_Creative_Commons_Attribution-ShareAlike_3.0_Unported_License) and the [GNU Free Documentation License](http://en.wikipedia.org/wiki/Wikipedia:Text_of_the_GNU_Free_Documentation_License).
+
+## Chat
+If you need help or want to discuss something directly, we have a IRC located at freenode.net #wikipedia-en-afc (Webchat: https://webchat.freenode.net/#wikipedia-en-afc ).
