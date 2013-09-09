@@ -1269,6 +1269,9 @@ function afcHelper_cleanup(text) {
 	// Remove empty HTML comments
 	text = text.replace(/<!--\s*-->/ig, "");
 
+	// Remove empty list elements and empty headers
+	text = text.replace(/^\s*[\*#:;]\s*$/igm, "");
+
 	//adding back the submission templates and comment templates
 	if (commentstemplates.length > 0) {
 		text = '----\n' + text;
