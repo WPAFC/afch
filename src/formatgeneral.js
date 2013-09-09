@@ -1,4 +1,5 @@
-//html, superscripted ordinals 
+function Ohc_formats() {
+//html, superscripted ordinals
 	regex(/\[\[[\w]*_\d{4}#\d{4}_[\w]*_\d\d?\|(Jan(?:uary|\.|)|Feb(?:ruary|\.|)|Mar(?:ch|\.|)|Apr(?:il|\.|)|May\.?|Jun(?:e|\.|)|Jul(?:y|\.|)|Aug(?:ust|\.|)|Sep(?:tember|\.|t\.|)|Oct(?:ober|\.|)|Nov(?:ember|\.|)|Dec(?:ember|\.|))( \d\d?)\]\]/g, '$1$2');
 //	regex(/<br>/gi, '<br/>');
 	regex(/(\d)(?:<(?:small|sup)>){2}(th|st|nd|rd)(?:<\/(?:small|sup)>){2}/gi, '$1$2');
@@ -13,7 +14,7 @@
 //rem empty parameters
 // 	regex(/\|[\n]*[ ]*[a-zA-Z][a-z0-9_ ]*=[ ]*[\n]?[ ]*(?=[\|\}])/g, "");
 
-//rem deprecated parameters 
+//rem deprecated parameters
  	regex(/\|\s*influence[sd]\s*=[^\|\{\}]*(?=[\|\}])/g, ""); //rfc infobox person July 2013
 
 //add correct hyphenation
@@ -52,8 +53,8 @@
 	regex(/(==[ ]*Heraldic )(Items)(?=[ ]*=)/g, '$1items');
 	regex(/(==[ ]*Campaign )(Credits)(?=[ ]*=)/g, '$1credits');
 	regex(/(==[ ]*Combat )(Chronicle)(?=[ ]*=)/g, '$1chronicle');
- 
-//other improper capitalisation 
+
+//other improper capitalisation
 //	regex(/(\d(?:st|nd|rd|th) )C(entur(?:ies|y))(?=[ ]*(=|BC|AD|CE))/g, '$1c$2'); //transferring to MOSNUM script
 //	regex(/(\d(?:st|nd|rd|th) )C(entur(?:ies|y))(?![ -]*(?:Fox|[A-Z]\w*))/g, '$1c$2');
 
@@ -97,7 +98,7 @@
         regex(/([Qq]uarter)[\- ]F(inal)/g, '$1-f$2');
         regex(/(\W[^A-Z]+ )[Ss](emi)[\- ]F(inal)/g, '$1s$2-f$3');
         regex(/([Ss]emi)[\- ]F(inal)/g, '$1-f$2');
- 
+
         regex(/(Bring |Turn )[Ii]t o(n)/g, '$1It O$2');   //reverting proper name - title of song or work
         regex(/(Carry )o(n [A-Z]\w*|n film)/g, '$1O$2');   //reverting proper name - 'Carry On' film series
         regex(/(Ma )o(n Shan)/g, '$1O$2');   //reverting proper name - 'Ma On Shan'
@@ -112,9 +113,9 @@
 	regex(/((?:country(?:_represented)?|nationality|residence)\s*=\s*)\{\{flag(?:country|icon|)\|([^{}]+)\}\}/gi, '$1');
 	regex(/((?:birth|death)(?:_?place|)\s*=\s*)\{\{flagu\|([^{}]+)\}\}/gi, '$1$2');
 	regex(/((?:country(?:_represented)?|nationality|residence)\s*=\s*)\{\{flagu\|([^{}]+)\}\}/gi, '$1$2');
-//remove scroll bar for reflists 
+//remove scroll bar for reflists
 	regex(/(References ?={1,4}[\n\r])[\r\n\s]*<div class=[^>]*>([\S\s]*?)<\/div>/g, '$1$2'); 	
-	regex(/((?:Notes ?|References ?)={2,4}\s?[\n\r])[\r\n\s]*(?:\{\{[Rr]eflist\}\}|<[Rr]eferences ?\/>)/g, '$1{{reflist|colwidth=30em}}');  
+	regex(/((?:Notes ?|References ?)={2,4}\s?[\n\r])[\r\n\s]*(?:\{\{[Rr]eflist\}\}|<[Rr]eferences ?\/>)/g, '$1{{reflist|colwidth=30em}}');
 
 //rem redundant spaces underlining and punctuation
 	regex(/(\s)[“”]((?:\w+ )*(?:\w+))[“”]([\s\.,])/gi, '$1\"$2\"$3');
@@ -140,7 +141,7 @@
 //rem 'external' wiktionary links
 	regex(/\[https?:\/\/en\.wiktionary\.org\/wiki\/[\w]*[ ](\w[^\]]*)\]/g, '$1');
 
-//rem linked copyright symbol 
+//rem linked copyright symbol
 	regex(/(\[\[copyright\|©\]\] |©)/g, '');
 
 //rem leading and lagging spaces within wikilinks
@@ -240,7 +241,7 @@
 	regex(/([Ff])reshman (year)/g, '$1irst $2');
 	regex(/([Ss])ophomore (album|year)/g, '$1econd $2');
 
-//remove Crores and Lakhs in templates converting to USD 
+//remove Crores and Lakhs in templates converting to USD
 	regex(/\{\{INR Convert[ ]*\|[ ]*/gi, '{{INRConvert|'); //removing spaces (redirects to shortcut)
 
 	regex(/(\{INRConvert\|)(-?\d+)0000[ ]*\|l(\|\d|)(?:\|nolink=yes|)(\}\})/g, '$1$2|b$3$4');
@@ -278,14 +279,14 @@
 
 /** ------------------------------------------------------------------------ **/
 /// PROTECTION BY STRING SUBSTITUTION
- 
+
 var linkmap=[];
 function ohc_downcase_CEO()
 {
     // protects categories, templates, link pipings, quotes, etc
     // the sensitive part is stored and replaced with a unique identifier,
     // which is later replaced with the stored part.
- 
+
     var protect_function = function(s, begin, replace, end) {
         linkmap.push(replace);
         return begin + "⍌"+(linkmap.length-1)+"⍍" + end;
@@ -306,7 +307,7 @@ function ohc_downcase_CEO()
     regex(/(.)((?:Chairman's|President'?s) (?:XI|Cup))(.)/g, protect_function);
     regex(/(.)(100\scrore club)(.)/gi, protect_function);
     regex(/(.)(Conference of Presidents)(.)/g, protect_function);
- 
+
         regex(/C(hief )E(xecutive )O(fficer\W)/g, 'c$1e$2o$3');
         regex(/C(hief )E(xecutive\W)/g, 'c$1e$2');
         regex(/C(hief )F(inancial )O(fficer\W)/g, 'c$1f$2o$3');
@@ -385,7 +386,7 @@ function ohc_downcase_CEO()
         return res;
     });
 }
- 
+
 function make_dates_bold(){
 //**********************************************************************************************
 // This script was originally written by Lightmouse to make dates bold - for timelines, etc.
@@ -425,7 +426,7 @@ function ohc_change_type(){
 	regex(/(\[\[\d{4})-(\d{2} (?:Asian Club Championship|AFC Champions League|Ekstraklasa|Eredivisie|Serie [A-Z]\d?|UEFA (?:Cup Winners' |)Cup|UEFA (?:Champions|Europa) League|Danish (?:Superliga|[1-3](?:st|nd|rd) Division)|French football Division \d|Czechoslovak First League|Gambrinus liga|Czech Cup|Coppa Italia|[A-Z]* (?:Premier|Super) League|KNVB Cup|Liga (?:Arzit|Leumit))\|)/gi, '$1–$2');
 //plus retraining
 	regex(/(\[\[)(Asian Club Championship|AFC Champions League|Ekstraklasa|Eredivisie|Serie [A-Z]\d?|UEFA (?:Cup Winners' |)Cup|UEFA (?:Champions|Europa) League|Danish (?:Superliga|[1-3](?:st|nd|rd) Division)|French football Division \d|Czechoslovak First League|Gambrinus liga|Czech Cup|Coppa Italia|[A-Z]* (?:Premier|Super) League|KNVB Cup|Liga (?:Arzit|Leumit)) (\d{4})[--](\d{2})(#|\|)/gi, '$1$3–$4 $2$5');
- 
+
 	regex(/(\[\[)(Ten Years)(\]\])/gi, '$110 Years (band)|10 Years$3');
 	regex(/(\[\[)(10 Years)(\]\])/gi, '$1$2 (band)|$2$3');
 
@@ -433,14 +434,14 @@ function ohc_change_type(){
 
 /** ------------------------------------------------------------------------ **/
 /// PROTECTION BY STRING SUBSTITUTION
- 
+
 var linkmap=[];
 function ohc_protect_fmt()
 {
     // protects categories, templates, link pipings, quotes, etc
     // the sensitive part is stored and replaced with a unique identifier,
     // which is later replaced with the stored part.
- 
+
     var protect_function = function(s, begin, replace, end) {
         linkmap.push(replace);
         return begin + "⍌"+(linkmap.length-1)+"⍍" + end;
@@ -457,7 +458,7 @@ function ohc_protect_fmt()
     regex(/(.)(On a Friday)(.)/gi, protect_function);
     regex(/(.)(Carry On [A-Z][a-z]*)(.)/g, protect_function);
     regex(/(.)(10 metre (?:air|running) \w*)(.)/g, protect_function);
- 
+
 }
 
 
