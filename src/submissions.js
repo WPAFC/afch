@@ -1184,6 +1184,14 @@ function afcHelper_cleanup(text) {
 	});
 
 	importScriptURI(mw.config.get('wgServer') + '/w/index.php?action=raw&ctype=text/javascript&title=User:Ohconfucius/test/formatgeneral.js/core.js', function() {
+	function regex(search,replace,repeat) {
+		if(!repeat || repeat<0) {
+			var repeat = 1;
+		}
+		for(var i=0; i<repeat; i++) {
+			text = text.replace(search,replace);
+		}
+	}
 		ohc_change_type();
 		Ohc_football_retrain();
 		ohc_protect_fmt();
@@ -1537,18 +1545,6 @@ function afcHelper_page_creator(title) {
 	user = response['query']['pages'][pageid]['revisions'][0]['user'];
 	afcHelper_cache[title] = user;
 	return user;
-}
-
-/* search & replace */
-function regex(search,replace,repeat) {
-	/* define how many times to perform */
-	if(!repeat || repeat<0) {
-		var repeat = 1;
-	}
-		/* perform */
-	for(var i=0; i<repeat; i++) {
-		text = text.replace(search,replace);
-	}
 }
 
 function afcHelper_turnvisible(type, bool) {
