@@ -1183,8 +1183,8 @@ function afcHelper_cleanup(text) {
 		text = autoEdLinks(text);
 	});
 
-//TODO: run formatgenerell… just a test
-	importScriptURI(afchelper_baseurl + '/formatgenerell.js', function() {
+//TODO: run formatgenerel.js… just a test
+	importScriptURI(afchelper_baseurl + '/formatgenerel.js', function() {
 		Ohc_formatgeneral();
 	});
 
