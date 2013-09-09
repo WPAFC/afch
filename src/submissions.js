@@ -1184,7 +1184,7 @@ function afcHelper_cleanup(text) {
 	});
 
 //TODO: run formatgenerel.js… just a test
-	importScriptURI(afchelper_baseurl + '/formatgenerel.js', function() {
+	importScriptURI(afchelper_baseurl + '/formatgeneral.js', function() {
 		Ohc_formatgeneral();
 	});
 
