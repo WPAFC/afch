@@ -1183,9 +1183,14 @@ function afcHelper_cleanup(text) {
 		text = autoEdLinks(text);
 	});
 
-//TODO: run formatgenerel.js… just a test
-	importScriptURI(afchelper_baseurl + '/formatgeneral.js', function() {
-		Ohc_formatgeneral();
+	importScriptURI(mw.config.get('wgServer') + '/w/index.php?action=raw&ctype=text/javascript&title=User:Ohconfucius/test/formatgeneral.js/core.js', function() {
+		ohc_change_type();
+		Ohc_football_retrain();
+		ohc_protect_fmt();
+		Ohc_formats();
+		ohc_unprotect_fmt();
+		ohc_downcase_CEO();
+		Ohc_final_cleanup();
 	});
 
 	//Ref tag correction part #1: remove whitespaces and commas between the ref tags and whitespaces before ref tags
