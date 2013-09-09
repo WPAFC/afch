@@ -1282,7 +1282,7 @@ function afcHelper_cleanup(text) {
 				if (find_shrinked.test(submissiontemplates[i])) {
 					temp = temp.replace(find_shrinked, "");
 				}
-				text = temp + '\n' + text;
+				text = temp + text;
 			} else if (i >= 0) {
 				if (find_shrinked.test(submissiontemplates[i])) {
 					text = submissiontemplates[i] + text;
@@ -1294,6 +1294,10 @@ function afcHelper_cleanup(text) {
 			}
 		}
 	}
+
+	// Remove excess newlines
+	text = text.replace(/\n{3,}/,'\n\n');
+
 	return text;
 }
 
