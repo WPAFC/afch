@@ -401,8 +401,8 @@ function afcHelper_prompt(type) {
 		'<label for="afcHelper_comments">Comment (signature is automatically added): </label><textarea rows="3" cols="60" id="afcHelper_comments" spellcheck="true"></textarea><br/><button type="button" class="afcHelper_button comment" id="afcHelper_prompt_button" onclick="afcHelper_act(\'comment\')">Add comment</button>';
 		$("#afcHelper_extra").html(text);
 	} else if (type === 'postpone_g13') {
-		var text = '<h3>Additional comment when marking as "postponed"</h3>' +
-		'<label for="afcHelper_comments">Comment (signature is automatically added): </label><textarea rows="3" cols="60" id="afcHelper_comments" spellcheck="true"></textarea><br/><button type="button" class="afcHelper_button comment" id="afcHelper_prompt_button" onclick="afcHelper_act(\'postpone_g13\')">Add comment</button>';
+		var text = '<h3>Additional comment when postponing speedy deletion</h3>' +
+		'<label for="afcHelper_comments">Comment (signature is automatically added): </label><textarea rows="3" cols="60" id="afcHelper_comments" spellcheck="true"></textarea><br/><button type="button" class="afcHelper_button" id="afcHelper_prompt_button" onclick="afcHelper_act(\'postpone_g13\')">Postpone G13 speedy deletion</button>';
 		$("#afcHelper_extra").html(text);
 	}
 }
