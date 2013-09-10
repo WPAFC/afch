@@ -250,7 +250,6 @@ function afcHelper_ffu_performActions() {
 				afcHelper_Submissions[i].talkpage = $("#afcHelper_ffu_filetalkpage_" + i).attr("checked");				afcHelper_Submissions[i].append = $("#afcHelper_ffu_append_" + i).val();
 				afcHelper_Submissions[i].recent = $("#afcHelper_ffu_recent_" + i).attr("checked");
 				afcHelper_Submissions[i].recenttext = $("#afcHelper_ffu_recenttext_" + i).val();
- u_recenttext_" + i).value;
 			} else if (action == 'decline') {
 				afcHelper_Submissions[i].reason = $('#afcHelper_ffu_decline_' + i).val();
 			} else if (action == 'hold') {
