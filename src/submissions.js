@@ -315,7 +315,7 @@ function afcHelper_prompt(type) {
 		var assessmentSelect = afcHelper_generateSelect("afcHelper_assessment", afcHelper_assessment, null);
 		text += assessmentSelect;
 
-		// First load the list of wikiprojects and stores it to afcHelper_wikiprojectindex
+		// First load the list of wikiprojects and store it to afcHelper_wikiprojectindex
 		$.ajax({
 			url: "//en.wikipedia.org/w/index.php?title=User:Theo%27s_Little_Bot/afchwikiproject.js&action=raw&ctype=text/javascript",
 			dataType: "json",
@@ -1295,7 +1295,7 @@ function afcHelper_cleanup(text) {
 	}
 
 	// Remove excess newlines
-	text = text.replace(/\n{3,}/,'\n\n');
+	text = text.replace(/(?:[\t ]*(?:\r?\n|\r)){3,}/ig,'\n\n');
 
 	return text;
 }
