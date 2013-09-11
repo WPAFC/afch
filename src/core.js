@@ -70,7 +70,7 @@ function afcHelper_escapeHtmlChars(original) {
 function afcHelper_getPageText(title, show, redirectcheck, timestamp) {
 	if (show) $('#afcHelper_status').html($('#afcHelper_status').html() + '<li id="afcHelper_get' + jqEsc(title) + '">Getting <a href="' + wgArticlePath.replace("$1", encodeURI(title)) + '" title="' + title + '">' + title + '</a></li>');
 
-	request = {
+	var request = {
 				'action': 'query',
 				'prop': 'revisions',
 				'rvprop': 'content',
@@ -123,7 +123,7 @@ function afcHelper_deletePage(title,reason) {
 	document.getElementById('afcHelper_status').innerHTML += '<li id="afcHelper_delete' + escape(title) + '">Deleting <a href="' + wgArticlePath.replace("$1", encodeURI(title)) + '" title="' + title + '">' + title + '</a></li>';
 
 	// Then get the deletion token
-	tokenrequest = {
+	var tokenrequest = {
 				'action': 'query',
 				'prop': 'info',
 				'format': 'json',
@@ -144,7 +144,7 @@ function afcHelper_deletePage(title,reason) {
 	token = tokenresponse['query']['pages'][pageid]['deletetoken'];
 
 	// And finally delete the page
-	delrequest = {
+	var delrequest = {
 				'action': 'delete',
 				'reason': reason + afcHelper_advert,
 				'format': 'json',
@@ -177,7 +177,7 @@ function afcHelper_editPage(title, newtext, summary, createonly) {
 	var func_id = afcHelper_AJAXnumber;
 	afcHelper_AJAXnumber++;
 	$('#afcHelper_status').html($('#afcHelper_status').html() + '<li id="afcHelper_edit' + jqEsc(title) + '">Editing <a href="' + wgArticlePath.replace("$1", encodeURI(title)) + '" title="' + title + '">' + title + '</a></li>');
-	request = {
+	var request = {
 				'action': 'edit',
 				'title': title,
 				'text': newtext,

@@ -704,7 +704,7 @@ function afcHelper_act(action) {
 			//check if page is orphaned (mainspace) and tag it!
 			if ((assessment !== 'disambig') && (assessment !== 'redirect') && (assessment !== 'project') && (assessment !== 'portal') && (assessment !== 'template')) {
 				afcHelper_displaymessagehelper('status','orphan');
-				request = {
+				var request = {
 					'action': 'query',
 					'list': 'backlinks',
 					'format': 'json',
@@ -831,7 +831,7 @@ function afcHelper_act(action) {
 			if (teahouse) {
 				document.getElementById('afcHelper_status').innerHTML += '<div id="afcHelper_get_teahouse"></div>';
 				$("#afcHelper_get_teahouse").html('<li id="afcHelper_get_teahouse">Checking for existing Teahouse Invitation for <a href="' + wgArticlePath.replace("$1", encodeURI('User_talk:' + username)) + '" title="User talk:' + username + '">User talk:' + username + '</a></li>');
-				request = {
+				var request = {
 					'action': 'query',
 					'prop': 'categories',
 					'format': 'json',
@@ -1018,7 +1018,7 @@ function afcHelper_movePage(oldtitle, newtitle, summary, callback, overwrite_red
 	var func_id = afcHelper_AJAXnumber;
 	afcHelper_AJAXnumber++;
 	document.getElementById('afcHelper_status').innerHTML += '<li id="afcHelper_move' + escape(oldtitle) + '">Moving <a href="' + wgArticlePath.replace("$1", encodeURI(oldtitle)) + '" title="' + oldtitle + '">' + oldtitle + '</a> to <a href="' + wgArticlePath.replace("$1", encodeURI(newtitle)) + '" title="' + newtitle + '">' + newtitle + '</a></li>';
-	request = {
+	var request = {
 				'action': 'move',
 				'from': oldtitle,
 				'to': newtitle,
@@ -1336,7 +1336,7 @@ function afcHelper_warnings(pagetext) {
 	}
 
 	//Check the deletion log and list it!
-	request = {
+	var request = {
 				'action': 'query',
 				'list': 'logevents',
 				'format': 'json',
@@ -1461,7 +1461,7 @@ function afcHelper_displaymessagehelper(type,detail) {
 }
 
 function afcHelper_last_nonbot(title) {
-	request = {
+	var request = {
 				'action': 'query',
 				'prop': 'revisions',
 				'format': 'json',
@@ -1524,7 +1524,7 @@ function afcHelper_g13_eligible(title) {
 
 function afcHelper_page_creator(title) {
 	if (afcHelper_cache[title]) return afcHelper_cache[title];
-	request = {
+	var request = {
 				'action': 'query',
 				'prop': 'revisions',
 				'rvprop': 'user',
