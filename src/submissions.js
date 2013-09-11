@@ -3,9 +3,20 @@
 var afcHelper_PageName = wgPageName.replace(/_/g, ' ');
 var afcHelper_AJAXnumber = 0;
 var afcHelper_submissionTitle = wgTitle.replace(/Articles for creation\//g, '');
-var afcHelper_cache = {};
 var disambig_re = /Disambig|Mil-unit-dis|Hndis|Geodis|Numberdis/i;
 var typetemplate_re = /\{\{\s*documentation\s*(?:\{\{[^\{\}]*\}\}|[^\}\{])*\}\}/gi;
+var afcdab_re = /\{\{\s*afc submission\s*\|(?:\{\{[^\{\}]*\}\}|[^\}\{])*\|\s*type\s*=\s*dab\s*(?:\{\{[^\{\}]*\}\}|[^\}\{])*\}\}/i;
+var afctemplate_re = /\{\{\s*afc submission\s*\|(?:\{\{[^\{\}]*\}\}|[^\}\{])*\|\s*type\s*=\s*template\s*(?:\{\{[^\{\}]*\}\}|[^\}\{])*\}\}/i;
+var afc_re = /\{\{\s*afc submission\s*\|(?:\{\{[^\{\}]*\}\}|[^\}\{])*\}\}/i;
+var all_afc_re = /\{\{\s*afc submission\s*\|(?:\{\{[^\{\}]*\}\}|[^\}\{])*\}\}/gi;
+var pending_afc_re = /(\{\{\s*afc submission\s*\|)(\s*[||r])+((?:\{\{[^\{\}]*\}\}|[^\}\{])*\}\})/i;
+var marked_afc_re = /\{\{\s*afc submission\s*\|\s*r\s*\|(?:\{\{[^\{\}]*\}\}|[^\}\{])*\}\}/gi;
+var template_status_re = /(\{\{\s*afc submission\s*\|)(\s*|r|d)+((?:\{\{[^\{\}]*\}\}|[^\}\{])*\}\})/i;
+var afc_comment_re = /\{\{\s*afc comment(?:\{\{[^\{\}]*\}\}|[^\}\{])*\}\}/i;
+var draft_afc_re = /\{\{\s*afc submission\s*\|\s*t(?:\{\{[^\{\}]*\}\}|[^\}\{])*\}\}/i;
+var not_draft_afc_re = /\{\{\s*afc submission\s*\|\s*[^t](?:\{\{[^\{\}]*\}\}|[^\}\{])*\}\}/i;
+var submissiontemplate_re = /(\{\{\s*afc submission\s*\|\s*([||t|h|r|d])(?:\{\{[^\{\}]*\}\}|[^\}\{])*)(\|\s*ts\s*=\s*([0-9]{14})|\{\{subst:LOCALTIMESTAMP\}\}|{{REVISIONTIMESTAMP}})((?:\{\{[^\{\}]*\}\}|[^\}\{]))*\}\}/i;
+var afcHelper_cache = {};
 var afcHelper_reasonhash = [{
 	label: 'Duplicate articles',
 	value: 'Duplicate articles',
@@ -433,18 +444,7 @@ function afcHelper_act(action) {
 		var comment = $("#afcHelper_comments").val();
 		displayMessage('<ul id="afcHelper_status"></ul><ul id="afcHelper_finish"></ul>');
 		afcHelper_displaymessagehelper('done','standard');
-		var containComment = 0;
-		if (comment !== '') {
-			var newComment = "\{\{afc comment|1=" + comment + " \~\~\~\~\}\}";
-			var afc_re = /\{\{\s*afc submission\s*\|\s*[||h|r|d](?:\{\{[^\{\}]*\}\}|[^\}\{])*\}\}/i;
-			if (!afc_re.test(pagetext)) {
-				alert("Unable to locate AFC submission template, aborting...");
-				return;
-			}
-			var afctemplate = afc_re.exec(pagetext)[0];
-			var endindex = pagetext.indexOf(afctemplate) + afctemplate.length;
-			pagetext = pagetext.substring(0, endindex) + '\n' + newComment + '\n----\n' + pagetext.substring(endindex);
-		}
+		pagetext = afcHelper_addcomment(comment) + pagetext;
 		postpone_re = /\{\{AfC postpone G13\s*(?:\|\s*(\d*)\s*)?\}\}/ig;
 		var match = postpone_re.exec(pagetext);
 		if (match) {
@@ -760,18 +760,12 @@ function afcHelper_act(action) {
 			alert("Unable to locate AFC submission template, aborting...");
 			return;
 		}
-		//TODO: removing after cleanup works
-		var afctemplate = afc_re.exec(pagetext)[0];
-		//moving the first hit to the top
-		pagetext = pagetext.replace(afctemplate, '');
-		pagetext = afctemplate + pagetext;
-		//todo END: removing after cleanup works
 		var notifytemplate = "afc decline";
 		if (code === 'reason' && customreason === '') {
 			alert("You must enter a reason!");
 			return;
 		}
-
+		var afctemplate = afc_re.exec(pagetext)[0];
 		var startindex = pagetext.indexOf(afctemplate);
 		var endindex = startindex + afctemplate.length;
 		//data is always between the first pipe and the one before the timestamp.
@@ -791,7 +785,7 @@ function afcHelper_act(action) {
 		//correcting namespace number after page moves mostly from userspace
 		newtemplate = newtemplate.replace(/\s*\|\s*ns\s*=\s*[0-9]{0,2}\s*/gi, '\|ns=\{\{subst:NAMESPACENUMBER\}\}');
 		if (code !== null && code !== 'reason' && customreason !== '') {
-			newcomment = "*\{\{afc comment|1=" + customreason + " \~\~\~\~\}\}";
+			newcomment = afcHelper_addcomment(customreason);
 		}
 
 		summary = "Declining submission";
@@ -885,17 +879,7 @@ function afcHelper_act(action) {
 			afcHelper_editPage(usertalkpage, usertext, reason, false);
 		}
 		if (!blank) {
-			var containComment = 0;
-			containComment = pagetext.indexOf('----');
-			if (newcomment !== '') {
-				if (containComment !== 0) {
-					pagetext = pagetext.substring(0, startindex) + newtemplate + '\n' + newcomment + '\n----\n' + pagetext.substring(endindex);
-				} else {
-					pagetext = pagetext.substring(0, startindex) + newtemplate + pagetext.substring(endindex);
-					var idx = pagetext.indexOf('----');
-					pagetext = pagetext.substring(0, idx) + '\n' + newcomment + '\n' + pagetext.substring(idx);
-				}
-			} else pagetext = pagetext.substring(0, startindex) + newtemplate + pagetext.substring(endindex);
+			pagetext = newtemplate + newcomment + pagetext;
 		} else {
 			if (blank_csd) {
 				if (code === 'cv') {
@@ -925,65 +909,29 @@ function afcHelper_act(action) {
 		var comment = $("#afcHelper_comments").val();
 		displayMessage('<ul id="afcHelper_status"></ul><ul id="afcHelper_finish"></ul>');
 		afcHelper_displaymessagehelper('done','standard');
-		var containComment = 0;
-		containComment = pagetext.indexOf('----');
-		if (containComment === -1) containComment = 0;
 
-		var newComment = "\{\{afc comment|1=" + comment + " \~\~\~\~\}\}";
 		if (comment !== '') {
-			if (!containComment) {
-				var afc_re = /\{\{\s*afc submission\s*\|\s*[||h|r|d](?:\{\{[^\{\}]*\}\}|[^\}\{])*\}\}/i;
-				if (!afc_re.test(pagetext)) {
-					alert("Unable to locate AFC submission template, aborting...");
-					return;
-				}
-				var afctemplate = afc_re.exec(pagetext)[0];
-				var endindex = pagetext.indexOf(afctemplate) + afctemplate.length;
-				pagetext = pagetext.substring(0, endindex) + '\n' + newComment + '\n----\n' + pagetext.substring(endindex);
-			} else {
-				var idx = pagetext.indexOf('----');
-				if (idx !== -1) pagetext = pagetext.substring(0, idx) + newComment + '\n' + pagetext.substring(idx);
-				else {
-					var afc_re = /\{\{\s*afc submission\s*\|\s*[||h|r|d](?:\{\{[^\{\}]*\}\}|[^\}\{])*\}\}/i;
-					if (!afc_re.test(pagetext)) {
-						alert("Unable to locate AFC submission template, aborting...");
-						return;
-					}
-					var afctemplate = afc_re.exec(pagetext)[0];
-					var endindex = pagetext.indexOf(afctemplate) + afctemplate.length;
-					pagetext = pagetext.substring(0, endindex) + '\n' + newComment + '\n----\n' + pagetext.substring(endindex);
-				}
-			}
-			afcHelper_editPage(afcHelper_PageName, pagetext, "Commenting on [[Wikipedia:Articles for creation]] submission", false);
+			pagetext = afcHelper_addcomment(comment) + pagetext;
+		} else {
+			alert("No comment was entered, aborting...");
+			return;
 		}
+		pagetext = afcHelper_cleanup(pagetext);
+		afcHelper_editPage(afcHelper_PageName, pagetext, "Commenting on [[Wikipedia:Articles for creation]] submission", false);
 	} else if (action === 'mark') {
 		var comment = $("#afcHelper_comments").val();
 		if (comment == undefined) comment = window.overwrite_comment; // This handles the overwrite_redirect scenario
 		displayMessage('<ul id="afcHelper_status"></ul><ul id="afcHelper_finish"></ul>');
 		afcHelper_displaymessagehelper('done','standard');
-		var containComment = (pagetext.indexOf('----') !== -1);
-		var newComment = "\{\{afc comment|1=" + comment + " \~\~\~\~\}\}";
-		if (comment !== '') {
-			if (!containComment) {
-				var afc_re = /\{\{\s*afc submission\s*\|\s*[||h|r|d](?:\{\{[^\{\}]*\}\}|[^\}\{])*\}\}/i;
-				if (!afc_re.test(pagetext)) {
-					alert("Unable to locate AFC submission template, aborting...");
-					return;
-				}
-				var afctemplate = afc_re.exec(pagetext)[0];
-				var endindex = pagetext.indexOf(afctemplate) + afctemplate.length;
-				pagetext = pagetext.substring(0, endindex) + '\n' + newComment + '\n----\n' + pagetext.substring(endindex);
-			} else {
-				var idx = pagetext.indexOf('----');
-				pagetext = pagetext.substring(0, idx) + newComment + '\n' + pagetext.substring(idx);
-			}
-		}
+		pagetext = afcHelper_addcomment(comment) + pagetext;
+
 		var afc_re = /(\{\{\s*afc submission\s*\|)(\s*[||h]\s*)*((?:\{\{[^\{\}]*\}\}|[^\}\{])*\}\})/i;
 		if (!afc_re.test(pagetext)) {
 			alert("Unable to locate AFC submission template, aborting...");
 			return;
 		}
 		pagetext = pagetext.replace(afc_re, "$1r\|$3");
+		pagetext = afcHelper_cleanup(pagetext);
 		afcHelper_editPage(afcHelper_PageName, pagetext, "Marking [[Wikipedia:Articles for creation]] submission as being reviewed", false);
 	} else if (action === 'unmark') {
 		displayMessage('<ul id="afcHelper_status"></ul><ul id="afcHelper_finish"></ul>');
@@ -1231,67 +1179,119 @@ function afcHelper_cleanup(text) {
 	text = text.replace(/\[\[:Category:Articles created via the Article Wizard\]\]/gi, "[[Category:Articles created via the Article Wizard]]");
 	text = text.replace(/\[\[:?Category:AfC(_|\s*)+submissions(_|\s*)+with(_|\s*)+missing(_|\s*)+AfC(_|\s*)+template\]\]/gi, ""); // Remove "AfC submission with missing AfC template" maintenace category
 
-	var afc_re = /\{\{\s*afc submission\s*\|\s*[||h|r](?:\{\{[^\{\}]*\}\}|[^\}\{])*\}\}/i;
-	var afc_alt = /\{\{\s*afc submission\s*\|\s*[^t](?:\{\{[^\{\}]*\}\}|[^\}\{])*\}\}/i;
-	var afc_all = /\{\{\s*afc submission\s*\|\s*(?:\{\{[^\{\}]*\}\}|[^\}\{])*\}\}/i;
-	var afc_comment = /\{\{\s*afc comment(?:\{\{[^\{\}]*\}\}|[^\}\{])*\}\}/i;
-
-	// Remove all draft templates
-	if (afc_alt.test(text)) text = text.replace(/\{\{\s*afc submission\s*\|\s*t(?:\{\{[^{}]*\}\}|[^}{])*\}\}/ig, "");
-	// Find the first pending submission or marked as review on the page.
-	var temp = text;
-	//Remove any duplicate open review requests before saving the page (only affects open requests)
-	//find the first pending template and remove it, if one was removed too much, revert the last removal
-	while (afc_re.test(text)) {
-		temp = text;
-		text = text.replace(/\{\{\s*afc submission\s*\|\s*[||h|r](?:\{\{[^{}]*\}\}|[^}{])*\}\}/i, "");
-		if (!afc_re.test(text)) {
-			text = temp;
-			break;
-		}
-	}
 	//create an array, strip the submission templates, then AFC comments and then add them back to the page
 	var submissiontemplates = new Array();
 	var commentstemplates = new Array();
-	while (afc_all.test(text)) {
-		submissiontemplates.push(afc_all.exec(text));
-		text = text.replace(afc_all.exec(text), "");
+	while (submissiontemplate_re.test(text)) {
+		var temptemplate = submissiontemplate_re.exec(text)[0].toString();
+		temptemplate = temptemplate.replace("{{subst:LOCALTIMESTAMP}}", "99999999999999");
+		// remove the shrinked parameter, will be added back later
+		temptemplate = temptemplate.replace(/\|\s*small\s*=\s*yes/i, "");
+
+		var temptimestamp = temptemplate.replace(submissiontemplate_re, "$4");
+		var tempstatus = temptemplate.replace(submissiontemplate_re, "$2");
+
+		text = text.replace(temptemplate, "");
+		submissiontemplates.push([
+				{template: temptemplate},
+				{timestamp: temptimestamp},
+				{status: tempstatus}
+		]);
 	}
-	while (afc_comment.test(text)) {
-		commentstemplates.push(afc_comment.exec(text));
-		text = text.replace(afc_comment.exec(text), "");
+	while (afc_comment_re.test(text)) {
+		var temptemplate = afc_comment_re.exec(text).toString();
+		var temptimestamp = temptemplate.replace(/([0-9]{2}):([0-9]{2}), ([0-9]{1,2}) (January|February|March|April|May|June|July|August|September|October|November|December) ([0-9]{4}) \(UTC\)/gi, "$5$4$3$1$2");
+		temptimestamp = temptimestamp.replace(/January/g, "01").replace(/February/g, "02").replace(/March/g, "03").replace(/April/g, "04").replace(/May/g, "05").replace(/June/g, "06").replace(/July/g, "07").replace(/August/g, "08").replace(/September/g, "09").replace(/October/g, "10").replace(/November/g, "11").replace(/December/g, "12");
+		if (/[0-9]{11,12}/.test(temptimestamp)){
+			temptimestamp = /[0-9]{11,12}/.exec(temptimestamp)[0].toString();
+			if (temptimestamp.length == 11){
+				var temptemptimestamp = temptimestamp;
+				temptimestamp = temptemptimestamp.slice(0, 6) + '0' +temptemptimestamp.slice(6, 11);
+			}
+			temptimestamp += '00';
+		}else{
+			temptimestamp = '00000000000000';
+			if (/~~~~/.test(temptemplate))
+				temptimestamp = '99999999999999';
+		}
+		commentstemplates.push([
+				{template: temptemplate},
+				{timestamp: temptimestamp}
+		]);
+		text = text.replace(temptemplate, "");
 	}
+
 	// Remove empty HTML comments
 	text = text.replace(/<!--\s*-->/ig, "");
 
 	// Remove empty list elements and empty headers
 	text = text.replace(/^\s*[\*#:;]\s*$/igm, "");
 
-	//adding back the submission templates and comment templates
-	if (commentstemplates.length > 0) {
+	//adding the submission templates and comment templates back
+	var commentstemplates_length = commentstemplates.length;
+	if (commentstemplates_length > 0) {
+		//sorting on basis of timestamp
+		commentstemplates.sort(function(a, b){
+			return b[1].timestamp-a[1].timestamp;
+		});
 		text = '----\n' + text;
-		for ((i = commentstemplates.length - 1); i >= 0; i--)
-		text = commentstemplates[i] + '\n\n' + text;
+		for ((i = commentstemplates_length - 1); i >= 0; i--)
+		text = commentstemplates[i][0].template + '\n\n' + text;
 	}
-	if (submissiontemplates.length > 0) {
-		var find_shrinked = /\|\s*small\s*=\s*yes/gi;
-		for ((i = submissiontemplates.length - 1); i >= 0; i--) {
-			if (i === (submissiontemplates.length - 1)) {
-				var temp = submissiontemplates[i].toString();
-				if (find_shrinked.test(submissiontemplates[i])) {
-					temp = temp.replace(find_shrinked, "");
-				}
-				text = temp + '\n' + text;
-			} else if (i >= 0) {
-				if (find_shrinked.test(submissiontemplates[i])) {
-					text = submissiontemplates[i] + text;
-				} else {
-					var temp = submissiontemplates[i].toString();
-					temp = temp.slice(0, temp.length - 2);
-					text = temp + '\|small=yes\}\}' + text;
-				}
+	var submissiontemplates_length = submissiontemplates.length;
+	if (submissiontemplates_length > 0) {
+		//sorting on basis of TS
+		submissiontemplates.sort(function(a, b){
+			return b[1].timestamp-a[1].timestamp;
+		});
+		// Remove all draft templates if there is any other submission template
+		// Remove any duplicate open review requests before saving the page (only affects open requests)
+		// Find the first pending template and remove it; if one was removed too much, revert the last removal
+		var multiple_draft_submission = false;
+		var not_draft_submission = false;
+		var pending_submission = false;
+		for(i = 0; i< submissiontemplates_length; i++){
+			if((submissiontemplates[i][2].status == "t") && (not_draft_draft_submission || pending_submission || multiple_draft_submission )){
+				submissiontemplates.splice(i, 1);
+				i = 0; //rerun for removing all draft templates
+				submissiontemplates_length = submissiontemplates.length;
+			}
+			else if((submissiontemplates[i][2].status == "t") && (!not_draft_draft_submission || !pending_submission)){
+				multiple_draft_submission = true;
+			}
+			else if ((!pending_submission) && ((submissiontemplates[i][2].status == "|")||(submissiontemplates[i][2].status == "r"))){
+				pending_submission = true;
+				not_draft_submission = true;
+			}
+			else if ((pending_submission) && ((submissiontemplates[i][2].status == "|")||(submissiontemplates[i][2].status == "r"))){
+				submissiontemplates.splice(i, 1);
+				i--;
+				submissiontemplates_length = submissiontemplates.length;
+			}
+			else{
+				not_draft_submission = true;
 			}
 		}
+		//simplify for now
+		for ((i = submissiontemplates_length - 1); i >= 0; i--){
+			var temp = submissiontemplates[i][0].template;
+			temp = temp.replace("99999999999999", "{{subst:LOCALTIMESTAMP}}");
+			text = temp + text;
+		}
+		// Moving pending template back to the top
+		if(pending_afc_re.test(text)){
+			var temptemplate = pending_afc_re.exec(text)[0].toString();
+			text = text.replace(temptemplate, "");
+			text = temptemplate + "\n" + text;
+		}
+	}
+
+	//Moving DB templates back to the top
+	var dbtemplates_re = /\{\{\s*db(?:\{\{[^\{\}]*\}\}|[^\}\{])*\}\}/i;
+	if(dbtemplates_re.test(text)){
+		var temptemplate = dbtemplates_re.exec(text)[0].toString();
+		text = text.replace(temptemplate, "");
+		text = temptemplate + "\n" + text;
 	}
 
 	// Remove excess newlines
@@ -1309,7 +1309,7 @@ function afcHelper_setup() {
 
 	// Fix utterly invalid templates so cleanup doesn't mangle them
 	pagetext = pagetext.replace(/\{\{AFC submission(\s*\|){0,}ts\s*=\s*/gi, "{{AFC submission|||ts=");
-	pagetext = pagetext.replace(/\{\{AFC submission\s*\}\}/gi, "{{AFC submission|||ts={{subst:LOCALTIMESTAMP}}|u=|ns={{subst:AFC submission/namespace number}}}}");
+	pagetext = pagetext.replace(/\{\{AFC submission\s*\}\}/gi, "{{AFC submission|||ts=99999999999999|u=|ns={{subst:AFC submission/namespace number}}}}");
 	pagetext = afcHelper_cleanup(pagetext);
 
 	warnings = afcHelper_warnings(pagetext); // Warn about problems with given pagetext
@@ -1546,6 +1546,13 @@ function afcHelper_page_creator(title) {
 	user = response['query']['pages'][pageid]['revisions'][0]['user'];
 	afcHelper_cache[title] = user;
 	return user;
+}
+
+function afcHelper_addcomment(comment) {
+	if (comment == "")
+		return "";
+	else
+		return "*\{\{afc comment|1=" + comment + " \~\~\~\~\}\}";
 }
 
 function afcHelper_turnvisible(id, visible) {
