@@ -15,7 +15,7 @@ var template_status_re = /(\{\{\s*afc submission\s*\|)(\s*|r|d)+((?:\{\{[^\{\}]*
 var afc_comment_re = /\{\{\s*afc comment(?:\{\{[^\{\}]*\}\}|[^\}\{])*\}\}/i;
 var draft_afc_re = /\{\{\s*afc submission\s*\|\s*t(?:\{\{[^\{\}]*\}\}|[^\}\{])*\}\}/i;
 var not_draft_afc_re = /\{\{\s*afc submission\s*\|\s*[^t](?:\{\{[^\{\}]*\}\}|[^\}\{])*\}\}/i;
-var submissiontemplate_re = /(\{\{\s*afc submission\s*\|\s*([||t|h|r|d])(?:\{\{[^\{\}]*\}\}|[^\}\{])*)(\|\s*ts\s*=\s*([0-9]{14})|\{\{subst:LOCALTIMESTAMP\}\}|{{REVISIONTIMESTAMP}})((?:\{\{[^\{\}]*\}\}|[^\}\{]))*\}\}/i;
+var submissiontemplate_re = /(\{\{\s*afc submission\s*\|\s*([||t|h|r|d])(?:\{\{[^\{\}]*\}\}|[^\}\{])*)(\|\s*ts\s*=\s*([0-9]{14})|\{\{subst:LOCALTIMESTAMP\}\}|\{\{REVISIONTIMESTAMP\}\})((?:\{\{[^\{\}]*\}\}|[^\}\{]))*\}\}/i;
 var afcHelper_cache = {};
 var afcHelper_reasonhash = [{
 	label: 'Duplicate articles',
@@ -1184,14 +1184,16 @@ function afcHelper_cleanup(text) {
 	var commentstemplates = new Array();
 	while (submissiontemplate_re.test(text)) {
 		var temptemplate = submissiontemplate_re.exec(text)[0].toString();
-		temptemplate = temptemplate.replace("{{subst:LOCALTIMESTAMP}}", "99999999999999");
+		text = text.replace(temptemplate, "");
+
+		temptemplate = temptemplate.replace("\{\{subst:LOCALTIMESTAMP\}\}", "99999999999999");
+		temptemplate = temptemplate.replace("\{\{REVISIONTIMESTAMP\}\}", "99999999999998");
 		// remove the shrinked parameter, will be added back later
 		temptemplate = temptemplate.replace(/\|\s*small\s*=\s*yes/i, "");
 
 		var temptimestamp = temptemplate.replace(submissiontemplate_re, "$4");
 		var tempstatus = temptemplate.replace(submissiontemplate_re, "$2");
 
-		text = text.replace(temptemplate, "");
 		submissiontemplates.push([
 				{template: temptemplate},
 				{timestamp: temptimestamp},
@@ -1275,7 +1277,8 @@ function afcHelper_cleanup(text) {
 		//simplify for now
 		for ((i = submissiontemplates_length - 1); i >= 0; i--){
 			var temp = submissiontemplates[i][0].template;
-			temp = temp.replace("99999999999999", "{{subst:LOCALTIMESTAMP}}");
+			temp = temp.replace("99999999999999", "\{\{subst:LOCALTIMESTAMP\}\}");
+			temp = temp.replace("99999999999998", "\{\{REVISIONTIMESTAMP\}\}");
 			text = temp + text;
 		}
 		// Moving pending template back to the top
