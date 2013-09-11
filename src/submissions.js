@@ -893,7 +893,7 @@ function afcHelper_act(action) {
 				} else {
 					pagetext = pagetext.substring(0, startindex) + newtemplate + pagetext.substring(endindex);
 					var idx = pagetext.indexOf('----');
-					pagetext = pagetext.substring(0, idx) + newcomment + '\n' + pagetext.substring(idx);
+					pagetext = pagetext.substring(0, idx) + '\n' + newcomment + '\n' + pagetext.substring(idx);
 				}
 			} else pagetext = pagetext.substring(0, startindex) + newtemplate + pagetext.substring(endindex);
 		} else {
