@@ -8,7 +8,7 @@ function jqEsc(expression) {
 importScript('User:Timotheus Canens/displaymessage.js');
 var afchelper_baseurl = mw.config.get('wgServer') + '/w/index.php?action=raw&ctype=text/javascript&title=MediaWiki:Gadget-afchelper.js';
 
-var afcHelper_advert = ' ([[WP:AFCH|AFCH]])';
+var afcHelper_advert = ' ([[WP:AFCH|AFCH develop]])';
 var pagetext = '';
 var usertalkpage = '';
 
