@@ -32,10 +32,12 @@ if (afchelper_baseurl.indexOf('MediaWiki:'+'Gadget-afchelper.js' /* hack to stop
 else
 	var BETA = false;
 
-// Manually load mw.api() and chosen only if we're not using the gadget...with the gadget, they are already dependencies
 if (BETA) {
+	// Manually load mw.api() and chosen only if we're not using the gadget...with the gadget, they are already dependencies
 	mw.loader.load('mediawiki.api');
 	mw.loader.load('jquery.chosen');
+	// Set the summary to denote that we're using a "beta" version of the script
+	var afcHelper_advert = ' ([[WP:AFCH|AFCH]] beta)';
 }
 
 function afcHelper_generateSelect(title, options, onchange) {
