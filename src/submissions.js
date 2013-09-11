@@ -1287,6 +1287,7 @@ function afcHelper_cleanup(text) {
 					temp = temp.replace(find_shrinked, "");
 				}
 				text = temp + text;
+				text = temp + '\n' + text;
 			} else if (i >= 0) {
 				if (find_shrinked.test(submissiontemplates[i])) {
 					text = submissiontemplates[i] + text;
