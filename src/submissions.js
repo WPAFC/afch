@@ -1089,13 +1089,6 @@ function afcHelper_movePage(oldtitle, newtitle, summary, callback, overwrite_red
 	$("#afcHelper_AJAX_finished_" + func_id).css("display", '');
 }
 
-var afcportletLink = mw.util.addPortletLink('p-cactions', '#', 'Review', 'ca-afcHelper', 'Review', 'a');
-// Bind click handler
-$(afcportletLink).click(function(e) {
-	e.preventDefault();
-	afcHelper_init();
-});
-
 function afcHelper_onChange(select) {
 	var value = select.options[select.selectedIndex].value;
 	if (value === 'cv') $("#afcHelper_extra_inline").html('<label for="afcHelper_extra">Please enter the URL if available: </label><input type="text" id="afcHelper_extra_inlinebox" value="http://" size="100%"/>');
@@ -1133,6 +1126,8 @@ function afcHelper_onChange(select) {
 function afcHelper_cleanup(text) {
 	// Remove html comments (<!--) that surround categories
 	text = text.replace(/\<!--\s*((\[\[:{0,1}(Category:.*?)\]\]\s*)+)--\>/gi, "$1");
+
+	// Comment out categories
 	text = text.replace(/\[\[Category:/gi, "\[\[:Category:");
 
 	// Fix {{afc comment}} when possible (takes rest of text on line and converts to a template parameter)
@@ -1286,7 +1281,6 @@ function afcHelper_cleanup(text) {
 				if (find_shrinked.test(submissiontemplates[i])) {
 					temp = temp.replace(find_shrinked, "");
 				}
-				text = temp + text;
 				text = temp + '\n' + text;
 			} else if (i >= 0) {
 				if (find_shrinked.test(submissiontemplates[i])) {
@@ -1306,8 +1300,9 @@ function afcHelper_cleanup(text) {
 	return text;
 }
 
-// Gets the pagetext, does some cleanup, lists previous deletions, and displays warnings about long comments and bad reference styles
 function afcHelper_setup() {
+	/* Gets the pagetext, does some cleanup, lists previous deletions,
+	and displays warnings about long comments and bad reference styles */
 	textdata = afcHelper_getPageText(afcHelper_PageName, false, false, true); // get page text AND timestamp to save API calls
 	pagetext = textdata.pagetext;
 	afcHelper_cache.afcHelper_lastedited = textdata.timestamp; // Store the last edited date to the cache
@@ -1424,7 +1419,6 @@ function afcHelper_warnings(pagetext) {
 	return errormsg;
 }
 
-//function to add afc cleared (csd) checkbox if afc cleared is checked
 function afcHelper_trigger(type) {
 	var e = document.getElementById(type);
 	if (type === "afcHelper_biography_status_box") {
@@ -1435,7 +1429,6 @@ function afcHelper_trigger(type) {
 			e.style.display = 'none';
 		}
 	} else if (type === "afcHelper_afcccleared") {
-		//dr
 		if ($("#afcHelper_blank").attr("data-typeof") == "cv_van" && $('#afcHelper_blank').attr("checked")) {
 			var f = document.getElementById("afcHelper_extra_afccleared");
 			f.style.display = 'block';
@@ -1516,7 +1509,6 @@ function afcHelper_logcsd(title,reason,usersnotified) {
 	}
 }
 
-//function to check if the submission is g13 eligible -- only checks timestamp
 function afcHelper_g13_eligible(title) {
 	var timeNow = new Date();
 	var timeNowMonth = timeNow.getMonth();
@@ -1556,8 +1548,16 @@ function afcHelper_page_creator(title) {
 	return user;
 }
 
-function afcHelper_turnvisible(type, bool) {
-	if (bool) $("#" + type).css("display", "block");
-	else $("#" + type).css("display", "none");
+function afcHelper_turnvisible(id, visible) {
+	if (visible) $("#" + id).css("display", "block");
+	else $("#" + id).css("display", "none");
 }
+
+// Finally display the Review link
+var afcportletLink = mw.util.addPortletLink('p-cactions', '#', 'Review', 'ca-afcHelper', 'Review', 'a');
+$(afcportletLink).click(function(e) {
+	e.preventDefault();
+	afcHelper_init();
+});
+
 //</nowiki>
