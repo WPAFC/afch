@@ -923,7 +923,6 @@ function afcHelper_act(action) {
 		if (comment == undefined) comment = window.overwrite_comment; // This handles the overwrite_redirect scenario
 		displayMessage('<ul id="afcHelper_status"></ul><ul id="afcHelper_finish"></ul>');
 		afcHelper_displaymessagehelper('done','standard');
-		pagetext = afcHelper_addcomment(comment) + pagetext;
 
 		var afc_re = /(\{\{\s*afc submission\s*\|)(\s*[||h]\s*)*((?:\{\{[^\{\}]*\}\}|[^\}\{])*\}\})/i;
 		if (!afc_re.test(pagetext)) {
@@ -931,6 +930,7 @@ function afcHelper_act(action) {
 			return;
 		}
 		pagetext = pagetext.replace(afc_re, "$1r\|$3");
+		pagetext = afcHelper_addcomment(comment) + pagetext;
 		pagetext = afcHelper_cleanup(pagetext);
 		afcHelper_editPage(afcHelper_PageName, pagetext, "Marking [[Wikipedia:Articles for creation]] submission as being reviewed", false);
 	} else if (action === 'unmark') {
@@ -1270,11 +1270,10 @@ function afcHelper_cleanup(text) {
 				i--;
 				submissiontemplates_length = submissiontemplates.length;
 			}
-			else{
+			else{ //only drafts on that page
 				not_draft_submission = true;
 			}
 		}
-		//simplify for now
 		for ((i = submissiontemplates_length - 1); i >= 0; i--){
 			var temp = submissiontemplates[i][0].template;
 			temp = temp.replace("99999999999999", "\{\{subst:LOCALTIMESTAMP\}\}");
