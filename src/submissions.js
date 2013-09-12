@@ -38,7 +38,7 @@ var afcHelper_reasonhash = [{
 	value: 'blank',
 	reason: 'submission is blank'
 }, {
-	label: 'test - Submission appears to be a test edit (please ensure that it is not a test of a tool before declining)',
+	label: 'test - Submission appears to be a test edit',
 	value: 'test',
 	reason: 'submission is a test edit'
 }, {
@@ -54,7 +54,7 @@ var afcHelper_reasonhash = [{
 	value: 'ilc',
 	reason: 'submission does not contain minimum citations'
 }, {
-	label: 'blp - Submission contains unsourced, possibly defamatory claims violating BLP, but WP:AGF and wait for sources (please blank the page but do not CSD it)',
+	label: 'blp - BLP contains unsourced, possibly defamatory claims, but WP:AGF and wait for sources (blank the page but do not CSD it)',
 	value: 'blp',
 	reason: 'submission does not conform to BLP'
 }, {
@@ -62,7 +62,7 @@ var afcHelper_reasonhash = [{
 	value: 'Merging',
 	disabled: true
 }, {
-	label: 'mergeto - Submission should be merged into another article (type a comment with a link to the article below in the comment box)',
+	label: 'mergeto - Submission should be merged into another article (indicate which article in the comment box)',
 	value: 'mergeto',
 	reason: 'submission is too short but can be merged'
 }, {
