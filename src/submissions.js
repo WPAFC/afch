@@ -10,6 +10,7 @@ var afctemplate_re = /\{\{\s*afc submission\s*\|(?:\{\{[^\{\}]*\}\}|[^\}\{])*\|\
 var afc_re = /\{\{\s*afc submission\s*\|(?:\{\{[^\{\}]*\}\}|[^\}\{])*\}\}/i;
 var all_afc_re = /\{\{\s*afc submission\s*\|(?:\{\{[^\{\}]*\}\}|[^\}\{])*\}\}/gi;
 var pending_afc_re = /(\{\{\s*afc submission\s*\|)(\s*[||r])+((?:\{\{[^\{\}]*\}\}|[^\}\{])*\}\})/i;
+var declined_afc_re = /(\{\{\s*afc submission\s*\|)(\s*[d])+((?:\{\{[^\{\}]*\}\}|[^\}\{])*)(\|small=yes)(\}\})/i;
 var marked_afc_re = /\{\{\s*afc submission\s*\|\s*r\s*\|(?:\{\{[^\{\}]*\}\}|[^\}\{])*\}\}/gi;
 var template_status_re = /(\{\{\s*afc submission\s*\|)(\s*|r|d)+((?:\{\{[^\{\}]*\}\}|[^\}\{])*\}\})/i;
 var afc_comment_re = /\{\{\s*afc comment(?:\{\{[^\{\}]*\}\}|[^\}\{])*\}\}/i;
@@ -1278,8 +1279,13 @@ function afcHelper_cleanup(text) {
 			var temp = submissiontemplates[i][0].template;
 			temp = temp.replace("99999999999999", "\{\{subst:LOCALTIMESTAMP\}\}");
 			temp = temp.replace("99999999999998", "\{\{REVISIONTIMESTAMP\}\}");
+			temp = temp.slice(0, (temp.length-2)) + '|small=yes\}\}';
 			text = temp + text;
 		}
+		// declined_afc_re
+		if (declined_afc_re.test(text))
+			text = text.replace(declined_afc_re, "$1$2$3$5");
+
 		// Moving pending template back to the top
 		if(pending_afc_re.test(text)){
 			var temptemplate = pending_afc_re.exec(text)[0].toString();
