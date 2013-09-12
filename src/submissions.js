@@ -1555,7 +1555,7 @@ function afcHelper_addcomment(comment) {
 	if (comment == "")
 		return "";
 	else
-		return "*\{\{afc comment|1=" + comment + " \~\~\~\~\}\}";
+		return "\{\{afc comment|1=" + comment + " \~\~\~\~\}\}";
 }
 
 function afcHelper_turnvisible(id, visible) {
