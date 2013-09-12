@@ -18,7 +18,7 @@ var not_draft_afc_re = /\{\{\s*afc submission\s*\|\s*[^t](?:\{\{[^\{\}]*\}\}|[^\
 var submissiontemplate_re = /(\{\{\s*afc submission\s*\|\s*([||t|h|r|d])(?:\{\{[^\{\}]*\}\}|[^\}\{])*)(\|\s*ts\s*=\s*([0-9]{14})|\{\{subst:LOCALTIMESTAMP\}\}|\{\{REVISIONTIMESTAMP\}\})((?:\{\{[^\{\}]*\}\}|[^\}\{]))*\}\}/i;
 var afcHelper_cache = {};
 var afcHelper_reasonhash = [{
-	label: 'Duplicate articles',
+	label: 'DUPLICATE ARTICLES',
 	value: 'Duplicate articles',
 	disabled: true
 }, {
@@ -30,7 +30,7 @@ var afcHelper_reasonhash = [{
 	value: 'dup',
 	reason: 'submission is a duplicate of another submission'
 }, {
-	label: 'Test edits',
+	label: 'TEST EDITS',
 	value: 'Test edits',
 	disabled: true
 }, {
@@ -42,7 +42,7 @@ var afcHelper_reasonhash = [{
 	value: 'test',
 	reason: 'submission is a test edit'
 }, {
-	label: 'BLP/Vandalism',
+	label: 'BLP/VANDALISM',
 	value: 'BLP/Vandalism',
 	disabled: true
 }, {
@@ -58,7 +58,7 @@ var afcHelper_reasonhash = [{
 	value: 'blp',
 	reason: 'submission does not conform to BLP'
 }, {
-	label: 'Merging',
+	label: 'MERGING',
 	value: 'Merging',
 	disabled: true
 }, {
@@ -66,7 +66,7 @@ var afcHelper_reasonhash = [{
 	value: 'mergeto',
 	reason: 'submission is too short but can be merged'
 }, {
-	label: 'Blatant [[WP:NOT]] violations',
+	label: 'BLATANT [[WP:NOT]] VIOLATIONS',
 	value: 'Blatant [[WP:NOT]] violations',
 	disabled: true
 }, {
@@ -78,7 +78,7 @@ var afcHelper_reasonhash = [{
 	value: 'not',
 	reason: 'submission is covered by WP:NOT'
 }, {
-	label: 'Prose issues',
+	label: 'PROSE ISSUES',
 	value: 'Prose issues',
 	disabled: true
 }, {
@@ -122,7 +122,7 @@ var afcHelper_reasonhash = [{
 	value: 'npov',
 	reason: 'submission is not written from a formal, neutral point of view'
 }, {
-	label: 'Notability',
+	label: 'NOTABILITY',
 	value: 'Notability',
 	disabled: true
 }, {
@@ -162,7 +162,7 @@ var afcHelper_reasonhash = [{
 	value: 'nn',
 	reason: 'subject appears to be non-notable'
 }, {
-	label: 'Sourcing',
+	label: 'SOURCING',
 	value: 'Sourcing',
 	disabled: true
 }, {
@@ -170,7 +170,7 @@ var afcHelper_reasonhash = [{
 	value: 'v',
 	reason: 'submission is unsourced or contains only unreliable sources'
 }, {
-	label: 'Other',
+	label: 'OTHER',
 	value: 'Other',
 	disabled: true
 }, {
