@@ -1211,11 +1211,10 @@ function afcHelper_cleanup(text) {
 				var temptemptimestamp = temptimestamp;
 				temptimestamp = temptemptimestamp.slice(0, 6) + '0' +temptemptimestamp.slice(6, 11);
 			}
-			temptimestamp += '00';
 		}else{
-			temptimestamp = '00000000000000';
+			temptimestamp = '000000000000';
 			if (/~~~~/.test(temptemplate))
-				temptimestamp = '99999999999999';
+				temptimestamp = '999999999999';
 		}
 		commentstemplates.push([
 				{template: temptemplate},
