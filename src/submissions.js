@@ -485,7 +485,7 @@ function afcHelper_act(action) {
 			if ($.inArray(l, uniqueUsers) === -1) uniqueUsers.push(l);
 		});
 		for (var i = 0; i < uniqueUsers.length; i++) {
-			username = uniqueUsers[i]
+			username = uniqueUsers[i];
 			usertalkpage = "User talk:" + username;
 			var usertext = afcHelper_getPageText(usertalkpage, true, true);
 			usertext += "\n{{subst:Db-afc-notice|" + afcHelper_PageName + "}} ~~~~";
@@ -573,7 +573,7 @@ function afcHelper_act(action) {
 			var yearofdeath = '';
 			var dateofdeath = '';
 			if (living === 'dead') {
-				yearofdeath = $("#afcHelper_yearofdeath").val()
+				yearofdeath = $("#afcHelper_yearofdeath").val();
 				dateofdeath = $("#afcHelper_dateofdeath").val();
 				placeofdeath = $("#afcHelper_placeofdeath").val();
 			}
@@ -1507,7 +1507,7 @@ function afcHelper_logcsd(title,reason,usersnotified) {
 			appendText += "{{user|1=" + user + "}}";
 		});
 		appendText += " ~~~~~\n";
-		afcHelper_editPage(speedyLogPageName,CSDlogtext + appendText,"Logging speedy deletion nomination of [[" + title + "]]")
+		afcHelper_editPage(speedyLogPageName,CSDlogtext + appendText,"Logging speedy deletion nomination of [[" + title + "]]");
 	}
 }
 
