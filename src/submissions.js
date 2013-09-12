@@ -1283,7 +1283,7 @@ function afcHelper_cleanup(text) {
 			text = temp + text;
 		}
 		// declined_afc_re
-		if (declined_afc_re.test(text))
+		if (!pending_submission || declined_afc_re.test(text))
 			text = text.replace(declined_afc_re, "$1$2$3$5");
 
 		// Moving pending template back to the top
