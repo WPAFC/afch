@@ -69,8 +69,10 @@ function afcHelper_escapeHtmlChars(original) {
 	return original.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
 }
 
-function afcHelper_countString(str, search){
+function afcHelper_countString(str, search, casesensitive){
 	// Returns count of occurances of a "search" string in "str"
+	// Casesensitive can be set to true for case sensitive matching
+	if (!casesensitive) str = str.toLowerCase();
 	var count = 0;
 	var index = str.indexOf(search);
 	while(index !=- 1){
