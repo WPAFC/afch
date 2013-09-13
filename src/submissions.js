@@ -603,7 +603,8 @@ function afcHelper_act(action) {
 			var newentry = "\{\{afc contrib|" + assessment + "|" + newtitle + "|" + username + "\}\}\n";
 			var lastentry = recenttext.toLowerCase().lastIndexOf("\{\{afc contrib");
 			var firstentry = recenttext.toLowerCase().indexOf("\{\{afc contrib");
-			if (recenttext.match(/\{\{afc contrib/gi).length >= 10){
+			if (afcHelper_countString(recenttext,'\{\{afc contrib') >= 10){
+				// Only remove the old entry if there are 10+ entries in the list
 				recenttext = recenttext.substring(0, lastentry);
 			}
 			recenttext = recenttext.substring(0, firstentry) + newentry + recenttext.substring(firstentry);

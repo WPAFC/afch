@@ -69,6 +69,17 @@ function afcHelper_escapeHtmlChars(original) {
 	return original.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
 }
 
+function afcHelper_countString(str, search){
+	// Returns count of occurances of a "search" string in "str"
+	var count = 0;
+	var index = str.indexOf(search);
+	while(index !=- 1){
+		count++;
+		index = str.indexOf(search,index+1);
+	}
+	return count;
+}
+
 function afcHelper_getPageText(title, show, redirectcheck, timestamp) {
 	if (show) $('#afcHelper_status').html($('#afcHelper_status').html() + '<li id="afcHelper_get' + jqEsc(title) + '">Getting <a href="' + wgArticlePath.replace("$1", encodeURI(title)) + '" title="' + title + '">' + title + '</a></li>');
 
