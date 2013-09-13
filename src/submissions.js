@@ -219,6 +219,12 @@ function afcHelper_init() {
 		form += '<button class="afcHelper_button" type="button" id="afcHelper_decline_button" onclick="afcHelper_prompt(\'decline\')">Decline</button>';
 	}
 
+	if (afcHelper_g13_eligible(afcHelper_PageName) && $.inArray("", template_statuses) == -1 && $.inArray("r", template_statuses) == -1) {
+		form += '<button class="afcHelper_button" type="button" id="afcHelper_accept_button" onclick="afcHelper_prompt(\'accept\')">Accept G13-eligible submission</button>'
+		form += '<button class="afcHelper_button" type="button" id="afcHelper_g13_button" onclick="afcHelper_act(\'g13\')">Tag the submission for G13 speedy deletion</button>';
+		form += '<button class="afcHelper_button" type="button" id="afcHelper_postpone_g13_button" onclick="afcHelper_prompt(\'postpone_g13\')">Postpone G13 deletion</button>';
+	}
+
 	if ($.inArray("", template_statuses) != -1 || $.inArray("r", template_statuses) != -1 || $.inArray("d", template_statuses) != -1) form += '<button class="afcHelper_button" type="button" id="afcHelper_comment_button" onclick="afcHelper_prompt(\'comment\')">Comment</button>';
 
 	if (template_statuses === false || $.inArray("t", template_statuses) != -1 || (($.inArray("d", template_statuses) != -1) && ($.inArray("", template_statuses) == -1))) form += '<button class="afcHelper_button" type="button" id="afcHelper_submit_button" onclick="afcHelper_prompt(\'submit\')">Submit</button>';
@@ -232,8 +238,6 @@ function afcHelper_init() {
 	}
 
 	if (template_statuses === false || $.inArray("", template_statuses) != -1 || $.inArray("r", template_statuses) != -1 || $.inArray("d", template_statuses) != -1 || $.inArray("t", template_statuses) != -1) form += '<button class="afcHelper_button" type="button" id="afcHelper_cleanup_button" onclick="afcHelper_act(\'cleanup\')">Clean the submission</button>';
-
-	if (afcHelper_g13_eligible(afcHelper_PageName)) form += '<button class="afcHelper_button" type="button" id="afcHelper_g13_button" onclick="afcHelper_act(\'g13\')">Tag the submission for G13 speedy deletion</button> <button class="afcHelper_button" type="button" id="afcHelper_postpone_g13_button" onclick="afcHelper_prompt(\'postpone_g13\')">Postpone G13 deletion</button>';
 
 	form += '<div id="afcHelper_extra"></div>';
 
