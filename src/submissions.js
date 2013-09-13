@@ -462,13 +462,14 @@ function afcHelper_act(action) {
 		} else {
 			newtext = pagetext+"\n{{AfC postpone G13|1}}";
 		}
+		newtext = afcHelper_cleanup(newtext);
 		afcHelper_editPage(afcHelper_PageName, newtext, "Postponing [[WP:G13|G13]] speedy deletion", false);
 	} else if (action === 'g13') {
 		displayMessage('<ul id="afcHelper_status"></ul><ul id="afcHelper_finish"></ul>');
 		afcHelper_displaymessagehelper('done','standard');
 		timestamp = afcHelper_cache.afcHelper_lastedited;
 		newtext = "{{Db-g13|ts=" + timestamp + "}}\n" + pagetext;
-
+		newtext = afcHelper_cleanup(newtext);
 		afcHelper_editPage(afcHelper_PageName, newtext, "Tagging abandoned [[Wikipedia:Articles for creation]] draft for speedy deletion under [[WP:G13|G13]]", false);
 		// notify users
 		var users = new Array();
@@ -587,7 +588,6 @@ function afcHelper_act(action) {
 		afcHelper_displaymessagehelper('done','standard');
 		var callback = function() {
 			var username = '';
-			// clean up page
 			var afc_re = /\{\{\s*afc submission\s*\|(?:\{\{[^\{\}]*\}\}|[^\}\{])*\}\}/i;
 			if (afc_re.test(pagetext)) {
 				var afctemplate = afc_re.exec(pagetext)[0];
@@ -645,17 +645,8 @@ function afcHelper_act(action) {
 
 			afcHelper_editPage(newtalktitle, talktext, 'Placing [[Wikipedia:Articles for creation]] project banner', false);
 
-			pagetext = pagetext.replace(/\{\{\s*afc\s*submission\s*\|(?:\{\{[^\{\}]*\}\}|[^\}\{])*\}\}/gim, "");
-			pagetext = pagetext.replace(/\{\{\s*afc\s*comment\s*\|(?:\{\{[^\{\}]*\}\}|[^\}\{])*\}\}/gim, "");
-
-			// first clean up the page
-			pagetext = afcHelper_cleanup(pagetext);
-
-			// Uncomment cats (after the cleanup commented them)
-			pagetext = pagetext.replace(/\[\[:Category/gi, "\[\[Category");
-			pagetext = pagetext.replace(/\{\{:?DEFAULTSORT:/gi, "\{\{DEFAULTSORT:"); //fixes upper and lowercase problems!
-			// Remove Doncram's category on accept per issue #39
-			pagetext = pagetext.replace(/\[\[:?Category:Submissions by Doncram ready for review\]\]/gi, "");
+			// clean up the page
+			pagetext = afcHelper_cleanup(pagetext,'accept');
 
 			// [[Template:L]]
 			var templatel = '\n';
@@ -699,9 +690,6 @@ function afcHelper_act(action) {
 			if ((assessment === 'disambig') && (!disambig_re.test(pagetext))) {
 				pagetext += '\n\{\{disambig\}\}';
 			}
-
-			// Template uncommenting -- covert {{tl}}'d templates to the real thing
-			pagetext = pagetext.replace(/\{\{(tl|tlx|tlg)\|(.*?)\}\}/ig, "\{\{$2\}\}");
 
 			// automatic tagging of linkrot
 			// TODO: Use non-regex for html
@@ -950,9 +938,11 @@ function afcHelper_act(action) {
 			return;
 		}
 		pagetext = pagetext.replace(/\{\{\s*afc submission\s*\|\s*r\s*\|\s*/gi, "{{AFC submission||");
+		pagetext = afcHelper_cleanup(pagetext);
 		afcHelper_editPage(afcHelper_PageName, pagetext, "Unmarking [[Wikipedia:Articles for creation]] submission as being reviewed", false);
 	} else if (action === 'cleanup') {
 		displayMessage('<ul id="afcHelper_status"></ul><ul id="afcHelper_finish"></ul>');
+		pagetext = afcHelper_cleanup(pagetext);
 		var text = afcHelper_getPageText(afcHelper_PageName, true, false);
 		if (text === pagetext) {
 			afcHelper_displaymessagehelper('done','cleanednochange');
@@ -1079,12 +1069,13 @@ function afcHelper_onChange(select) {
 	}
 }
 
-function afcHelper_cleanup(text) {
+function afcHelper_cleanup(text,type) {
+	// type can be either `initial`, `accept`, or `default`
+	// it determines which fixes are run
+	if (!type) type = 'default';
+
 	// Remove html comments (<!--) that surround categories
 	text = text.replace(/\<!--\s*((\[\[:{0,1}(Category:.*?)\]\]\s*)+)--\>/gi, "$1");
-
-	// Comment out categories
-	text = text.replace(/\[\[Category:/gi, "\[\[:Category:");
 
 	// Fix {{afc comment}} when possible (takes rest of text on line and converts to a template parameter)
 	text = text.replace(/\{\{afc comment(?!\s*\|\s*1\s*=)\s*\}\}\s*(.*?)\s*[\r\n]/ig, "\{\{afc comment\|1=$1\}\}\n");
@@ -1097,62 +1088,81 @@ function afcHelper_cleanup(text) {
 	//remove boldings and big-tags from headlines; ignore level 1 headlines for not breaking URLs and other stuff!
 	text = text.replace(/[\s\n]*(={2,})\s*(?:\s*<big>|\s*''')*\s*(.*?)\s*(?:\s*<\/big>|\s*''')*\s*?(={2,})[\n\s]*/gi, "\n\n$1 $2 $1\n\n");
 
-	// Run AutoEd automatically
-	var AutoEd_baseurl = '//en.wikipedia.org/w/index.php?action=raw&ctype=text/javascript&title=Wikipedia:AutoEd/';
-	importScriptURI(AutoEd_baseurl + 'unicodify.js', function() {
-		text = autoEdUnicodify(text);
-	});
-	importScriptURI(AutoEd_baseurl + 'isbn.js', function() {
-		text = autoEdISBN(text);
-	});
-	importScriptURI(AutoEd_baseurl + 'whitespace.js', function() {
-		text = autoEdWhitespace(text);
-	});
-	importScriptURI(AutoEd_baseurl + 'wikilinks.js', function() {
-		text = autoEdWikilinks(text);
-	});
-	importScriptURI(AutoEd_baseurl + 'htmltowikitext.js', function() {
-		text = autoEdHTMLtoWikitext(text);
-	});
-	importScriptURI(AutoEd_baseurl + 'headlines.js', function() {
-		text = autoEdHeadlines(text);
-	});
-	importScriptURI(AutoEd_baseurl + 'unicodecontrolchars.js', function() {
-		text = autoEdUnicodeControlChars(text);
-	});
-	importScriptURI(AutoEd_baseurl + 'unicodehex.js', function() {
-		text = autoEdUnicodeHex(text);
-	});
-	importScriptURI(AutoEd_baseurl + 'templates.js', function() {
-		text = autoEdTemplates(text);
-	});
-	importScriptURI(AutoEd_baseurl + 'tablestowikitext.js', function() {
-		text = autoEdTablestoWikitext(text);
-	});
-	importScriptURI(AutoEd_baseurl + 'extrabreaks.js', function() {
-		text = autoEdExtraBreaks(text);
-	});
-	importScriptURI(AutoEd_baseurl + 'links.js', function() {
-		text = autoEdLinks(text);
-	});
+	if (type === 'accept') {
+		// Remove {{AFC...}} templates
+		pagetext = pagetext.replace(/\{\{\s*afc\s*submission\s*\|(?:\{\{[^\{\}]*\}\}|[^\}\{])*\}\}/gim, "");
+		pagetext = pagetext.replace(/\{\{\s*afc\s*comment\s*\|(?:\{\{[^\{\}]*\}\}|[^\}\{])*\}\}/gim, "");
+		// Uncomment cats
+		pagetext = pagetext.replace(/\[\[:Category/gi, "\[\[Category");
+		pagetext = pagetext.replace(/\{\{:?DEFAULTSORT:/gi, "\{\{DEFAULTSORT:"); //fixes upper and lowercase problems!
+		// Remove Doncram's category on accept per issue #39
+		pagetext = pagetext.replace(/\[\[:?Category:Submissions by Doncram ready for review\]\]/gi, "");
+		// Template uncommenting -- covert {{tl}}'d templates to the real thing
+		pagetext = pagetext.replace(/\{\{(tl|tlx|tlg)\|(.*?)\}\}/ig, "\{\{$2\}\}");
+	} else {
+		// If we're not accepting, comment out categories
+		text = text.replace(/\[\[Category:/gi, "\[\[:Category:");
+	}
 
-	// Run formatgeneral.js automatically
-	importScriptURI(mw.config.get('wgServer') + '/w/index.php?action=raw&ctype=text/javascript&title=User:Ohconfucius/test/formatgeneral.js/core.js', function() {
-		function regex(search,replace,repeat) {
-			// regex() function stolen from [[meta:User:Pathoschild/Scripts/Regex_menu_framework.js]]
-			if(!repeat || repeat<0)	var repeat = 1;
-			for(var i=0; i<repeat; i++) {
-				text = text.replace(search,replace);
+	if (type !== 'initial') {
+		/* Don't run external cleanup scripts on initial load to speed up opening */
+		// Run AutoEd automatically
+		var AutoEd_baseurl = '//en.wikipedia.org/w/index.php?action=raw&ctype=text/javascript&title=Wikipedia:AutoEd/';
+		importScriptURI(AutoEd_baseurl + 'unicodify.js', function() {
+			text = autoEdUnicodify(text);
+		});
+		importScriptURI(AutoEd_baseurl + 'isbn.js', function() {
+			text = autoEdISBN(text);
+		});
+		importScriptURI(AutoEd_baseurl + 'whitespace.js', function() {
+			text = autoEdWhitespace(text);
+		});
+		importScriptURI(AutoEd_baseurl + 'wikilinks.js', function() {
+			text = autoEdWikilinks(text);
+		});
+		importScriptURI(AutoEd_baseurl + 'htmltowikitext.js', function() {
+			text = autoEdHTMLtoWikitext(text);
+		});
+		importScriptURI(AutoEd_baseurl + 'headlines.js', function() {
+			text = autoEdHeadlines(text);
+		});
+		importScriptURI(AutoEd_baseurl + 'unicodecontrolchars.js', function() {
+			text = autoEdUnicodeControlChars(text);
+		});
+		importScriptURI(AutoEd_baseurl + 'unicodehex.js', function() {
+			text = autoEdUnicodeHex(text);
+		});
+		importScriptURI(AutoEd_baseurl + 'templates.js', function() {
+			text = autoEdTemplates(text);
+		});
+		importScriptURI(AutoEd_baseurl + 'tablestowikitext.js', function() {
+			text = autoEdTablestoWikitext(text);
+		});
+		importScriptURI(AutoEd_baseurl + 'extrabreaks.js', function() {
+			text = autoEdExtraBreaks(text);
+		});
+		importScriptURI(AutoEd_baseurl + 'links.js', function() {
+			text = autoEdLinks(text);
+		});
+
+		// Run formatgeneral.js automatically
+		importScriptURI(mw.config.get('wgServer') + '/w/index.php?action=raw&ctype=text/javascript&title=User:Ohconfucius/test/formatgeneral.js/core.js', function() {
+			function regex(search,replace,repeat) {
+				// regex() function stolen from [[meta:User:Pathoschild/Scripts/Regex_menu_framework.js]]
+				if(!repeat || repeat<0)	var repeat = 1;
+				for(var i=0; i<repeat; i++) {
+					text = text.replace(search,replace);
+				}
 			}
-		}
-		ohc_change_type();
-		Ohc_football_retrain();
-		ohc_protect_fmt();
-		Ohc_formats();
-		ohc_unprotect_fmt();
-		ohc_downcase_CEO();
-		Ohc_final_cleanup();
-	});
+			ohc_change_type();
+			Ohc_football_retrain();
+			ohc_protect_fmt();
+			Ohc_formats();
+			ohc_unprotect_fmt();
+			ohc_downcase_CEO();
+			Ohc_final_cleanup();
+		});
+	}
 
 	//Ref tag correction part #1: remove whitespaces and commas between the ref tags and whitespaces before ref tags
 	text = text.replace(/\s*(\<\/\s*ref\s*\>)\s*[,]*\s*(<\s*ref\s*(name\s*=|group\s*=)*\s*[^\/]*>)\s*$/gim, "$1$2");
@@ -1186,6 +1196,12 @@ function afcHelper_cleanup(text) {
 	text = text.replace(/^----+$/igm, ""); // Removes horizontal rules
 	text = text.replace(/\[\[:Category:Articles created via the Article Wizard\]\]/gi, "[[Category:Articles created via the Article Wizard]]");
 	text = text.replace(/\[\[:?Category:AfC(_|\s*)+submissions(_|\s*)+with(_|\s*)+missing(_|\s*)+AfC(_|\s*)+template\]\]/gi, ""); // Remove "AfC submission with missing AfC template" maintenace category
+
+	// Remove empty HTML comments
+	text = text.replace(/<!--\s*-->/ig, "");
+
+	// Remove empty list elements and empty headers
+	text = text.replace(/^\s*[\*#:;]\s*$/igm, "");
 
 	//create an array, strip the submission templates, then AFC comments and then add them back to the page
 	var submissiontemplates = new Array();
@@ -1229,12 +1245,6 @@ function afcHelper_cleanup(text) {
 		]);
 		text = text.replace(temptemplate, "");
 	}
-
-	// Remove empty HTML comments
-	text = text.replace(/<!--\s*-->/ig, "");
-
-	// Remove empty list elements and empty headers
-	text = text.replace(/^\s*[\*#:;]\s*$/igm, "");
 
 	//adding the submission templates and comment templates back
 	var commentstemplates_length = commentstemplates.length;
@@ -1324,7 +1334,7 @@ function afcHelper_setup() {
 	// Fix utterly invalid templates so cleanup doesn't mangle them
 	pagetext = pagetext.replace(/\{\{AFC submission(\s*\|){0,}ts\s*=\s*/gi, "{{AFC submission|||ts=");
 	pagetext = pagetext.replace(/\{\{AFC submission\s*\}\}/gi, "{{AFC submission|||ts=99999999999999|u=|ns={{subst:AFC submission/namespace number}}}}");
-	pagetext = afcHelper_cleanup(pagetext);
+	pagetext = afcHelper_cleanup(pagetext,'initial');
 
 	warnings = afcHelper_warnings(pagetext); // Warn about problems with given pagetext
 
