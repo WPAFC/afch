@@ -468,6 +468,7 @@ function afcHelper_act(action) {
 		afcHelper_editPage(afcHelper_PageName, newtext, "Tagging abandoned [[Wikipedia:Articles for creation]] draft for speedy deletion under [[WP:G13|G13]]", false);
 		// notify users
 		var users = new Array();
+		//todo dr
 		var templates = pagetext.match(/\{\{\s*afc submission\s*\|(?:\{\{[^\{\}]*\}\}|[^\}\{])*\}\}/gi);
 		var author_re = /\|\s*u=\s*[^\|]*\|/i;
 		if (templates) {
@@ -515,6 +516,7 @@ function afcHelper_act(action) {
 				alert("Unable to find a non-bot editor; please check the page history.");
 			}
 		} else {
+			//TODO: use a case switch
 			if (typeofsubmit == 'first') {
 				var afc_re = /\{\{\s*afc submission\s*\|(?:\{\{[^\{\}]*\}\}|[^\}\{])*\}\}/i;
 				if (afc_re.test(pagetext)) {
@@ -548,6 +550,7 @@ function afcHelper_act(action) {
 			afcHelper_editPage(afcHelper_PageName, newtext, "Submitting [[Wikipedia:Articles for creation]] submission", false);
 		}
 	} else if (action === 'accept') {
+		afcHelper_underreview();
 		var newtitle = $("#afcHelper_movetarget").val();
 		var assessment = $("#afcHelper_assessment").val();
 		var pagePrepend = $("#afcHelper_pagePrepend").val();
@@ -644,14 +647,15 @@ function afcHelper_act(action) {
 			pagetext = pagetext.replace(/\{\{\s*afc\s*submission\s*\|(?:\{\{[^\{\}]*\}\}|[^\}\{])*\}\}/gim, "");
 			pagetext = pagetext.replace(/\{\{\s*afc\s*comment\s*\|(?:\{\{[^\{\}]*\}\}|[^\}\{])*\}\}/gim, "");
 
+			// Remove Doncram's category on accept per issue #39
+			pagetext = pagetext.replace(/\[\[:?Category:Submissions by Doncram ready for review\]\]/gi, "");
+			
 			// first clean up the page
 			pagetext = afcHelper_cleanup(pagetext);
 
 			// Uncomment cats (after the cleanup commented them)
 			pagetext = pagetext.replace(/\[\[:Category/gi, "\[\[Category");
 			pagetext = pagetext.replace(/\{\{:?DEFAULTSORT:/gi, "\{\{DEFAULTSORT:"); //fixes upper and lowercase problems!
-			// Remove Doncram's category on accept per issue #39
-			pagetext = pagetext.replace(/\[\[:?Category:Submissions by Doncram ready for review\]\]/gi, "");
 
 			// [[Template:L]]
 			var templatel = '\n';
@@ -736,6 +740,7 @@ function afcHelper_act(action) {
 		};
 		afcHelper_movePage(afcHelper_PageName, newtitle, 'Created via \[\[WP:AFC|Articles for creation\]\] (\[\[WP:WPAFC|you can help!\]\])', callback, true);
 	} else if (action === 'decline') {
+		afcHelper_underreview();
 		var code = $("#afcHelper_reason").val();
 		for (i = 0; i < (afcHelper_reasonhash.length + 1); i++) {
 			if ((typeof(afcHelper_reasonhash[i]) !== 'undefined') && (afcHelper_reasonhash[i].value === code)) var reasontext = afcHelper_reasonhash[i].reason;
@@ -764,7 +769,7 @@ function afcHelper_act(action) {
 			alert("Unable to locate AFC submission template, aborting...");
 			return;
 		}
-		var notifytemplate = "afc decline";
+		
 		if (code === 'reason' && customreason === '') {
 			alert("You must enter a reason!");
 			return;
@@ -786,6 +791,8 @@ function afcHelper_act(action) {
 			newtemplate += '|3=' + extra;
 		}
 		newtemplate += '|declinets=\{\{subst:CURRENTTIMESTAMP\}\}|decliner=\{\{subst:REVISIONUSER\}\}' + afctemplate.substring(endpipe);
+		
+		//TODO should be used in _cleanup()
 		//correcting namespace number after page moves mostly from userspace
 		newtemplate = newtemplate.replace(/\s*\|\s*ns\s*=\s*[0-9]{0,2}\s*/gi, '\|ns=\{\{subst:NAMESPACENUMBER\}\}');
 		if (code !== null && code !== 'reason' && customreason !== '') {
@@ -814,15 +821,12 @@ function afcHelper_act(action) {
 			afcHelper_authorusername = afcHelper_page_creator(afcHelper_PageName);
 		}
 
-
 		if (notify) {
 			usertalkpage = "User talk:" + afcHelper_authorusername;
 			var usertext = afcHelper_getPageText(usertalkpage, true, true);
 			var reason = 'Your submission at \[\[Wikipedia:Articles for creation|Articles for creation\]\]';
-			var SubmissionName = afcHelper_PageName.replace(/(Wikipedia( talk)*:Articles for creation\/)+/i, '');
-			usertext += "\n== Your submission at \[\[Wikipedia:Articles for creation|Articles for creation\]\]: \[\[" + afcHelper_PageName + "|" + SubmissionName + "\]\] ({{subst:CURRENTMONTHNAME}} {{subst:CURRENTDAY}}) ==";
-			var newnewnewtitle = afcHelper_submissionTitle.replace(" ", "{{subst:Sp}}");
-			usertext += "\n\{\{subst:" + notifytemplate + "|1=" + newnewnewtitle;
+			usertext += "\n== Your submission at \[\[Wikipedia:Articles for creation|Articles for creation\]\]: \[\[" + afcHelper_PageName + "|" + afcHelper_PageName.replace(/(Wikipedia( talk)*:Articles for creation\/)+/i, '') + "\]\] ({{subst:CURRENTMONTHNAME}} {{subst:CURRENTDAY}}) ==";
+			usertext += "\n\{\{subst:afc decline|1=" + afcHelper_submissionTitle.replace(" ", "{{subst:Sp}}");
 			if (code === 'cv') usertext += "|cv=yes";
 			usertext += "|sig=yes\}\}";
 
@@ -904,7 +908,7 @@ function afcHelper_act(action) {
 				pagetext = newtemplate + '\n' + newcomment + '\n\{\{afc cleared\}\}';
 			}
 		}
-
+		//TODO: this isn't needed any more as the commentsorting does this already, or?
 		//first remove the multiple pending templates, otherwise one isn't recognized
 		pagetext = pagetext.replace(/\{\{\s*afc submission\s*\|\s*[||h|r](?:\{\{[^{}]*\}\}|[^}{])*\}\}/i, "");
 		pagetext = afcHelper_cleanup(pagetext);
@@ -923,6 +927,7 @@ function afcHelper_act(action) {
 		pagetext = afcHelper_cleanup(pagetext);
 		afcHelper_editPage(afcHelper_PageName, pagetext, "Commenting on [[Wikipedia:Articles for creation]] submission", false);
 	} else if (action === 'mark') {
+		afcHelper_underreview();
 		var comment = $("#afcHelper_comments").val();
 		if (comment == undefined) comment = window.overwrite_comment; // This handles the overwrite_redirect scenario
 		displayMessage('<ul id="afcHelper_status"></ul><ul id="afcHelper_finish"></ul>');
@@ -938,6 +943,7 @@ function afcHelper_act(action) {
 		pagetext = afcHelper_cleanup(pagetext);
 		afcHelper_editPage(afcHelper_PageName, pagetext, "Marking [[Wikipedia:Articles for creation]] submission as being reviewed", false);
 	} else if (action === 'unmark') {
+		afcHelper_underreview();
 		displayMessage('<ul id="afcHelper_status"></ul><ul id="afcHelper_finish"></ul>');
 		afcHelper_displaymessagehelper('done','standard');
 		var afc_re = /\{\{\s*afc submission\s*\|\s*r\s*\|(?:\{\{[^\{\}]*\}\}|[^\}\{])*\}\}/gi;
@@ -1563,6 +1569,10 @@ function afcHelper_addcomment(comment) {
 		return "";
 	else
 		return "\{\{afc comment|1=" + comment + " \~\~\~\~\}\}";
+}
+
+function afcHelper_underreview() {
+	//TODO: check for a marked template and notify that a user is in review since TIME
 }
 
 function afcHelper_turnvisible(id, visible) {
