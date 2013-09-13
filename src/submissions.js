@@ -1182,27 +1182,7 @@ function afcHelper_cleanup(text) {
 	text = text.replace(/\[\[:Category:Articles created via the Article Wizard\]\]/gi, "[[Category:Articles created via the Article Wizard]]");
 	text = text.replace(/\[\[:?Category:AfC(_|\s*)+submissions(_|\s*)+with(_|\s*)+missing(_|\s*)+AfC(_|\s*)+template\]\]/gi, ""); // Remove "AfC submission with missing AfC template" maintenace category
 
-	//create an array, strip the submission templates, then AFC comments and then add them back to the page
-	var submissiontemplates = new Array();
 	var commentstemplates = new Array();
-	while (submissiontemplate_re.test(text)) {
-		var temptemplate = submissiontemplate_re.exec(text)[0].toString();
-		text = text.replace(temptemplate, "");
-
-		temptemplate = temptemplate.replace("\{\{subst:LOCALTIMESTAMP\}\}", "99999999999999");
-		temptemplate = temptemplate.replace("\{\{REVISIONTIMESTAMP\}\}", "99999999999998");
-		// remove the shrinked parameter, will be added back later
-		temptemplate = temptemplate.replace(/\|\s*small\s*=\s*yes/i, "");
-
-		var temptimestamp = temptemplate.replace(submissiontemplate_re, "$4");
-		var tempstatus = temptemplate.replace(submissiontemplate_re, "$2");
-
-		submissiontemplates.push([
-				{template: temptemplate},
-				{timestamp: temptimestamp},
-				{status: tempstatus}
-		]);
-	}
 	while (afc_comment_re.test(text)) {
 		var temptemplate = afc_comment_re.exec(text).toString();
 		var temptimestamp = temptemplate.replace(/([0-9]{2}):([0-9]{2}), ([0-9]{1,2}) (January|February|March|April|May|June|July|August|September|October|November|December) ([0-9]{4}) \(UTC\)/gi, "$5$4$3$1$2");
@@ -1245,7 +1225,7 @@ function afcHelper_cleanup(text) {
 	var submissiontemplates_length = submissiontemplates.length;
 	if (submissiontemplates_length > 0) {
 		//sorting on basis of TS
-		submissiontemplates.sort(function(a, b){
+		afcHelper_submissiontemplates.sort(function(a, b){
 			return b[1].timestamp-a[1].timestamp;
 		});
 		// Remove all draft templates if there is any other submission template
@@ -1308,6 +1288,32 @@ function afcHelper_cleanup(text) {
 
 	return text;
 }
+
+function afcHelper_parse() {
+	/**
+	 * afcHelper_submissiontemplates = array of all submission templates on page
+	 * afcHelper_submissionstatuses = array of all unique statuses on page
+	 */
+
+	afcHelper_submissiontemplates = new Array();
+	while (submissiontemplate_re.test(text)) {
+		var temptemplate = submissiontemplate_re.exec(text)[0].toString();
+		text = text.replace(temptemplate, "");
+
+		temptemplate = temptemplate.replace("\{\{subst:LOCALTIMESTAMP\}\}", "99999999999999");
+		temptemplate = temptemplate.replace("\{\{REVISIONTIMESTAMP\}\}", "99999999999998");
+		// remove the shrinked parameter, will be added back later
+		temptemplate = temptemplate.replace(/\|\s*small\s*=\s*yes/i, "");
+
+		var temptimestamp = temptemplate.replace(submissiontemplate_re, "$4");
+		var tempstatus = temptemplate.replace(submissiontemplate_re, "$2");
+
+		afcHelper_submissiontemplates.push([
+				{template: temptemplate},
+				{timestamp: temptimestamp},
+				{status: tempstatus}
+		]);
+	}
 
 function afcHelper_setup() {
 	/* Gets the pagetext, does some cleanup, lists previous deletions,
