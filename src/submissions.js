@@ -603,7 +603,9 @@ function afcHelper_act(action) {
 			var newentry = "\{\{afc contrib|" + assessment + "|" + newtitle + "|" + username + "\}\}\n";
 			var lastentry = recenttext.toLowerCase().lastIndexOf("\{\{afc contrib");
 			var firstentry = recenttext.toLowerCase().indexOf("\{\{afc contrib");
-			recenttext = recenttext.substring(0, lastentry);
+			if (recenttext.match(/\{\{afc contrib/gi).length >= 10){
+				recenttext = recenttext.substring(0, lastentry);
+			}
 			recenttext = recenttext.substring(0, firstentry) + newentry + recenttext.substring(firstentry);
 			afcHelper_editPage("Wikipedia:Articles for creation/recent", recenttext, 'Updating recent AFC creations', false);
 
