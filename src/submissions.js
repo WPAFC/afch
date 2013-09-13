@@ -1315,6 +1315,13 @@ function afcHelper_parse() {
 		]);
 	}
 
+	// Now also set up an array with the data about templates on page
+	afcHelper_submissionstatuses = new Array();
+	$.each(afcHelper_submissionstatuses, function(i, l.status) {
+			if ($.inArray(l.status, afcHelper_submissionstatuses) === -1) afcHelper_submissionstatuses.push(l);
+	});
+}
+
 function afcHelper_setup() {
 	/* Gets the pagetext, does some cleanup, lists previous deletions,
 	and displays warnings about long comments and bad reference styles */
