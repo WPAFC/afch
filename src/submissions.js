@@ -1276,12 +1276,12 @@ function afcHelper_cleanup(text,type) {
 		var not_draft_submission = false;
 		var pending_submission = false;
 		for(i = 0; i< submissiontemplates_length; i++){
-			if((submissiontemplates[i][2].status == "t") && (not_draft_draft_submission || pending_submission || multiple_draft_submission )){
+			if((submissiontemplates[i][2].status == "t") && (not_draft_submission || pending_submission || multiple_draft_submission )){
 				submissiontemplates.splice(i, 1);
 				i = 0; //rerun for removing all draft templates
 				submissiontemplates_length = submissiontemplates.length;
 			}
-			else if((submissiontemplates[i][2].status == "t") && (!not_draft_draft_submission || !pending_submission)){
+			else if((submissiontemplates[i][2].status == "t") && (!not_draft_submission || !pending_submission)){
 				multiple_draft_submission = true;
 			}
 			else if ((!pending_submission) && ((submissiontemplates[i][2].status == "|")||(submissiontemplates[i][2].status == "r"))){
