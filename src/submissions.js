@@ -1087,15 +1087,15 @@ function afcHelper_cleanup(text,type) {
 
 	if (type === 'accept') {
 		// Remove {{AFC...}} templates
-		pagetext = pagetext.replace(/\{\{\s*afc\s*submission\s*\|(?:\{\{[^\{\}]*\}\}|[^\}\{])*\}\}/gim, "");
-		pagetext = pagetext.replace(/\{\{\s*afc\s*comment\s*\|(?:\{\{[^\{\}]*\}\}|[^\}\{])*\}\}/gim, "");
+		text = text.replace(/\{\{\s*afc\s*submission\s*\|(?:\{\{[^\{\}]*\}\}|[^\}\{])*\}\}/gim, "");
+		text = text.replace(/\{\{\s*afc\s*comment\s*\|(?:\{\{[^\{\}]*\}\}|[^\}\{])*\}\}/gim, "");
 		// Uncomment cats
-		pagetext = pagetext.replace(/\[\[:Category/gi, "\[\[Category");
-		pagetext = pagetext.replace(/\{\{:?DEFAULTSORT:/gi, "\{\{DEFAULTSORT:"); //fixes upper and lowercase problems!
+		text = text.replace(/\[\[:Category/gi, "\[\[Category");
+		text = text.replace(/\{\{:?DEFAULTSORT:/gi, "\{\{DEFAULTSORT:"); //fixes upper and lowercase problems!
 		// Remove Doncram's category on accept per issue #39
-		pagetext = pagetext.replace(/\[\[:?Category:Submissions by Doncram ready for review\]\]/gi, "");
+		text = text.replace(/\[\[:?Category:Submissions by Doncram ready for review\]\]/gi, "");
 		// Template uncommenting -- covert {{tl}}'d templates to the real thing
-		pagetext = pagetext.replace(/\{\{(tl|tlx|tlg)\|(.*?)\}\}/ig, "\{\{$2\}\}");
+		text = text.replace(/\{\{(tl|tlx|tlg)\|(.*?)\}\}/ig, "\{\{$2\}\}");
 	} else {
 		// If we're not accepting, comment out categories
 		text = text.replace(/\[\[Category:/gi, "\[\[:Category:");
