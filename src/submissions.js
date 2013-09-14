@@ -1200,6 +1200,15 @@ function afcHelper_cleanup(text,type) {
 	// Remove empty list elements and empty headers
 	text = text.replace(/^\s*[\*#:;]\s*$/igm, "");
 
+	// Move stub templates to the bottom, see [[WP:FOOTER]]
+	var temptext = text;
+	var stub_re = /\s*(\{\{(?:.+?-|)stub\}\})\s*/gi
+	var stubmatch;
+	while (stubmatch = stub_re.exec(temptext)) {
+		text = text.replace(stubmatch[0],'\n\n' /* since stub templates previously made a line break wherever they were placed */);
+		text += '\n' + stubmatch[1];
+	}
+
 	//create an array, strip the submission templates, then AFC comments and then add them back to the page
 	var submissiontemplates = new Array();
 	var commentstemplates = new Array();
