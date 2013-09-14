@@ -1202,7 +1202,7 @@ function afcHelper_cleanup(text,type) {
 
 	// Move stub templates to the bottom, see [[WP:FOOTER]]
 	var temptext = text;
-	var stub_re = /\s*(\{\{(?:.+?-|)stub\}\})\s*/gi
+	var stub_re = /\s*(\{\{(?:.+?-|)stub\}\})\s*/gi;
 	var stubmatch;
 	while (stubmatch = stub_re.exec(temptext)) {
 		text = text.replace(stubmatch[0],'\n\n' /* since stub templates previously made a line break wherever they were placed */);
