@@ -209,7 +209,7 @@ function afcHelper_ffu_onActionChange(id) {
 			label: 'Article is at AfD',
 			value: 'afd'
 		}, {
-			label: 'Non-free file for use in still-pending AfC submission',
+			label: 'Pending AfC submission',
 			value: 'afc'
 		}, {
 			label: 'No URL',
@@ -408,7 +408,7 @@ function add_review_links() {
 	});
 	$("#bodyContent [sectionIndex]").click((function() {
 		$("#bodyContent [sectionIndex]").each(function(i) {
-			$(reviewlink).html("Reviewing requests...");
+			$(this).html("Reviewing requests...");
 		});
 		afcHelper_ffu_init();
 	}));
