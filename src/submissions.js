@@ -778,10 +778,7 @@ function afcHelper_act(action) {
 			newtemplate += '|3=' + extra;
 		}
 		newtemplate += '|declinets=\{\{subst:CURRENTTIMESTAMP\}\}|decliner=\{\{subst:REVISIONUSER\}\}' + afctemplate.substring(endpipe);
-		
-		//TODO should be used in _cleanup()
-		//correcting namespace number after page moves mostly from userspace
-		newtemplate = newtemplate.replace(/\s*\|\s*ns\s*=\s*[0-9]{0,2}\s*/gi, '\|ns=\{\{subst:NAMESPACENUMBER\}\}');
+
 		if (code !== null && code !== 'reason' && customreason !== '') {
 			newcomment = afcHelper_addcomment(customreason);
 		}
@@ -1222,7 +1219,9 @@ function afcHelper_cleanup(text,type) {
 		temptemplate = temptemplate.replace("\{\{REVISIONTIMESTAMP\}\}", "99999999999998");
 		// remove the shrinked parameter, will be added back later
 		temptemplate = temptemplate.replace(/\|\s*small\s*=\s*yes/i, "");
-
+		//correcting namespace number after page moves mostly from userspace
+		temptemplate = temptemplate.replace(/\s*\|\s*ns\s*=\s*[0-9]{0,2}\s*/gi, '\|ns=\{\{subst:NAMESPACENUMBER\}\}');
+		
 		var temptimestamp = temptemplate.replace(submissiontemplate_re, "$4");
 		var tempstatus = temptemplate.replace(submissiontemplate_re, "$2");
 
