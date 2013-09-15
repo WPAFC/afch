@@ -1076,9 +1076,18 @@ function afcHelper_cleanup(text,type) {
 	// Fix {{afc comment}} when possible (takes rest of text on line and converts to a template parameter)
 	text = text.replace(/\{\{afc comment(?!\s*\|\s*1\s*=)\s*\}\}\s*(.*?)\s*[\r\n]/ig, "\{\{afc comment\|1=$1\}\}\n");
 
-	//Wikilink correction
-	text = text.replace(/(\[){2}(?:https?:)?\/\/(en.wikipedia.org\/wiki|enwp.org)\/([^\s\|]+)(\s|\|)?((?:\[\[[^\[\]]*\]\]|[^\]\[])*)(\]){2}/gi, "\[\[$3$4$5\]\]");
-	text = text.replace(/(\[){1}(?:https?:)?\/\/(en.wikipedia.org\/wiki|enwp.org)\/([^\s\|]+)(\s|\|)?((?:\[\[[^\[\]]*\]\]|[^\]\[])*)(\]){1}/gi, "\[\[$3$4$5\]\]");
+	// Convert external links to Wikipedia articles to proper wikilinks 
+	var wikilink_re = /(\[){1,2}(?:https?:)?\/\/(en.wikipedia.org\/wiki|enwp.org)\/([^\s\|\]\[]+)(\s|\|)?((?:\[\[[^\[\]]*\]\]|[^\]\[])*)(\]){1,2}/gi;
+	var temptext = text;
+	var match;
+	while (match = wikilink_re.exec(temptext)) {
+		var pagename = match[3].replace(/_/g,' ');
+		var displayname = match[5].replace(/_/g,' ');
+		if (pagename === displayname) displayname = '';
+		var replacetext = '[[' + pagename + ((displayname) ? '|' + displayname : '') + ']]';
+		text = text.replace(match[0],replacetext,1);
+	}
+
 	//KISS: for the case at the end of the url is a <ref> it detects all < symbols and stops there
 	text = text.replace(/https?:\/\/(en.wikipedia.org\/wiki|enwp.org)\/([^\s\<]+)/gi, "\[\[$2\]\]");
 	//remove boldings and big-tags from headlines; ignore level 1 headlines for not breaking URLs and other stuff!
