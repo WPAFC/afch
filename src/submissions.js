@@ -749,9 +749,10 @@ function afcHelper_act(action) {
 
 		displayMessage('<ul id="afcHelper_status"></ul><ul id="afcHelper_finish"></ul>');
 		afcHelper_displaymessagehelper('done','standard');
+
 		// Find the first pending submission or marked as review on the page.
-		if (!afc_re.test(pagetext)) {
-			alert("Unable to locate AFC submission template, aborting...");
+		if (!pending_afc_re.test(pagetext)) {
+			alert("Unable to locate a pending AFC submission template, aborting...");
 			return;
 		}
 		
