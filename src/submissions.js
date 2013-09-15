@@ -12,11 +12,13 @@ var all_afc_re = /\{\{\s*afc submission\s*\|(?:\{\{[^\{\}]*\}\}|[^\}\{])*\}\}/gi
 var pending_afc_re = /(\{\{\s*afc submission\s*\|)(\s*[||r])+((?:\{\{[^\{\}]*\}\}|[^\}\{])*\}\})/i;
 var declined_afc_re = /(\{\{\s*afc submission\s*\|)(\s*[d])+((?:\{\{[^\{\}]*\}\}|[^\}\{])*)(\|small=yes)(\}\})/i;
 var marked_afc_re = /\{\{\s*afc submission\s*\|\s*r\s*\|(?:\{\{[^\{\}]*\}\}|[^\}\{])*\}\}/gi;
+var reviewing_afc_re = /\{\{\s*afc submission\s*\|\s*r\s*\|(?:\{\{[^\{\}]*\}\}|[^\}\{])*\}\}/gi;
 var template_status_re = /(\{\{\s*afc submission\s*\|)(\s*|r|d)+((?:\{\{[^\{\}]*\}\}|[^\}\{])*\}\})/i;
 var afc_comment_re = /\{\{\s*afc comment(?:\{\{[^\{\}]*\}\}|[^\}\{])*\}\}/i;
 var draft_afc_re = /\{\{\s*afc submission\s*\|\s*t(?:\{\{[^\{\}]*\}\}|[^\}\{])*\}\}/i;
 var not_draft_afc_re = /\{\{\s*afc submission\s*\|\s*[^t](?:\{\{[^\{\}]*\}\}|[^\}\{])*\}\}/i;
-var submissiontemplate_re = /(\{\{\s*afc submission\s*\|\s*([||t|h|r|d])(?:\{\{[^\{\}]*\}\}|[^\}\{])*)(\|\s*ts\s*=\s*([0-9]{14})|\{\{subst:LOCALTIMESTAMP\}\}|\{\{REVISIONTIMESTAMP\}\})((?:\{\{[^\{\}]*\}\}|[^\}\{]))*\}\}/i;
+var submissiontemplate_re = /(\{\{\s*afc submission\s*\|\s*([||t|r|d])(?:\{\{[^\{\}]*\}\}|[^\}\{])*)(\|\s*ts\s*=\s*([0-9]{14})|\{\{subst:LOCALTIMESTAMP\}\}|\{\{REVISIONTIMESTAMP\}\})((?:\{\{[^\{\}]*\}\}|[^\}\{]))*\}\}/i;
+var exclusive_pending_afc_re = /(\{\{\s*afc submission\s*\|)(\s*[|]\s*)*((?:\{\{[^\{\}]*\}\}|[^\}\{])*\}\})/i;
 var afcHelper_cache = {};
 var afcHelper_reasonhash = [{
 	label: 'DUPLICATE ARTICLES',
@@ -220,7 +222,7 @@ function afcHelper_init() {
 	}
 
 	if (afcHelper_g13_eligible(afcHelper_PageName) && $.inArray("", template_statuses) == -1 && $.inArray("r", template_statuses) == -1) {
-		form += '<button class="afcHelper_button" type="button" id="afcHelper_accept_button" onclick="afcHelper_prompt(\'accept\')">Accept G13-eligible submission</button>'
+		form += '<button class="afcHelper_button" type="button" id="afcHelper_accept_button" onclick="afcHelper_prompt(\'accept\')">Accept G13-eligible submission</button>';
 		form += '<button class="afcHelper_button" type="button" id="afcHelper_g13_button" onclick="afcHelper_act(\'g13\')">Tag the submission for G13 speedy deletion</button>';
 		form += '<button class="afcHelper_button" type="button" id="afcHelper_postpone_g13_button" onclick="afcHelper_prompt(\'postpone_g13\')">Postpone G13 deletion</button>';
 	}
@@ -522,7 +524,6 @@ function afcHelper_act(action) {
 		} else {
 			//TODO: use a case switch
 			if (typeofsubmit == 'first') {
-				var afc_re = /\{\{\s*afc submission\s*\|(?:\{\{[^\{\}]*\}\}|[^\}\{])*\}\}/i;
 				if (afc_re.test(pagetext)) {
 					var afctemplate = afc_re.exec(pagetext)[0];
 					var author_re = /\|\s*u=\s*[^\|]*\|/i;
@@ -591,7 +592,6 @@ function afcHelper_act(action) {
 		var callback = function() {
 			var username = '';
 			// clean up page
-			var afc_re = /\{\{\s*afc submission\s*\|(?:\{\{[^\{\}]*\}\}|[^\}\{])*\}\}/i;
 			if (afc_re.test(pagetext)) {
 				var afctemplate = afc_re.exec(pagetext)[0];
 				var author_re = /\|\s*u=\s*[^\|]*\|/i;
@@ -767,9 +767,7 @@ function afcHelper_act(action) {
 		displayMessage('<ul id="afcHelper_status"></ul><ul id="afcHelper_finish"></ul>');
 		afcHelper_displaymessagehelper('done','standard');
 		// Find the first pending submission or marked as review on the page.
-		var afc_re = /\{\{\s*afc submission\s*\|\s*[||h|r](?:\{\{[^\{\}]*\}\}|[^\}\{])*\}\}/i;
-
-		if (!afc_re.test(pagetext)) {
+		if (!pending_afc_re.test(pagetext)) {
 			alert("Unable to locate AFC submission template, aborting...");
 			return;
 		}
@@ -778,7 +776,7 @@ function afcHelper_act(action) {
 			alert("You must enter a reason!");
 			return;
 		}
-		var afctemplate = afc_re.exec(pagetext)[0];
+		var afctemplate = pending_afc_re.exec(pagetext)[0];
 		var startindex = pagetext.indexOf(afctemplate);
 		var endindex = startindex + afctemplate.length;
 		//data is always between the first pipe and the one before the timestamp.
@@ -914,7 +912,7 @@ function afcHelper_act(action) {
 		}
 		//TODO: this isn't needed any more as the commentsorting does this already, or?
 		//first remove the multiple pending templates, otherwise one isn't recognized
-		pagetext = pagetext.replace(/\{\{\s*afc submission\s*\|\s*[||h|r](?:\{\{[^{}]*\}\}|[^}{])*\}\}/i, "");
+		pagetext = pagetext.replace(/\{\{\s*afc submission\s*\|\s*[||r](?:\{\{[^{}]*\}\}|[^}{])*\}\}/i, "");
 		pagetext = afcHelper_cleanup(pagetext);
 		afcHelper_editPage(afcHelper_PageName, pagetext, summary, false);
 	} else if (action === 'comment') {
@@ -937,12 +935,11 @@ function afcHelper_act(action) {
 		displayMessage('<ul id="afcHelper_status"></ul><ul id="afcHelper_finish"></ul>');
 		afcHelper_displaymessagehelper('done','standard');
 
-		var afc_re = /(\{\{\s*afc submission\s*\|)(\s*[||h]\s*)*((?:\{\{[^\{\}]*\}\}|[^\}\{])*\}\})/i;
-		if (!afc_re.test(pagetext)) {
+		if (!exclusive_pending_afc_re.test(pagetext)) {
 			alert("Unable to locate AFC submission template, aborting...");
 			return;
 		}
-		pagetext = pagetext.replace(afc_re, "$1r\|$3");
+		pagetext = pagetext.replace(exclusive_pending_afc_re, "$1r\|$3");
 		pagetext = afcHelper_addcomment(comment) + pagetext;
 		pagetext = afcHelper_cleanup(pagetext);
 		afcHelper_editPage(afcHelper_PageName, pagetext, "Marking [[Wikipedia:Articles for creation]] submission as being reviewed", false);
@@ -950,8 +947,7 @@ function afcHelper_act(action) {
 		afcHelper_underreview();
 		displayMessage('<ul id="afcHelper_status"></ul><ul id="afcHelper_finish"></ul>');
 		afcHelper_displaymessagehelper('done','standard');
-		var afc_re = /\{\{\s*afc submission\s*\|\s*r\s*\|(?:\{\{[^\{\}]*\}\}|[^\}\{])*\}\}/gi;
-		if (!afc_re.test(pagetext)) {
+		if (!reviewing_afc_re.test(pagetext)) {
 			alert("Unable to locate AFC submission template or page is not marked as being reviewed, aborting...");
 			return;
 		}
@@ -1011,7 +1007,7 @@ function afcHelper_movePage(oldtitle, newtitle, summary, callback, overwrite_red
 							del = confirm("The target title, " + newtitle + ", is a redirect. Would you like to automatically delete it under {{db-move}} and then accept and move the submission?");
 							if (del) {
 								document.getElementById('afcHelper_move' + escape(oldtitle)).innerHTML = '<div id="afcHelper_delete' + escape(oldtitle)+'"></div>'; // to allow for messages from the editor
-								deleted = afcHelper_deletePage(newtitle, "[[CSD:G6]]: redirect in the way of move of accepted [[Wikipedia:Articles for creation]] submission")
+								deleted = afcHelper_deletePage(newtitle, "[[CSD:G6]]: redirect in the way of move of accepted [[Wikipedia:Articles for creation]] submission");
 								if (deleted) {
 									afcHelper_movePage(oldtitle, newtitle, summary, callback, overwrite_redirect); // Then just move the page again as if nothing happened
 									return; // So we don't run callback() twice
