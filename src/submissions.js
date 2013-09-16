@@ -1218,9 +1218,9 @@ function afcHelper_cleanup(text,type) {
 		temptemplate = temptemplate.replace("\{\{subst:LOCALTIMESTAMP\}\}", "99999999999999");
 		temptemplate = temptemplate.replace("\{\{REVISIONTIMESTAMP\}\}", "99999999999998");
 		// remove the shrinked parameter, will be added back later
-		temptemplate = temptemplate.replace(/\|\s*small\s*=\s*yes/i, "");
+		temptemplate = temptemplate.replace(/\s*\|\s*small\s*=\s*yes\s*/gi, "");
 		//correcting namespace number after page moves mostly from userspace
-		temptemplate = temptemplate.replace(/\s*\|\s*ns\s*=\s*[0-9]{0,2}\s*/gi, '\|ns=\{\{subst:NAMESPACENUMBER\}\}');
+		temptemplate = temptemplate.replace(/\s*\|\s*ns\s*=\s*(\{\{(subst:)?NAMESPACENUMBER\}\}|[0-9]{0,2})\s*/gi, '\|ns=\{\{subst:NAMESPACENUMBER\}\}'); 
 		
 		var temptimestamp = temptemplate.replace(submissiontemplate_re, "$4");
 		var tempstatus = temptemplate.replace(submissiontemplate_re, "$2");
@@ -1302,7 +1302,8 @@ function afcHelper_cleanup(text,type) {
 			var temp = submissiontemplates[i][0].template;
 			temp = temp.replace("99999999999999", "\{\{subst:LOCALTIMESTAMP\}\}");
 			temp = temp.replace("99999999999998", "\{\{REVISIONTIMESTAMP\}\}");
-			temp = temp.slice(0, (temp.length-2)) + '|small=yes\}\}';
+			if (submissiontemplates[i][2].status == "d")
+				temp = temp.slice(0, (temp.length-2)) + '|small=yes\}\}';
 			text = temp + text;
 		}
 		// declined_afc_re
