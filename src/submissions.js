@@ -520,7 +520,6 @@ function afcHelper_act(action) {
 				alert("Unable to find a non-bot editor; please check the page history.");
 			}
 		} else {
-			//TODO: use a case switch
 			if (typeofsubmit == 'first') {
 				if (afc_re.test(pagetext)) {
 					var afctemplate = afc_re.exec(pagetext)[0];
