@@ -1349,7 +1349,7 @@ function afcHelper_setup() {
 
 	// Fix utterly invalid templates so cleanup doesn't mangle them
 	pagetext = pagetext.replace(/\{\{AFC submission(\s*\|){0,}ts\s*=\s*/gi, "{{AFC submission|||ts=");
-	pagetext = pagetext.replace(/\{\{AFC submission\s*\}\}/gi, "{{AFC submission|||ts=99999999999999|u=|ns={{subst:AFC submission/namespace number}}}}");
+	pagetext = pagetext.replace(/\{\{AFC submission\s*\}\}/gi, "{{AFC submission|||ts=99999999999999|u=|ns={{subst:NAMESPACENUMBER}}}}");
 	pagetext = afcHelper_cleanup(pagetext,'initial');
 
 	warnings = afcHelper_warnings(pagetext); // Warn about problems with given pagetext
