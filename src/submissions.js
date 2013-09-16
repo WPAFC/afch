@@ -512,7 +512,7 @@ function afcHelper_act(action) {
 				dt = new Date(submitinfo['timestamp']);
 				// output the date in the correct format
 				date = dt.getUTCFullYear() + ('0' + (dt.getUTCMonth() + 1)).slice(-2) + ('0' + dt.getUTCDate()).slice(-2) + ('0' + dt.getUTCHours()).slice(-2) + ('0' + dt.getUTCMinutes()).slice(-2) + ('0' + dt.getUTCSeconds()).slice(-2);
-				var submit = "{{AFC submission|||ts=" + date + "|u=" + submitinfo['user'] + "|ns={{subst:NAMESPACENUMBER}}}}\n";
+				var submit = "{{AFC submission|||ts=" + date + "|u=" + submitinfo['user'] + "|ns=" + wgNamespaceNumber + "}}\n";
 				newtext = submit + pagetext;
 				newtext = afcHelper_cleanup(newtext);
 				afcHelper_editPage(afcHelper_PageName, newtext, "Submitting [[Wikipedia:Articles for creation]] submission", false);
@@ -1229,7 +1229,7 @@ function afcHelper_cleanup(text,type) {
 		// remove the shrinked parameter, will be added back later
 		temptemplate = temptemplate.replace(/\s*\|\s*small\s*=\s*yes\s*/gi, "");
 		//correcting namespace number after page moves mostly from userspace
-		temptemplate = temptemplate.replace(/\s*\|\s*ns\s*=\s*(\{\{(subst:)?NAMESPACENUMBER\}\}|[0-9]{0,2})\s*/gi, '\|ns=\{\{subst:NAMESPACENUMBER\}\}'); 
+		temptemplate = temptemplate.replace(/\s*\|\s*ns\s*=\s*[0-9]{0,2}\s*/gi, '\|ns=' + wgNamespaceNumber); 
 		
 		var temptimestamp = temptemplate.replace(submissiontemplate_re, "$4");
 		var tempstatus = temptemplate.replace(submissiontemplate_re, "$2");
@@ -1350,7 +1350,7 @@ function afcHelper_setup() {
 
 	// Fix utterly invalid templates so cleanup doesn't mangle them
 	pagetext = pagetext.replace(/\{\{AFC submission(\s*\|){0,}ts\s*=\s*/gi, "{{AFC submission|||ts=");
-	pagetext = pagetext.replace(/\{\{AFC submission\s*\}\}/gi, "{{AFC submission|||ts=99999999999999|u=|ns={{subst:NAMESPACENUMBER}}}}");
+	pagetext = pagetext.replace(/\{\{AFC submission\s*\}\}/gi, "{{AFC submission|||ts=99999999999999|u=Example|ns="+ wgNamespaceNumber + "}}");
 	pagetext = afcHelper_cleanup(pagetext,'initial');
 
 	warnings = afcHelper_warnings(pagetext); // Warn about problems with given pagetext
