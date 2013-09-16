@@ -8,7 +8,7 @@ var typetemplate_re = /\{\{\s*documentation\s*(?:\{\{[^\{\}]*\}\}|[^\}\{])*\}\}/
 var afcdab_re = /\{\{\s*afc submission\s*\|(?:\{\{[^\{\}]*\}\}|[^\}\{])*\|\s*type\s*=\s*dab\s*(?:\{\{[^\{\}]*\}\}|[^\}\{])*\}\}/i;
 var afctemplate_re = /\{\{\s*afc submission\s*\|(?:\{\{[^\{\}]*\}\}|[^\}\{])*\|\s*type\s*=\s*template\s*(?:\{\{[^\{\}]*\}\}|[^\}\{])*\}\}/i;
 var afc_re = /\{\{\s*afc submission\s*\|(?:\{\{[^\{\}]*\}\}|[^\}\{])*\}\}/i;
-var all_afc_re = /\{\{\s*afc submission\s*\|(?:\{\{[^\{\}]*\}\}|[^\}\{])*\}\}/i;
+var all_afc_re = /\{\{\s*afc submission\s*\|(?:\{\{[^\{\}]*\}\}|[^\}\{])*\}\}/gi;
 var pending_afc_re = /(\{\{\s*afc submission\s*\|)(\s*[||r])+((?:\{\{[^\{\}]*\}\}|[^\}\{])*\}\})/i;
 var declined_afc_re = /(\{\{\s*afc submission\s*\|)(\s*[d])+((?:\{\{[^\{\}]*\}\}|[^\}\{])*)(\|small=yes)(\}\})/i;
 var reviewing_afc_re = /\{\{\s*afc submission\s*\|\s*r\s*\|(?:\{\{[^\{\}]*\}\}|[^\}\{])*\}\}/gi;
@@ -472,8 +472,7 @@ function afcHelper_act(action) {
 		afcHelper_editPage(afcHelper_PageName, newtext, "Tagging abandoned [[Wikipedia:Articles for creation]] draft for speedy deletion under [[WP:G13|G13]]", false);
 		// notify users
 		var users = new Array();
-		//todo dr
-		var templates = pagetext.match(/\{\{\s*afc submission\s*\|(?:\{\{[^\{\}]*\}\}|[^\}\{])*\}\}/gi);
+		var templates = pagetext.match(all_afc_re);
 		var author_re = /\|\s*u=\s*[^\|]*\|/i;
 		if (templates) {
 			for (var i = 0; i < templates.length; i++) {
@@ -892,9 +891,6 @@ function afcHelper_act(action) {
 				pagetext = newtemplate + '\n' + newcomment + '\n\{\{afc cleared\}\}';
 			}
 		}
-		//TODO: this isn't needed any more as the commentsorting does this already, or?
-		//first remove the multiple pending templates, otherwise one isn't recognized
-		pagetext = pagetext.replace(/\{\{\s*afc submission\s*\|\s*[||r](?:\{\{[^{}]*\}\}|[^}{])*\}\}/i, "");
 		pagetext = afcHelper_cleanup(pagetext);
 		afcHelper_editPage(afcHelper_PageName, pagetext, summary, false);
 	} else if (action === 'comment') {
@@ -1200,7 +1196,8 @@ function afcHelper_cleanup(text,type) {
 	text = text.replace(/<!--\s*-->/ig, ""); // Remove empty HTML comments
 	text = text.replace(/^----+$/igm, ""); // Removes horizontal rules
 	text = text.replace(/\[\[:Category:Articles created via the Article Wizard\]\]/gi, "[[Category:Articles created via the Article Wizard]]");
-	text = text.replace(/\[\[:?Category:AfC(_|\s*)+submissions(_|\s*)+with(_|\s*)+missing(_|\s*)+AfC(_|\s*)+template\]\]/gi, ""); // Remove "AfC submission with missing AfC template" maintenace category
+	if (afc_re.test(text)) // Remove "AfC submission with missing AfC template" maintenace category - a cleanup will remove the cat without adding any!
+		text = text.replace(/\[\[:?Category:AfC(_|\s*)+submissions(_|\s*)+with(_|\s*)+missing(_|\s*)+AfC(_|\s*)+template\]\]/gi, "");
 
 	// Remove empty HTML comments
 	text = text.replace(/<!--\s*-->/ig, "");
@@ -1349,10 +1346,10 @@ function afcHelper_setup() {
 	afcHelper_cache.afcHelper_lastedited = textdata.timestamp; // Store the last edited date to the cache
 
 	// Fix utterly invalid templates so cleanup doesn't mangle them
-	pagetext = pagetext.replace(/\{\{AFC submission(\s*\|){0,}ts\s*=\s*/gi, "{{AFC submission|||ts=");
-	pagetext = pagetext.replace(/\{\{AFC submission\s*\}\}/gi, "{{AFC submission|||ts=99999999999999|u=Example|ns="+ wgNamespaceNumber + "}}");
+	pagetext = pagetext.replace(/\{\{\s*AFC submission(\s*\|){0,}ts\s*=\s*/gi, "{{AFC submission|||ts=");
+	pagetext = pagetext.replace(/\{\{\s*AFC submission\s*\}\}/gi, "{{AFC submission|||ts=99999999999999|u=Example|ns="+ wgNamespaceNumber + "}}");
 	pagetext = afcHelper_cleanup(pagetext,'initial');
-
+var bla = /({\{\s*afc submission\s*\|\s*r\s*((?:\{\{[^\{\}]*\}\}|[^\}\{])*\s*))(\|\s*reviewer\s*=\s*([^\|]+)*)*((\s*\|\s*reviewts\s*=\s*([0-9]{14})*)*((?:\{\{[^\{\}]*\}\}|[^\}\{]|)*\}\}))/i;
 	warnings = afcHelper_warnings(pagetext); // Warn about problems with given pagetext
 
 	return warnings; // Prepends the warnings
