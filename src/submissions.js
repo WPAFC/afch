@@ -1259,14 +1259,13 @@ function afcHelper_cleanup(text,type) {
 	}
 
 	//adding the submission templates and comment templates back
-	var commentstemplates_length = commentstemplates.length;
-	if (commentstemplates_length > 0) {
+	if (commentstemplates.length > 0) {
 		//sorting on basis of timestamp
 		commentstemplates.sort(function(a, b){
 			return b[1].timestamp-a[1].timestamp;
 		});
 		text = '----\n' + text;
-		for ((i = commentstemplates_length - 1); i >= 0; i--)
+		for ((i = commentstemplates.length - 1); i >= 0; i--)
 		text = commentstemplates[i][0].template + '\n\n' + text;
 	}
 	var submissiontemplates_length = submissiontemplates.length;
