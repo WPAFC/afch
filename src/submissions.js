@@ -17,7 +17,7 @@ var afc_comment_re = /\{\{\s*afc comment(?:\{\{[^\{\}]*\}\}|[^\}\{])*\}\}/i;
 var draft_afc_re = /\{\{\s*afc submission\s*\|\s*t(?:\{\{[^\{\}]*\}\}|[^\}\{])*\}\}/i;
 var not_draft_afc_re = /\{\{\s*afc submission\s*\|\s*[^t](?:\{\{[^\{\}]*\}\}|[^\}\{])*\}\}/i;
 var submissiontemplate_re = /(\{\{\s*afc submission\s*\|\s*([||t|r|d])(?:\{\{[^\{\}]*\}\}|[^\}\{])*)(\|\s*ts\s*=\s*([0-9]{14})|\{\{subst:LOCALTIMESTAMP\}\}|\{\{REVISIONTIMESTAMP\}\})((?:\{\{[^\{\}]*\}\}|[^\}\{]))*\}\}/i;
-var exclusive_pending_afc_re = /(\{\{\s*afc submission\s*\|)(\s*[|]\s*)*((?:\{\{[^\{\}]*\}\}|[^\}\{])*\}\})/i;
+var exclusive_pending_afc_re = /(\{\{\s*afc submission\s*\|)(\s*[\|]\s*)((?:\{\{[^\{\}]*\}\}|[^\}\{])*\}\})/i;
 var afcHelper_cache = {};
 var afcHelper_reasonhash = [{
 	label: 'DUPLICATE ARTICLES',
