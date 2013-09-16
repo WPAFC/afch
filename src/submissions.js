@@ -228,7 +228,7 @@ function afcHelper_init() {
 
 	if ($.inArray("", template_statuses) != -1 || $.inArray("r", template_statuses) != -1 || $.inArray("d", template_statuses) != -1) form += '<button class="afcHelper_button" type="button" id="afcHelper_comment_button" onclick="afcHelper_prompt(\'comment\')">Comment</button>';
 
-	if (template_statuses === false || $.inArray("t", template_statuses) != -1 || (($.inArray("d", template_statuses) != -1) && ($.inArray("", template_statuses) == -1))) form += '<button class="afcHelper_button" type="button" id="afcHelper_submit_button" onclick="afcHelper_prompt(\'submit\')">Submit</button>';
+	if (template_statuses === false || $.inArray("t", template_statuses) != -1 || (($.inArray("d", template_statuses) != -1) && ($.inArray("", template_statuses) == -1) && ($.inArray("r", template_statuses) == -1))) form += '<button class="afcHelper_button" type="button" id="afcHelper_submit_button" onclick="afcHelper_prompt(\'submit\')">Submit</button>';
 
 	if (template_statuses === false) form += '<button class="afcHelper_button" type="button" id="afcHelper_draft_button" onclick="afcHelper_prompt(\'draft\')">Mark as draft submission</button>';
 
@@ -1076,9 +1076,18 @@ function afcHelper_cleanup(text,type) {
 	// Fix {{afc comment}} when possible (takes rest of text on line and converts to a template parameter)
 	text = text.replace(/\{\{afc comment(?!\s*\|\s*1\s*=)\s*\}\}\s*(.*?)\s*[\r\n]/ig, "\{\{afc comment\|1=$1\}\}\n");
 
-	//Wikilink correction
-	text = text.replace(/(\[){2}(?:https?:)?\/\/(en.wikipedia.org\/wiki|enwp.org)\/([^\s\|]+)(\s|\|)?((?:\[\[[^\[\]]*\]\]|[^\]\[])*)(\]){2}/gi, "\[\[$3$4$5\]\]");
-	text = text.replace(/(\[){1}(?:https?:)?\/\/(en.wikipedia.org\/wiki|enwp.org)\/([^\s\|]+)(\s|\|)?((?:\[\[[^\[\]]*\]\]|[^\]\[])*)(\]){1}/gi, "\[\[$3$4$5\]\]");
+	// Convert external links to Wikipedia articles to proper wikilinks 
+	var wikilink_re = /(\[){1,2}(?:https?:)?\/\/(en.wikipedia.org\/wiki|enwp.org)\/([^\s\|\]\[]+)(\s|\|)?((?:\[\[[^\[\]]*\]\]|[^\]\[])*)(\]){1,2}/gi;
+	var temptext = text;
+	var match;
+	while (match = wikilink_re.exec(temptext)) {
+		var pagename = match[3].replace(/_/g,' ');
+		var displayname = match[5].replace(/_/g,' ');
+		if (pagename === displayname) displayname = '';
+		var replacetext = '[[' + pagename + ((displayname) ? '|' + displayname : '') + ']]';
+		text = text.replace(match[0],replacetext,1);
+	}
+
 	//KISS: for the case at the end of the url is a <ref> it detects all < symbols and stops there
 	text = text.replace(/https?:\/\/(en.wikipedia.org\/wiki|enwp.org)\/([^\s\<]+)/gi, "\[\[$2\]\]");
 	//remove boldings and big-tags from headlines; ignore level 1 headlines for not breaking URLs and other stuff!
@@ -1341,7 +1350,7 @@ function afcHelper_setup() {
 
 	// Fix utterly invalid templates so cleanup doesn't mangle them
 	pagetext = pagetext.replace(/\{\{AFC submission(\s*\|){0,}ts\s*=\s*/gi, "{{AFC submission|||ts=");
-	pagetext = pagetext.replace(/\{\{AFC submission\s*\}\}/gi, "{{AFC submission|||ts=99999999999999|u=|ns={{subst:AFC submission/namespace number}}}}");
+	pagetext = pagetext.replace(/\{\{AFC submission\s*\}\}/gi, "{{AFC submission|||ts=99999999999999|u=|ns={{subst:NAMESPACENUMBER}}}}");
 	pagetext = afcHelper_cleanup(pagetext,'initial');
 
 	warnings = afcHelper_warnings(pagetext); // Warn about problems with given pagetext
