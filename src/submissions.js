@@ -1081,7 +1081,7 @@ function afcHelper_cleanup(text,type) {
 		var displayname = match[5].replace(/_/g,' ');
 		if (pagename === displayname) displayname = '';
 		var replacetext = '[[' + pagename + ((displayname) ? '|' + displayname : '') + ']]';
-		text = text.replace(match[0],replacetext,1);
+		text = text.replace(match[0],replacetext);
 	}
 
 	//KISS: for the case at the end of the url is a <ref> it detects all < symbols and stops there
