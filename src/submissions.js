@@ -1605,6 +1605,18 @@ function afcHelper_turnvisible(id, visible) {
 	else $("#" + id).css("display", "none");
 }
 
+function afcHelper_removehtmlcomment() {
+	// Removes the selected HTML comment from wikitext
+	var parent = $(this).parent();
+	var comment = afcHelper_longcomments[parent.attr('id')];
+	pagetext = pagetext.replace(comment,'');
+	parent.html('<span class="success">Comment removed!</span>');
+	setTimeout(function() {
+		parent.fadeOut();
+		if ($('.afcHelper_hidden:visible').length < 2) $('#afcHelper_hiddenheader').fadeOut();
+	},1000);
+}
+
 // Finally display the Review link
 var afcportletLink = mw.util.addPortletLink('p-cactions', '#', 'Review', 'ca-afcHelper', 'Review', 'a');
 $(afcportletLink).click(function(e) {
