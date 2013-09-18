@@ -1367,8 +1367,8 @@ function afcHelper_warnings(pagetext) {
 	var matchct = 0;
 	while (matched = recomment.exec(texttest)) {
 		matchct += 1;
-		if (errormsg == '') errormsg += '<div id="afcHelper_hiddenheader"><h3 class="notice">Please check the source code! This page contains one or more long (30+ characters) HTML comments!</h3></div>';
-		errormsg += '<div class="afcHelper_hidden" id="'+ matchct +'">Hidden text: <b><i>' + matched[1] + '</b></i> (<a href="#">automatically delete comment from page</a>)</div>';
+		if (errormsg == '') errormsg += '<div id="afcHelper_hiddenheader"><h3 class="notice">Please check the source code! This page contains one or more long (30+ characters) HTML comments, listed below:</h3></div>';
+		errormsg += '<div class="afcHelper_hidden" id="'+ matchct +'"><a href="#">(Delete the following hidden comment)</a>: <b><i>' + matched[1] + '</b></i></div>';
 		afcHelper_longcomments[matchct.toString()] = matched[0];
 	}
 
