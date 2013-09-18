@@ -1199,9 +1199,6 @@ function afcHelper_cleanup(text,type) {
 	if (afc_re.test(text)) // Remove "AfC submission with missing AfC template" maintenace category - a cleanup will remove the cat without adding any!
 		text = text.replace(/\[\[:?Category:AfC(_|\s*)+submissions(_|\s*)+with(_|\s*)+missing(_|\s*)+AfC(_|\s*)+template\]\]/gi, "");
 
-	// Remove empty HTML comments
-	text = text.replace(/<!--\s*-->/ig, "");
-
 	// Remove empty list elements and empty headers
 	text = text.replace(/^\s*[\*#:;]\s*$/igm, "");
 
