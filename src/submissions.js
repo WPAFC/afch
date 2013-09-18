@@ -1365,7 +1365,7 @@ function afcHelper_warnings(pagetext) {
 	var errormsg = '';
 
 	// test if there are 30+ character html comments in the page text
-	var recomment = /\<![ \r\n\t]*--(([^\-]|[\r\n]|-[^\-]){30,})(--[ \r\n\t]*\>|$)/gi;
+	var recomment = /\<!--(([^\-]|[\r\n]|-[^\-]){30,})(--[ \r\n\t]*\>|$)/gi;
 	var matched;
 	var matchct = 0;
 	while (matched = recomment.exec(texttest)) {
