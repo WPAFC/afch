@@ -19,6 +19,7 @@ var not_draft_afc_re = /\{\{\s*afc submission\s*\|\s*[^t](?:\{\{[^\{\}]*\}\}|[^\
 var submissiontemplate_re = /(\{\{\s*afc submission\s*\|\s*([||t|r|d])(?:\{\{[^\{\}]*\}\}|[^\}\{])*)(\|\s*ts\s*=\s*([0-9]{14})|\{\{subst:LOCALTIMESTAMP\}\}|\{\{REVISIONTIMESTAMP\}\})((?:\{\{[^\{\}]*\}\}|[^\}\{]))*\}\}/i;
 var exclusive_pending_afc_re = /(\{\{\s*afc submission\s*\|)(\s*[\|]\s*)((?:\{\{[^\{\}]*\}\}|[^\}\{])*\}\})/i;
 var afcHelper_cache = {};
+var afcHelper_longcomments = {};
 var afcHelper_reasonhash = [{
 	label: 'DUPLICATE ARTICLES',
 	value: 'Duplicate articles',
@@ -1364,12 +1365,18 @@ function afcHelper_warnings(pagetext) {
 	var errormsg = '';
 
 	// test if there are 30+ character html comments in the page text
-	var recomment = /\<![ \r\n\t]*(--([^\-]|[\r\n]|-[^\-]){30,})(--[ \r\n\t]*\>|$)/gi;
+	var recomment = /\<![ \r\n\t]*--(([^\-]|[\r\n]|-[^\-]){30,})(--[ \r\n\t]*\>|$)/gi;
 	var matched;
+	var matchct = 0;
 	while (matched = recomment.exec(texttest)) {
-		if (errormsg == '') errormsg += '<h3><div class="notice">Please check the source code! This page contains one or more long (30+ characters) HTML comments! <em>(please report false positives)</em></div></h3>';
-		errormsg += 'The hidden text is: <i>' + matched[1] + '</i><br/>';
+		matchct += 1;
+		if (errormsg == '') errormsg += '<div id="afcHelper_hiddenheader"><h3 class="notice">Please check the source code! This page contains one or more long (30+ characters) HTML comments!</h3></div>';
+		errormsg += '<div class="afcHelper_hidden" id="'+ matchct +'">Hidden text: <b><i>' + matched[1] + '</b></i> (<a href="#">automatically delete comment from page</a>)</div>';
+		afcHelper_longcomments[matchct.toString()] = matched[0];
 	}
+
+	// When "remove comment" is clicked, trigger afcHelper_removehtmlcomment()
+	$('body').on('click', '.afcHelper_hidden a', afcHelper_removehtmlcomment);
 
 	//Check the deletion log and list it!
 	var request = {
@@ -1599,6 +1606,18 @@ function afcHelper_underreview() {
 function afcHelper_turnvisible(id, visible) {
 	if (visible) $("#" + id).css("display", "block");
 	else $("#" + id).css("display", "none");
+}
+
+function afcHelper_removehtmlcomment() {
+	// Removes the selected HTML comment from wikitext
+	var parent = $(this).parent();
+	var comment = afcHelper_longcomments[parent.attr('id')];
+	pagetext = pagetext.replace(comment,'');
+	parent.html('<span class="success">Comment removed!</span>');
+	setTimeout(function() {
+		parent.fadeOut();
+		if ($('.afcHelper_hidden:visible').length < 2) $('#afcHelper_hiddenheader').fadeOut();
+	},1000);
 }
 
 // Finally display the Review link
