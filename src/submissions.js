@@ -1375,6 +1375,9 @@ function afcHelper_warnings(pagetext) {
 		afcHelper_longcomments[matchct.toString()] = matched[0];
 	}
 
+	// When "remove comment" is clicked, trigger afcHelper_removehtmlcomment()
+	$('body').on('click', '.afcHelper_hidden a', afcHelper_removehtmlcomment);
+
 	//Check the deletion log and list it!
 	var request = {
 				'action': 'query',
