@@ -1508,7 +1508,7 @@ function afcHelper_last_nonbot(title) {
 				'action': 'query',
 				'prop': 'revisions',
 				'format': 'json',
-				'rvprop': 'user%7Ctimestamp',
+				'rvprop': 'user|timestamp',
 				'rvlimit': 1,
 				'rvdir': 'older',
 				'rvexcludeuser': 'ArticlesForCreationBot',
