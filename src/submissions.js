@@ -919,10 +919,10 @@ function afcHelper_act(action) {
 		var containComment = (pagetext.indexOf('----') !== -1);
 		var newComment = "\{\{afc comment|1=" + comment + " \~\~\~\~\}\}";
 		if (comment !== '') {
+			var afc_re = /\{\{\s*afc submission\s*\|\s*[\| ](?:\{\{[^\{\}]*\}\}|[^\}\{])*\}\}/i;
 			if (!containComment) {
-				var afc_re = /\{\{\s*afc submission\s*\|\s*[||h|r|d](?:\{\{[^\{\}]*\}\}|[^\}\{])*\}\}/i;
 				if (!afc_re.test(pagetext)) {
-					alert("Unable to locate AFC submission template, aborting...");
+					alert("Unable to locate pending AFC submission template, aborting...");
 					return;
 				}
 				var afctemplate = afc_re.exec(pagetext)[0];
@@ -933,7 +933,7 @@ function afcHelper_act(action) {
 				pagetext = pagetext.substring(0, idx) + newComment + '\n' + pagetext.substring(idx);
 			}
 		}
-		var afc_re = /(\{\{\s*afc submission\s*\|)(\s*[||h]\s*)*((?:\{\{[^\{\}]*\}\}|[^\}\{])*\}\})/i;
+		var afc_re = /(\{\{\s*afc submission\s*\|)(\s*[\| ]\s*)((?:\{\{[^\{\}]*\}\}|[^\}\{])*\}\})/i;
 		if (!afc_re.test(pagetext)) {
 			alert("Unable to locate AFC submission template, aborting...");
 			return;
