@@ -1352,13 +1352,8 @@ function afcHelper_setup() {
 }
 
 function afcHelper_warnings(pagetext) {
-	//longer than 30 characters, but commonly added to the source code
-	texttest = pagetext.replace(/\<\!--  Bot generated title --\>/gi, "");
-	texttest = texttest.replace(/\<\!-- See Wikipedia\:WikiProject Musicians --\>/gi, "");
-	texttest = texttest.replace(/\<\!-- Only for images narrower than 220 pixels --\>/gi, "");
-	texttest = texttest.replace(/\<\!-- Metadata\: see \[\[Wikipedia\:Persondata\]\]. --\>/gi, "");
-	// Bad workaround to fix the error message; will be removed later in cleanup()
-	texttest = texttest.replace(/\<\!-- Be sure to cite all of your sources in \<ref\>...\<\/ref\> tags and they will automatically display when you hit save. The more reliable sources added the better! See \[\[Wikipedia:REFB\]\] for more information--\>/ig, "");
+	// longer than 30 characters, but commonly added to the source code
+	var texttest = pagetext.replace(/\<\!--\s*(See Wikipedia\:WikiProject Musicians|Only for images narrower than 220 pixels|Metadata\: see \[\[Wikipedia\:Persondata\]\])\s*--\>/gi, "");
 	var errormsg = '';
 
 	// test if there are 30+ character html comments in the page text
