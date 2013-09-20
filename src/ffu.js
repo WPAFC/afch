@@ -70,9 +70,10 @@ function afcHelper_ffu_init() {
 			// if a submission has been "done" already, kill it with fire
 			var sub = {
 				type: 'done-ffu',
+				section: i,
+				from: new Array()
 			};
-			afcHelper_Submissions.push(sub);
-			afcHelper_numTotal++;
+			afcHelper_ffuSubmissions.push(sub);
 		}
 	}
 	var afcHelper_ffu_temp = new Array();
