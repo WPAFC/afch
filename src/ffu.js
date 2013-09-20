@@ -266,7 +266,7 @@ function afcHelper_ffu_performActions() {
 	$("html, body").animate({
 		scrollTop: 0
 	}, "slow"); // Takes up back up to the top for the displayMessage() dialog, __slowly__
-	$('afcHelper_finish').innerHTML += '<span id="afcHelper_finished_wrapper"><span id="afcHelper_finished_main" style="display:none"><li id="afcHelper_done"><b>Done (<a href="' + wgArticlePath.replace("$1", encodeURI(afcHelper_ffuPageName)) + '?action=purge" title="' + afcHelper_ffuPageName + '">Reload page</a>)</b></li></span></span>';
+	$('#afcHelper_finish').html('<span id="afcHelper_finished_main" style="display:none"><li id="afcHelper_done"><b>Done (<a href="' + wgArticlePath.replace("$1", encodeURI(afcHelper_ffuPageName)) + '?action=purge" title="' + afcHelper_ffuPageName + '">Reload page</a>)</b></li></span>');
 	pagetext = afcHelper_getPageText(afcHelper_ffuPageName, true);
 	var totalaccept = 0;
 	var totaldecline = 0;
