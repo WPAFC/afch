@@ -376,7 +376,11 @@ function afcHelper_ffu_performActions() {
 
 	// And now finally update the WP:FFU page
 	afcHelper_editPage(afcHelper_ffuPageName, pagetext, summary, false);
-	$('#afcHelper_finished_main').css("display", "");
+
+	// Display the "Done" text only after all ajax requests are completed
+	$(document).ajaxStop(function () {
+		$("#afcHelper_finished_main").css("display", "");
+	});
 }
 
 function add_review_links() {
