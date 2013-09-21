@@ -1624,11 +1624,10 @@ function afcHelper_underreview() {
 				reviewts = reviewts_re.exec(template)[1];
 			}
 			if (reviewts !== ""){
-				//TODO: use function timestamptodate(reviewts)
 				reviewts = timestamptodate(reviewts);
 				reviewts = " since " + reviewts;
 			}
-			if(!confirm(reviewer + ' is reviewing the page' + reviewts + '. Do you want to continue?')){
+			if(!confirm(reviewer + ' has been reviewing the submission' + reviewts + '. Do you want to continue?')){
 				alert('Aborted...');
 				return false;
 			}
