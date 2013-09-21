@@ -11,13 +11,13 @@ var afc_re = /\{\{\s*afc submission\s*\|(?:\{\{[^\{\}]*\}\}|[^\}\{])*\}\}/i;
 var all_afc_re = /\{\{\s*afc submission\s*\|(?:\{\{[^\{\}]*\}\}|[^\}\{])*\}\}/gi;
 var pending_afc_re = /((\{\{\s*afc submission\s*\|)(\s*[||r])+((?:\{\{[^\{\}]*\}\}|[^\}\{])*\}\})|\{\{subst:submit\|?.*?\}\})/i;
 var declined_afc_re = /(\{\{\s*afc submission\s*\|)(\s*[d])+((?:\{\{[^\{\}]*\}\}|[^\}\{])*)(\|small=yes)(\}\})/i;
-var reviewing_afc_re = /\{\{\s*afc submission\s*\|\s*r\s*\|(?:\{\{[^\{\}]*\}\}|[^\}\{])*\}\}/gi;
+var reviewing_afc_re = /{\{\s*afc submission\s*\|\s*r\s*((?:\{\{[^\{\}]*\}\}|[^\}\{])*\}\})/i;
 var template_status_re = /(\{\{\s*afc submission\s*\|)(\s*|r|d)+((?:\{\{[^\{\}]*\}\}|[^\}\{])*\}\})/i;
 var afc_comment_re = /\{\{\s*afc comment(?:\{\{[^\{\}]*\}\}|[^\}\{])*\}\}/i;
 var draft_afc_re = /\{\{\s*afc submission\s*\|\s*t(?:\{\{[^\{\}]*\}\}|[^\}\{])*\}\}/i;
 var not_draft_afc_re = /\{\{\s*afc submission\s*\|\s*[^t](?:\{\{[^\{\}]*\}\}|[^\}\{])*\}\}/i;
 var submissiontemplate_re = /(\{\{\s*afc submission\s*\|\s*([||t|r|d])(?:\{\{[^\{\}]*\}\}|[^\}\{])*)(\|\s*ts\s*=\s*([0-9]{14})|\{\{subst:LOCALTIMESTAMP\}\}|\{\{REVISIONTIMESTAMP\}\})((?:\{\{[^\{\}]*\}\}|[^\}\{]))*\}\}/i;
-var exclusive_pending_afc_re = /(\{\{\s*afc submission\s*\|)(\s*[\|]\s*)((?:\{\{[^\{\}]*\}\}|[^\}\{])*\}\})/i;
+var exclusive_pending_afc_re = /(\{\{\s*afc submission\s*\|)(\s*[|]\s*)*((?:\{\{[^\{\}]*\}\}|[^\}\{])*\}\})/i;
 var afcHelper_cache = {};
 var afcHelper_longcomments = {};
 var afcHelper_reasonhash = [{
@@ -248,6 +248,7 @@ function afcHelper_init() {
 
 function afcHelper_prompt(type) {
 	if (type === 'accept') {
+		if (!afcHelper_underreview()) return;
 		var afcHelper_assessment = [{
 			label: 'B-class',
 			value: 'B'
@@ -380,6 +381,7 @@ function afcHelper_prompt(type) {
 			if (!this.value) $(this).animate({ height: "1em" }, 500);
 		});
 	} else if (type === 'decline') {
+		if (!afcHelper_underreview()) return;
 		var text = '<h3>Declining ' + afcHelper_PageName + '</h3>' + '<label for="afcHelper_reason">Reason for ' + type + ': </label>';
 		var reasonSelect = afcHelper_generateSelect("afcHelper_reason", afcHelper_reasonhash, "afcHelper_onChange(this)");
 		text += reasonSelect;
@@ -552,7 +554,6 @@ function afcHelper_act(action) {
 			afcHelper_editPage(afcHelper_PageName, newtext, "Submitting [[Wikipedia:Articles for creation]] submission", false);
 		}
 	} else if (action === 'accept') {
-		afcHelper_underreview();
 		var newtitle = $("#afcHelper_movetarget").val();
 		var assessment = $("#afcHelper_assessment").val();
 		var pagePrepend = $("#afcHelper_pagePrepend").val();
@@ -728,7 +729,6 @@ function afcHelper_act(action) {
 		};
 		afcHelper_movePage(afcHelper_PageName, newtitle, 'Created via \[\[WP:AFC|Articles for creation\]\] (\[\[WP:WPAFC|you can help!\]\])', callback, true);
 	} else if (action === 'decline') {
-		afcHelper_underreview();
 		var code = $("#afcHelper_reason").val();
 		for (i = 0; i < (afcHelper_reasonhash.length + 1); i++) {
 			if ((typeof(afcHelper_reasonhash[i]) !== 'undefined') && (afcHelper_reasonhash[i].value === code)) var reasontext = afcHelper_reasonhash[i].reason;
@@ -917,19 +917,23 @@ function afcHelper_act(action) {
 			alert("Unable to locate AFC submission template, aborting...");
 			return;
 		}
-		pagetext = pagetext.replace(exclusive_pending_afc_re, "$1r\|$3");
+		pagetext = pagetext.replace(exclusive_pending_afc_re, "$1r\|\|$2\|reviewer=\{\{subst:REVISIONUSER\}\}\|reviewts={{subst:CURRENTTIMESTAMP}}\|$3");
 		pagetext = afcHelper_addcomment(comment) + pagetext;
 		pagetext = afcHelper_cleanup(pagetext);
 		afcHelper_editPage(afcHelper_PageName, pagetext, "Marking [[Wikipedia:Articles for creation]] submission as being reviewed", false);
 	} else if (action === 'unmark') {
-		afcHelper_underreview();
+		if (!afcHelper_underreview()) return;
 		displayMessage('<ul id="afcHelper_status"></ul><ul id="afcHelper_finish"></ul>');
 		afcHelper_displaymessagehelper('done','standard');
 		if (!reviewing_afc_re.test(pagetext)) {
 			alert("Unable to locate AFC submission template or page is not marked as being reviewed, aborting...");
 			return;
 		}
-		pagetext = pagetext.replace(/\{\{\s*afc submission\s*\|\s*r\s*\|\s*/gi, "{{AFC submission||");
+		var template = reviewing_afc_re.exec(pagetext)[0];
+		var newtemplate = template.replace(reviewing_afc_re, "\{\{AFC submission\|$1");
+		newtemplate = newtemplate.replace(/\|\s*reviewer=\s*[^\|]*\|/i, "");
+		newtemplate = newtemplate.replace(/\|\s*reviewts=\s*([0-9]{14})[^\|]*\|/i, "");
+		pagetext = pagetext.replace(template, newtemplate);
 		pagetext = afcHelper_cleanup(pagetext);
 		afcHelper_editPage(afcHelper_PageName, pagetext, "Unmarking [[Wikipedia:Articles for creation]] submission as being reviewed", false);
 	} else if (action === 'cleanup') {
@@ -1186,7 +1190,7 @@ function afcHelper_cleanup(text,type) {
 	text = text.replace(/\<\!--- See \[\[Wikipedia:Footnotes\]\] on how to create references using (?:\<ref\>\<\/ref\> tags|tags) which will then appear here automatically --\>/ig, "");
 	text = text.replace(/\<\!--Please don't change anything and press save --\>/ig, "");
 	text = text.replace(/\<\!-- Please leave this line alone! --\>/ig, "");
-	text = text.replace(/\<\!-- Do not include any categories - these don't need to be added until the article is accepted; They will just get removed by a bot! --\>/ig, "");
+	text = text.replace(/\<\!-- Do not include any categories - these don't need to be added + escape(oldtitle)).innerHTML =  until the article is accepted; They will just get removed by a bot! --\>/ig, "");
 	text = text.replace(/\<\!-{1,3}\s*Important, do not remove this line before (template|article) has been created.\s*-{1,3}\>/ig, "");
 	text = text.replace(/\<\!-- Just press the \"Save page\" button below without changing anything! Doing so will submit your article submission for review. Once you have saved this page you will find a new yellow 'Review waiting' box at the bottom of your submission page. If you have submitted your page previously, the old pink 'Submission declined' template or the old grey 'Draft' template will still appear at the top of your submission page, but you should ignore them. Again, please don't change anything in this text box. Just press the \"Save page\" button below. --\>/ig, "");
 	text = text.replace(/== Request review at \[\[WP:AFC\]\] ==\n/ig, "");
@@ -1223,8 +1227,8 @@ function afcHelper_cleanup(text,type) {
 		// remove the shrinked parameter, will be added back later
 		temptemplate = temptemplate.replace(/\s*\|\s*small\s*=\s*yes\s*/gi, "");
 		//correcting namespace number after page moves mostly from userspace
-		temptemplate = temptemplate.replace(/\s*\|\s*ns\s*=\s*[0-9]{0,2}\s*/gi, '\|ns=' + wgNamespaceNumber); 
-		
+		temptemplate = temptemplate.replace(/\s*\|\s*ns\s*=\s*[0-9]{0,2}\s*/gi, '\|ns=' + wgNamespaceNumber);
+
 		var temptimestamp = temptemplate.replace(submissiontemplate_re, "$4");
 		var tempstatus = temptemplate.replace(submissiontemplate_re, "$2");
 
@@ -1254,6 +1258,18 @@ function afcHelper_cleanup(text,type) {
 				{timestamp: temptimestamp}
 		]);
 		text = text.replace(temptemplate, "");
+	}
+
+	// Handle just submitted drafts
+	var submit_re = /\{\{subst:(submit|AFC draft)(?:\{\{[^\{\}]*\}\}|[^\}\{])*\}\}/i;
+	if (submit_re.test(text)){
+		var temptemplate = submit_re.exec(text)[0].toString();
+		text = text.replace(temptemplate, "");
+		submissiontemplates.push([
+					{template: temptemplate},
+					{timestamp: '99999999999999'},
+					{status: '|'}
+			]);
 	}
 
 	//adding the submission templates and comment templates back
@@ -1345,7 +1361,6 @@ function afcHelper_setup() {
 	pagetext = pagetext.replace(/\{\{\s*AFC submission(\s*\|){0,}ts\s*=\s*/gi, "{{AFC submission|||ts=");
 	pagetext = pagetext.replace(/\{\{\s*AFC submission\s*\}\}/gi, "{{AFC submission|||ts=99999999999999|u=Example|ns="+ wgNamespaceNumber + "}}");
 	pagetext = afcHelper_cleanup(pagetext,'initial');
-	var bla = /({\{\s*afc submission\s*\|\s*r\s*((?:\{\{[^\{\}]*\}\}|[^\}\{])*\s*))(\|\s*reviewer\s*=\s*([^\|]+)*)*((\s*\|\s*reviewts\s*=\s*([0-9]{14})*)*((?:\{\{[^\{\}]*\}\}|[^\}\{]|)*\}\}))/i;
 	warnings = afcHelper_warnings(pagetext); // Warn about problems with given pagetext
 
 	return warnings; // Prepends the warnings
@@ -1591,8 +1606,43 @@ function afcHelper_addcomment(comment) {
 }
 
 function afcHelper_underreview() {
-	//TODO: check for a marked template and notify that a user is in review since TIME
+	if (reviewing_afc_re.test(pagetext)){
+		var reviewer = "";
+		var template = pagetext.match(reviewing_afc_re);
+		reviewer_re = /\|\s*reviewer=\s*[^\|]*\|/i;
+		if (reviewer_re.test(template)) {
+			reviewer = reviewer_re.exec(template)[0];
+			reviewer = reviewer.split(/=\s*/)[1];
+			reviewer = reviewer.replace(/\|/g, '');
+		}
+		else
+			reviewer ="Somebody (unknown)";
+			
+		if (mw.config.get('wgUserName') !== reviewer){
+			var reviewts = "";
+			reviewts_re = /\|\s*reviewts=\s*([0-9]{14})[^\|]*\|/i;
+			if (reviewts_re.test(template)){
+				reviewts = reviewts_re.exec(template)[1];
+			}
+			if (reviewts !== ""){
+				//TODO: use function timestamptodate(reviewts)
+				reviewts = timestamptodate(reviewts);
+				reviewts = " since " + reviewts;
+			}
+			if(!confirm(reviewer + ' is reviewing the page' + reviewts + '. Do you want to continue?')){
+				alert('Aborted...');
+				return false;
+			}
+		}
+	}
+	// if everything is OK...
 	return true;
+}
+
+function timestamptodate(timestamp){
+//use variable wgDefaultDateFormat see https://www.mediawiki.org/wiki/Manual:Interface/JavaScript
+	var formatteddate = timestamp.slice(0,4) + '-' + timestamp.slice(4,6) + '-' + timestamp.slice(6,8) + ' ' + timestamp.slice(8,10) + ':' + timestamp.slice(10,12) + ' (UTC)';
+	return formatteddate;
 }
 
 function afcHelper_turnvisible(id, visible) {
@@ -1613,10 +1663,12 @@ function afcHelper_removehtmlcomment() {
 }
 
 // Finally display the Review link
-var afcportletLink = mw.util.addPortletLink('p-cactions', '#', 'Review', 'ca-afcHelper', 'Review', 'a');
+if (mw.config.get('wgServer') === "//test.wikipedia.org")
+	var afcportletLink = mw.util.addPortletLink('p-cactions', '#', 'Review', 'ca-afcHelper', 'Review', 'o'); //
+else
+	var afcportletLink = mw.util.addPortletLink('p-cactions', '#', 'Review', 'ca-afcHelper', 'Review', 'a');
 $(afcportletLink).click(function(e) {
 	e.preventDefault();
 	afcHelper_init();
 });
-
 //</nowiki>
