@@ -982,6 +982,7 @@ function afcHelper_movePage(oldtitle, newtitle, summary, callback, overwrite_red
 			document.getElementById('afcHelper_move' + escape(oldtitle)).innerHTML = 'Moved <a href="' + wgArticlePath.replace("$1", encodeURI(oldtitle)) + '" title="' + oldtitle + '">' + oldtitle + '</a>';
 			error = false;
 		} else {
+			// TODO theo combine error messages so we don't have so many redundant elses
 			if (overwrite_redirect) {
 				if (response['error']['code'] == "articleexists") {
 					text = afcHelper_getPageText(newtitle);
@@ -995,10 +996,10 @@ function afcHelper_movePage(oldtitle, newtitle, summary, callback, overwrite_red
 									afcHelper_movePage(oldtitle, newtitle, summary, callback, overwrite_redirect); // Then just move the page again as if nothing happened
 									return; // So we don't run callback() twice
 								} else {
-									document.getElementById('afcHelper_move' + escape(oldtitle)).innerHTML = '<div style="color:red"><b>Unable to automatically delete <a href="' + wgArticlePath.replace("$1", encodeURI(oldtitle)) + '" title="' + oldtitle + '">' + oldtitle + '</a></b></div>';
+									document.getElementById('afcHelper_move' + escape(oldtitle)).innerHTML = '<span style="color:red"><b>Unable to automatically delete <a href="' + wgArticlePath.replace("$1", encodeURI(oldtitle)) + '" title="' + oldtitle + '">' + oldtitle + '</a></b></span>';
 								}
 							} else {
-								document.getElementById('afcHelper_move' + escape(oldtitle)).innerHTML = '<div style="color:red"><b>Move failed on <a href="' + wgArticlePath.replace("$1", encodeURI(oldtitle)) + '" title="' + oldtitle + '">' + oldtitle + '</a></b></div>. Error info: User canceled automatically deleting the blocking redirect';
+								document.getElementById('afcHelper_move' + escape(oldtitle)).innerHTML = '<span style="color:red"><b>Move failed on <a href="' + wgArticlePath.replace("$1", encodeURI(oldtitle)) + '" title="' + oldtitle + '">' + oldtitle + '</a></b></span>. Error info: User canceled automatically deleting the blocking redirect';
 							}
 						} else {
 							del = confirm("The target title, "+newtitle+", is a redirect. Would you like to automatically tag it for deletion under {{db-move}} to make way for the approved submission?");
@@ -1010,19 +1011,21 @@ function afcHelper_movePage(oldtitle, newtitle, summary, callback, overwrite_red
 								afcHelper_act('mark'); // We mark the submission as "under review"
 								document.getElementById('afcHelper_move' + escape(oldtitle)).innerHTML += '<div><b>Successfully tagged redirect page <a href="' + wgArticlePath.replace("$1", encodeURI(newtitle)) + '" title="' + newtitle + '">' + newtitle + '</a> for deletion</b> under {{db-move}}. The article should be moved by the administrator who deletes the redirect.</div>';
 							} else {
-								document.getElementById('afcHelper_move' + escape(oldtitle)).innerHTML = '<div style="color:red"><b>Move failed on <a href="' + wgArticlePath.replace("$1", encodeURI(oldtitle)) + '" title="' + oldtitle + '">' + oldtitle + '</a></b></div>. Error info: User canceled automatically tagging the target for deletion';
+								document.getElementById('afcHelper_move' + escape(oldtitle)).innerHTML = '<span style="color:red"><b>Move failed on <a href="' + wgArticlePath.replace("$1", encodeURI(oldtitle)) + '" title="' + oldtitle + '">' + oldtitle + '</a></b></span>. Error info: User canceled automatically tagging the target for deletion';
 							}
 						}
 					} else {
-						document.getElementById('afcHelper_move' + escape(oldtitle)).innerHTML = '<div style="color:red"><b>Move failed on <a href="' + wgArticlePath.replace("$1", encodeURI(oldtitle)) + '" title="' + oldtitle + '">' + oldtitle + '</a></b></div> Error info: <b>' + response['error']['code'] + '</b>: ' + response['error']['info'];
+						document.getElementById('afcHelper_move' + escape(oldtitle)).innerHTML = '<span style="color:red"><b>Move failed on <a href="' + wgArticlePath.replace("$1", encodeURI(oldtitle)) + '" title="' + oldtitle + '">' + oldtitle + '</a></b></span>. Error info: <b>' + response['error']['code'] + '</b>: ' + response['error']['info'];
 					}
+				} else {
+					document.getElementById('afcHelper_move' + escape(oldtitle)).innerHTML = '<span style="color:red"><b>Move failed on <a href="' + wgArticlePath.replace("$1", encodeURI(oldtitle)) + '" title="' + oldtitle + '">' + oldtitle + '</a></b></span>. Error info: <b>' + response['error']['code'] + '</b>: ' + response['error']['info'];
 				}
 			} else {
-				document.getElementById('afcHelper_move' + escape(oldtitle)).innerHTML = '<div style="color:red"><b>Move failed on <a href="' + wgArticlePath.replace("$1", encodeURI(oldtitle)) + '" title="' + oldtitle + '">' + oldtitle + '</a></b></div>. Error info:' + response['error']['code'] + ' : ' + response['error']['info'];
+				document.getElementById('afcHelper_move' + escape(oldtitle)).innerHTML = '<span style="color:red"><b>Move failed on <a href="' + wgArticlePath.replace("$1", encodeURI(oldtitle)) + '" title="' + oldtitle + '">' + oldtitle + '</a></b></span>. Error info: <b>' + response['error']['code'] + '</b>: ' + response['error']['info'];
 			}
 		}
 	} catch (err) {
-		document.getElementById('afcHelper_move' + escape(oldtitle)).innerHTML = '<div style="color:red"><b>Move failed on <a href="' + wgArticlePath.replace("$1", encodeURI(oldtitle)) + '" title="' + oldtitle + '">' + oldtitle + '</a></b></div>';
+		document.getElementById('afcHelper_move' + escape(oldtitle)).innerHTML = '<span style="color:red"><b>Move failed on <a href="' + wgArticlePath.replace("$1", encodeURI(oldtitle)) + '" title="' + oldtitle + '">' + oldtitle + '</a></b></span>';
 	}
 	if (!error) {
 		if (callback !== null) callback();
