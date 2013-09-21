@@ -1661,10 +1661,7 @@ function afcHelper_removehtmlcomment() {
 }
 
 // Finally display the Review link
-if (mw.config.get('wgServer') === "//test.wikipedia.org")
-	var afcportletLink = mw.util.addPortletLink('p-cactions', '#', 'Review', 'ca-afcHelper', 'Review', 'o'); //
-else
-	var afcportletLink = mw.util.addPortletLink('p-cactions', '#', 'Review', 'ca-afcHelper', 'Review', 'a');
+var afcportletLink = mw.util.addPortletLink('p-cactions', '#', 'Review', 'ca-afcHelper', 'Review', 'a');
 $(afcportletLink).click(function(e) {
 	e.preventDefault();
 	afcHelper_init();
