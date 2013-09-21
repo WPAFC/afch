@@ -2,7 +2,7 @@
 // Script should be located at [[MediaWiki:Gadget-afchelper.js/core.js]]
 
 function jqEsc(expression) {
-	return expression.replace(/[!"#$%&'()*+,.\/:;<=>?@\[\\\]^`{|}~]/g, '\\$&'); 
+	return expression.replace(/[!"#$%&'()*+,.\/:;<=>?@\[\\\]^`{|}~ ]/g, ''); 
 }
 
 importScript('User:Timotheus Canens/displaymessage.js');
