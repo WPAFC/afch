@@ -207,7 +207,7 @@ function afcHelper_editPage(title, newtext, summary, createonly) {
 				if ( data && data.edit && data.edit.result && data.edit.result == 'Success' ) {
 					$('#afcHelper_edit' + jqEsc(title)).html('Saved <a href="' + wgArticlePath.replace("$1", encodeURI(title)) + '" title="' + title + '">' + title + '</a>');
 				} else {
-					$('#afcHelper_edit' + jqEsc(title)).html('<span class="notice><b>Edit failed on <a href="' + wgArticlePath.replace("$1", encodeURI(title)) + '" title="' + title + '">' + title + '</a></b></span>. Error info:' + response['error']['code'] + ' : ' + response['error']['info']);
+					$('#afcHelper_edit' + jqEsc(title)).html('<span class="notice><b>Edit failed on <a href="' + wgArticlePath.replace("$1", encodeURI(title)) + '" title="' + title + '">' + title + '</a></b></span>. Error info:' + data['error']['code'] + ': ' + data['error']['info']);
 				}
 			} )
 			.fail( function ( error ) {
