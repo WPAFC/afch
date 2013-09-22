@@ -264,68 +264,34 @@ function afcHelper_prompt(type) {
 		}, {
 			label: 'List-class',
 			value: 'list'
+		}, {
+			label: 'Disambig-class',
+			value: 'disambig',
+			selected: (((afcdab_re.test(pagetext)) || (disambig_re.test(pagetext))) ? true : false)
+		}, {
+			label: 'Template-class',
+			value: 'template',
+			selected: (((afctemplate_re.test(pagetext)) || (typetemplate_re.test(pagetext))) ? true : false)
+		}, {	
+			label: 'Redirect-class',
+			value: 'redirect'
+		}, {
+			label: 'Portal-class',
+			value: 'portal'
+		}, {
+			label: 'Project-class',
+			value: 'project'
+		}, {
+			label: 'Template-class',
+			value: 'template'
+		}, {
+			label: 'NA-class',
+			value: 'na'
+		}, {
+			label: 'None',
+			selected: (((afctemplate_re.test(pagetext)) || (disambig_re.test(pagetext)) || (afcdab_re.test(pagetext)) || (typetemplate_re.test(pagetext))) ? false : true),
+			value: ''
 		}];
-		// checking for ANY submission template (doesn't matter if declined) for the type parameter
-		// TODO: use boolean variables and add the disambiguation check to the accept stuff deeper
-		if ((afcdab_re.test(pagetext)) || (disambig_re.test(pagetext))) {
-			afcHelper_assessment.push(
-				{
-				label: 'Disambig-class',
-				value: 'disambig',
-				selected: true
-				});
-		}else{
-			afcHelper_assessment.push(
-				{
-				label: 'Disambig-class',
-				value: 'disambig'
-				});
-		}
-		if ((afctemplate_re.test(pagetext)) || (typetemplate_re.test(pagetext))) {
-			afcHelper_assessment.push(
-				{
-				label: 'Template-class',
-				value: 'template',
-				selected: true
-				});
-		}else{
-			afcHelper_assessment.push(
-				{
-				label: 'Template-class',
-				value: 'template'
-				});
-		}
-		afcHelper_assessment.push(
-			{
-				label: 'Redirect-class',
-				value: 'redirect'
-			}, {
-				label: 'Portal-class',
-				value: 'portal'
-			}, {
-				label: 'Project-class',
-				value: 'project'
-			}, {
-				label: 'Template-class',
-				value: 'template'
-			}, {
-				label: 'NA-class',
-				value: 'na'
-			});
-		if ((afctemplate_re.test(pagetext)) || (disambig_re.test(pagetext)) || (afcdab_re.test(pagetext)) || (typetemplate_re.test(pagetext))){
-			afcHelper_assessment.push(
-			{
-				label: 'None',
-				value: ''
-			});
-		}else{
-			afcHelper_assessment.push(
-			{
-				label: 'None',
-				selected: true,
-				value: ''
-			});
-		}
 		var text = '<h3>Accepting ' + afcHelper_PageName + '</h3>' +
 		'<label for="afcHelper_movetarget">Move submission to: </label><input type="text" id="afcHelper_movetarget" value="' + afcHelper_escapeHtmlChars(afcHelper_submissionTitle) + '" />' +
 		'<br /><label for="afcHelper_assessment">Assessment (optional): </label>';
