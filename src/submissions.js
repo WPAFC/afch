@@ -11,7 +11,7 @@ var afc_re = /\{\{\s*afc submission\s*\|(?:\{\{[^\{\}]*\}\}|[^\}\{])*\}\}/i;
 var all_afc_re = /\{\{\s*afc submission\s*\|(?:\{\{[^\{\}]*\}\}|[^\}\{])*\}\}/gi;
 var pending_afc_re = /(\{\{\s*afc submission\s*\|)(\s*[||r])+((?:\{\{[^\{\}]*\}\}|[^\}\{])*\}\})/i;
 var declined_afc_re = /(\{\{\s*afc submission\s*\|)(\s*[d])+((?:\{\{[^\{\}]*\}\}|[^\}\{])*)(\|small=yes)(\}\})/i;
-var reviewing_afc_re = /\{\{\s*afc submission\s*\|\s*r\s*((?:\{\{[^\{\}]*\}\}|[^\}\{])*\}\})/i;
+var reviewing_afc_re = /{\{\s*afc submission\s*\|\s*r\s*((?:\{\{[^\{\}]*\}\}|[^\}\{])*\}\})/i;
 var template_status_re = /(\{\{\s*afc submission\s*\|)(\s*|r|d)+((?:\{\{[^\{\}]*\}\}|[^\}\{])*\}\})/i;
 var afc_comment_re = /\{\{\s*afc comment(?:\{\{[^\{\}]*\}\}|[^\}\{])*\}\}/i;
 var draft_afc_re = /\{\{\s*afc submission\s*\|\s*t(?:\{\{[^\{\}]*\}\}|[^\}\{])*\}\}/i;
@@ -761,7 +761,8 @@ function afcHelper_act(action) {
 			return;
 		}
 		var afctemplate = pending_afc_re.exec(pagetext)[0];
-		pagetext = pagetext.replace(afctemplate, "");
+		var startindex = pagetext.indexOf(afctemplate);
+		var endindex = startindex + afctemplate.length;
 		//data is always between the first pipe and the one before the timestamp.
 		var firstpipe = afctemplate.indexOf('|');
 		var endpipe = afctemplate.indexOf('|ts');
@@ -813,7 +814,7 @@ function afcHelper_act(action) {
 			usertext += "|sig=yes\}\}";
 
 			if (teahouse) {
-				document.getElementById('afcHelper_status').innerHTML += '<div id="afcHelper_get_teahouse"></div>';
+				$("#afcHelper_status").html($("#afcHelper_status").html() + '<div id="afcHelper_get_teahouse"></div>');
 				$("#afcHelper_get_teahouse").html('<li id="afcHelper_get_teahouse">Checking for existing Teahouse Invitation for <a href="' + wgArticlePath.replace("$1", encodeURI('User_talk:' + username)) + '" title="User talk:' + username + '">User talk:' + username + '</a></li>');
 				var request = {
 					'action': 'query',
@@ -957,7 +958,7 @@ function afcHelper_movePage(oldtitle, newtitle, summary, callback, overwrite_red
 	$("#afcHelper_finished_wrapper").html('<span id="afcHelper_AJAX_finished_' + afcHelper_AJAXnumber + '" style="display:none">' + $("#afcHelper_finished_wrapper").html() + '</span>');
 	var func_id = afcHelper_AJAXnumber;
 	afcHelper_AJAXnumber++;
-	document.getElementById('afcHelper_status').innerHTML += '<li id="afcHelper_move' + escape(oldtitle) + '">Moving <a href="' + wgArticlePath.replace("$1", encodeURI(oldtitle)) + '" title="' + oldtitle + '">' + oldtitle + '</a> to <a href="' + wgArticlePath.replace("$1", encodeURI(newtitle)) + '" title="' + newtitle + '">' + newtitle + '</a></li>';
+	$('afcHelper_status').html($('afcHelper_status').html() + '<li id="afcHelper_move' + escape(oldtitle) + '">Moving <a href="' + wgArticlePath.replace("$1", encodeURI(oldtitle)) + '" title="' + oldtitle + '">' + oldtitle + '</a> to <a href="' + wgArticlePath.replace("$1", encodeURI(newtitle)) + '" title="' + newtitle + '">' + newtitle + '</a></li>');
 	var request = {
 				'action': 'move',
 				'from': oldtitle,
@@ -978,10 +979,9 @@ function afcHelper_movePage(oldtitle, newtitle, summary, callback, overwrite_red
 	error = true;
 	try {
 		if (typeof(response['move']) !== "undefined") {
-			document.getElementById('afcHelper_move' + escape(oldtitle)).innerHTML = 'Moved <a href="' + wgArticlePath.replace("$1", encodeURI(oldtitle)) + '" title="' + oldtitle + '">' + oldtitle + '</a>';
+			$('afcHelper_move' + jqEsc(oldtitle)).html('Moved <a href="' + wgArticlePath.replace("$1", encodeURI(oldtitle)) + '" title="' + oldtitle + '">' + oldtitle + '</a>');
 			error = false;
 		} else {
-			// TODO theo combine error messages so we don't have so many redundant elses
 			if (overwrite_redirect) {
 				if (response['error']['code'] == "articleexists") {
 					text = afcHelper_getPageText(newtitle);
@@ -989,16 +989,16 @@ function afcHelper_movePage(oldtitle, newtitle, summary, callback, overwrite_red
 						if ($.inArray('sysop', mw.config.get('wgUserGroups')) !== -1) {
 							del = confirm("The target title, " + newtitle + ", is a redirect. Would you like to automatically delete it under {{db-move}} and then accept and move the submission?");
 							if (del) {
-								document.getElementById('afcHelper_move' + escape(oldtitle)).innerHTML = '<div id="afcHelper_delete' + escape(oldtitle)+'"></div>'; // to allow for messages from the editor
+								$('#afcHelper_move' + jqEsc(oldtitle)).html('<div id="afcHelper_delete' + escape(oldtitle)+'"></div>'); // to allow for messages from the editor
 								deleted = afcHelper_deletePage(newtitle, "[[CSD:G6]]: redirect in the way of move of accepted [[Wikipedia:Articles for creation]] submission");
 								if (deleted) {
 									afcHelper_movePage(oldtitle, newtitle, summary, callback, overwrite_redirect); // Then just move the page again as if nothing happened
 									return; // So we don't run callback() twice
 								} else {
-									document.getElementById('afcHelper_move' + escape(oldtitle)).innerHTML = '<span style="color:red"><b>Unable to automatically delete <a href="' + wgArticlePath.replace("$1", encodeURI(oldtitle)) + '" title="' + oldtitle + '">' + oldtitle + '</a></b></span>';
+									$('#afcHelper_move' + jqEsc(oldtitle)).html('<div style="color:red"><b>Unable to automatically delete <a href="' + wgArticlePath.replace("$1", encodeURI(oldtitle)) + '" title="' + oldtitle + '">' + oldtitle + '</a></b></div>');
 								}
 							} else {
-								document.getElementById('afcHelper_move' + escape(oldtitle)).innerHTML = '<span style="color:red"><b>Move failed on <a href="' + wgArticlePath.replace("$1", encodeURI(oldtitle)) + '" title="' + oldtitle + '">' + oldtitle + '</a></b></span>. Error info: User canceled automatically deleting the blocking redirect';
+								$('#afcHelper_move' + jsEsc(oldtitle)).html('<div style="color:red"><b>Move failed on <a href="' + wgArticlePath.replace("$1", encodeURI(oldtitle)) + '" title="' + oldtitle + '">' + oldtitle + '</a></b></div>. Error info: User canceled automatically deleting the blocking redirect');
 							}
 						} else {
 							del = confirm("The target title, "+newtitle+", is a redirect. Would you like to automatically tag it for deletion under {{db-move}} to make way for the approved submission?");
@@ -1006,25 +1006,23 @@ function afcHelper_movePage(oldtitle, newtitle, summary, callback, overwrite_red
 								rat = "{{db-move|1="+oldtitle+"|2=redirect preventing move of accepted [[WP:AFC|article submission]].}}\n";
 								afcHelper_editPage(newtitle, rat+text, "Tagging redirect in the way of [[Wikipedia:Articles for creation]] submission for deletion under {{[[Template:Db-move|db-move]]}}");
 								window.overwrite_comment = 'This article submission has been approved, but a [[WP:REDIRECT|redirect]] is blocking it from being moved into the article space. An administrator should delete the redirect and move the article within the next few days. Thanks for your patience!';
-								document.getElementById('afcHelper_move' + escape(oldtitle)).innerHTML = '<div id="afcHelper_edit' + escape(oldtitle)+'"></div>'; // to allow for messages from the editor
+								$('#afcHelper_move' + jsEsc(oldtitle)).html('<div id="afcHelper_edit' + escape(oldtitle)+'"></div>'); // to allow for messages from the editor
 								afcHelper_act('mark'); // We mark the submission as "under review"
-								document.getElementById('afcHelper_move' + escape(oldtitle)).innerHTML += '<div><b>Successfully tagged redirect page <a href="' + wgArticlePath.replace("$1", encodeURI(newtitle)) + '" title="' + newtitle + '">' + newtitle + '</a> for deletion</b> under {{db-move}}. The article should be moved by the administrator who deletes the redirect.</div>';
+								$('#afcHelper_move' + jsEsc(oldtitle)).html($('#afcHelper_move' + jsEsc(oldtitle)).html() + '<div><b>Successfully tagged redirect page <a href="' + wgArticlePath.replace("$1", encodeURI(newtitle)) + '" title="' + newtitle + '">' + newtitle + '</a> for deletion</b> under {{db-move}}. The article should be moved by the administrator who deletes the redirect.</div>');
 							} else {
-								document.getElementById('afcHelper_move' + escape(oldtitle)).innerHTML = '<span style="color:red"><b>Move failed on <a href="' + wgArticlePath.replace("$1", encodeURI(oldtitle)) + '" title="' + oldtitle + '">' + oldtitle + '</a></b></span>. Error info: User canceled automatically tagging the target for deletion';
+								$('#afcHelper_move' + jsEsc(oldtitle)).html('<div style="color:red"><b>Move failed on <a href="' + wgArticlePath.replace("$1", encodeURI(oldtitle)) + '" title="' + oldtitle + '">' + oldtitle + '</a></b></div>. Error info: User canceled automatically tagging the target for deletion');
 							}
 						}
 					} else {
-						document.getElementById('afcHelper_move' + escape(oldtitle)).innerHTML = '<span style="color:red"><b>Move failed on <a href="' + wgArticlePath.replace("$1", encodeURI(oldtitle)) + '" title="' + oldtitle + '">' + oldtitle + '</a></b></span>. Error info: <b>' + response['error']['code'] + '</b>: ' + response['error']['info'];
+						$('#afcHelper_move' + jsEsc(oldtitle)).html('<div style="color:red"><b>Move failed on <a href="' + wgArticlePath.replace("$1", encodeURI(oldtitle)) + '" title="' + oldtitle + '">' + oldtitle + '</a></b></div> Error info: <b>' + response['error']['code'] + '</b>: ' + response['error']['info']);
 					}
-				} else {
-					document.getElementById('afcHelper_move' + escape(oldtitle)).innerHTML = '<span style="color:red"><b>Move failed on <a href="' + wgArticlePath.replace("$1", encodeURI(oldtitle)) + '" title="' + oldtitle + '">' + oldtitle + '</a></b></span>. Error info: <b>' + response['error']['code'] + '</b>: ' + response['error']['info'];
 				}
 			} else {
-				document.getElementById('afcHelper_move' + escape(oldtitle)).innerHTML = '<span style="color:red"><b>Move failed on <a href="' + wgArticlePath.replace("$1", encodeURI(oldtitle)) + '" title="' + oldtitle + '">' + oldtitle + '</a></b></span>. Error info: <b>' + response['error']['code'] + '</b>: ' + response['error']['info'];
+				$('#afcHelper_move' + jsEsc(oldtitle)).html( '<div style="color:red"><b>Move failed on <a href="' + wgArticlePath.replace("$1", encodeURI(oldtitle)) + '" title="' + oldtitle + '">' + oldtitle + '</a></b></div>. Error info:' + response['error']['code'] + ' : ' + response['error']['info']);
 			}
 		}
 	} catch (err) {
-		document.getElementById('afcHelper_move' + escape(oldtitle)).innerHTML = '<span style="color:red"><b>Move failed on <a href="' + wgArticlePath.replace("$1", encodeURI(oldtitle)) + '" title="' + oldtitle + '">' + oldtitle + '</a></b></span>';
+		$('#afcHelper_move' + jsEsc(oldtitle)).html('<div style="color:red"><b>Move failed on <a href="' + wgArticlePath.replace("$1", encodeURI(oldtitle)) + '" title="' + oldtitle + '">' + oldtitle + '</a></b></div>');
 	}
 	if (!error) {
 		if (callback !== null) callback();
@@ -1223,7 +1221,7 @@ function afcHelper_cleanup(text,type) {
 		var temptemplate = submissiontemplate_re.exec(text)[0].toString();
 		text = text.replace(temptemplate, "");
 
-		temptemplate = temptemplate.replace("\{\{subst:(REVISIONTIMESTAMP|LOCALTIMESTAMP|CURRENTTIMESTAMP)\}\}", "99999999999999"); // both timestamps are nearly the same, per [[MW:Help:Magic Words]]
+		temptemplate = temptemplate.replace("\{\{subst:LOCALTIMESTAMP\}\}", "99999999999999");
 		temptemplate = temptemplate.replace("\{\{REVISIONTIMESTAMP\}\}", "99999999999998");
 		// remove the shrinked parameter, will be added back later
 		temptemplate = temptemplate.replace(/\s*\|\s*small\s*=\s*yes\s*/gi, "");
@@ -1319,7 +1317,7 @@ function afcHelper_cleanup(text,type) {
 		}
 		for ((i = submissiontemplates_length - 1); i >= 0; i--){
 			var temp = submissiontemplates[i][0].template;
-			temp = temp.replace("99999999999999", "\{\{subst:CURRENTTIMESTAMP\}\}");
+			temp = temp.replace("99999999999999", "\{\{subst:LOCALTIMESTAMP\}\}");
 			temp = temp.replace("99999999999998", "\{\{REVISIONTIMESTAMP\}\}");
 			if (submissiontemplates[i][2].status == "d")
 				temp = temp.slice(0, (temp.length-2)) + '|small=yes\}\}';
@@ -1471,20 +1469,20 @@ function afcHelper_warnings(pagetext) {
 }
 
 function afcHelper_trigger(type) {
-	var e = document.getElementById(type);
+	var e = $(type);
 	if (type === "afcHelper_biography_status_box") {
-		var f = document.getElementById("afcHelper_biography_status");
-		if (f.value === "dead") {
+		var f = $("#afcHelper_biography_status");
+		if (f.val() === "dead") {
 			e.style.display = 'block';
 		} else {
 			e.style.display = 'none';
 		}
 	} else if (type === "afcHelper_afcccleared") {
 		if ($("#afcHelper_blank").attr("data-typeof") == "cv_van" && $('#afcHelper_blank').attr("checked")) {
-			var f = document.getElementById("afcHelper_extra_afccleared");
+			var f = $("#afcHelper_extra_afccleared");
 			f.style.display = 'block';
 		} else if (!$('#afcHelper_blank').attr("checked")) {
-			var f = document.getElementById("afcHelper_extra_afccleared");
+			var f = $("#afcHelper_extra_afccleared");
 			f.style.display = 'none';
 		}
 	} else {
@@ -1497,13 +1495,13 @@ function afcHelper_displaymessagehelper(type,detail) {
 	// type == "status" for messages that should be displayed as they occur
 	if (type === "done") {
 		if (detail === "standard") {
-			document.getElementById('afcHelper_finish').innerHTML += '<span id="afcHelper_finished_wrapper"><span id="afcHelper_finished_main" style="display:none"><li id="afcHelper_done"><b>Done (<a href="' + wgArticlePath.replace("$1", encodeURI(afcHelper_PageName)) + '?action=purge" title="' + afcHelper_PageName + '">Reload page</a>)</b></li></span></span>';
+			$('#afcHelper_finish').html($('#afcHelper_finish').html() + '<span id="afcHelper_finished_wrapper"><span id="afcHelper_finished_main" style="display:none"><li id="afcHelper_done"><b>Done (<a href="' + wgArticlePath.replace("$1", encodeURI(afcHelper_PageName)) + '?action=purge" title="' + afcHelper_PageName + '">Reload page</a>)</b></li></span></span>');
 		} else if (detail === "cleanednochange") {
-			document.getElementById('afcHelper_finish').innerHTML += '<span id="afcHelper_finished_wrapper"><span id="afcHelper_finished_main"><span id="afcHelper_done"><li id="afcHelper_done"><b>This submission is already cleaned. Nothing changed. (<a href="' + wgArticlePath.replace("$1", encodeURI(afcHelper_PageName)) + '?action=purge" title="' + afcHelper_PageName + '">Reload page</a>)</b></li></span></span>';
+			$('#afcHelper_finish').html($('#afcHelper_finish').html() + '<span id="afcHelper_finished_wrapper"><span id="afcHelper_finished_main"><span id="afcHelper_done"><li id="afcHelper_done"><b>This submission is already cleaned. Nothing changed. (<a href="' + wgArticlePath.replace("$1", encodeURI(afcHelper_PageName)) + '?action=purge" title="' + afcHelper_PageName + '">Reload page</a>)</b></li></span></span>');
 		}
 	} else if (type === "status") {
 		if (detail === "orphan") {
-			document.getElementById('afcHelper_status').innerHTML += '<li id="afcHelper_orphan">Checking if article is an orphan...</li>';
+			$('#afcHelper_status').html($('#afcHelper_status').html() + '<li id="afcHelper_orphan">Checking if article is an orphan...</li>');
 		}
 	} else {
 		// Unrecognized
@@ -1625,10 +1623,8 @@ function afcHelper_underreview() {
 			if (reviewts_re.test(template)){
 				reviewts = reviewts_re.exec(template)[1];
 			}
-			if (reviewts !== ""){
-				reviewts = timestamptodate(reviewts);
-				reviewts = " since " + reviewts;
-			}
+			if (reviewts !== "")
+				reviewts = " since " + timestamptodate(reviewts);
 			if(!confirm(reviewer + ' has been reviewing the submission' + reviewts + '. Do you want to continue?')){
 				alert('Aborted...');
 				return false;
