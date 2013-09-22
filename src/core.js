@@ -185,7 +185,7 @@ function afcHelper_deletePage(title,reason) {
 	}
 }
 
-function afcHelper_editPage(title, newtext, summary, createonly) {
+function afcHelper_editPage(title, newtext, summary, createonly, nopatrol) {
 	var edittoken = mw.user.tokens.get('editToken');
 	summary += afcHelper_advert;
 	$("#afcHelper_finished_wrapper").html('<span id="afcHelper_AJAX_finished_' + afcHelper_AJAXnumber + '" style="display:none">' + $("#afcHelper_finished_wrapper").html() + '</span>');
@@ -219,5 +219,36 @@ function afcHelper_editPage(title, newtext, summary, createonly) {
 			.always( function () {
 				$("#afcHelper_AJAX_finished_" + func_id).css("display", '');
 			});
+
+	if (!nopatrol) {
+		/* We patrol by default */
+		if ($('.patrollink').length) {
+			// Extract the rcid token from the "Mark page as patrolled" link on page
+			var patrolhref = $('.patrollink a').attr('href');
+			var rcid = mw.util.getParamValue('rcid', patrolhref);
+
+			if (rcid) {
+				$('#afcHelper_status').html($('#afcHelper_status').html() + '<li id="afcHelper_patrol' + jqEsc(title) + '">Marking <a href="' + wgArticlePath.replace("$1", encodeURI(title)) + '" title="' + title + '">' + title + ' as patrolled</a></li>');
+				var patrolrequest = {
+							'action': 'patrol',
+							'format': 'json',
+							'token': mw.user.tokens.get('patrolToken'),
+							'rcid': rcid
+						}
+				api.post(patrolrequest)
+						.done(function ( data ) {
+							if ( data ) {
+								$('#afcHelper_patrol' + jqEsc(title)).html('Marked <a href="' + wgArticlePath.replace("$1", encodeURI(title)) + '" title="' + title + '">' + title + '</a> as patrolled');
+							} else {
+								$('#afcHelper_patrol' + jqEsc(title)).html('<span class="notice><b>Patrolling failed on <a href="' + wgArticlePath.replace("$1", encodeURI(title)) + '" title="' + title + '">' + title + '</a></b></span>. Error info:' + data['error']['code'] + ': ' + data['error']['info']);
+							}
+						} )
+						.fail( function ( error ) {
+							$('#afcHelper_patrol' + jqEsc(title)).html('<span class="notice><b>Patrolling failed on <a href="' + wgArticlePath.replace("$1", encodeURI(title)) + '" title="' + title + '">' + title + '</a></b></span>. Error info: ' + error); 
+						});
+			}				
+		}
+
+	}
 }	
 //</nowiki>
