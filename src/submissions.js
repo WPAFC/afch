@@ -463,7 +463,7 @@ function afcHelper_act(action) {
 			usertalkpage = "User talk:" + username;
 			var usertext = afcHelper_getPageText(usertalkpage, true, true);
 			usertext += "\n{{subst:Db-afc-notice|" + afcHelper_PageName + "}} ~~~~";
-			afcHelper_editPage(usertalkpage, usertext, 'Notification: [[WP:G13|G13]] speedy deletion nomination of [[' + afcHelper_PageName + ']]', false);
+			afcHelper_editPage(usertalkpage, usertext, 'Notification: [[WP:G13|G13]] speedy deletion nomination of [[' + afcHelper_PageName + ']]', false, false);
 		}
 		afcHelper_logcsd(afcHelper_PageName,"[[CSD:G13]] ({{tl|db-afc}})",uniqueUsers);
 	} else if (action === 'submit') {
@@ -567,7 +567,7 @@ function afcHelper_act(action) {
 					var usertext = afcHelper_getPageText(usertalkpage, true, true);
 					usertext += "\n== Your submission at AfC \[\[" + wgPageName + "|" + newtitle + "\]\] was accepted ==";
 					usertext += "\n\{\{subst:afc talk|1=" + newtitle + "|class=" + assessment + "|sig=yes\}\}";
-					afcHelper_editPage(usertalkpage, usertext, 'Your submission at \[\[WP:AFC|Articles for creation\]\]', false);
+					afcHelper_editPage(usertalkpage, usertext, 'Your submission at \[\[WP:AFC|Articles for creation\]\]', false, false);
 				}
 			}
 			var recenttext = afcHelper_getPageText("Wikipedia:Articles for creation/recent", true, false);
@@ -579,7 +579,7 @@ function afcHelper_act(action) {
 				recenttext = recenttext.substring(0, lastentry);
 			}
 			recenttext = recenttext.substring(0, firstentry) + newentry + recenttext.substring(firstentry);
-			afcHelper_editPage("Wikipedia:Articles for creation/recent", recenttext, 'Updating recent AFC creations', false);
+			afcHelper_editPage("Wikipedia:Articles for creation/recent", recenttext, 'Updating recent AFC creations', false, false);
 
 			var talktext = "";
 			if (biography) {
@@ -610,7 +610,7 @@ function afcHelper_act(action) {
 			var newtalktitle = newtitle.replace(/(Template|Category|Wikipedia|Portal):/,"$1 talk:");
 			if (newtalktitle == newtitle) newtalktitle = 'Talk:' + newtitle;
 
-			afcHelper_editPage(newtalktitle, talktext, 'Placing [[Wikipedia:Articles for creation]] project banner', false);
+			afcHelper_editPage(newtalktitle, talktext, 'Placing [[Wikipedia:Articles for creation]] project banner', false, false);
 
 			// clean up the page
 			pagetext = afcHelper_cleanup(pagetext,'accept');
@@ -832,7 +832,7 @@ function afcHelper_act(action) {
 					$("#afcHelper_get_teahouse").html('<a href="' + wgArticlePath.replace("$1", encodeURI('User talk:' + username)) + '" title="User talk:' + username + '">' + username + '</a> already has an invitation.');
 				}
 			} //end TH stuff
-			afcHelper_editPage(usertalkpage, usertext, reason, false);
+			afcHelper_editPage(usertalkpage, usertext, reason, false, false);
 		}
 		if (!blank) {
 			pagetext = newtemplate + newcomment + pagetext;
@@ -1522,7 +1522,7 @@ function afcHelper_logcsd(title,reason,usersnotified) {
 			appendText += "{{user|1=" + user + "}}";
 		});
 		appendText += " ~~~~~\n";
-		afcHelper_editPage(speedyLogPageName,CSDlogtext + appendText,"Logging speedy deletion nomination of [[" + title + "]]");
+		afcHelper_editPage(speedyLogPageName,CSDlogtext + appendText,"Logging speedy deletion nomination of [[" + title + "]]",false,false);
 	}
 }
 
