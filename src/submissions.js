@@ -1223,9 +1223,8 @@ function afcHelper_cleanup(text,type) {
 		var temptemplate = submissiontemplate_re.exec(text)[0].toString();
 		text = text.replace(temptemplate, "");
 
-		temptemplate = temptemplate.replace("\{\{subst:LOCALTIMESTAMP\}\}", "99999999999999");
+		temptemplate = temptemplate.replace("\{\{subst:(REVISIONTIMESTAMP|LOCALTIMESTAMP|CURRENTTIMESTAMP)\}\}", "99999999999999"); // both timestamps are nearly the same, per [[MW:Help:Magic Words]]
 		temptemplate = temptemplate.replace("\{\{REVISIONTIMESTAMP\}\}", "99999999999998");
-		temptemplate = temptemplate.replace("\{\{subst:CURRENTTIMESTAMP\}\}", "99999999999997");
 		// remove the shrinked parameter, will be added back later
 		temptemplate = temptemplate.replace(/\s*\|\s*small\s*=\s*yes\s*/gi, "");
 		//correcting namespace number after page moves mostly from userspace
@@ -1320,9 +1319,8 @@ function afcHelper_cleanup(text,type) {
 		}
 		for ((i = submissiontemplates_length - 1); i >= 0; i--){
 			var temp = submissiontemplates[i][0].template;
-			temp = temp.replace("99999999999999", "\{\{subst:LOCALTIMESTAMP\}\}");
+			temp = temp.replace("99999999999999", "\{\{subst:CURRENTTIMESTAMP\}\}");
 			temp = temp.replace("99999999999998", "\{\{REVISIONTIMESTAMP\}\}");
-			temp = temp.replace("99999999999997", "\{\{subst:CURRENTTIMESTAMP\}\}");
 			if (submissiontemplates[i][2].status == "d")
 				temp = temp.slice(0, (temp.length-2)) + '|small=yes\}\}';
 			text = temp + text;
