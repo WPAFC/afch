@@ -177,10 +177,10 @@ function afcHelper_deletePage(title,reason) {
 	);
 
 	if (delresponse && delresponse.delete) {
-		document.getElementById('afcHelper_delete' + escape(title)).innerHTML = 'Deleted <a href="' + wgArticlePath.replace("$1", encodeURI(title)) + '" title="' + title + '">' + title + '</a>';
+		$('#afcHelper_delete' + jqEsc(title)).html('Deleted <a href="' + wgArticlePath.replace("$1", encodeURI(title)) + '" title="' + title + '">' + title + '</a>');
 		return true;
 	} else {
-		document.getElementById('afcHelper_delete' + escape(title)).innerHTML = '<div style="color:red"><b>Deletion failed on <a href="' + wgArticlePath.replace("$1", encodeURI(title)) + '" title="' + title + '">' + title + '</a></b></div>. Error info:' + error;
+		$('#afcHelper_delete' + jqEsc(title)).html('<div style="color:red"><b>Deletion failed on <a href="' + wgArticlePath.replace("$1", encodeURI(title)) + '" title="' + title + '">' + title + '</a></b></div>. Error info:' + error);
 		return false;
 	}
 }
