@@ -47,12 +47,18 @@ function afcHelper_ffu_init() {
 				comment: ''
 			};
 			var urllinks_re = /(http|gopher|https|ftp|ftps)\:\/\/[^\s\n]*/gi;
-			var links = afcHelper_ffuSections[i].match(urllinks_re);
-			if (links === null) {
+			var matchedlinks = afcHelper_ffuSections[i].match(urllinks_re);
+			var links = new Array();
+			if (matchedlinks === null) {
 				var linkscounter = 1;
-				var links = new Array();
 				links.push('');
-			} else var linkscounter = links.length;
+			} else {
+				$.each(matchedlinks, function(i, l) {
+					if ($.inArray(l, links) === -1 && l.indexOf('wikipedia.org') === -1)
+						links.push(l);
+				});
+				var linkscounter = links.length;
+			}
 			for (var j = 0; j < linkscounter; j++) {
 				var sub = {
 					type: 'ffu',
