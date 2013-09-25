@@ -91,3 +91,7 @@ input[type=text]:hover { /* Small shadow on textarea hover */
 #afcHelper_extra select {
   vertical-align: middle;
 }
+
+#afcHelper_extra_inlinebox {
+  width: 40%;
+}

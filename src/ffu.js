@@ -70,9 +70,10 @@ function afcHelper_ffu_init() {
 			// if a submission has been "done" already, kill it with fire
 			var sub = {
 				type: 'done-ffu',
+				section: i,
+				from: new Array()
 			};
-			afcHelper_Submissions.push(sub);
-			afcHelper_numTotal++;
+			afcHelper_ffuSubmissions.push(sub);
 		}
 	}
 	var afcHelper_ffu_temp = new Array();
@@ -209,7 +210,7 @@ function afcHelper_ffu_onActionChange(id) {
 			label: 'Article is at AfD',
 			value: 'afd'
 		}, {
-			label: 'Non-free file for use in still-pending AfC submission',
+			label: 'Pending AfC submission',
 			value: 'afc'
 		}, {
 			label: 'No URL',
@@ -266,7 +267,7 @@ function afcHelper_ffu_performActions() {
 	$("html, body").animate({
 		scrollTop: 0
 	}, "slow"); // Takes up back up to the top for the displayMessage() dialog, __slowly__
-	$('afcHelper_finish').innerHTML += '<span id="afcHelper_finished_wrapper"><span id="afcHelper_finished_main" style="display:none"><li id="afcHelper_done"><b>Done (<a href="' + wgArticlePath.replace("$1", encodeURI(afcHelper_ffuPageName)) + '?action=purge" title="' + afcHelper_ffuPageName + '">Reload page</a>)</b></li></span></span>';
+	$('#afcHelper_finish').html('<span id="afcHelper_finished_main" style="display:none"><li id="afcHelper_done"><b>Done (<a href="' + wgArticlePath.replace("$1", encodeURI(afcHelper_ffuPageName)) + '?action=purge" title="' + afcHelper_ffuPageName + '">Reload page</a>)</b></li></span>');
 	pagetext = afcHelper_getPageText(afcHelper_ffuPageName, true);
 	var totalaccept = 0;
 	var totaldecline = 0;
@@ -325,7 +326,7 @@ function afcHelper_ffu_performActions() {
 						var lastentry = recentpagetext.toLowerCase().lastIndexOf("| file:");
 						var firstentry = recentpagetext.toLowerCase().indexOf("| file:");
 						recentpagetext = recentpagetext.substring(0, lastentry);
-						recentpagetext = recentpagetext.substring(0, firstentry) + newentry + recentpagetext.substring(firstentry) + '\n}}';
+						recentpagetext = recentpagetext.substring(0, firstentry) + newentry + recentpagetext.substring(firstentry) + '}}';
 						afcHelper_editPage("Wikipedia:Files for upload/recent", recentpagetext, 'Updating recently uploaded FFUs', false);
 					}
 				} else if (sub_m.action == 'decline') {
@@ -375,7 +376,11 @@ function afcHelper_ffu_performActions() {
 
 	// And now finally update the WP:FFU page
 	afcHelper_editPage(afcHelper_ffuPageName, pagetext, summary, false);
-	$('#afcHelper_finished_main').css("display", "");
+
+	// Display the "Done" text only after all ajax requests are completed
+	$(document).ajaxStop(function () {
+		$("#afcHelper_finished_main").css("display", "");
+	});
 }
 
 function add_review_links() {
@@ -408,7 +413,7 @@ function add_review_links() {
 	});
 	$("#bodyContent [sectionIndex]").click((function() {
 		$("#bodyContent [sectionIndex]").each(function(i) {
-			$(reviewlink).html("Reviewing requests...");
+			$(this).html("Reviewing requests...");
 		});
 		afcHelper_ffu_init();
 	}));

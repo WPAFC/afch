@@ -2,7 +2,7 @@
 // Script should be located at [[MediaWiki:Gadget-afchelper.js/core.js]]
 
 function jqEsc(expression) {
-	return expression.replace(/[!"#$%&'()*+,.\/:;<=>?@\[\\\]^`{|}~]/g, '\\$&'); 
+	return expression.replace(/[!"#$%&'()*+,.\/:;<=>?@\[\\\]^`{|}~ ]/g, ''); 
 }
 
 importScript('User:Timotheus Canens/displaymessage.js');
@@ -69,6 +69,19 @@ function afcHelper_escapeHtmlChars(original) {
 	return original.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
 }
 
+function afcHelper_countString(str, search, casesensitive){
+	// Returns count of occurances of a "search" string in "str"
+	// Casesensitive can be set to true for case sensitive matching
+	if (!casesensitive) str = str.toLowerCase();
+	var count = 0;
+	var index = str.indexOf(search);
+	while(index !=- 1){
+		count++;
+		index = str.indexOf(search,index+1);
+	}
+	return count;
+}
+
 function afcHelper_getPageText(title, show, redirectcheck, timestamp) {
 	if (show) $('#afcHelper_status').html($('#afcHelper_status').html() + '<li id="afcHelper_get' + jqEsc(title) + '">Getting <a href="' + wgArticlePath.replace("$1", encodeURI(title)) + '" title="' + title + '">' + title + '</a></li>');
 
@@ -131,7 +144,7 @@ function afcHelper_deletePage(title,reason) {
 				'format': 'json',
 				'intoken': 'delete',
 				'indexpageids': true,
-				'titles' : title
+				'titles': title
 			};
 	var tokenresponse = JSON.parse(
 		$.ajax({
@@ -151,7 +164,7 @@ function afcHelper_deletePage(title,reason) {
 				'reason': reason + afcHelper_advert,
 				'format': 'json',
 				'token': token,
-				'title' : title
+				'title': title
 			}
 	var delresponse = JSON.parse(
 		$.ajax({
@@ -164,15 +177,15 @@ function afcHelper_deletePage(title,reason) {
 	);
 
 	if (delresponse && delresponse.delete) {
-		document.getElementById('afcHelper_delete' + escape(title)).innerHTML = 'Deleted <a href="' + wgArticlePath.replace("$1", encodeURI(title)) + '" title="' + title + '">' + title + '</a>';
+		$('#afcHelper_delete' + jqEsc(title)).html('Deleted <a href="' + wgArticlePath.replace("$1", encodeURI(title)) + '" title="' + title + '">' + title + '</a>');
 		return true;
 	} else {
-		document.getElementById('afcHelper_delete' + escape(title)).innerHTML = '<div style="color:red"><b>Deletion failed on <a href="' + wgArticlePath.replace("$1", encodeURI(title)) + '" title="' + title + '">' + title + '</a></b></div>. Error info:' + error;
+		$('#afcHelper_delete' + jqEsc(title)).html('<div style="color:red"><b>Deletion failed on <a href="' + wgArticlePath.replace("$1", encodeURI(title)) + '" title="' + title + '">' + title + '</a></b></div>. Error info:' + error);
 		return false;
 	}
 }
 
-function afcHelper_editPage(title, newtext, summary, createonly) {
+function afcHelper_editPage(title, newtext, summary, createonly, nopatrol) {
 	var edittoken = mw.user.tokens.get('editToken');
 	summary += afcHelper_advert;
 	$("#afcHelper_finished_wrapper").html('<span id="afcHelper_AJAX_finished_' + afcHelper_AJAXnumber + '" style="display:none">' + $("#afcHelper_finished_wrapper").html() + '</span>');
@@ -194,17 +207,48 @@ function afcHelper_editPage(title, newtext, summary, createonly) {
 				if ( data && data.edit && data.edit.result && data.edit.result == 'Success' ) {
 					$('#afcHelper_edit' + jqEsc(title)).html('Saved <a href="' + wgArticlePath.replace("$1", encodeURI(title)) + '" title="' + title + '">' + title + '</a>');
 				} else {
-					$('#afcHelper_edit' + jqEsc(title)).html('<div class="notice"><b>Edit failed on <a href="' + wgArticlePath.replace("$1", encodeURI(title)) + '" title="' + title + '">' + title + '</a></b></div>. Error info:' + response['error']['code'] + ' : ' + response['error']['info']);
+					$('#afcHelper_edit' + jqEsc(title)).html('<span class="notice><b>Edit failed on <a href="' + wgArticlePath.replace("$1", encodeURI(title)) + '" title="' + title + '">' + title + '</a></b></span>. Error info:' + data['error']['code'] + ': ' + data['error']['info']);
 				}
 			} )
 			.fail( function ( error ) {
 				if (createonly && error == "articleexists")
-					$('#afcHelper_edit' + jqEsc(title)).html('<div class="notice"><b>Edit failed on <a href="' + wgArticlePath.replace("$1", encodeURI(title)) + '" title="' + title + '">' + title + '</a></b></div>. Error info: The article already exists!');
+					$('#afcHelper_edit' + jqEsc(title)).html('<span class="notice><b>Edit failed on <a href="' + wgArticlePath.replace("$1", encodeURI(title)) + '" title="' + title + '">' + title + '</a></b></span>. Error info: The article already exists!');
 				else
-					$('#afcHelper_edit' + jqEsc(title)).html('<div class="notice"><b>Edit failed on <a href="' + wgArticlePath.replace("$1", encodeURI(title)) + '" title="' + title + '">' + title + '</a></b></div>. Error info: ' + error); 
+					$('#afcHelper_edit' + jqEsc(title)).html('<span class="notice><b>Edit failed on <a href="' + wgArticlePath.replace("$1", encodeURI(title)) + '" title="' + title + '">' + title + '</a></b></span>. Error info: ' + error); 
 			})
 			.always( function () {
 				$("#afcHelper_AJAX_finished_" + func_id).css("display", '');
 			});
+
+	if (!nopatrol) {
+		/* We patrol by default */
+		if ($('.patrollink').length) {
+			// Extract the rcid token from the "Mark page as patrolled" link on page
+			var patrolhref = $('.patrollink a').attr('href');
+			var rcid = mw.util.getParamValue('rcid', patrolhref);
+
+			if (rcid) {
+				$('#afcHelper_status').html($('#afcHelper_status').html() + '<li id="afcHelper_patrol' + jqEsc(title) + '">Marking <a href="' + wgArticlePath.replace("$1", encodeURI(title)) + '" title="' + title + '">' + title + ' as patrolled</a></li>');
+				var patrolrequest = {
+							'action': 'patrol',
+							'format': 'json',
+							'token': mw.user.tokens.get('patrolToken'),
+							'rcid': rcid
+						}
+				api.post(patrolrequest)
+						.done(function ( data ) {
+							if ( data ) {
+								$('#afcHelper_patrol' + jqEsc(title)).html('Marked <a href="' + wgArticlePath.replace("$1", encodeURI(title)) + '" title="' + title + '">' + title + '</a> as patrolled');
+							} else {
+								$('#afcHelper_patrol' + jqEsc(title)).html('<span class="notice><b>Patrolling failed on <a href="' + wgArticlePath.replace("$1", encodeURI(title)) + '" title="' + title + '">' + title + '</a></b></span>. Error info:' + data['error']['code'] + ': ' + data['error']['info']);
+							}
+						} )
+						.fail( function ( error ) {
+							$('#afcHelper_patrol' + jqEsc(title)).html('<span class="notice><b>Patrolling failed on <a href="' + wgArticlePath.replace("$1", encodeURI(title)) + '" title="' + title + '">' + title + '</a></b></span>. Error info: ' + error); 
+						});
+			}				
+		}
+
+	}
 }	
 //</nowiki>
