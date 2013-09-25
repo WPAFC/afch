@@ -248,7 +248,8 @@ function afcHelper_ffu_performActions() {
 			if (action == 'none') continue;
 			if (action == 'accept') {
 				afcHelper_Submissions[i].to = $("#afcHelper_ffu_to_" + i).val();
-				afcHelper_Submissions[i].talkpage = $("#afcHelper_ffu_filetalkpage_" + i).attr("checked");				afcHelper_Submissions[i].append = $("#afcHelper_ffu_append_" + i).val();
+				afcHelper_Submissions[i].talkpage = $("#afcHelper_ffu_filetalkpage_" + i).attr("checked") == 'checked';
+				afcHelper_Submissions[i].append = $("#afcHelper_ffu_append_" + i).val();
 				afcHelper_Submissions[i].recent = $("#afcHelper_ffu_recent_" + i).attr("checked");
 				afcHelper_Submissions[i].recenttext = $("#afcHelper_ffu_recenttext_" + i).val();
 			} else if (action == 'decline') {
@@ -259,7 +260,7 @@ function afcHelper_ffu_performActions() {
 				afcHelper_Submissions[i].prefmtcomment = $("#afcHelper_ffu_prefmtcomment_" + i).val();
 			}
 			afcHelper_Submissions[i].comment = $("#afcHelper_ffu_comment_" + i).val();
-			afcHelper_Submissions[i].notify = $("#afcHelper_ffu_notify_" + i).attr("checked");
+			afcHelper_Submissions[i].notify = $("#afcHelper_ffu_notify_" + i).attr("checked") == 'checked';
 		}
 	}
 	// Data loaded. Show progress screen and get WP:FFU page text.
