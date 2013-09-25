@@ -166,14 +166,14 @@ function afcHelper_redirect_init() {
 }
 
 function afcHelper_redirect_onActionChange(id) {
-	var extra = document.getElementById("afcHelper_redirect_extra_" + id);
-	var selectValue = document.getElementById("afcHelper_redirect_action_" + id).value;
-	if (selectValue === 'none') extra.innerHTML = '';
+	var extra = $("#afcHelper_redirect_extra_" + id);
+	var selectValue = $("#afcHelper_redirect_action_" + id).val();
+	if (selectValue === 'none') extra.html('');
 	else if (selectValue === 'accept') {
 		if (afcHelper_Submissions[id].type === 'redirect') {
-			extra.innerHTML = '<label for="afcHelper_redirect_from_' + id + '">From: </label><input type="text" ' + 'name="afcHelper_redirect_from_' + id + '" id="afcHelper_redirect_from_' + id + '" value="' + afcHelper_escapeHtmlChars(afcHelper_Submissions[id].title) + '" />';
-			extra.innerHTML += '&nbsp;<label for="afcHelper_redirect_to_' + id + '">To: </label><input type="text" ' + 'name="afcHelper_redirect_to_' + id + '" id="afcHelper_redirect_to_' + id + '" value="' + afcHelper_escapeHtmlChars(afcHelper_Submissions[id].to) + '" />';
-			extra.innerHTML += '<label for="afcHelper_redirect_append_' + id + '">Template to append: </label>' + afcHelper_generateSelect('afcHelper_redirect_append_' + id, [{
+			extra.html(extra.html() + '<label for="afcHelper_redirect_from_' + id + '">From: </label><input type="text" ' + 'name="afcHelper_redirect_from_' + id + '" id="afcHelper_redirect_from_' + id + '" value="' + afcHelper_escapeHtmlChars(afcHelper_Submissions[id].title) + '" />');
+			extra.html(extra.html() + '&nbsp;<label for="afcHelper_redirect_to_' + id + '">To: </label><input type="text" ' + 'name="afcHelper_redirect_to_' + id + '" id="afcHelper_redirect_to_' + id + '" value="' + afcHelper_escapeHtmlChars(afcHelper_Submissions[id].to) + '" />');
+			extra.html(extra.html() + '<label for="afcHelper_redirect_append_' + id + '">Template to append: </label>' + afcHelper_generateSelect('afcHelper_redirect_append_' + id, [{
 				label: 'R from alternative name',
 				value: 'R from alternative name'
 			}, {
@@ -198,16 +198,15 @@ function afcHelper_redirect_onActionChange(id) {
 				label: 'None',
 				selected: true,
 				value: 'none'
-			}]);
+			}]));
 		} else {
-			extra.innerHTML = '<label for="afcHelper_redirect_name_' + id + '">name: </label><input type="text" ' + 'name="afcHelper_redirect_name_' + id + '" id="afcHelper_redirect_name_' + id + '" value="' + afcHelper_escapeHtmlChars(afcHelper_Submissions[id].title) + '" />';
-			extra.innerHTML += '<label for="afcHelper_redirect_parent_' + id + '">Parent category:</label>' + '<input type="text" id="afcHelper_redirect_parent_' + id + '" name="afcHelper_redirect_parent_' + id + '" value="' + afcHelper_escapeHtmlChars(afcHelper_Submissions[id].parent) + '" />';
+			extra.html('<label for="afcHelper_redirect_name_' + id + '">name: </label><input type="text" ' + 'name="afcHelper_redirect_name_' + id + '" id="afcHelper_redirect_name_' + id + '" value="' + afcHelper_escapeHtmlChars(afcHelper_Submissions[id].title) + '" />');
+			extra.html(extra.html() + '<label for="afcHelper_redirect_parent_' + id + '">Parent category:</label>' + '<input type="text" id="afcHelper_redirect_parent_' + id + '" name="afcHelper_redirect_parent_' + id + '" value="' + afcHelper_escapeHtmlChars(afcHelper_Submissions[id].parent) + '" />');
 		}
-		extra.innerHTML += '<label for="afcHelper_redirect_comment_' + id + '">Comment:</label>' + '<input type="text" id="afcHelper_redirect_comment_' + id + '" name="afcHelper_redirect_comment_' + id + '"/>';
+		extra.html(extra.html() + '<label for="afcHelper_redirect_comment_' + id + '">Comment:</label>' + '<input type="text" id="afcHelper_redirect_comment_' + id + '" name="afcHelper_redirect_comment_' + id + '"/>');
 	} else if (selectValue === 'decline') {
 		if (afcHelper_Submissions[id].type === 'redirect') {
-			extra.innerHTML = '<label for="afcHelper_redirect_decline_' + id + '">Reason for decline: </label>' + afcHelper_generateSelect('afcHelper_redirect_decline_' + id, [{
-				label: 'Already exists',
+			extra.html('<label for="afcHelper_redirect_decline_' + id + '">Reason for decline: </label>' + afcHelper_generateSelect('afcHelper_redirect_decline_' + id, [{				label: 'Already exists',
 				value: 'exists'
 			}, {
 				label: 'Blank request',
@@ -225,9 +224,9 @@ function afcHelper_redirect_onActionChange(id) {
 				label: 'Custom - reason below',
 				selected: true,
 				value: 'custom'
-			}]);
+			}]));
 		} else {
-			extra.innerHTML = '<label for="afcHelper_redirect_decline_' + id + '">Reason for decline: </label>' + afcHelper_generateSelect('afcHelper_redirect_decline_' + id, [{
+			extra.html('<label for="afcHelper_redirect_decline_' + id + '">Reason for decline: </label>' + afcHelper_generateSelect('afcHelper_redirect_decline_' + id, [{
 				label: 'Already exists',
 				value: 'exists'
 			}, {
@@ -243,42 +242,43 @@ function afcHelper_redirect_onActionChange(id) {
 				label: 'Custom - reason below',
 				selected: true,
 				value: 'custom'
-			}]);
+			}]));
 		}
-		extra.innerHTML += '<label for="afcHelper_redirect_comment_' + id + '">Comment:</label>' + '<input type="text" id="afcHelper_redirect_comment_' + id + '" name="afcHelper_redirect_comment_' + id + '"/>';
+		extra.html(extra.html() + '<label for="afcHelper_redirect_comment_' + id + '">Comment:</label>' + '<input type="text" id="afcHelper_redirect_comment_' + id + '" name="afcHelper_redirect_comment_' + id + '"/>');
+    } 
 	} else {
-		extra.innerHTML = '<label for="afcHelper_redirect_comment_' + id + '">Comment:</label>' + '<input type="text" id="afcHelper_redirect_comment_' + id + '" name="afcHelper_redirect_comment_' + id + '"/>';
+		extra.html(extra.html() + '<label for="afcHelper_redirect_comment_' + id + '">Comment:</label>' + '<input type="text" id="afcHelper_redirect_comment_' + id + '" name="afcHelper_redirect_comment_' + id + '"/>');
 	}
 }
 
 function afcHelper_redirect_performActions() {
 	// Load all of the data.
 	for (var i = 0; i < afcHelper_Submissions.length; i++) {
-		var action = document.getElementById("afcHelper_redirect_action_" + i).value;
+		var action = $("#afcHelper_redirect_action_" + i).val();
 		afcHelper_Submissions[i].action = action;
 		if (action === 'none') continue;
 		if (action === 'accept') {
 			if (afcHelper_Submissions[i].type === 'redirect') {
-				afcHelper_Submissions[i].title = document.getElementById("afcHelper_redirect_from_" + i).value;
-				afcHelper_Submissions[i].to = document.getElementById("afcHelper_redirect_to_" + i).value;
-				afcHelper_Submissions[i].append = document.getElementById("afcHelper_redirect_append_" + i).value;
+				afcHelper_Submissions[i].title = $("#afcHelper_redirect_from_" + i).val();
+				afcHelper_Submissions[i].to = $("#afcHelper_redirect_to_" + i).val();
+				afcHelper_Submissions[i].append = $("#afcHelper_redirect_append_" + i).val();
 				if (afcHelper_Submissions[i].append === 'custom') {
 					afcHelper_Submissions[i].append = prompt("Please enter the template to append for " + afcHelper_Submissions[i].title + ". Do not include the curly brackets.");
 				}
 				if (afcHelper_Submissions[i].append === 'none' || afcHelper_Submissions[i].append === null) afcHelper_Submissions[i].append = '';
 				else afcHelper_Submissions[i].append = '\{\{' + afcHelper_Submissions[i].append + '\}\}';
 			} else {
-				afcHelper_Submissions[i].title = document.getElementById("afcHelper_redirect_name_" + i).value;
-				afcHelper_Submissions[i].parent = document.getElementById("afcHelper_redirect_parent_" + i).value;
+				afcHelper_Submissions[i].title = $("#afcHelper_redirect_name_" + i).val();
+				afcHelper_Submissions[i].parent = $("#afcHelper_redirect_parent_" + i).val();
 			}
 		} else if (action === 'decline') {
-			afcHelper_Submissions[i].reason = document.getElementById('afcHelper_redirect_decline_' + i).value;
+			afcHelper_Submissions[i].reason = $('#afcHelper_redirect_decline_' + i).val();
 		}
-		afcHelper_Submissions[i].comment = document.getElementById("afcHelper_redirect_comment_" + i).value;
+		afcHelper_Submissions[i].comment = $("#afcHelper_redirect_comment_" + i).val();
 	}
 	// Data loaded. Show progress screen and get WP:AFC/R page text.
 	displayMessage('<ul id="afcHelper_status"></ul><ul id="afcHelper_finish"></ul>');
-	document.getElementById('afcHelper_finish').innerHTML += '<span id="afcHelper_finished_wrapper"><span id="afcHelper_finished_main" style="display:none"><li id="afcHelper_done"><b>Done (<a href="' + wgArticlePath.replace("$1", encodeURI(afcHelper_RedirectPageName)) + '?action=purge" title="' + afcHelper_RedirectPageName + '">Reload page</a>)</b></li></span></span>';
+	$('#afcHelper_finish').html($('#afcHelper_finish').html() + '<span id="afcHelper_finished_wrapper"><span id="afcHelper_finished_main" style="display:none"><li id="afcHelper_done"><b>Done (<a href="' + wgArticlePath.replace("$1", encodeURI(afcHelper_RedirectPageName)) + '?action=purge" title="' + afcHelper_RedirectPageName + '">Reload page</a>)</b></li></span></span>');
 	pagetext = afcHelper_getPageText(afcHelper_RedirectPageName, true);
 	var totalaccept = 0;
 	var totaldecline = 0;
@@ -288,7 +288,7 @@ function afcHelper_redirect_performActions() {
 		var sub = afcHelper_RedirectSubmissions[i];
 		if (pagetext.indexOf(afcHelper_RedirectSections[sub.section]) === -1) {
 			// Someone has modified the section in the mean time. Skip.
-			document.getElementById('afcHelper_status').innerHTML += '<li>Skipping ' + sub.title + ': Cannot find section. Perhaps it was modified in the mean time?</li>';
+			$('#afcHelper_status').html($('#afcHelper_status').html() + '<li>Skipping ' + sub.title + ': Cannot find section. Perhaps it was modified in the mean time?</li>'); 
 			continue;
 		}
 		var text = afcHelper_RedirectSections[sub.section];
@@ -316,7 +316,7 @@ function afcHelper_redirect_performActions() {
 				if (reason === '') reason = sub.comment;
 				else if (sub.comment !== '') reason = reason + ': ' + sub.comment;
 				if (reason === '') {
-					document.getElementById('afcHelper_status').innerHTML += '<li>Skipping ' + sub.title + ': No decline reason specified.</li>';
+					$('afcHelper_status').html($('#afcHelper_status').html() + '<li>Skipping ' + sub.title + ': No decline reason specified.</li>');       
 					continue;
 				}
 				text = header + "\n\{\{AfC-c|d\}\}\n" + text.substring(header.length);
@@ -356,7 +356,7 @@ function afcHelper_redirect_performActions() {
 					if (reason === '') reason = redirect.comment;
 					else if (redirect.comment !== '') reason = reason + ': ' + redirect.comment;
 					if (reason === '') {
-						document.getElementById('afcHelper_status').innerHTML += '<li>Skipping ' + redirect.title + ': No decline reason specified.</li>';
+						$('#afcHelper_status').html($('#afcHelper_status').html() + '<li>Skipping ' + redirect.title + ': No decline reason specified.</li>');              
 						continue;
 					}
 					declinecomment += redirect.title + " &rarr; " + redirect.to + ": " + reason + "; ";
@@ -405,7 +405,7 @@ function afcHelper_redirect_performActions() {
 	}
 
 	afcHelper_editPage(afcHelper_RedirectPageName, pagetext, summary, false);
-	document.getElementById('afcHelper_finished_main').style.display = '';
+	$('afcHelper_finished_main').css("display", '');
 }
 
 // Create portlet link
