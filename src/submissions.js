@@ -515,7 +515,22 @@ function afcHelper_act(action) {
 				alert("No valid submitter was specified, aborting...");
 				return;
 			}
-			newtext = submit + pagetext;
+			if (afcHelper_g13_eligible(afcHelper_PageName)) {
+				postpone_re = /\{\{AfC postpone G13\s*(?:\|\s*(\d*)\s*)?\}\}/ig;
+				var match = postpone_re.exec(pagetext);
+				if (match) {
+					if (match[1] != undefined) {
+						addition = "{{AfC postpone G13|"+(parseInt(match[1])+1)+"}}";
+					} else {
+						addition = "{{AfC postpone G13|2}}";
+					}
+					newtext = submit + pagetext.replace(match[0],addition);
+				} else {
+					newtext = submit + pagetext + "\n{{AfC postpone G13|1}}";
+				}
+			} else {
+				newtext = submit + pagetext
+			}
 			newtext = afcHelper_cleanup(newtext);
 			afcHelper_editPage(afcHelper_PageName, newtext, "Submitting [[Wikipedia:Articles for creation]] submission", false);
 		}
