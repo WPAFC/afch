@@ -204,6 +204,9 @@ function afcHelper_ffu_onActionChange(id) {
 			label: 'Broken or invalid URL',
 			value: 'badlink'
 		}, {
+			label: 'AfC submission declined',
+			value: 'afcdeclined'
+		}, {
 			label: 'Custom - reason below',
 			selected: true,
 			value: 'custom'
