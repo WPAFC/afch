@@ -306,7 +306,7 @@ function afcHelper_ffu_performActions() {
 				// todo list: if more files in one request were handled, only notify once (would require change in structure of program)
 				if ((sub_m.action != 'none') && (sub_m.notify == true)) {
 					// assuming the first User/IP is the requester
-					match = /\[\[(?:User[_ ]talk:|User:|Special:Contributions\/)([^\||\]\]]*)([^\]]*?)\]\]/i.exec(text)
+					match = /\[\[(?:User[_ ]talk:|User:|Special:Contributions\/)([^\||\]\]]*)([^\]]*?)\]\]/i.exec(text);
 					// only notify if we can find a user to notify
 					if (match) {
 						var requestinguser = match[1];
@@ -335,7 +335,7 @@ function afcHelper_ffu_performActions() {
 					totalaccept++;
 					// update [[Wikipedia:Files for upload/recent]]
 					if (sub_m.recent == true) {
-						recentpagetext = afcHelper_getPageText('Wikipedia:Files_for_upload/recent', true)
+						recentpagetext = afcHelper_getPageText('Wikipedia:Files_for_upload/recent', true);
 						var newentry = "\| File:" + sub_m.to + " | " + (typeof sub_m.recenttext !== "undefined" ? sub_m.recenttext : "") + "\n";
 						var lastentry = recentpagetext.toLowerCase().lastIndexOf("| file:");
 						var firstentry = recentpagetext.toLowerCase().indexOf("| file:");
@@ -445,7 +445,7 @@ function afcHelper_selectOnChange(select,id) {
 
 function displayMessage_inline(message, div, className) {
 	// a reimplementation of [[User:Timotheus Canens/displaymessage.js]] that displays messages inline
-	var divtitle = '#' + div
+	var divtitle = '#' + div;
 	if (!arguments.length || message === '' || message === null) {
 		$(divtitle).empty().hide();
 		return true; // Emptying and hiding message is intended behaviour, return true
