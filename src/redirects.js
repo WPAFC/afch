@@ -244,8 +244,7 @@ function afcHelper_redirect_onActionChange(id) {
 				value: 'custom'
 			}]));
 		}
-		extra.html(extra.html() + '<label for="afcHelper_redirect_comment_' + id + '">Comment:</label>' + '<input type="text" id="afcHelper_redirect_comment_' + id + '" name="afcHelper_redirect_comment_' + id + '"/>');
-    } 
+		extra.html(extra.html() + '<label for="afcHelper_redirect_comment_' + id + '">Comment:</label>' + '<input type="text" id="afcHelper_redirect_comment_' + id + '" name="afcHelper_redirect_comment_' + id + '"/>'); 
 	} else {
 		extra.html(extra.html() + '<label for="afcHelper_redirect_comment_' + id + '">Comment:</label>' + '<input type="text" id="afcHelper_redirect_comment_' + id + '" name="afcHelper_redirect_comment_' + id + '"/>');
 	}
