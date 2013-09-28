@@ -201,14 +201,14 @@ function afcHelper_ffu_onActionChange(id) {
 			label: 'Lack of response',
 			value: 'lackof'
 		}, {
-			label: 'Declined AFC submission',
+			label: 'Declined AfC submission',
 			value: 'afcd'
+		}, {
+			label: 'Deleted AfD submission',
+			value: 'afdd'
 		}, {
 			label: 'Broken or invalid URL',
 			value: 'badlink'
-		}, {
-			label: 'AfC submission declined',
-			value: 'afcdeclined'
 		}, {
 			label: 'Custom - reason below',
 			selected: true,
