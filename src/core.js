@@ -2,6 +2,9 @@
 // Script should be located at [[MediaWiki:Gadget-afchelper.js/core.js]]
 
 (function($, mw) {
+	// If we're not viewing the page, don't show the review links
+	if (mw.util.getParamValue('action') !== null && mw.util.getParamValue('action') !== 'view') return;
+
 	function jqEsc(expression) {
 		return expression.replace(/[!"#$%&'()*+,.\/:;<=>?@\[\\\]^`{|}~ ]/g, ''); 
 	}
