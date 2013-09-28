@@ -149,7 +149,7 @@ function afcHelper_redirect_init() {
 			text += '</ul></li>';
 		} else {
 			text += '<li>Category submission: ' + afcHelper_RedirectSubmissions[k].title;
-			text += '<br/> <label for="afcHelper_redirect_action_' + afcHelper_RedirectSubmissions[k].id + '">Action: </label>' + afcHelper_generateSelect('afcHelper_redirect_action_' + afcHelper_RedirectSubmissions[k].id, [{
+			text += '<label for="afcHelper_redirect_action_' + afcHelper_RedirectSubmissions[k].id + '">Action: </label>' + afcHelper_generateSelect('afcHelper_redirect_action_' + afcHelper_RedirectSubmissions[k].id, [{
 				label: 'Accept',
 				value: 'accept'
 			}, {
@@ -177,8 +177,8 @@ function afcHelper_redirect_onActionChange(id) {
 	else if (selectValue === 'accept') {
 		if (afcHelper_Submissions[id].type === 'redirect') {
 			extra.html(extra.html() + '<label for="afcHelper_redirect_from_' + id + '">From: </label><input type="text" ' + 'name="afcHelper_redirect_from_' + id + '" id="afcHelper_redirect_from_' + id + '" value="' + afcHelper_escapeHtmlChars(afcHelper_Submissions[id].title) + '" />');
-			extra.html(extra.html() + '&nbsp;<label for="afcHelper_redirect_to_' + id + '">To: </label><input type="text" ' + 'name="afcHelper_redirect_to_' + id + '" id="afcHelper_redirect_to_' + id + '" value="' + afcHelper_escapeHtmlChars(afcHelper_Submissions[id].to) + '" />');
-			extra.html(extra.html() + '<label for="afcHelper_redirect_append_' + id + '">Template to append: </label>' + afcHelper_generateSelect('afcHelper_redirect_append_' + id, [{
+			extra.html(extra.html() + '&nbsp;<br /><label for="afcHelper_redirect_to_' + id + '">To: </label><input type="text" ' + 'name="afcHelper_redirect_to_' + id + '" id="afcHelper_redirect_to_' + id + '" value="' + afcHelper_escapeHtmlChars(afcHelper_Submissions[id].to) + '" />');
+			extra.html(extra.html() + '<br /><label for="afcHelper_redirect_append_' + id + '">Template to append: </label>' + afcHelper_generateSelect('afcHelper_redirect_append_' + id, [{
 				label: 'R from alternative name',
 				value: 'R from alternative name'
 			}, {
@@ -205,10 +205,10 @@ function afcHelper_redirect_onActionChange(id) {
 				value: 'none'
 			}]));
 		} else {
-			extra.html('<label for="afcHelper_redirect_name_' + id + '">name: </label><input type="text" ' + 'name="afcHelper_redirect_name_' + id + '" id="afcHelper_redirect_name_' + id + '" value="' + afcHelper_escapeHtmlChars(afcHelper_Submissions[id].title) + '" />');
-			extra.html(extra.html() + '<label for="afcHelper_redirect_parent_' + id + '">Parent category:</label>' + '<input type="text" id="afcHelper_redirect_parent_' + id + '" name="afcHelper_redirect_parent_' + id + '" value="' + afcHelper_escapeHtmlChars(afcHelper_Submissions[id].parent) + '" />');
+			extra.html('<br /><label for="afcHelper_redirect_name_' + id + '">name: </label><input type="text" ' + 'name="afcHelper_redirect_name_' + id + '" id="afcHelper_redirect_name_' + id + '" value="' + afcHelper_escapeHtmlChars(afcHelper_Submissions[id].title) + '" />');
+			extra.html(extra.html() + '<br /><label for="afcHelper_redirect_parent_' + id + '">Parent category:</label>' + '<input type="text" id="afcHelper_redirect_parent_' + id + '" name="afcHelper_redirect_parent_' + id + '" value="' + afcHelper_escapeHtmlChars(afcHelper_Submissions[id].parent) + '" />');
 		}
-		extra.html(extra.html() + '<label for="afcHelper_redirect_comment_' + id + '">Comment:</label>' + '<input type="text" id="afcHelper_redirect_comment_' + id + '" name="afcHelper_redirect_comment_' + id + '"/>');
+		extra.html(extra.html() + '<br /><label for="afcHelper_redirect_comment_' + id + '">Comment:</label>' + '<input type="text" id="afcHelper_redirect_comment_' + id + '" name="afcHelper_redirect_comment_' + id + '"/>');
 	} else if (selectValue === 'decline') {
 		if (afcHelper_Submissions[id].type === 'redirect') {
 			extra.html('<label for="afcHelper_redirect_decline_' + id + '">Reason for decline: </label>' + afcHelper_generateSelect('afcHelper_redirect_decline_' + id, [{				label: 'Already exists',
@@ -249,7 +249,7 @@ function afcHelper_redirect_onActionChange(id) {
 				value: 'custom'
 			}]));
 		}
-		extra.html(extra.html() + '<label for="afcHelper_redirect_comment_' + id + '">Comment:</label>' + '<input type="text" id="afcHelper_redirect_comment_' + id + '" name="afcHelper_redirect_comment_' + id + '"/>'); 
+		extra.html(extra.html() + '<br /><label for="afcHelper_redirect_comment_' + id + '">Comment:</label>' + '<input type="text" id="afcHelper_redirect_comment_' + id + '" name="afcHelper_redirect_comment_' + id + '"/>'); 
 	} else {
 		extra.html(extra.html() + '<label for="afcHelper_redirect_comment_' + id + '">Comment:</label>' + '<input type="text" id="afcHelper_redirect_comment_' + id + '" name="afcHelper_redirect_comment_' + id + '"/>');
 	}
