@@ -127,7 +127,7 @@ function afcHelper_getPageText(title, show, redirectcheck, timestamp) {
 	}		
 	if (show && !redirectcheck)	$('#afcHelper_status').html($('#afcHelper_status').html() + '<li id="afcHelper_get' + jqEsc(title) + '">Got <a href="' + wgArticlePath.replace("$1", encodeURI(title)) + '" title="' + title + '">' + title + '</a></li>');
 	if (!timestamp) return newtext;
-	else return {'pagetext':newtext,'timestamp':response['query']['pages'][pageid]['revisions'][0]['timestamp']}
+	else return {'pagetext':newtext,'timestamp':response['query']['pages'][pageid]['revisions'][0]['timestamp']};
 }
 
 function afcHelper_deletePage(title,reason) {
@@ -139,13 +139,13 @@ function afcHelper_deletePage(title,reason) {
 
 	// Then get the deletion token
 	var tokenrequest = {
-				'action': 'query',
-				'prop': 'info',
-				'format': 'json',
-				'intoken': 'delete',
-				'indexpageids': true,
-				'titles': title
-			};
+		'action': 'query',
+		'prop': 'info',
+		'format': 'json',
+		'intoken': 'delete',
+		'indexpageids': true,
+		'titles': title
+	};
 	var tokenresponse = JSON.parse(
 		$.ajax({
 			url: mw.util.wikiScript('api'),
@@ -198,7 +198,7 @@ function afcHelper_editPage(title, newtext, summary, createonly, nopatrol) {
 				'text': newtext,
 				'summary': summary,
 				'token': edittoken
-			}
+		};
 	if (createonly) request.createonly = true;
 
 	var api = new mw.Api();
@@ -234,7 +234,7 @@ function afcHelper_editPage(title, newtext, summary, createonly, nopatrol) {
 							'format': 'json',
 							'token': mw.user.tokens.get('patrolToken'),
 							'rcid': rcid
-						}
+					};
 				api.post(patrolrequest)
 						.done(function ( data ) {
 							if ( data ) {
