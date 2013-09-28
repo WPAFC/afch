@@ -123,7 +123,12 @@ function afcHelper_redirect_init() {
 			if (afcHelper_RedirectSubmissions[k] === '' || afcHelper_RedirectSubmissions[k] === ' ') {
 				text += 'Empty submission \#' + afcHelper_Redirect_empty + '<ul>';
 				afcHelper_Redirect_empty++;
-			} else text += '<a href="' + wgArticlePath.replace("$1", encodeURIComponent(afcHelper_RedirectSubmissions[k].to)) + '">' + afcHelper_RedirectSubmissions[k].to + '</a>: <ul>';
+			} else {
+				if (afcHelper_RedirectSubmissions[k].to.replace(/\s/g,'')) 
+					text += '<a href="' + wgArticlePath.replace("$1", encodeURIComponent(afcHelper_RedirectSubmissions[k].to)) + '">' + afcHelper_RedirectSubmissions[k].to + '</a>: <ul>';
+				else
+					text += '<b>no target given</b>: <ul>'
+			}
 			for (var l = 0; l < afcHelper_RedirectSubmissions[k].from.length; l++) {
 				var from = afcHelper_RedirectSubmissions[k].from[l];
 				text += "<li>From: " + from.title + '<br/><label for="afcHelper_redirect_action_' + from.id + '">Action: </label>' + afcHelper_generateSelect('afcHelper_redirect_action_' + from.id, [{
