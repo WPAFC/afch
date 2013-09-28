@@ -46,7 +46,7 @@ function afcHelper_ffu_init() {
 				action: 'none',
 				comment: ''
 			};
-			var urllinks_re = /(http|gopher|https|ftp|ftps)\:\/\/[^\s\n]*/gi;
+			var urllinks_re = /(https?|gopher|ftps?)\:\/\/[^\s\n]*/gi;
 			var matchedlinks = afcHelper_ffuSections[i].match(urllinks_re);
 			var links = new Array();
 			if (matchedlinks === null) {
