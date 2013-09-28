@@ -350,10 +350,14 @@ function afcHelper_ffu_performActions() {
 						$('#afcHelper_status').html($('#afcHelper_status').html() + '<li>Skipping ' + sub_m.title + ': No decline reason specified.</li>');
 						continue;
 					}
+					// TODO convert to case switch (afcd, afdd)
+					// AFC
 					if ((sub_m.reason == 'afcd') && (sub_m.addtl)) sub_m.reason = 'afcd|afc title=' + sub_m.addtl;
-					if ((sub_m.reason == 'afdd') && (sub_m.addtl)) sub_m.reason = 'afdd|afd title=' + sub_m.addtl;
-					else if ((sub_m.reason == 'afdd') && (sub_m.addloc)) sub_m.reason = 'afdd|afd location=' + sub_m.addloc;
+					// AFD
 					else if ((sub_m.reason == 'afdd') && (sub_m.addtl) && (sub_m.addloc)) sub_m.reason = 'afdd|afd title=' + sub_m.addtl + '|afd location=' + sub_m.addloc;
+					else if ((sub_m.reason == 'afdd') && (sub_m.addloc)) sub_m.reason = 'afdd|afd location=' + sub_m.addloc;
+					else if ((sub_m.reason == 'afdd') && (sub_m.addtl)) sub_m.reason = 'afdd|afd title=' + sub_m.addtl;
+
 					text = header + "\n\{\{subst:ffu d\}\}\n" + text.substring(header.length);
 					if (sub_m.comment == '') text += '\n*\{\{subst:ffu|' + sub_m.reason + '\}\} \~\~\~\~\n';
 					else if (sub_m.reason == 'custom') text += '\n*{{subst:ffu|d}} ' + sub_m.comment + ' \~\~\~\~\n';
@@ -369,9 +373,14 @@ function afcHelper_ffu_performActions() {
 					}
 					totalcomment++;
 				} else if (sub_m.action == 'hold') {
+					// TODO convert to case switch (afc, afd)
+					// AFC
 					if ((sub_m.holdrat == 'afc') && (sub_m.addtl)) sub_m.holdrat = 'afc|afc title=' + sub_m.addtl;
-					else if ((sub_m.holdrat == 'afd') && (sub_m.addloc)) sub_m.holdrat = 'afd|afd location=' + sub_m.addloc;
+					// AFD
 					else if ((sub_m.holdrat == 'afd') && (sub_m.addtl) && (sub_m.addloc)) sub_m.holdrat = 'afd|afd title=' + sub_m.addtl + '|afd location=' + sub_m.addloc;
+					else if ((sub_m.holdrat == 'afd') && (sub_m.addloc)) sub_m.holdrat = 'afd|afd location=' + sub_m.addloc;
+					else if ((sub_m.holdrat == 'afd') && (sub_m.addtl)) sub_m.holdrat = 'afd|afd title=' + sub_m.addtl;
+
 					if (sub_m.comment == '') text += '\n:\{\{subst:ffu|' + sub_m.holdrat + '\}\} \~\~\~\~\n';
 					else text += '\n:\{\{subst:ffu|' + sub_m.holdrat + '\}\} ' + sub_m.comment + ' \~\~\~\~\n';
 					totalcomment++; // a "hold" is basically equal to a comment
