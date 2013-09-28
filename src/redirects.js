@@ -173,8 +173,8 @@ function afcHelper_redirect_init() {
 function afcHelper_redirect_onActionChange(id) {
 	var extra = $("#afcHelper_redirect_extra_" + id);
 	var selectValue = $("#afcHelper_redirect_action_" + id).val();
-	if (selectValue === 'none') extra.html('');
-	else if (selectValue === 'accept') {
+	extra.html(''); // Blank it first
+	if (selectValue === 'accept') {
 		if (afcHelper_Submissions[id].type === 'redirect') {
 			extra.html(extra.html() + '<label for="afcHelper_redirect_from_' + id + '">From: </label><input type="text" ' + 'name="afcHelper_redirect_from_' + id + '" id="afcHelper_redirect_from_' + id + '" value="' + afcHelper_escapeHtmlChars(afcHelper_Submissions[id].title) + '" />');
 			extra.html(extra.html() + '&nbsp;<br /><label for="afcHelper_redirect_to_' + id + '">To: </label><input type="text" ' + 'name="afcHelper_redirect_to_' + id + '" id="afcHelper_redirect_to_' + id + '" value="' + afcHelper_escapeHtmlChars(afcHelper_Submissions[id].to) + '" />');
