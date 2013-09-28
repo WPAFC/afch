@@ -302,13 +302,20 @@ function afcHelper_prompt(type) {
 		$.ajax({
 			url: mw.config.get('wgServer') + "/w/index.php?title=User:Theo%27s_Little_Bot/afchwikiproject.js&action=raw&ctype=text/javascript",
 			dataType: "json",
-			success: function (data) { afcHelper_wikiprojectindex = data; },
-			async: false
+			success: function (wikiproject_data) {
+				var wikiprojectSelect = afcHelper_generateChzn("afcHelper_wikiproject_selection",'Start typing to filter the list of WikiProjects...',wikiproject_data);
+				var text = '<label for="afcHelper_wikiproject_selection">Choose associated WikiProjects to be automatically be added to the talk page: </label><br>' + wikiprojectSelect;
+				$('#afcHelper_wikiprojectSelect').html(text);
+				$("#afcHelper_wikiproject_selection").chosen({no_results_text: "Oops, couldn't find any WikiProjects matching your input!"}); 
+			},
+			fail: function() {
+				$('#afcHelper_wikiprojectSelect').html('Unable to load WikiProject selection tool.');
+			}
+			//async: false
 		});
 		// Then generate a dynamic menu for them
-		var wikiprojectSelect = afcHelper_generateChzn("afcHelper_wikiproject_selection",'Start typing to filter the list of WikiProjects...',afcHelper_wikiprojectindex);
-		text += '<br /><label for="afcHelper_wikiproject_selection">Choose associated WikiProjects to be automatically be added to the talk page: </label><br>' + wikiprojectSelect;
-		text += '<br /><label for="afcHelper_pagePrepend">Prepend wikicode to page (optional, e.g. maintenance boxes): </label><br><textarea class="afcHelper_expand" rows="1" cols="60" id="afcHelper_pagePrepend" spellcheck="true"></textarea>' +
+		text += '<br /><div id="afcHelper_wikiprojectSelect">[Loading WikiProject selection tool...]</div>';
+		text += '<label for="afcHelper_pagePrepend">Prepend wikicode to page (optional, e.g. maintenance boxes): </label><br><textarea class="afcHelper_expand" rows="1" cols="60" id="afcHelper_pagePrepend" spellcheck="true"></textarea>' +
 		'<br /><label for="afcHelper_pageAppend">Append wikicode to page (optional, e.g. categories or stub templates): </label><br><textarea class="afcHelper_expand" rows="1" cols="60" id="afcHelper_pageAppend" spellcheck="true"></textarea>' +
 		'<br /><label for="afcHelper_talkAppend">Append wikicode to talk page (optional, e.g. WikiProject templates): </label><br><textarea class="afcHelper_expand" rows="1" cols="60" id="afcHelper_talkAppend" spellcheck="true"></textarea>' +
 		'<br /><label for="afcHelper_reqphoto">Does the article need a photo/image? (will add &#123;&#123;<a href="'+ wgArticlePath.replace("$1", 'Template:Reqphoto') + '" title="Template:Reqphoto" target="_blank">reqphoto</a>&#125;&#125; to talk page) </label><input type="checkbox" id="afcHelper_reqphoto"/>' +
@@ -336,8 +343,6 @@ function afcHelper_prompt(type) {
 		'</div></div><div id="afcHelper_extra_inline"></div>' +
 		'<button class="afcHelper_button" type="button" id="afcHelper_accept_button" onclick="afcHelper_act(\'accept\')">Accept and publish to mainspace</button>';
 		$("#afcHelper_extra").html(text);
-		// Set up chosen wikiproject menu
-		$("#afcHelper_wikiproject_selection").chosen({no_results_text: "Oops, couldn't find any WikiProjects matching your input!"}); 
 		// Expand textareas on click so they don't take up space, and then...
 		$('textarea.afcHelper_expand').focus(function () {
 			$(this).animate({ height: "4em" }, 500);
