@@ -178,7 +178,7 @@ function afcHelper_init() {
 	displayMessage('<div id="afcHelper_loadingmsg">Loading the Article for creation helper script...</div>');
 
 	if (!wfSupportsAjax()) {
-		displayMessage('<span class="notice">Uh oh. Your browser appears to be too old to handle this script or does not support AJAX. Please use the latest version of Mozilla Firefox, Apple Safari, Google Chrome, or Opera for best results. Sorry about that.</span>');
+		displayMessage('<span class="afch-notice">Uh oh. Your browser appears to be too old to handle this script or does not support AJAX. Please use the latest version of Mozilla Firefox, Apple Safari, Google Chrome, or Opera for best results. Sorry about that.</span>');
 		return;
 	}
 
@@ -1331,7 +1331,7 @@ function afcHelper_warnings(pagetext) {
 	var recomment = /\<![ \r\n\t]*(--([^\-]|[\r\n]|-[^\-]){30,})(--[ \r\n\t]*\>|$)/gi;
 	var matched;
 	while (matched = recomment.exec(texttest)) {
-		if (errormsg == '') errormsg += '<h3><div class="notice">Please check the source code! This page contains one or more long (30+ characters) HTML comments! <em>(please report false positives)</em></div></h3>';
+		if (errormsg == '') errormsg += '<h3><div class="afch-notice">Please check the source code! This page contains one or more long (30+ characters) HTML comments! <em>(please report false positives)</em></div></h3>';
 		errormsg += 'The hidden text is: <i>' + matched[1] + '</i><br/>';
 	}
 
@@ -1357,7 +1357,7 @@ function afcHelper_warnings(pagetext) {
 	);
 	var deletionlog = response['query']['logevents'];
 	if (deletionlog.length) {
-		errormsg += ('<h3><div class="notice">The page ' + afcHelper_escapeHtmlChars(afcHelper_submissionTitle) + ' was deleted ' + deletionlog.length + ' time' + ((deletionlog.length != 1) ? "s" : "") + '. Here ' + ((deletionlog.length != 1) ? "are" : "is") + ' the edit summar' + ((deletionlog.length != 1) ? "ies" : "y") + ' from the <a href="' + wgScript + '?title=Special%3ALog&type=delete&page=' + afcHelper_submissionTitle + '" target="_blank">deletion log</a>:</div></h3><table class="wikitable"><tr><td><b>Timestamp</b></td><td><b>User</b></td><td><b>Reason</b></td></tr>');
+		errormsg += ('<h3><div class="afch-notice">The page ' + afcHelper_escapeHtmlChars(afcHelper_submissionTitle) + ' was deleted ' + deletionlog.length + ' time' + ((deletionlog.length != 1) ? "s" : "") + '. Here ' + ((deletionlog.length != 1) ? "are" : "is") + ' the edit summar' + ((deletionlog.length != 1) ? "ies" : "y") + ' from the <a href="' + wgScript + '?title=Special%3ALog&type=delete&page=' + afcHelper_submissionTitle + '" target="_blank">deletion log</a>:</div></h3><table class="wikitable"><tr><td><b>Timestamp</b></td><td><b>User</b></td><td><b>Reason</b></td></tr>');
 		for (var i = 0; i < deletionlog.length; i++) {
 			var deletioncomment = deletionlog[i].comment;
 			var deletioncomment1_re = /\[\[([^\[\]]*?[^\]\|]*?)(\|([^\[\]]*?))\]\]/gi;
@@ -1386,15 +1386,15 @@ function afcHelper_warnings(pagetext) {
 	if (refbegin) { //Firefox workaround!
 		if (refend) { //Firefox workaround!
 			if (refbegin.length !== refend.length) {
-				errormsg += '<h3><div class="notice">Please check the source code! This page contains unclosed &lt;ref&gt; tags!</div></h3>';
+				errormsg += '<h3><div class="afch-notice">Please check the source code! This page contains unclosed &lt;ref&gt; tags!</div></h3>';
 			}
 		} else {
-			errormsg += '<h3><div class="notice">Please check the source code! This page contains unbalanced &lt;ref&gt; and &lt;/ref&gt; tags!</div></h3>';
+			errormsg += '<h3><div class="afch-notice">Please check the source code! This page contains unbalanced &lt;ref&gt; and &lt;/ref&gt; tags!</div></h3>';
 		}
 	}
 	//test if ref tags are used, but no reflist available
 	if ((!reflistre.test(pagetext)) && refbegin) {
-		errormsg += '<h3><div class="notice">Be careful, there is a &lt;ref&gt; tag used, but no references list (reflist)! You might not see all references.</div></h3>';
+		errormsg += '<h3><div class="afch-notice">Be careful, there is a &lt;ref&gt; tag used, but no references list (reflist)! You might not see all references.</div></h3>';
 	}
 
 	// test if <ref> foo <ref> on the page and place the markup on the box
@@ -1413,7 +1413,7 @@ function afcHelper_warnings(pagetext) {
 	if (o) {
 		temppagetext = temppagetext.slice(n + o[0].length);
 		if ((temppagetext.search(rerefbegin)) > -1) {
-			errormsg += '<h3><div class="notice">Be careful, there is a &lt;ref&gt; tag after the references list! You might not see all references.</div></h3>';
+			errormsg += '<h3><div class="afch-notice">Be careful, there is a &lt;ref&gt; tag after the references list! You might not see all references.</div></h3>';
 		}
 	}
 	return errormsg;

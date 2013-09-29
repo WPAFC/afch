@@ -1,10 +1,10 @@
 /* Stylesheet should be located at [[MediaWiki:Gadget-afchelper.css]] */
 
-.notice {
+.afch-notice {
   color: red;
 }
 
-span.notice {
+span.afch-notice {
   font-size: 120%;
 }
 

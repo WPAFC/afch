@@ -194,14 +194,14 @@ function afcHelper_editPage(title, newtext, summary, createonly) {
 				if ( data && data.edit && data.edit.result && data.edit.result == 'Success' ) {
 					$('#afcHelper_edit' + jqEsc(title)).html('Saved <a href="' + wgArticlePath.replace("$1", encodeURI(title)) + '" title="' + title + '">' + title + '</a>');
 				} else {
-					$('#afcHelper_edit' + jqEsc(title)).html('<div class="notice"><b>Edit failed on <a href="' + wgArticlePath.replace("$1", encodeURI(title)) + '" title="' + title + '">' + title + '</a></b></div>. Error info:' + response['error']['code'] + ' : ' + response['error']['info']);
+					$('#afcHelper_edit' + jqEsc(title)).html('<div class="afch-notice"><b>Edit failed on <a href="' + wgArticlePath.replace("$1", encodeURI(title)) + '" title="' + title + '">' + title + '</a></b></div>. Error info:' + response['error']['code'] + ' : ' + response['error']['info']);
 				}
 			} )
 			.fail( function ( error ) {
 				if (createonly && error == "articleexists")
-					$('#afcHelper_edit' + jqEsc(title)).html('<div class="notice"><b>Edit failed on <a href="' + wgArticlePath.replace("$1", encodeURI(title)) + '" title="' + title + '">' + title + '</a></b></div>. Error info: The article already exists!');
+					$('#afcHelper_edit' + jqEsc(title)).html('<div class="afch-notice"><b>Edit failed on <a href="' + wgArticlePath.replace("$1", encodeURI(title)) + '" title="' + title + '">' + title + '</a></b></div>. Error info: The article already exists!');
 				else
-					$('#afcHelper_edit' + jqEsc(title)).html('<div class="notice"><b>Edit failed on <a href="' + wgArticlePath.replace("$1", encodeURI(title)) + '" title="' + title + '">' + title + '</a></b></div>. Error info: ' + error); 
+					$('#afcHelper_edit' + jqEsc(title)).html('<div class="afch-notice"><b>Edit failed on <a href="' + wgArticlePath.replace("$1", encodeURI(title)) + '" title="' + title + '">' + title + '</a></b></div>. Error info: ' + error);
 			})
 			.always( function () {
 				$("#afcHelper_AJAX_finished_" + func_id).css("display", '');
