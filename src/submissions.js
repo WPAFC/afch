@@ -18,6 +18,7 @@ var draft_afc_re = /\{\{\s*afc submission\s*\|\s*t(?:\{\{[^\{\}]*\}\}|[^\}\{])*\
 var not_draft_afc_re = /\{\{\s*afc submission\s*\|\s*[^t](?:\{\{[^\{\}]*\}\}|[^\}\{])*\}\}/i;
 var submissiontemplate_re = /(\{\{\s*afc submission\s*\|\s*([||t|r|d])(?:\{\{[^\{\}]*\}\}|[^\}\{])*)(\|\s*ts\s*=\s*([0-9]{14})|\{\{subst:LOCALTIMESTAMP\}\}|\{\{REVISIONTIMESTAMP\}\})((?:\{\{[^\{\}]*\}\}|[^\}\{]))*\}\}/i;
 var exclusive_pending_afc_re = /(\{\{\s*afc submission\s*\|)(\s*[|]\s*)*((?:\{\{[^\{\}]*\}\}|[^\}\{])*\}\})/i;
+var afcHelper_pageStatuses = new Array(); // List of all statuses on the page (e.g., ['r','d'])
 var afcHelper_cache = {};
 var afcHelper_longcomments = {};
 var afcHelper_reasonhash = [{
@@ -202,44 +203,30 @@ function afcHelper_init() {
 
 	if (BETA) form += '<div id="afcHelper_betanotice">You are currently running a <b>beta version</b> of the Articles for creation helper script. Some features may not work as intended; please report errors <a href="https://en.wikipedia.org/wiki/Wikipedia_talk:WikiProject_Articles_for_creation/Helper_script" target="_blank">here</a>.</div>';
 
-	var template_status_re = /\{\{\s*afc submission\s*\|\s*(\S|\s*)\s*\|/gi;
-	var temp_statuses = new Array();
-	var match;
-	while (match = template_status_re.exec(pagetext)) {
-		temp_statuses.push(match[1]);
-	}
-	var template_statuses = new Array();
-	for (var i = 0; i < temp_statuses.length; i++) {
-		status = temp_statuses[i];
-		if (status === "|") status = "";
-		template_statuses[i] = status.toLowerCase();
-	}
-	if (template_statuses.length == 0) template_statuses = false; // if there is no template on page
-
-	if ($.inArray("", template_statuses) != -1 || $.inArray("r", template_statuses) != -1) {
+	if ($.inArray("", afcHelper_pageStatuses) != -1 || $.inArray("r", afcHelper_pageStatuses) != -1) {
 		form += '<button class="afcHelper_button" type="button" id="afcHelper_accept_button" onclick="afcHelper_prompt(\'accept\')">Accept</button>';
 		form += '<button class="afcHelper_button" type="button" id="afcHelper_decline_button" onclick="afcHelper_prompt(\'decline\')">Decline</button>';
 	}
 
-	if (afcHelper_g13_eligible(afcHelper_PageName) && $.inArray("", template_statuses) == -1 && $.inArray("r", template_statuses) == -1) {
+	if (afcHelper_g13_eligible(afcHelper_PageName) && $.inArray("", afcHelper_pageStatuses) == -1 && $.inArray("r", afcHelper_pageStatuses) == -1) {
 		form += '<button class="afcHelper_button" type="button" id="afcHelper_accept_button" onclick="afcHelper_prompt(\'accept\')">Accept G13-eligible submission</button>';
 		form += '<button class="afcHelper_button" type="button" id="afcHelper_g13_button" onclick="afcHelper_act(\'g13\')">Tag the submission for G13 speedy deletion</button>';
 		form += '<button class="afcHelper_button" type="button" id="afcHelper_postpone_g13_button" onclick="afcHelper_prompt(\'postpone_g13\')">Postpone G13 deletion</button>';
 	}
 
-	if ($.inArray("", template_statuses) != -1 || $.inArray("r", template_statuses) != -1 || $.inArray("d", template_statuses) != -1) form += '<button class="afcHelper_button" type="button" id="afcHelper_comment_button" onclick="afcHelper_prompt(\'comment\')">Comment</button>';
+	if ($.inArray("", afcHelper_pageStatuses) != -1 || $.inArray("r", afcHelper_pageStatuses) != -1 || $.inArray("d", afcHelper_pageStatuses) != -1) form += '<button class="afcHelper_button" type="button" id="afcHelper_comment_button" onclick="afcHelper_prompt(\'comment\')">Comment</button>';
 
-	if (template_statuses === false || $.inArray("t", template_statuses) != -1 || (($.inArray("d", template_statuses) != -1) && ($.inArray("", template_statuses) == -1) && ($.inArray("r", template_statuses) == -1))) form += '<button class="afcHelper_button" type="button" id="afcHelper_submit_button" onclick="afcHelper_prompt(\'submit\')">Submit</button>';
+	if (afcHelper_pageStatuses === false || $.inArray("t", afcHelper_pageStatuses) != -1 || (($.inArray("d", afcHelper_pageStatuses) != -1) && ($.inArray("", afcHelper_pageStatuses) == -1) && ($.inArray("r", afcHelper_pageStatuses) == -1))) form += '<button class="afcHelper_button" type="button" id="afcHelper_submit_button" onclick="afcHelper_prompt(\'submit\')">Submit</button>';
 
-	if (template_statuses === false) form += '<button class="afcHelper_button" type="button" id="afcHelper_draft_button" onclick="afcHelper_prompt(\'draft\')">Mark as draft submission</button>';
+	if (afcHelper_pageStatuses === false) form += '<button class="afcHelper_button" type="button" id="afcHelper_draft_button" onclick="afcHelper_prompt(\'draft\')">Mark as draft submission</button>';
 
-	if ($.inArray("r", template_statuses) != -1) {
+	if ($.inArray("r", afcHelper_pageStatuses) != -1) {
 		form += '<button class="afcHelper_button" type="button" id="afcHelper_unmark_button" onclick="afcHelper_act(\'unmark\')">Unmark as reviewing</button>';
-	} else if ($.inArray("", template_statuses) != -1) {
+	} else if ($.inArray("", afcHelper_pageStatuses) != -1) {
 		form += '<button class="afcHelper_button" type="button" id="afcHelper_mark_button" onclick="afcHelper_prompt(\'mark\')">Mark as reviewing</button>';
 	}
 
-	if (template_statuses === false || $.inArray("", template_statuses) != -1 || $.inArray("r", template_statuses) != -1 || $.inArray("d", template_statuses) != -1 || $.inArray("t", template_statuses) != -1) form += '<button class="afcHelper_button" type="button" id="afcHelper_cleanup_button" onclick="afcHelper_act(\'cleanup\')">Clean the submission</button>';
+	if (afcHelper_pageStatuses === false || $.inArray("", afcHelper_pageStatuses) != -1 || $.inArray("r", afcHelper_pageStatuses) != -1 || $.inArray("d", afcHelper_pageStatuses) != -1 || $.inArray("t", afcHelper_pageStatuses) != -1) form += '<button class="afcHelper_button" type="button" id="afcHelper_cleanup_button" onclick="afcHelper_act(\'cleanup\')">Clean the submission</button>';
 
 	form += '<div id="afcHelper_extra"></div>';
 
@@ -1330,6 +1317,14 @@ function afcHelper_cleanup(text,type) {
 		text = text.replace(temptemplate, "");
 		text = temptemplate + "\n" + text;
 	}
+
+	// Save the statuses to a global variable
+	$.each(submissiontemplates, function(index, data) {
+		var status = data[2].status;
+		if (status === "|") status = "";
+		afcHelper_pageStatuses.push(status.toLowerCase());
+	});
+	if (afcHelper_pageStatuses.length === 0) afcHelper_pageStatuses = false;
 
 	// Remove excess newlines
 	text = text.replace(/(?:[\t ]*(?:\r?\n|\r)){3,}/ig,'\n\n');
