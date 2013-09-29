@@ -267,7 +267,7 @@ function afcHelper_redirect_performActions() {
 				afcHelper_Submissions[i].to = $("#afcHelper_redirect_to_" + i).val();
 				afcHelper_Submissions[i].append = $("#afcHelper_redirect_append_" + i).val();
 				if (afcHelper_Submissions[i].append === 'custom') {
-					afcHelper_Submissions[i].append = prompt("Please enter the template to append for " + afcHelper_Submissions[i].title + ". Do not include the curly brackets.");
+					afcHelper_Submissions[i].append = prompt("Please enter the template to append to " + afcHelper_Submissions[i].title + ". Do not include the curly brackets.");
 				}
 				if (afcHelper_Submissions[i].append === 'none' || afcHelper_Submissions[i].append === null) afcHelper_Submissions[i].append = '';
 				else afcHelper_Submissions[i].append = '\{\{' + afcHelper_Submissions[i].append + '\}\}';
@@ -409,7 +409,11 @@ function afcHelper_redirect_performActions() {
 	}
 
 	afcHelper_editPage(afcHelper_RedirectPageName, pagetext, summary, false);
-	$('afcHelper_finished_main').css("display", '');
+
+	// Display the "Done" text only after all ajax requests are completed
+	$(document).ajaxStop(function () {
+		$("#afcHelper_finished_main").css("display", "");
+	});
 }
 
 // Create portlet link
