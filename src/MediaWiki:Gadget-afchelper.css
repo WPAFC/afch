@@ -1,19 +1,15 @@
 /* Stylesheet should be located at [[MediaWiki:Gadget-afchelper.css]] */
 
-.notice {
+.afcHelper_notice {
   color: red;
 }
 
-span.notice {
+span.afcHelper_notice {
   font-size: 120%;
 }
 
 div#afcHelper_betanotice {
   font-style: italic;
-}
-
-input[type=text]:hover { /* Small shadow on textarea hover */
-  box-shadow: 0px 0px 1px rgba(0, 0, 0, 0.3) inset;
 }
 
 .afcHelper_button {
