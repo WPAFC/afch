@@ -211,14 +211,14 @@
 					if ( data && data.edit && data.edit.result && data.edit.result == 'Success' ) {
 						$('#afcHelper_edit' + jqEsc(title)).html('Saved <a href="' + wgArticlePath.replace("$1", encodeURI(title)) + '" title="' + title + '">' + title + '</a>');
 					} else {
-						$('#afcHelper_edit' + jqEsc(title)).html('<span class="notice><b>Edit failed on <a href="' + wgArticlePath.replace("$1", encodeURI(title)) + '" title="' + title + '">' + title + '</a></b></span>. Error info:' + data['error']['code'] + ': ' + data['error']['info']);
+						$('#afcHelper_edit' + jqEsc(title)).html('<span class="afcHelper_notice"><b>Edit failed on <a href="' + wgArticlePath.replace("$1", encodeURI(title)) + '" title="' + title + '">' + title + '</a></b></span>. Error info:' + data['error']['code'] + ': ' + data['error']['info']);
 					}
 				} )
 				.fail( function ( error ) {
 					if (createonly && error == "articleexists")
-						$('#afcHelper_edit' + jqEsc(title)).html('<span class="notice><b>Edit failed on <a href="' + wgArticlePath.replace("$1", encodeURI(title)) + '" title="' + title + '">' + title + '</a></b></span>. Error info: The article already exists!');
+						$('#afcHelper_edit' + jqEsc(title)).html('<span class="afcHelper_notice"><b>Edit failed on <a href="' + wgArticlePath.replace("$1", encodeURI(title)) + '" title="' + title + '">' + title + '</a></b></span>. Error info: The article already exists!');
 					else
-						$('#afcHelper_edit' + jqEsc(title)).html('<span class="notice><b>Edit failed on <a href="' + wgArticlePath.replace("$1", encodeURI(title)) + '" title="' + title + '">' + title + '</a></b></span>. Error info: ' + error); 
+						$('#afcHelper_edit' + jqEsc(title)).html('<span class="afcHelper_notice"><b>Edit failed on <a href="' + wgArticlePath.replace("$1", encodeURI(title)) + '" title="' + title + '">' + title + '</a></b></span>. Error info: ' + error); 
 				})
 				.always( function () {
 					$("#afcHelper_AJAX_finished_" + func_id).css("display", '');
@@ -244,11 +244,11 @@
 								if ( data ) {
 									$('#afcHelper_patrol' + jqEsc(title)).html('Marked <a href="' + wgArticlePath.replace("$1", encodeURI(title)) + '" title="' + title + '">' + title + '</a> as patrolled');
 								} else {
-									$('#afcHelper_patrol' + jqEsc(title)).html('<span class="notice><b>Patrolling failed on <a href="' + wgArticlePath.replace("$1", encodeURI(title)) + '" title="' + title + '">' + title + '</a></b></span>. Error info:' + data['error']['code'] + ': ' + data['error']['info']);
+									$('#afcHelper_patrol' + jqEsc(title)).html('<span class="afcHelper_notice"><b>Patrolling failed on <a href="' + wgArticlePath.replace("$1", encodeURI(title)) + '" title="' + title + '">' + title + '</a></b></span>. Error info:' + data['error']['code'] + ': ' + data['error']['info']);
 								}
 							} )
 							.fail( function ( error ) {
-								$('#afcHelper_patrol' + jqEsc(title)).html('<span class="notice><b>Patrolling failed on <a href="' + wgArticlePath.replace("$1", encodeURI(title)) + '" title="' + title + '">' + title + '</a></b></span>. Error info: ' + error); 
+								$('#afcHelper_patrol' + jqEsc(title)).html('<span class="afcHelper_notice"><b>Patrolling failed on <a href="' + wgArticlePath.replace("$1", encodeURI(title)) + '" title="' + title + '">' + title + '</a></b></span>. Error info: ' + error); 
 							});
 				}				
 			}
