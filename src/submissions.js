@@ -1521,7 +1521,7 @@ function afcHelper_last_nonbot(title) {
 function afcHelper_logcsd(title,reason,usersnotified) {
 	// Update the user's Twinkle CSD log if they have one
 	var speedyLogPageName = "User:" + mw.config.get('wgUserName') + "/" + (Twinkle.getPref('speedyLogPageName') || "CSD log");
-	CSDlogtext = afcHelper_getPageText(speedyLogPageName);
+	var CSDlogtext = afcHelper_getPageText(speedyLogPageName);
 	if (CSDlogtext) { // Only update the log if it exists
 		var appendText = "";
 		// Add header for new month if necessary (this `date` bit is directly from the Twinkle source code)
