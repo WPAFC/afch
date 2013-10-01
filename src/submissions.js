@@ -197,7 +197,7 @@ function afcHelper_init() {
 		return;
 	}
 
-	form = '<div id="afcHelper_initialform">';
+	var form = '<div id="afcHelper_initialform">';
 	form += afcHelper_setup();
 	form += '<h3>Reviewing ' + afcHelper_PageName + '</h3>';
 
