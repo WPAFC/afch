@@ -20,7 +20,7 @@ function displayMessage( message, className ){
 		// an mw-js-message div to start with.
 		var $messageDiv = $( '#display-message' );
 		if ( !$messageDiv.length ) {
-			$messageDiv = $( '<div id="display-message" style="margin:1em;padding:0.5em 2.5%;border:solid 1px #ddd;background-color:#fcfcfc;font-size: 0.8em"></div>' );
+			$messageDiv = $( '<div id="display-message" spellcheck="true" style="margin:1em;padding:0.5em 2.5%;border:solid 1px #ddd;background-color:#fcfcfc;font-size: 0.8em"></div>' );
 			if ( mw.util.$content.length ) {
 				mw.util.$content.prepend( $messageDiv );
 			} else {
