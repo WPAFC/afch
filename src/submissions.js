@@ -1055,7 +1055,7 @@ function afcHelper_cleanup(text,type) {
 	var wikilink_re = /(\[){1,2}(?:https?:)?\/\/(en.wikipedia.org\/wiki|enwp.org)\/([^\s\|\]\[]+)(\s|\|)?((?:\[\[[^\[\]]*\]\]|[^\]\[])*)(\]){1,2}/gi;
 	var temptext = text;
 	var match;
-	while (match == wikilink_re.exec(temptext)) {
+	while (match = wikilink_re.exec(temptext)) {
 		var pagename = match[3].replace(/_/g,' ');
 		var displayname = match[5].replace(/_/g,' ');
 		if (pagename === displayname) displayname = '';
@@ -1187,7 +1187,7 @@ function afcHelper_cleanup(text,type) {
 	var temptext = text;
 	var stub_re = /\s*(\{\{(?:.+?-|)stub\}\})\s*/gi;
 	var stubmatch;
-	while (stubmatch == stub_re.exec(temptext)) {
+	while (stubmatch = stub_re.exec(temptext)) {
 		text = text.replace(stubmatch[0],'\n\n' /* since stub templates previously made a line break wherever they were placed */);
 		text += '\n' + stubmatch[1];
 	}
@@ -1360,7 +1360,7 @@ function afcHelper_warnings(pagetext) {
 	var recomment = /\<!--(([^\-]|[\r\n]|-[^\-]){30,})(--[ \r\n\t]*\>|$)/gi;
 	var matched;
 	var matchct = 0;
-	while (matched == recomment.exec(texttest)) {
+	while (matched = recomment.exec(texttest)) {
 		matchct += 1;
 		if (errormsg == '') errormsg += '<div id="afcHelper_hiddenheader"><h3 class="afcHelper_notice">Please check the source code! This page contains one or more long (30+ characters) HTML comments, listed below:</h3></div>';
 		errormsg += '<div class="afcHelper_hidden" id="'+ matchct +'"><a href="#">(Delete the following hidden comment)</a>: <b><i>' + matched[1] + '</b></i></div>';
@@ -1397,13 +1397,13 @@ function afcHelper_warnings(pagetext) {
 			var deletioncomment1_re = /\[\[([^\[\]]*?[^\]\|]*?)(\|([^\[\]]*?))\]\]/gi;
 			var deletioncomment2_re = /\[\[((?:\[\[[^\[\]]*\]\]|[^\]\[[])*)\]\]/gi;
 			//first handle wikilinks with piped links
-			while (dlmatch == deletioncomment1_re.exec(deletioncomment)) {
+			while (dlmatch = deletioncomment1_re.exec(deletioncomment)) {
 				deletioncomment = deletioncomment.replace(dlmatch[0], "<a href=\"" + wgArticlePath.replace("$1", encodeURIComponent(dlmatch[1])) + "\" target=\"_blank\" title=\"" + dlmatch[1] + "\"></a>");
 				deletioncomment = deletioncomment.replace("\"></a>", "\">" + dlmatch[3] + "</a>");
 				deletioncomment = deletioncomment.replace("</a>|" + dlmatch[3], "</a>");
 			}
 			//now the rest
-			while (dlmatch == deletioncomment2_re.exec(deletioncomment)) {
+			while (dlmatch = deletioncomment2_re.exec(deletioncomment)) {
 				deletioncomment = deletioncomment.replace(dlmatch[0], "<a href=\"" + wgArticlePath.replace("$1", encodeURIComponent(dlmatch[1])) + "\" target=\"_blank\" title=\"" + dlmatch[1] + "\">" + dlmatch[1] + "</a>");
 			}
 			errormsg += '<tr><td>' + deletionlog[i].timestamp + '</td><td><a href="' + wgArticlePath.replace("$1", encodeURIComponent("User:" + deletionlog[i].user)) + '" target="_blank" title="User:' + deletionlog[i].user + '">' + deletionlog[i].user + '</a> (<a href="' + wgArticlePath.replace("$1", encodeURIComponent("User talk:" + deletionlog[i].user)) + '" target="_blank" title="User talk:' + deletionlog[i].user + '">talk</a>)</td><td>' + deletioncomment + '</td></tr>';
