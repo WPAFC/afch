@@ -11,7 +11,6 @@ var afchelper_baseurl = mw.config.get('wgServer') + '/w/index.php?action=raw&cty
 var afcHelper_advert = ' ([[WP:AFCH|AFCH]])';
 var pagetext = '';
 var usertalkpage = '';
-var pageid = mw.config.get( 'wgArticleId' );
 
 // CSS stylesheet
 importStylesheetURI(mw.config.get('wgServer') + '/w/index.php?action=raw&ctype=text/css&title=MediaWiki:Gadget-afchelper.css');
