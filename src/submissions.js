@@ -765,7 +765,6 @@ function afcHelper_act(action) {
 
 		// Stores the author of the submission to afcHelper_authorusername
 		var author_re = /\|\s*u\s*=\s*(.*?)\|/i;
-		var afcHelper_authorusername = "Example";
 		if (author_re.test(afctemplate)) {
 			var username = author_re.exec(afctemplate)[1];
 			if (username !== 'Example') {
