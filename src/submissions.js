@@ -1129,8 +1129,10 @@ function afcHelper_cleanup(text,type) {
 		importScriptURI(mw.config.get('wgServer') + '/w/index.php?action=raw&ctype=text/javascript&title=User:Ohconfucius/test/formatgeneral.js/core.js', function() {
 			function regex(search,replace,repeat) {
 				// regex() function stolen from [[meta:User:Pathoschild/Scripts/Regex_menu_framework.js]]
-				if(!repeat || repeat<0)	var repeat = 1;
-				for(var i=0; i<repeat; i++) {
+				if( !repeat || repeat < 0 ){
+					repeat = 1;
+				}
+				for( var i=0; i<repeat; i++ ) {
 					text = text.replace(search,replace);
 				}
 			}
