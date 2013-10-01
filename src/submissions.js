@@ -1269,7 +1269,7 @@ function afcHelper_cleanup(text,type) {
 		var multiple_draft_submission = false;
 		var not_draft_submission = false;
 		var pending_submission = false;
-		for(i = 0; i< submissiontemplates_length; i++){
+		for(var i = 0; i< submissiontemplates_length; i++){
 			if((submissiontemplates[i][2].status == "t") && (not_draft_submission || pending_submission || multiple_draft_submission )){
 				submissiontemplates.splice(i, 1);
 				i = 0; //rerun for removing all draft templates
