@@ -1344,7 +1344,7 @@ function afcHelper_setup() {
 	pagetext = pagetext.replace(/\{\{\s*AFC submission(\s*\|){0,}ts\s*=\s*/gi, "{{AFC submission|||ts=");
 	pagetext = pagetext.replace(/\{\{\s*AFC submission\s*\}\}/gi, "{{AFC submission|||ts=99999999999999|u=Example|ns="+ wgNamespaceNumber + "}}");
 	pagetext = afcHelper_cleanup(pagetext,'initial');
-	warnings = afcHelper_warnings(pagetext); // Warn about problems with given pagetext
+	var warnings = afcHelper_warnings(pagetext); // Warn about problems with given pagetext
 
 	return warnings; // Prepends the warnings
 }
