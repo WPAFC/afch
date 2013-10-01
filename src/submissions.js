@@ -1414,8 +1414,8 @@ function afcHelper_warnings(pagetext) {
 	var rerefbegin = /\<\s*ref\s*(name\s*=|group\s*=)*\s*[^\/]*>/ig;
 	var rerefend = /\<\/\s*ref\s*\>/ig;
 	var reflistre = /(\{\{reflist(?:\{\{[^\{\}]*\}\}|[^\}\{])*\}\})|(\<\s*references\s*\/\s*\>)/i;
-	refbegin = texttest.match(rerefbegin);
-	refend = texttest.match(rerefend);
+	var refbegin = texttest.match(rerefbegin);
+	var refend = texttest.match(rerefend);
 	if (refbegin) { //Firefox workaround!
 		if (refend) { //Firefox workaround!
 			if (refbegin.length !== refend.length) {
