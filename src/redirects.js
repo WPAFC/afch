@@ -23,10 +23,6 @@ var afcHelper_categoryDecline_reasonhash = {
 };
 
 function afcHelper_redirect_init() {
-	afcHelper_RedirectSubmissions = new Array();
-	afcHelper_RedirectSections = new Array();
-	afcHelper_numTotal = 0;
-
 	pagetext = afcHelper_getPageText(afcHelper_RedirectPageName, false);
 	// let the parsing begin.
 	// first, strip out the parts before the first section.
@@ -104,9 +100,8 @@ function afcHelper_redirect_init() {
 					var endidx = tempcontent.search(/Parent category\/categories:/i);
 					var tempcontent = afcHelper_RedirectSections[i].substring(header.length);
 					tempcontent = tempcontent.substr(startidx + 73, (endidx-(startidx + 75))); //73 the content of the string
-					tempcontent = tempcontent.replace(/\n*\**\s*/gi, "");
-					tempcontent = tempcontent.substr(2,tempcontent.length);
-					tempcontent = tempcontent.substr(0,tempcontent.length-2);
+					tempcontent = tempcontent.replace(/[\n\r]*?[\*]*\s*?\[\[/g, "[[");
+					tempcontent = tempcontent.substr(2, tempcontent.length-4);
 					var articles = tempcontent.split(/\]\]\[\[/gi);
 					var submission = {
 						type: 'category',
@@ -147,13 +142,14 @@ function afcHelper_redirect_init() {
 			for (var l = 0; l < afcHelper_RedirectSubmissions[k].from.length; l++) {
 				var from = afcHelper_RedirectSubmissions[k].from[l];
 				var toarticle = from.title;
-				if (toarticle.replace("\s*"/gi, "").length == 0) toarticle = "<b>no target given</b>";
+				if (toarticle.replace(/\s*/gi, "").length == 0) toarticle = "<b>no source given</b>";
 				text += "<li>From: " + toarticle + '<br/><label for="afcHelper_redirect_action_' + from.id + '">Action: </label>' + afcHelper_generateSelect('afcHelper_redirect_action_' + from.id, [{
 					label: 'Accept',
 					value: 'accept'
 				}, {
 					label: 'Decline',
 					value: 'decline',
+					//TODO: ok, a bug in the autoselected decline for the redirect --> not displaying the other fields
 					selected: (((submissionname.length == 0) || (from.to.length == 0)) ? true : false)
 				}, {
 					label: 'Comment',
@@ -166,7 +162,7 @@ function afcHelper_redirect_init() {
 			}
 			text += '</ul></li>';
 		} else {
-			text += '<li>Category submission: ' + afcHelper_RedirectSubmissions[k].title;
+			text += '<li>Category submission: <a href="/wiki/' + afcHelper_RedirectSubmissions[k].title + '" title="' + afcHelper_RedirectSubmissions[k].title + '">' + afcHelper_RedirectSubmissions[k].title + '</a>';
 			text += '<br /><label for="afcHelper_redirect_action_' + afcHelper_RedirectSubmissions[k].id + '">Action: </label>' + afcHelper_generateSelect('afcHelper_redirect_action_' + afcHelper_RedirectSubmissions[k].id, [{
 				label: 'Accept',
 				value: 'accept'
@@ -224,15 +220,15 @@ function afcHelper_redirect_onActionChange(id) {
 			}]));
 		} else {
 			// Categories
-			extra.html('<label for="afcHelper_redirect_name_' + id + '">Name: </label><input type="text" ' + 'name="afcHelper_redirect_name_' + id + '" id="afcHelper_redirect_name_' + id + '" value="' + afcHelper_escapeHtmlChars(afcHelper_Submissions[id].title) + '" />');
-			extra.html(extra.html() + '<br /><label for="afcHelper_redirect_parent_' + id + '">Parent category:</label>' + '<input type="text" id="afcHelper_redirect_parent_' + id + '" name="afcHelper_redirect_parent_' + id + '" value="' + afcHelper_escapeHtmlChars(afcHelper_Submissions[id].parent) + '" />');
+			extra.html('<label for="afcHelper_redirect_name_' + id + '">Name: </label><input type="text" size="100"' + 'name="afcHelper_redirect_name_' + id + '" id="afcHelper_redirect_name_' + id + '" value="' + afcHelper_escapeHtmlChars(afcHelper_Submissions[id].title) + '" />');
+			extra.html(extra.html() + '<br /><label for="afcHelper_redirect_parent_' + id + '">Parent category:</label>' + '<input type="text" size="100" id="afcHelper_redirect_parent_' + id + '" name="afcHelper_redirect_parent_' + id + '" value="' + afcHelper_escapeHtmlChars(afcHelper_Submissions[id].parent) + '" />');
 			// pages in cat
-			extra.html(extra.html() + '<br />Add category to following pages:<br />');
-			for(i=0; i < afcHelper_RedirectSubmissions[id].pagesincat.length; i++){
-				extra.html(extra.html() + '<br /><input type="checkbox" name="afcHelper_redirect_name_' + id + '_' + i + '" id="afcHelper_redirect_name_' + id + '_'+ i + '" checked /> ' + afcHelper_RedirectSubmissions[id].pagesincat[i]);
+			extra.html(extra.html() + '<br />Add category to following pages:');
+			for(var i=0; i < afcHelper_RedirectSubmissions[id].pagesincat.length; i++){
+				extra.html(extra.html() + '<br /><input type="checkbox" name="afcHelper_redirect_name_' + id + '_' + i + '" id="afcHelper_redirect_name_' + id + '_'+ i + '" checked /> <a href="/wiki/' + afcHelper_RedirectSubmissions[id].pagesincat[i] + '" title="' + afcHelper_RedirectSubmissions[id].pagesincat[i] + '">' + afcHelper_RedirectSubmissions[id].pagesincat[i] + '</a>');
 			}
 		}
-		extra.html(extra.html() + '<br /><label for="afcHelper_redirect_comment_' + id + '">Comment:</label>' + '<input type="text" id="afcHelper_redirect_comment_' + id + '" name="afcHelper_redirect_comment_' + id + '"/>');
+		extra.html(extra.html() + '<br /><label for="afcHelper_redirect_comment_' + id + '">Comment: </label>' + '<input type="text" size="100" id="afcHelper_redirect_comment_' + id + '" name="afcHelper_redirect_comment_' + id + '"/>');
 	} else if (selectValue === 'decline') {
 		if (afcHelper_Submissions[id].type === 'redirect') {
 			extra.html('<label for="afcHelper_redirect_decline_' + id + '">Reason for decline: </label>' + afcHelper_generateSelect('afcHelper_redirect_decline_' + id, [{				label: 'Already exists',
@@ -273,9 +269,9 @@ function afcHelper_redirect_onActionChange(id) {
 				value: 'custom'
 			}]));
 		}
-		extra.html(extra.html() + '<br /><label for="afcHelper_redirect_comment_' + id + '">Comment:</label>' + '<input type="text" id="afcHelper_redirect_comment_' + id + '" name="afcHelper_redirect_comment_' + id + '"/>'); 
+		extra.html(extra.html() + '<br /><label for="afcHelper_redirect_comment_' + id + '">Comment: </label>' + '<input type="text" size="100" id="afcHelper_redirect_comment_' + id + '" name="afcHelper_redirect_comment_' + id + '"/>');
 	} else {
-		extra.html(extra.html() + '<label for="afcHelper_redirect_comment_' + id + '">Comment:</label>' + '<input type="text" id="afcHelper_redirect_comment_' + id + '" name="afcHelper_redirect_comment_' + id + '"/>');
+		extra.html(extra.html() + '<label for="afcHelper_redirect_comment_' + id + '">Comment: </label>' + '<input type="text" size="100" id="afcHelper_redirect_comment_' + id + '" name="afcHelper_redirect_comment_' + id + '"/>');
 	}
 }
 
