@@ -97,14 +97,25 @@ function afcHelper_redirect_init() {
 					links[j] = links[j].replace(/[\[\]]/g, '');
 					links[j] = links[j].replace(/Category\s*:\s*/gi, 'Category:');
 					if (links[j].charAt(0) === ':') links[j] = links[j].substring(1);
-
+					// add pages which should belong in that category
+					var pagesincat = new Array;
+					var tempcontent = afcHelper_RedirectSections[i].substring(header.length);
+					var startidx = tempcontent.search(/\<!-- List THREE examples of pages that would fall into this category --\>/i);
+					var endidx = tempcontent.search(/Parent category\/categories:/i);
+					var tempcontent = afcHelper_RedirectSections[i].substring(header.length);
+					tempcontent = tempcontent.substr(startidx + 73, (endidx-(startidx + 75))); //73 the content of the string
+					tempcontent = tempcontent.replace(/\n*\**\s*/gi, "");
+					tempcontent = tempcontent.substr(2,tempcontent.length);
+					tempcontent = tempcontent.substr(0,tempcontent.length-2);
+					var articles = tempcontent.split(/\]\]\[\[/gi);
 					var submission = {
 						type: 'category',
 						title: links[j],
 						section: i,
 						id: afcHelper_numTotal,
 						action: '',
-						parent: parent
+						parent: parent,
+						pagesincat: articles
 					};
 					afcHelper_numTotal++;
 					afcHelper_RedirectSubmissions.push(submission);
@@ -117,6 +128,10 @@ function afcHelper_redirect_init() {
 	// now layout the text.
 	var afcHelper_Redirect_empty = 1;
 	for (var k = 0; k < afcHelper_RedirectSubmissions.length; k++) {
+		if (afcHelper_RedirectSubmissions[k].to != undefined)
+			var submissionname = afcHelper_RedirectSubmissions[k].to.replace(/\s/g,'');
+		else
+			var submissionname = "";
 		text += '<ul>';
 		if (afcHelper_RedirectSubmissions[k].type === 'redirect') {
 			text += '<li>Redirect(s) to ';
@@ -124,32 +139,35 @@ function afcHelper_redirect_init() {
 				text += 'Empty submission \#' + afcHelper_Redirect_empty + '<ul>';
 				afcHelper_Redirect_empty++;
 			} else {
-				if (afcHelper_RedirectSubmissions[k].to.replace(/\s/g,'')) 
+				if (submissionname.length > 0) 
 					text += '<a href="' + wgArticlePath.replace("$1", encodeURIComponent(afcHelper_RedirectSubmissions[k].to)) + '">' + afcHelper_RedirectSubmissions[k].to + '</a>: <ul>';
 				else
-					text += '<b>no target given</b>: <ul>'
+					text += '<b>no target given</b>: <ul>';
 			}
 			for (var l = 0; l < afcHelper_RedirectSubmissions[k].from.length; l++) {
 				var from = afcHelper_RedirectSubmissions[k].from[l];
-				text += "<li>From: " + from.title + '<br/><label for="afcHelper_redirect_action_' + from.id + '">Action: </label>' + afcHelper_generateSelect('afcHelper_redirect_action_' + from.id, [{
+				var toarticle = from.title;
+				if (toarticle.replace("\s*"/gi, "").length == 0) toarticle = "<b>no target given</b>";
+				text += "<li>From: " + toarticle + '<br/><label for="afcHelper_redirect_action_' + from.id + '">Action: </label>' + afcHelper_generateSelect('afcHelper_redirect_action_' + from.id, [{
 					label: 'Accept',
 					value: 'accept'
 				}, {
 					label: 'Decline',
-					value: 'decline'
+					value: 'decline',
+					selected: (((submissionname.length == 0) || (from.to.length == 0)) ? true : false)
 				}, {
 					label: 'Comment',
 					value: 'comment'
 				}, {
 					label: 'None',
-					selected: true,
+					selected: (((submissionname.length !== 0) && (from.to.length !== 0)) ? true : false),
 					value: 'none'
 				}], 'afcHelper_redirect_onActionChange(' + from.id + ')') + '<div id="afcHelper_redirect_extra_' + from.id + '"></div></li>';
 			}
 			text += '</ul></li>';
 		} else {
 			text += '<li>Category submission: ' + afcHelper_RedirectSubmissions[k].title;
-			text += '<label for="afcHelper_redirect_action_' + afcHelper_RedirectSubmissions[k].id + '">Action: </label>' + afcHelper_generateSelect('afcHelper_redirect_action_' + afcHelper_RedirectSubmissions[k].id, [{
+			text += '<br /><label for="afcHelper_redirect_action_' + afcHelper_RedirectSubmissions[k].id + '">Action: </label>' + afcHelper_generateSelect('afcHelper_redirect_action_' + afcHelper_RedirectSubmissions[k].id, [{
 				label: 'Accept',
 				value: 'accept'
 			}, {
@@ -205,8 +223,14 @@ function afcHelper_redirect_onActionChange(id) {
 				value: 'none'
 			}]));
 		} else {
-			extra.html('<br /><label for="afcHelper_redirect_name_' + id + '">name: </label><input type="text" ' + 'name="afcHelper_redirect_name_' + id + '" id="afcHelper_redirect_name_' + id + '" value="' + afcHelper_escapeHtmlChars(afcHelper_Submissions[id].title) + '" />');
+			// Categories
+			extra.html('<label for="afcHelper_redirect_name_' + id + '">Name: </label><input type="text" ' + 'name="afcHelper_redirect_name_' + id + '" id="afcHelper_redirect_name_' + id + '" value="' + afcHelper_escapeHtmlChars(afcHelper_Submissions[id].title) + '" />');
 			extra.html(extra.html() + '<br /><label for="afcHelper_redirect_parent_' + id + '">Parent category:</label>' + '<input type="text" id="afcHelper_redirect_parent_' + id + '" name="afcHelper_redirect_parent_' + id + '" value="' + afcHelper_escapeHtmlChars(afcHelper_Submissions[id].parent) + '" />');
+			// pages in cat
+			extra.html(extra.html() + '<br />Add category to following pages:<br />');
+			for(i=0; i < afcHelper_RedirectSubmissions[id].pagesincat.length; i++){
+				extra.html(extra.html() + '<br /><input type="checkbox" name="afcHelper_redirect_name_' + id + '_' + i + '" id="afcHelper_redirect_name_' + id + '_'+ i + '" checked /> ' + afcHelper_RedirectSubmissions[id].pagesincat[i]);
+			}
 		}
 		extra.html(extra.html() + '<br /><label for="afcHelper_redirect_comment_' + id + '">Comment:</label>' + '<input type="text" id="afcHelper_redirect_comment_' + id + '" name="afcHelper_redirect_comment_' + id + '"/>');
 	} else if (selectValue === 'decline') {
@@ -298,7 +322,7 @@ function afcHelper_redirect_performActions() {
 		var text = afcHelper_RedirectSections[sub.section];
 		var startindex = pagetext.indexOf(afcHelper_RedirectSections[sub.section]);
 		var endindex = startindex + text.length;
-
+		//TODO mabdul
 		// First deal with cats. These are easy.
 		if (sub.type === 'category') {
 			if (sub.action === 'accept') {
