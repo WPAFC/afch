@@ -1379,7 +1379,6 @@ function afcHelper_warnings(pagetext) {
 				'leaction': 'delete/delete',
 				'letype': 'delete',
 				'lelimit': 10,
-				'leprop': 'user|timestamp|comment',
 				'letitle': afcHelper_submissionTitle
 			};
 	var response = JSON.parse(
