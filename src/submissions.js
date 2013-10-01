@@ -1336,7 +1336,7 @@ function afcHelper_cleanup(text,type) {
 function afcHelper_setup() {
 	/* Gets the pagetext, does some cleanup, lists previous deletions,
 	and displays warnings about long comments and bad reference styles */
-	textdata = afcHelper_getPageText(afcHelper_PageName, false, false, true); // get page text AND timestamp to save API calls
+	var textdata = afcHelper_getPageText(afcHelper_PageName, false, false, true); // get page text AND timestamp to save API calls
 	pagetext = textdata.pagetext;
 	afcHelper_cache.afcHelper_lastedited = textdata.timestamp; // Store the last edited date to the cache
 
