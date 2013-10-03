@@ -406,12 +406,12 @@ function add_review_links() {
 			offset = offset - 1;
 		}
 	});
-	$("#bodyContent [sectionIndex]").click((function() {
-		$("#bodyContent [sectionIndex]").each(function(i) {
-			$(reviewlink).html("Reviewing requests...");
-		});
-		afcHelper_ffu_init();
-	}));
+        $( "#bodyContent [sectionIndex]" ).click((function() {
+                $( "#bodyContent [sectionIndex]" ).each(function(i) {
+                        $( this ).html( "Reviewing requests..." );
+                });
+                afcHelper_ffu_init();
+        }));
 }
 
 function displayMessage_inline(message, div, className) {
