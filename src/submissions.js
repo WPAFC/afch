@@ -574,7 +574,7 @@ function afcHelper_act(action) {
 					var usertext = afcHelper_getPageText(usertalkpage, true, true);
 					usertext += "\n== Your submission at AfC \[\[" + wgPageName + "|" + newtitle + "\]\] was accepted ==";
 					usertext += "\n\{\{subst:afc talk|1=" + newtitle + "|class=" + assessment + "|sig=yes\}\}";
-					afcHelper_editPage(usertalkpage, usertext, 'Your submission at \[\[WP:AFC|Articles for creation\]\]', false, true);
+					afcHelper_editPage(usertalkpage, usertext, 'Your submission at \[\[WP:AFC|Articles for creation\]\],  \[\[' + wgPageName + '|' + newtitle + '\]\], was accepted', false, true);
 				}
 			}
 			var recenttext = afcHelper_getPageText("Wikipedia:Articles for creation/recent", true, false);
@@ -779,8 +779,8 @@ function afcHelper_act(action) {
 		if (notify) {
 			usertalkpage = "User talk:" + afcHelper_authorusername;
 			var usertext = afcHelper_getPageText(usertalkpage, true, true);
-			var reason = 'Your submission at \[\[Wikipedia:Articles for creation|Articles for creation\]\]';
-			usertext += "\n== Your submission at \[\[Wikipedia:Articles for creation|Articles for creation\]\]: \[\[" + afcHelper_PageName + "|" + afcHelper_PageName.replace(/(Wikipedia( talk)*:Articles for creation\/)+/i, '') + "\]\] ({{subst:CURRENTMONTHNAME}} {{subst:CURRENTDAY}}) ==";
+			var reason = 'Your submission at \[\[Wikipedia:Articles for creation|Articles for creation\]\],  \[\[' + afcHelper_PageName + '|' + afcHelper_submissionTitle + '\]\], was declined';
+			usertext += "\n== Your submission at \[\[Wikipedia:Articles for creation|Articles for creation\]\]: \[\[" + afcHelper_PageName + "|" + afcHelper_submissionTitle + "\]\] ({{subst:CURRENTMONTHNAME}} {{subst:CURRENTDAY}}) ==";
 			usertext += "\n\{\{subst:afc decline|1=" + afcHelper_submissionTitle.replace(" ", "{{subst:Sp}}");
 			if (code === 'cv') usertext += "|cv=yes";
 			usertext += "|sig=yes\}\}";
