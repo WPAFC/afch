@@ -30,7 +30,7 @@ if (wgPageName.indexOf('Wikipedia:Articles_for_creation/Redirects') !== -1) {
 	importScriptURI(afchelper_baseurl + '/submissions.js');				
 }
 
-var afcHelper_advert = afcHelper_preferences.summary;
+var afcHelper_advert = ((afcHelper_preferences.summary[0] == ' ') ? '' : ' ') + afcHelper_preferences.summary;
 var pagetext = '';
 var usertalkpage = '';
 
@@ -45,7 +45,7 @@ if (BETA) {
 	mw.loader.load('mediawiki.api');
 	mw.loader.load('jquery.chosen');
 	// Set the summary to denote that we're using a "beta" version of the script
-	var afcHelper_advert += ' [beta]';
+	afcHelper_advert += ' [beta]';
 }
 
 function afcHelper_generateSelect(title, options, onchange) {
