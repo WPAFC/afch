@@ -9,9 +9,9 @@
 */
 
 var afcHelper_defaultPreferences = {
-	'dosomething': true,
 	'summary': '([[WP:AFCH|AFCH]])',
-	'lalala': 'LOREM 2345'
+	'csdlog': true,
+	'dosomething': false
 }
 
 function afcHelper_assemblePrefSetter() {
@@ -24,13 +24,19 @@ function afcHelper_assemblePrefSetter() {
 				{
 					'id':'summary',
 					'type':'text',
-					'prompt':'What is your desired edit summary ad?'
-				}, {
-					'id':'lalala',
-					'type':'text',
-					'prompt':'Give me a long string of text...just for fun'
+					'prompt':'Edit summary ad'
 				}
-
+			]
+		},{
+			'type':'category',
+			'id':'afc',
+			'title':'Articles for creation',
+			'preferences': [
+				{
+					'id':'csdlog',
+					'type':'checkbox',
+					'prompt':'Log CSD nominations'
+				}
 			]
 		},{
 			'type':'category',
