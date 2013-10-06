@@ -8,12 +8,11 @@ function jqEsc(expression) {
 importScript('User:Timotheus Canens/displaymessage.js');
 var afchelper_baseurl = mw.config.get('wgServer') + '/w/index.php?action=raw&ctype=text/javascript&title=MediaWiki:Gadget-afchelper.js';
 
-var afcHelper_advert = ' ([[WP:AFCH|AFCH]])';
-var pagetext = '';
-var usertalkpage = '';
-
 // CSS stylesheet
 importStylesheetURI(mw.config.get('wgServer') + '/w/index.php?action=raw&ctype=text/css&title=MediaWiki:Gadget-afchelper.css');
+
+// Preferences
+importScriptURI(afchelper_baseurl + '/prefs.js');
 
 if (wgPageName.indexOf('Wikipedia:Articles_for_creation/Redirects') !== -1) {
 	importScriptURI(afchelper_baseurl + '/redirects.js');
@@ -39,6 +38,10 @@ if (BETA) {
 	// Set the summary to denote that we're using a "beta" version of the script
 	var afcHelper_advert = ' ([[WP:AFCH|AFCH]] beta)';
 }
+
+var afcHelper_advert = afcHelper_preferences.summary;
+var pagetext = '';
+var usertalkpage = '';
 
 function afcHelper_generateSelect(title, options, onchange) {
 	var text = '<select name="' + title + '" id="' + title + '" ';
