@@ -100,7 +100,7 @@ function afcHelper_savePrefs() {
 				var value = ((jqpref.attr("checked") != undefined) ? true : false);
 				break;
 			default:
-				var value = jqpref.val();
+				var value = $.trim(jqpref.val());
 				break;
 		}
 		afcHelper_preferences[jqpref.attr('id')] = value;
