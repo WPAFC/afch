@@ -30,6 +30,10 @@ if (wgPageName.indexOf('Wikipedia:Articles_for_creation/Redirects') !== -1) {
 	importScriptURI(afchelper_baseurl + '/submissions.js');				
 }
 
+var afcHelper_advert = afcHelper_preferences.summary;
+var pagetext = '';
+var usertalkpage = '';
+
 // This enables the beta notice for all uses except the official gadget
 if (afchelper_baseurl.indexOf('MediaWiki:'+'Gadget-afchelper.js' /* hack to stop upload scripts from find+replacing this */) == -1)
 	var BETA = true;
@@ -41,12 +45,8 @@ if (BETA) {
 	mw.loader.load('mediawiki.api');
 	mw.loader.load('jquery.chosen');
 	// Set the summary to denote that we're using a "beta" version of the script
-	var afcHelper_advert = ' ([[WP:AFCH|AFCH]] beta)';
+	var afcHelper_advert += ' [beta]';
 }
-
-var afcHelper_advert = afcHelper_preferences.summary;
-var pagetext = '';
-var usertalkpage = '';
 
 function afcHelper_generateSelect(title, options, onchange) {
 	var text = '<select name="' + title + '" id="' + title + '" ';
