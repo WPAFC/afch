@@ -248,56 +248,6 @@ function afcHelper_editPage(title, newtext, summary, createonly, nopatrol) {
 						});
 			}				
 		}
-
-		var api = new mw.Api();
-		api.post(request)
-				.done(function ( data ) {
-					if ( data && data.edit && data.edit.result && data.edit.result == 'Success' ) {
-						$('#afcHelper_edit' + jqEsc(title)).html('Saved <a href="' + wgArticlePath.replace("$1", encodeURI(title)) + '" title="' + title + '">' + title + '</a>');
-					} else {
-						$('#afcHelper_edit' + jqEsc(title)).html('<span class="afcHelper_notice"><b>Edit failed on <a href="' + wgArticlePath.replace("$1", encodeURI(title)) + '" title="' + title + '">' + title + '</a></b></span>. Error info:' + data['error']['code'] + ': ' + data['error']['info']);
-					}
-				} )
-				.fail( function ( error ) {
-					if (createonly && error == "articleexists")
-						$('#afcHelper_edit' + jqEsc(title)).html('<span class="afcHelper_notice"><b>Edit failed on <a href="' + wgArticlePath.replace("$1", encodeURI(title)) + '" title="' + title + '">' + title + '</a></b></span>. Error info: The article already exists!');
-					else
-						$('#afcHelper_edit' + jqEsc(title)).html('<span class="afcHelper_notice"><b>Edit failed on <a href="' + wgArticlePath.replace("$1", encodeURI(title)) + '" title="' + title + '">' + title + '</a></b></span>. Error info: ' + error); 
-				})
-				.always( function () {
-					$("#afcHelper_AJAX_finished_" + func_id).css("display", '');
-				});
-
-		if (!nopatrol) {
-			/* We patrol by default */
-			if ($('.patrollink').length) {
-				// Extract the rcid token from the "Mark page as patrolled" link on page
-				var patrolhref = $('.patrollink a').attr('href');
-				var rcid = mw.util.getParamValue('rcid', patrolhref);
-
-				if (rcid) {
-					$('#afcHelper_status').html($('#afcHelper_status').html() + '<li id="afcHelper_patrol' + jqEsc(title) + '">Marking <a href="' + wgArticlePath.replace("$1", encodeURI(title)) + '" title="' + title + '">' + title + ' as patrolled</a></li>');
-					var patrolrequest = {
-								'action': 'patrol',
-								'format': 'json',
-								'token': mw.user.tokens.get('patrolToken'),
-								'rcid': rcid
-						};
-					api.post(patrolrequest)
-							.done(function ( data ) {
-								if ( data ) {
-									$('#afcHelper_patrol' + jqEsc(title)).html('Marked <a href="' + wgArticlePath.replace("$1", encodeURI(title)) + '" title="' + title + '">' + title + '</a> as patrolled');
-								} else {
-									$('#afcHelper_patrol' + jqEsc(title)).html('<span class="afcHelper_notice"><b>Patrolling failed on <a href="' + wgArticlePath.replace("$1", encodeURI(title)) + '" title="' + title + '">' + title + '</a></b></span>. Error info:' + data['error']['code'] + ': ' + data['error']['info']);
-								}
-							} )
-							.fail( function ( error ) {
-								$('#afcHelper_patrol' + jqEsc(title)).html('<span class="afcHelper_notice"><b>Patrolling failed on <a href="' + wgArticlePath.replace("$1", encodeURI(title)) + '" title="' + title + '">' + title + '</a></b></span>. Error info: ' + error); 
-							});
-				}				
-			}
-
-		}
 	}
 }	
 //</nowiki>
