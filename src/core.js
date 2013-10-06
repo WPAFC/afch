@@ -11,8 +11,13 @@ var afchelper_baseurl = mw.config.get('wgServer') + '/w/index.php?action=raw&cty
 // CSS stylesheet
 importStylesheetURI(mw.config.get('wgServer') + '/w/index.php?action=raw&ctype=text/css&title=MediaWiki:Gadget-afchelper.css');
 
-// Preferences
-importScriptURI(afchelper_baseurl + '/prefs.js');
+// Load the preferences
+// TODO stop having so much asyncronous junk
+$.ajax({
+	url: afchelper_baseurl + '/prefs.js',
+	dataType: "script",
+	async: false
+});
 
 if (wgPageName.indexOf('Wikipedia:Articles_for_creation/Redirects') !== -1) {
 	importScriptURI(afchelper_baseurl + '/redirects.js');
