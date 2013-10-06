@@ -384,6 +384,13 @@ function afcHelper_prompt(type) {
 }
 
 function afcHelper_act(action) {
+	if (mw.util.getParamValue('action') === 'edit') {
+		// If page is in edit mode and has been modified, use the contents of the textbox as `pagetext`.
+		if (confirm('The helper script will use your modified page text from the text box below when processing the page.\n[click "OK" to continue or "Cancel" to abort]'))
+			pagetext = $('textarea[name=wpTextbox1]').val();
+		else
+			return;
+	}
 	if (action === 'draft') {
 		var typeofsubmit = $("input[name=afcHelper_draft]:checked").val();
 		var customuser = $("#afcHelper_draft_submitter").val();
