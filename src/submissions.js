@@ -1157,6 +1157,8 @@ function afcHelper_cleanup(text,type) {
 	text = text.replace(/\s*(<\s*ref\s*(name\s*=|group\s*=)*\s*.*[^\/]+>)[ \t]*$/gim, "$1");
 	//Ref tag correction part #2: move :;.,!? before ref tags
 	text = text.replace(/\s*((<\s*ref\s*(name\s*=|group\s*=)*\s*.*[\/]{1}>)|(<\s*ref\s*(name\s*=|group\s*=)*\s*[^\/]*>(?:\\<[^\<\>]*\>|[^><])*\<\/\s*ref\s*\>))[ \t]*([.!?,;:])+$/gim, "$6$1");
+	//Link / Template correction: replace {{http://example.com/foobar}} with "* http://example.com/foo" (common error by new users)
+	text = text.replace(/\n\{\{(http[s]?|ftp[s]?|irc|gopher|telnet)\:\/\/(.*?)\}\}/gi, "\n\* $1:\/\/$3");
 
 	// Remove all unneeded HTML comments and wizards stuff
 	text = text.replace("\* \[http\:\/\/www.example.com\/ example.com\]", "");
