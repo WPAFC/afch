@@ -28,24 +28,12 @@ function afcHelper_redirect_init() {
 	afcHelper_numTotal = 0;
 
 	pagetext = afcHelper_getPageText(afcHelper_RedirectPageName, false);
-	// let the parsing begin.
-	// first, strip out the parts before the first section.
-	var section_re = /==[^=]*==/;
-	pagetext = pagetext.substring(pagetext.search(section_re));
 
-	// now parse it into sections.
-	//		section_re = /==\s*\[\[(\s*[^=]*)\]\]\s*==/g;
-	var section_re = /==[^=]*==/g;
-	var section_headers = pagetext.match(section_re);
-	for (var i = 0; i < section_headers.length; i++) {
-		var section_start = pagetext.indexOf(section_headers[i]);
-		var section_text = pagetext.substring(section_start);
-		if (i < section_headers.length - 1) {
-			var section_end = section_text.substring(section_headers[i].length).indexOf(section_headers[i + 1]) + section_headers[i].length;
-			section_text = section_text.substring(0, section_end);
-		}
-		afcHelper_RedirectSections.push(section_text);
-	}
+	// first, strip out the parts before the first section.
+	var section_re = /==.*?==/;
+	pagetext = pagetext.substring(pagetext.search(section_re));
+	// then split it into the rest of the sections
+	afcHelper_RedirectSections = pagetext.match(/^==.*?==$((\r?\n?)(?!==[^=]).*)*/img);
 
 	// parse the sections.
 	for (var i = 0; i < afcHelper_RedirectSections.length; i++) {
