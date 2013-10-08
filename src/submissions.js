@@ -788,7 +788,7 @@ function afcHelper_act(action) {
 			var usertext = afcHelper_getPageText(usertalkpage, true, true);
 			var reason = 'Your submission at \[\[Wikipedia:Articles for creation|Articles for creation\]\],  \[\[' + afcHelper_PageName + '|' + afcHelper_submissionTitle + '\]\], was declined';
 			usertext += "\n== Your submission at \[\[Wikipedia:Articles for creation|Articles for creation\]\]: \[\[" + afcHelper_PageName + "|" + afcHelper_submissionTitle + "\]\] ({{subst:CURRENTMONTHNAME}} {{subst:CURRENTDAY}}) ==";
-			usertext += "\n\{\{subst:afc decline|1=" + afcHelper_submissionTitle.replace(" ", "{{subst:Sp}}");
+			usertext += "\n\{\{subst:afc decline|full=" + afcHelper_PageName;
 			if (code === 'cv') usertext += "|cv=yes";
 			usertext += "|sig=yes\}\}";
 
