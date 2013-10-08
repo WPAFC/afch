@@ -1217,11 +1217,13 @@ function afcHelper_cleanup(text,type) {
 		var temptimestamp = temptemplate.replace(submissiontemplate_re, "$4");
 		var tempstatus = temptemplate.replace(submissiontemplate_re, "$2");
 
-		submissiontemplates.push([
-				{template: temptemplate},
-				{timestamp: temptimestamp},
-				{status: tempstatus}
-		]);
+		submissiontemplates.push(
+			{
+				template: temptemplate,
+				timestamp: temptimestamp,
+				status: tempstatus
+			}
+		);
 	}
 	while (afc_comment_re.test(text)) {
 		var temptemplate = afc_comment_re.exec(text).toString();
@@ -1238,10 +1240,12 @@ function afcHelper_cleanup(text,type) {
 			if (/~~~~/.test(temptemplate))
 				temptimestamp = '999999999999';
 		}
-		commentstemplates.push([
-				{template: temptemplate},
-				{timestamp: temptimestamp}
-		]);
+		commentstemplates.push(
+			{
+				template: temptemplate,
+				timestamp: temptimestamp
+			}
+		);
 		text = text.replace(temptemplate, "");
 	}
 
@@ -1250,28 +1254,30 @@ function afcHelper_cleanup(text,type) {
 	if (submit_re.test(text)){
 		var temptemplate = submit_re.exec(text)[0].toString();
 		text = text.replace(temptemplate, "");
-		submissiontemplates.push([
-					{template: temptemplate},
-					{timestamp: '99999999999999'},
-					{status: '|'}
-			]);
+		submissiontemplates.push(
+			{
+				template: temptemplate,
+				timestamp: '99999999999999',
+				status: '|'
+			}
+		);
 	}
 
 	//adding the submission templates and comment templates back
 	if (commentstemplates.length > 0) {
 		//sorting on basis of timestamp
 		commentstemplates.sort(function(a, b){
-			return b[1].timestamp-a[1].timestamp;
+			return b.timestamp-a.timestamp;
 		});
 		text = '----\n' + text;
 		for ((i = commentstemplates.length - 1); i >= 0; i--)
-		text = commentstemplates[i][0].template + '\n\n' + text;
+		text = commentstemplates[i].template + '\n\n' + text;
 	}
 	var submissiontemplates_length = submissiontemplates.length;
 	if (submissiontemplates_length > 0) {
 		//sorting on basis of TS
 		submissiontemplates.sort(function(a, b){
-			return b[1].timestamp-a[1].timestamp;
+			return b.timestamp-a.timestamp;
 		});
 		// Remove all draft templates if there is any other submission template
 		// Remove any duplicate open review requests before saving the page (only affects open requests)
@@ -1280,19 +1286,19 @@ function afcHelper_cleanup(text,type) {
 		var not_draft_submission = false;
 		var pending_submission = false;
 		for(var i = 0; i< submissiontemplates_length; i++){
-			if((submissiontemplates[i][2].status == "t") && (not_draft_submission || pending_submission || multiple_draft_submission )){
+			if((submissiontemplates[i].status == "t") && (not_draft_submission || pending_submission || multiple_draft_submission )){
 				submissiontemplates.splice(i, 1);
 				i = 0; //rerun for removing all draft templates
 				submissiontemplates_length = submissiontemplates.length;
 			}
-			else if((submissiontemplates[i][2].status == "t") && (!not_draft_submission || !pending_submission)){
+			else if((submissiontemplates[i].status == "t") && (!not_draft_submission || !pending_submission)){
 				multiple_draft_submission = true;
 			}
-			else if ((!pending_submission) && ((submissiontemplates[i][2].status == "|")||(submissiontemplates[i][2].status == "r"))){
+			else if ((!pending_submission) && ((submissiontemplates[i].status == "|")||(submissiontemplates[i].status == "r"))){
 				pending_submission = true;
 				not_draft_submission = true;
 			}
-			else if ((pending_submission) && ((submissiontemplates[i][2].status == "|")||(submissiontemplates[i][2].status == "r"))){
+			else if ((pending_submission) && ((submissiontemplates[i].status == "|")||(submissiontemplates[i].status == "r"))){
 				submissiontemplates.splice(i, 1);
 				i--;
 				submissiontemplates_length = submissiontemplates.length;
@@ -1302,10 +1308,10 @@ function afcHelper_cleanup(text,type) {
 			}
 		}
 		for ((i = submissiontemplates_length - 1); i >= 0; i--){
-			var temp = submissiontemplates[i][0].template;
+			var temp = submissiontemplates[i].template;
 			temp = temp.replace("99999999999999", "\{\{subst:CURRENTTIMESTAMP\}\}");
 			temp = temp.replace("99999999999998", "\{\{REVISIONTIMESTAMP\}\}");
-			if (submissiontemplates[i][2].status == "d")
+			if (submissiontemplates[i].status == "d")
 				temp = temp.slice(0, (temp.length-2)) + '|small=yes\}\}';
 			text = temp + text;
 		}
@@ -1331,7 +1337,7 @@ function afcHelper_cleanup(text,type) {
 
 	// Save the statuses to a global variable
 	$.each(submissiontemplates, function(index, data) {
-		var status = data[2].status;
+		var status = data.status;
 		if (status === "|") status = "";
 		afcHelper_pageStatuses.push(status.toLowerCase());
 	});
