@@ -63,7 +63,7 @@ function afcHelper_redirect_init() {
 				}
 				var re = /Target of redirect:\s*\[\[([^\[\]]*)\]\]/i;
 				re.test(afcHelper_RedirectSections[i]);
-				var to = RegExp.$1;
+				var to = $.trim(RegExp.$1);
 				var submission = {
 					type: 'redirect',
 					from: new Array(),
@@ -351,9 +351,9 @@ function afcHelper_redirect_performActions() {
 					afcHelper_editPage(talktitle, talktext, 'Placing WPAFC project banner', true);
 					acceptcomment += redirect.title + " &rarr; " + redirect.to;
 					if (redirect.comment !== '') {
-						acceptcomment += ': ' + redirect.comment + '; ';
+						acceptcomment += ': ' + redirect.comment + '. ';
 						hascomment = true;
-					} else acceptcomment += '; ';
+					} else acceptcomment += '. ';
 					acceptcount++;
 				} else if (redirect.action === 'decline') {
 					var reason = afcHelper_redirectDecline_reasonhash[redirect.reason];
@@ -363,10 +363,10 @@ function afcHelper_redirect_performActions() {
 						$('#afcHelper_status').html($('#afcHelper_status').html() + '<li>Skipping ' + redirect.title + ': No decline reason specified.</li>');              
 						continue;
 					}
-					declinecomment += redirect.title + " &rarr; " + redirect.to + ": " + reason + "; ";
+					declinecomment += redirect.title + " &rarr; " + redirect.to + ": " + reason + ". ";
 					declinecount++;
 				} else if (redirect.action === 'comment') {
-					othercomment += redirect.title + ": " + redirect.comment + ", ";
+					othercomment += redirect.title + ": " + redirect.comment + ". ";
 					commentcount++;
 				}
 			}
