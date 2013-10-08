@@ -57,9 +57,9 @@ function afcHelper_redirect_init() {
 				var wikilink_re = /\[\[(\s*[^=]*?)*?\]\]/g;
 				var links = header.match(wikilink_re);
 				if (!links) continue;
-				for (var j = 0; j < links.length; j++) {
-					links[j] = links[j].replace(/[\[\]]/g, '');
-					if (links[j].charAt(0) === ':') links[j] = links[j].substring(1);
+				for (var l = 0; l < links.length; l++) {
+					links[l] = links[l].replace(/[\[\]]/g, '');
+					if (links[l].charAt(0) === ':') links[l] = links[l].substring(1);
 				}
 				var re = /Target of redirect:\s*\[\[([^\[\]]*)\]\]/i;
 				re.test(afcHelper_RedirectSections[i]);
