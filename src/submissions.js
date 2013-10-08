@@ -122,9 +122,9 @@ var afcHelper_reasonhash = [{
 	value: 'essay',
 	reason: 'submission reads like an essay'
 }, {
-	label: 'npov - Submission is not written in a formal, neutral encyclopedic tone',
+	label: 'npov - Submission is not written in a neutral tone',
 	value: 'npov',
-	reason: 'submission is not written from a formal, neutral point of view'
+	reason: 'submission is not written from a neutral point of view'
 }, {
 	label: 'NOTABILITY',
 	value: 'Notability',
