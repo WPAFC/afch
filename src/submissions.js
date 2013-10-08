@@ -2,7 +2,7 @@
 // Script should be located at [[MediaWiki:Gadget-afchelper.js/submissions.js]]
 var afcHelper_PageName = wgPageName.replace(/_/g, ' ');
 var afcHelper_AJAXnumber = 0;
-var afcHelper_submissionTitle = wgTitle.replace(/Articles for creation\//g, '');
+var afcHelper_submissionTitle = wgTitle.replace(/^Articles for creation\//, '');
 var disambig_re = /Disambig|Mil-unit-dis|Hndis|Geodis|Numberdis/i;
 var typetemplate_re = /\{\{\s*documentation\s*(?:\{\{[^\{\}]*\}\}|[^\}\{])*\}\}/i;
 var afcdab_re = /\{\{\s*afc submission\s*\|(?:\{\{[^\{\}]*\}\}|[^\}\{])*\|\s*type\s*=\s*dab\s*(?:\{\{[^\{\}]*\}\}|[^\}\{])*\}\}/i;
