@@ -131,7 +131,13 @@ function afcHelper_redirect_init() {
 			}
 			for (var l = 0; l < afcHelper_RedirectSubmissions[k].from.length; l++) {
 				var from = afcHelper_RedirectSubmissions[k].from[l];
-				text += "<li>From: " + from.title + '<br/><label for="afcHelper_redirect_action_' + from.id + '">Action: </label>' + afcHelper_generateSelect('afcHelper_redirect_action_' + from.id, [{
+				if (!from.title.replace(/\s*/g,'')) {
+					var display = "<b>no title specified</b>, check the request details";
+					from.title = "NO TITLE SPECIFIED";
+				} else {
+					var display = from.title;
+				}
+				text += "<li>From: " + display + '<br/><label for="afcHelper_redirect_action_' + from.id + '">Action: </label>' + afcHelper_generateSelect('afcHelper_redirect_action_' + from.id, [{
 					label: 'Accept',
 					value: 'accept'
 				}, {
