@@ -442,8 +442,8 @@ function add_review_links() {
 			offset = offset - 1;
 		}
 	});
-	$("#bodyContent [sectionIndex]").click((function() {
-		$("#bodyContent [sectionIndex]").each(function(i) {
+	$('body [sectionIndex]').click((function() {
+		$('body [sectionIndex]').each(function(i) {
 			$(this).html("Reviewing requests...");
 		});
 		afcHelper_ffu_init();
