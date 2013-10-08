@@ -49,7 +49,7 @@ function afcHelper_redirect_init() {
 
 	// parse the sections.
 	for (var i = 0; i < afcHelper_RedirectSections.length; i++) {
-		var closed = /\{\{\s*afc(?!\s+comment)/i.test(afcHelper_RedirectSections[i]);
+		var closed = /(\{\{\s*afc(?!\s+comment)|This is an archived discussion)/i.test(afcHelper_RedirectSections[i]);
 		if (!closed) {
 			// parse.
 			var header = afcHelper_RedirectSections[i].match(section_re)[0];
