@@ -100,7 +100,7 @@ function afcHelper_redirect_init() {
 			}
 		}
 	}
-	var text = '<h3>Reviewing AFC redirect requests</h3>';
+	var text = '<h3>Reviewing AfC redirect requests</h3>';
 	// now layout the text.
 	var afcHelper_Redirect_empty = 1;
 	for (var k = 0; k < afcHelper_RedirectSubmissions.length; k++) {
