@@ -5,6 +5,7 @@ var afcHelper_RedirectSubmissions = new Array();
 var afcHelper_RedirectSections = new Array();
 var afcHelper_numTotal = 0;
 var afcHelper_Submissions = new Array();
+var needsupdate = new Array();
 var afcHelper_redirectDecline_reasonhash = {
 	'exists': 'The title you suggested already exists on Wikipedia',
 	'blank': 'We cannot accept empty submissions',
@@ -107,6 +108,17 @@ function afcHelper_redirect_init() {
 		text += '<ul>';
 		if (afcHelper_RedirectSubmissions[k].type === 'redirect') {
 			text += '<li>Redirect(s) to ';
+			if (submissionname.length == 0){
+				needsupdate.push({
+					id: k,
+					reason: 'notarget'
+					});
+			} else if(from.to.length == 0){
+				needsupdate.push({
+					id: k,
+					reason: 'notredirect'
+					});
+			}
 			if (afcHelper_RedirectSubmissions[k] === '' || afcHelper_RedirectSubmissions[k] === ' ') {
 				text += 'Empty submission \#' + afcHelper_Redirect_empty + '<ul>';
 				afcHelper_Redirect_empty++;
@@ -161,6 +173,11 @@ function afcHelper_redirect_init() {
 	}
 	text += '<input type="button" id="afcHelper_redirect_done_button" name="afcHelper_redirect_done_button" value="Done" onclick="afcHelper_redirect_performActions()" />';
 	displayMessage(text);
+	for (var y = 0; y < needsupdate.length; y++){
+		$('#afcHelper_redirect_action_'+needsupdate[y].id).attr('value', 'decline');
+		afcHelper_redirect_onActionChange(needsupdate[y].id);
+		$('#afcHelper_redirect_decline_'+needsupdate[y].id).attr('value', needsupdate[y].reason);
+	}
 }
 
 function afcHelper_redirect_onActionChange(id) {
@@ -419,6 +436,7 @@ $(redirectportletLink).click(function(e) {
 	afcHelper_RedirectSections.length = 0;
 	afcHelper_numTotal = 0;
 	afcHelper_Submissions.length = 0;
+	needsupdate.length = 0;
 	afcHelper_redirect_init();
 });
 //</nowiki>
