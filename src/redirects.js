@@ -101,6 +101,10 @@ function afcHelper_redirect_init() {
 	// now layout the text.
 	var afcHelper_Redirect_empty = 1;
 	for (var k = 0; k < afcHelper_RedirectSubmissions.length; k++) {
+		if (afcHelper_RedirectSubmissions[k].to != undefined)
+			var submissionname = afcHelper_RedirectSubmissions[k].to.replace(/\s/g,'');
+		else
+			var submissionname = "";
 		text += '<ul>';
 		if (afcHelper_RedirectSubmissions[k].type === 'redirect') {
 			text += '<li>Redirect(s) to ';
@@ -119,20 +123,15 @@ function afcHelper_redirect_init() {
 				text += 'Empty submission \#' + afcHelper_Redirect_empty + '<ul>';
 				afcHelper_Redirect_empty++;
 			} else {
-				if (afcHelper_RedirectSubmissions[k].to.replace(/\s/g,'')) 
+				if (submissionname.length > 0)
 					text += '<a href="' + wgArticlePath.replace("$1", encodeURIComponent(afcHelper_RedirectSubmissions[k].to)) + '">' + afcHelper_RedirectSubmissions[k].to + '</a>: <ul>';
 				else
-					text += '<b>no target given</b>: <ul>'
-			}
+					text += '<b>no target given</b>: <ul>';
 			for (var l = 0; l < afcHelper_RedirectSubmissions[k].from.length; l++) {
 				var from = afcHelper_RedirectSubmissions[k].from[l];
-				if (!from.title.replace(/\s*/g,'')) {
-					var display = "<b>no title specified</b>, check the request details";
-					from.title = "NO TITLE SPECIFIED";
-				} else {
-					var display = from.title;
-				}
-				text += "<li>From: " + display + '<br/><label for="afcHelper_redirect_action_' + from.id + '">Action: </label>' + afcHelper_generateSelect('afcHelper_redirect_action_' + from.id, [{
+				var toarticle = from.title;
+				if (toarticle.replace(/\s*/gi, "").length == 0) toarticle = "<b>no title (source) specified</b>, check the request details";
+				text += "<li>From: " + toarticle + '<br/><label for="afcHelper_redirect_action_' + from.id + '">Action: </label>' + afcHelper_generateSelect('afcHelper_redirect_action_' + from.id, [{
 					label: 'Accept',
 					value: 'accept'
 				}, {
@@ -149,7 +148,7 @@ function afcHelper_redirect_init() {
 			}
 			text += '</ul></li>';
 		} else {
-			text += '<li>Category submission: ' + afcHelper_RedirectSubmissions[k].title;
+			text += '<li>Category submission: <a href="/wiki/' + afcHelper_RedirectSubmissions[k].title + '" title="' + afcHelper_RedirectSubmissions[k].title + '">' + afcHelper_RedirectSubmissions[k].title + '</a>';
 			text += '<label for="afcHelper_redirect_action_' + afcHelper_RedirectSubmissions[k].id + '">Action: </label>' + afcHelper_generateSelect('afcHelper_redirect_action_' + afcHelper_RedirectSubmissions[k].id, [{
 				label: 'Accept',
 				value: 'accept'
@@ -255,9 +254,9 @@ function afcHelper_redirect_onActionChange(id) {
 				value: 'custom'
 			}]));
 		}
-		extra.html(extra.html() + '<br /><label for="afcHelper_redirect_comment_' + id + '">Comment:</label>' + '<input type="text" id="afcHelper_redirect_comment_' + id + '" name="afcHelper_redirect_comment_' + id + '"/>'); 
+		extra.html(extra.html() + '<br /><label for="afcHelper_redirect_comment_' + id + '">Comment: </label>' + '<input type="text" size="100" id="afcHelper_redirect_comment_' + id + '" name="afcHelper_redirect_comment_' + id + '"/>'); 
 	} else {
-		extra.html(extra.html() + '<label for="afcHelper_redirect_comment_' + id + '">Comment:</label>' + '<input type="text" id="afcHelper_redirect_comment_' + id + '" name="afcHelper_redirect_comment_' + id + '"/>');
+		extra.html(extra.html() + '<br /><label for="afcHelper_redirect_comment_' + id + '">Comment: </label>' + '<input type="text" size="100" id="afcHelper_redirect_comment_' + id + '" name="afcHelper_redirect_comment_' + id + '"/>');
 	}
 }
 
