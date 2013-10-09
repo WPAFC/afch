@@ -1122,26 +1122,6 @@ function afcHelper_cleanup(text,type) {
 		text = autoEdTablestoWikitext(text);
 		text = autoEdExtraBreaks(text);
 		text = autoEdLinks(text);
-
-		// Run formatgeneral.js automatically
-		importScriptURI(mw.config.get('wgServer') + '/w/index.php?action=raw&ctype=text/javascript&title=User:Ohconfucius/test/formatgeneral.js/core.js', function() {
-			function regex(search,replace,repeat) {
-				// regex() function stolen from [[meta:User:Pathoschild/Scripts/Regex_menu_framework.js]]
-				if( !repeat || repeat < 0 ){
-					repeat = 1;
-				}
-				for( var i=0; i<repeat; i++ ) {
-					text = text.replace(search,replace);
-				}
-			}
-			ohc_change_type();
-			Ohc_football_retrain();
-			ohc_protect_fmt();
-			Ohc_formats();
-			ohc_unprotect_fmt();
-			ohc_downcase_CEO();
-			Ohc_final_cleanup();
-		});
 	}
 
 	//Ref tag correction part #1: remove whitespaces and commas between the ref tags and whitespaces before ref tags
