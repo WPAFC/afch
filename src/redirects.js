@@ -25,6 +25,8 @@ var afcHelper_categoryDecline_reasonhash = {
 
 function afcHelper_redirect_init() {
 	pagetext = afcHelper_getPageText(afcHelper_RedirectPageName, false);
+	// cleanup the wikipedia links for preventing stuff like https://en.wikipedia.org/w/index.php?diff=576244067&oldid=576221437
+	pagetext = afcHelper_cleanuplinks(pagetext);
 
 	// first, strip out the parts before the first section.
 	var section_re = /==.*?==/;
