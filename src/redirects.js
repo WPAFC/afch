@@ -4,6 +4,7 @@ var afcHelper_RedirectPageName = wgPageName.replace(/_/g, ' ');
 var afcHelper_RedirectSubmissions = new Array();
 var afcHelper_RedirectSections = new Array();
 var afcHelper_numTotal = 0;
+var afcHelper_AJAXnumber = 0;
 var afcHelper_Submissions = new Array();
 var needsupdate = new Array();
 var afcHelper_redirectDecline_reasonhash = {
