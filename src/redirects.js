@@ -212,6 +212,7 @@ function afcHelper_redirect_onActionChange(id) {
 				value: 'none'
 			}]));
 		} else {
+			// now Categories
 			extra.html('<br /><label for="afcHelper_redirect_name_' + id + '">name: </label><input type="text" size="100" ' + 'name="afcHelper_redirect_name_' + id + '" id="afcHelper_redirect_name_' + id + '" value="' + afcHelper_escapeHtmlChars(afcHelper_Submissions[id].title) + '" />');
 			extra.html(extra.html() + '<br /><label for="afcHelper_redirect_parent_' + id + '">Parent category:</label>' + '<input type="text" size="100" id="afcHelper_redirect_parent_' + id + '" name="afcHelper_redirect_parent_' + id + '" value="' + afcHelper_escapeHtmlChars(afcHelper_Submissions[id].parent) + '" />');
 		}
@@ -238,6 +239,7 @@ function afcHelper_redirect_onActionChange(id) {
 				value: 'custom'
 			}]));
 		} else {
+			// now Categories
 			extra.html('<label for="afcHelper_redirect_decline_' + id + '">Reason for decline: </label>' + afcHelper_generateSelect('afcHelper_redirect_decline_' + id, [{
 				label: 'Already exists',
 				value: 'exists'
@@ -256,9 +258,12 @@ function afcHelper_redirect_onActionChange(id) {
 				value: 'custom'
 			}]));
 		}
-		extra.html(extra.html() + '<br /><label for="afcHelper_redirect_comment_' + id + '">Comment: </label>' + '<input type="text" size="100" id="afcHelper_redirect_comment_' + id + '" name="afcHelper_redirect_comment_' + id + '"/>');
+		extra.html(extra.html() + '<label for="afcHelper_redirect_comment_' + id + '">Comment: </label>' + '<input type="text" size="100" id="afcHelper_redirect_comment_' + id + '" name="afcHelper_redirect_comment_' + id + '"/>');
+	} else if (selectValue === 'none'){
+		// for categories and redirects!
+		extra.html('');
 	} else {
-		extra.html(extra.html() + '<br /><label for="afcHelper_redirect_comment_' + id + '">Comment: </label>' + '<input type="text" size="100" id="afcHelper_redirect_comment_' + id + '" name="afcHelper_redirect_comment_' + id + '"/>');
+		extra.html(extra.html() + '<label for="afcHelper_redirect_comment_' + id + '">Comment: </label>' + '<input type="text" size="100" id="afcHelper_redirect_comment_' + id + '" name="afcHelper_redirect_comment_' + id + '"/>');
 	}
 }
 
