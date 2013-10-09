@@ -23,10 +23,6 @@ var afcHelper_categoryDecline_reasonhash = {
 };
 
 function afcHelper_redirect_init() {
-	afcHelper_RedirectSubmissions = new Array();
-	afcHelper_RedirectSections = new Array();
-	afcHelper_numTotal = 0;
-
 	pagetext = afcHelper_getPageText(afcHelper_RedirectPageName, false);
 
 	// first, strip out the parts before the first section.
