@@ -414,6 +414,11 @@ var redirectportletLink = mw.util.addPortletLink('p-cactions', '#', 'Review', 'c
 // Bind click handler
 $(redirectportletLink).click(function(e) {
 	e.preventDefault();
+	// clear variables for the case somebody is clicking multiple times on "review"
+	afcHelper_RedirectSubmissions.length = 0;
+	afcHelper_RedirectSections.length = 0;
+	afcHelper_numTotal = 0;
+	afcHelper_Submissions.length = 0;
 	afcHelper_redirect_init();
 });
 //</nowiki>
