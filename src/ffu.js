@@ -132,7 +132,7 @@ function afcHelper_ffu_init() {
 						value: 'none'
 					}];
 				}
-				if (/flickr.com/gi.test(from.title)) text += ' (<a href="http:// toolserver.org/~bryan/flickr/upload?username=' + wgUserName + '&link=' + from.title + '" target="_blank"><b>launch Flickuploadbot</b></a> in a new window)';
+				if (/flickr.com/gi.test(from.title)) text += ' (<a href="http://toolserver.org/~bryan/flickr/upload?username=' + wgUserName + '&link=' + from.title + '" target="_blank"><b>launch Flickuploadbot</b></a> in a new window)';
 				text += '<br/><label for="afcHelper_ffu_action_' + from.id + '">Action: </label>' + afcHelper_generateSelect('afcHelper_ffu_action_' + from.id, selectoptions, 'afcHelper_ffu_onActionChange(' + from.id + ')') + '<div id="afcHelper_ffu_extra_' + from.id + '"></div></li>';
 			}
 			text += '</ul></li>';
