@@ -464,7 +464,7 @@ function afcHelper_act(action) {
 			usertext += "\n{{subst:Db-afc-notice|" + afcHelper_PageName + "}} ~~~~";
 			afcHelper_editPage(usertalkpage, usertext, 'Notification: [[WP:G13|G13]] speedy deletion nomination of [[' + afcHelper_PageName + ']]', false, true);
 		}
-		afcHelper_logcsd(afcHelper_PageName,"[[CSD:G13]] ({{tl|db-afc}})",uniqueUsers);
+		afcHelper_logcsd(afcHelper_PageName,"[[WP:G13]] ({{tl|db-afc}})",uniqueUsers);
 	} else if (action === 'submit') {
 		var typeofsubmit = $("input[name=afcHelper_submit]:checked").val();
 		var customuser = $("#afcHelper_custom_submitter").val();
@@ -860,7 +860,7 @@ function afcHelper_act(action) {
 						pagetext = "\{\{Db-g12\}\}\n" + newtemplate + '\n' + newcomment + '\n\{\{afc cleared\}\}';
 					}
 					// And for good measure log the CSD nomination
-					afcHelper_logcsd(afcHelper_PageName,"[[CSD:G12]] ({{tl|db-copyvio}})",[afcHelper_authorusername]);
+					afcHelper_logcsd(afcHelper_PageName,"[[WP:G12]] ({{tl|db-copyvio}})",[afcHelper_authorusername]);
 				} else {
 					pagetext = newtemplate + '\n' + newcomment + '\n\{\{afc cleared|csd\}\}';
 					afcHelper_logcsd(afcHelper_PageName,"{{tl|db-reason}} ([[WP:AFC|Articles for creation]])",[afcHelper_authorusername]);
@@ -970,7 +970,7 @@ function afcHelper_movePage(oldtitle, newtitle, summary, callback, overwrite_red
 							del = confirm("The target title, " + newtitle + ", is a redirect. Would you like to automatically delete it under {{db-move}} and then accept and move the submission?");
 							if (del) {
 								$('#afcHelper_move' + jqEsc(oldtitle)).html('<div id="afcHelper_delete' + escape(oldtitle)+'"></div>'); // to allow for messages from the editor
-								deleted = afcHelper_deletePage(newtitle, "[[CSD:G6]]: redirect in the way of move of accepted [[Wikipedia:Articles for creation]] submission");
+								deleted = afcHelper_deletePage(newtitle, "[[WP:G6]]: redirect in the way of move of accepted [[Wikipedia:Articles for creation]] submission");
 								if (deleted) {
 									afcHelper_movePage(oldtitle, newtitle, summary, callback, overwrite_redirect); // Then just move the page again as if nothing happened
 									return; // So we don't run callback() twice
