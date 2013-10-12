@@ -1092,6 +1092,79 @@ function afcHelper_cleanup(text,type) {
 		text = text.replace(/\[\[Category:/gi, "\[\[:Category:");
 	}
 
+	if (type !== 'initial') {
+		/* Don't run external cleanup scripts on initial load to speed up opening */
+		$('#afcHelper_status').html($('#afcHelper_status').html() + '<li id="afcHelper_cleanscripts">Running AutoEd automatically<span id="afcHelper_autoedscriptname"></span>...</li>');
+		// Run AutoEd automatically
+		var AutoEd_baseurl = '//en.wikipedia.org/w/index.php?action=raw&ctype=text/javascript&title=Wikipedia:AutoEd/';
+		var modules = [
+			'unicodify.js',
+			'isbn.js',
+			'whitespace.js',
+			'htmltowikitext.js',
+			'headlines.js',
+			'unicodecontrolchars.js',
+			'unicodehex.js',
+			'templates.js',
+			'tablestowikitext.js',
+			'extrabreaks.js',
+			'links.js'
+		]
+		//Import individual modules for use
+		for (var i = modules.length - 1; i >= 0; i--) {
+			$.ajax({
+				url: AutoEd_baseurl + modules[i],
+				dataType: "script",
+				cache: true,
+				async: false
+			});
+			$('#afcHelper_autoedscriptname').html(' (' + modules[i] + ')');
+		};
+		$('#afcHelper_autoedscriptname').html();
+
+		text = autoEdUnicodify(text);
+		text = autoEdISBN(text);
+		text = autoEdWhitespace(text);
+		text = autoEdUnicodeHex(text);
+		text = autoEdWikilinks(text);
+		text = autoEdHTMLtoWikitext(text);
+		text = autoEdHeadlines(text);
+		text = autoEdUnicodeControlChars(text);
+		text = autoEdTemplates(text);
+		text = autoEdTablestoWikitext(text);
+		text = autoEdExtraBreaks(text);
+		text = autoEdLinks(text);
+
+		/* FORMATGENERAL.JS is disabled due to `ReferenceError: regex is not defined`
+		
+		// Run formatgeneral.js automatically
+		function regex(search,replace,repeat) {
+			// regex() function stolen from [[meta:User:Pathoschild/Scripts/Regex_menu_framework.js]]
+			if( !repeat || repeat < 0 ){
+				repeat = 1;
+			}
+			for( var i=0; i<repeat; i++ ) {
+				text = text.replace(search,replace);
+			}
+		}
+		$.ajax({
+				url: mw.config.get('wgServer') + '/w/index.php?action=raw&ctype=text/javascript&title=User:Ohconfucius/test/formatgeneral.js/core.js',
+				dataType: "script",
+				cache: true,
+				async: false
+		});	
+		ohc_change_type();
+		Ohc_football_retrain();
+		ohc_protect_fmt();
+		Ohc_formats();
+		ohc_unprotect_fmt();
+		ohc_downcase_CEO();
+		Ohc_final_cleanup();
+		*/
+
+		$('#afcHelper_cleanscripts').html('Successfully cleaned up the page using AutoEd.')
+	}
+
 	//Ref tag correction part #1: remove whitespaces and commas between the ref tags and whitespaces before ref tags
 	text = text.replace(/\s*(\<\/\s*ref\s*\>)\s*[,]*\s*(<\s*ref\s*(name\s*=|group\s*=)*\s*[^\/]*>)[ \t]*$/gim, "$1$2");
 	text = text.replace(/\s*(<\s*ref\s*(name\s*=|group\s*=)*\s*.*[^\/]+>)[ \t]*$/gim, "$1");
