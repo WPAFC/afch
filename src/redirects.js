@@ -116,7 +116,7 @@ function afcHelper_redirect_init() {
 					id: k,
 					reason: 'notarget'
 					});
-			} else if(from.to.length == 0){
+			} else if(afcHelper_RedirectSubmissions[k].to.length == 0){
 				needsupdate.push({
 					id: k,
 					reason: 'notredirect'
@@ -215,7 +215,7 @@ function afcHelper_redirect_onActionChange(id) {
 			}]));
 		} else {
 			// now Categories
-			extra.html('<br /><label for="afcHelper_redirect_name_' + id + '">name: </label><input type="text" size="100" ' + 'name="afcHelper_redirect_name_' + id + '" id="afcHelper_redirect_name_' + id + '" value="' + afcHelper_escapeHtmlChars(afcHelper_Submissions[id].title) + '" />');
+			extra.html('<label for="afcHelper_redirect_name_' + id + '">Category name: </label><input type="text" size="100" ' + 'name="afcHelper_redirect_name_' + id + '" id="afcHelper_redirect_name_' + id + '" value="' + afcHelper_escapeHtmlChars(afcHelper_Submissions[id].title) + '" />');
 			extra.html(extra.html() + '<br /><label for="afcHelper_redirect_parent_' + id + '">Parent category:</label>' + '<input type="text" size="100" id="afcHelper_redirect_parent_' + id + '" name="afcHelper_redirect_parent_' + id + '" value="' + afcHelper_escapeHtmlChars(afcHelper_Submissions[id].parent) + '" />');
 		}
 		extra.html(extra.html() + '<br /><label for="afcHelper_redirect_comment_' + id + '">Comment:</label>' + '<input type="text" size="100" id="afcHelper_redirect_comment_' + id + '" name="afcHelper_redirect_comment_' + id + '"/>');
@@ -260,7 +260,7 @@ function afcHelper_redirect_onActionChange(id) {
 				value: 'custom'
 			}]));
 		}
-		extra.html(extra.html() + '<label for="afcHelper_redirect_comment_' + id + '">Comment: </label>' + '<input type="text" size="100" id="afcHelper_redirect_comment_' + id + '" name="afcHelper_redirect_comment_' + id + '"/>');
+		extra.html(extra.html() + '<br/><label for="afcHelper_redirect_comment_' + id + '">Comment: </label>' + '<input type="text" size="100" id="afcHelper_redirect_comment_' + id + '" name="afcHelper_redirect_comment_' + id + '"/>');
 	} else if (selectValue === 'none'){
 		// for categories and redirects!
 		extra.html('');
