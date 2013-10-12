@@ -280,7 +280,7 @@ function afcHelper_prompt(type) {
 			value: ''
 		}];
 		var text = '<h3>Accepting ' + afcHelper_PageName + '</h3>' +
-		'<label for="afcHelper_movetarget">Move submission to: </label><input type="text" id="afcHelper_movetarget" value="' + afcHelper_escapeHtmlChars(afcHelper_submissionTitle) + '" />' +
+		'<label for="afcHelper_movetarget">Move submission to: </label><input type="text" id="afcHelper_movetarget" value="' + afcHelper_escapeHtmlChars(afcHelper_submissionTitle) + '" onkeyup="afcHelper_checkTarget()"/>&nbsp;<span id="afcHelper_isvalid"></span>' +
 		'<br /><label for="afcHelper_assessment">Assessment (optional): </label>';
 		var assessmentSelect = afcHelper_generateSelect("afcHelper_assessment", afcHelper_assessment, null);
 		text += assessmentSelect;
@@ -338,6 +338,8 @@ function afcHelper_prompt(type) {
 		$('textarea.afcHelper_expand').blur(function () {
 			if (!this.value) $(this).animate({ height: "1em" }, 500);
 		});
+		// Check if the current title is valid
+		afcHelper_checkTarget();
 	} else if (type === 'decline') {
 		if (!afcHelper_underreview()) return;
 		var text = '<h3>Declining ' + afcHelper_PageName + '</h3>' + '<label for="afcHelper_reason">Reason for ' + type + ': </label>';
@@ -1595,6 +1597,40 @@ function afcHelper_removehtmlcomment() {
 		parent.fadeOut();
 		if ($('.afcHelper_hidden:visible').length < 2) $('#afcHelper_hiddenheader').fadeOut();
 	},1000);
+}
+
+function afcHelper_checkTarget() {
+	var target = $('#afcHelper_movetarget').val();
+	var result = $('#afcHelper_isvalid');
+	var request = {
+		'action': 'query',
+		'titles': target,
+		'format': 'json',
+		'redirects': true,
+		'indexpageids': true
+	};
+	result.html('<img src="https://upload.wikimedia.org/wikipedia/en/thumb/e/e0/Symbol_question.svg/17px-Symbol_question.svg.png" alt=" [...] "> checking title availability');
+	$.ajax({
+		url: mw.util.wikiScript('api'),
+		data: request,
+		success: function (response) {
+			if (response.query) {
+				var pageid = response.query.pageids[0];
+				if (response['query']['pageids'][0] == -1)
+					result.html('<img src="https://upload.wikimedia.org/wikipedia/en/thumb/f/fb/Yes_check.svg/18px-Yes_check.svg.png" alt=" [✓]"> title is available');	
+				else
+					if (response.query.redirects)
+						result.html('<img src="https://upload.wikimedia.org/wikipedia/en/thumb/e/e0/Symbol_question.svg/17px-Symbol_question.svg.png" alt=" [?]"> a redirect exists at this location (target: <a href="'+ wgArticlePath.replace("$1", response['query']['redirects'][0]['to']) + '" target="_blank">'+response['query']['redirects'][0]['to']+'</a>)');							
+					else
+						result.html('<img src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/a2/X_mark.svg/18px-X_mark.svg.png" alt=" [X]"> a page already exists at this location (<a href="'+ wgArticlePath.replace("$1", response['query']['pages'][pageid]['title']) + '" target="_blank">view</a>)');							
+			} else {
+				result.html('<img src="https://upload.wikimedia.org/wikipedia/en/thumb/e/e0/Symbol_question.svg/17px-Symbol_question.svg.png" alt=" [?]"> unable to check title availability');				
+			}
+		},
+		fail: function() {
+				result.html('<img src="https://upload.wikimedia.org/wikipedia/en/thumb/e/e0/Symbol_question.svg/17px-Symbol_question.svg.png" alt=" [?]"> unable to check title availability');
+		}
+	});
 }
 
 // Finally display the Review link
