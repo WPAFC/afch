@@ -1337,6 +1337,7 @@ function afcHelper_warnings(pagetext) {
 		errormsg += ('<h3><div class="afcHelper_notice">The page ' + afcHelper_escapeHtmlChars(afcHelper_submissionTitle) + ' was deleted ' + deletionlog.length + ' time' + ((deletionlog.length != 1) ? "s" : "") + '. Here ' + ((deletionlog.length != 1) ? "are" : "is") + ' the edit summar' + ((deletionlog.length != 1) ? "ies" : "y") + ' from the <a href="' + wgScript + '?title=Special%3ALog&type=delete&page=' + afcHelper_submissionTitle + '" target="_blank">deletion log</a>:</div></h3><table class="wikitable"><tr><td><b>Timestamp</b></td><td><b>User</b></td><td><b>Reason</b></td></tr>');
 		for (var i = 0; i < deletionlog.length; i++) {
 			var deletioncomment = deletionlog[i].comment;
+			deletioncomment = $('<div/>').text(deletioncomment).html(); //properly escape html entities
 			var deletioncomment1_re = /\[\[([^\[\]]*?[^\]\|]*?)(\|([^\[\]]*?))\]\]/gi;
 			var deletioncomment2_re = /\[\[((?:\[\[[^\[\]]*\]\]|[^\]\[[])*)\]\]/gi;
 			//first handle wikilinks with piped links
