@@ -1633,10 +1633,12 @@ function afcHelper_checkTarget() {
 	});
 }
 
-// Finally display the Review link
-var afcportletLink = mw.util.addPortletLink('p-cactions', '#', 'Review', 'ca-afcHelper', 'Review', 'a');
-$(afcportletLink).click(function(e) {
-	e.preventDefault();
-	afcHelper_init();
-});
+// Finally display the Review link if the page exists
+if (mw.config.get('wgArticleId') !== 0) {
+	var afcportletLink = mw.util.addPortletLink('p-cactions', '#', 'Review', 'ca-afcHelper', 'Review', 'a');
+	$(afcportletLink).click(function(e) {
+		e.preventDefault();
+		afcHelper_init();
+	});
+}
 //</nowiki>
