@@ -632,7 +632,7 @@ function afcHelper_act(action) {
 			// [[Template:L]]
 			var templatel = '\n';
 			if (biography) {
-				templatel = '\n\{\{Persondata\n| NAME              =' + listas + '\n| ALTERNATIVE NAMES = ' + alternativesname + '\n| SHORT DESCRIPTION = ' + shortdescription + '\n| DATE OF BIRTH     = ' + dateofbirth + ', ' + yearofbirth + '\n| PLACE OF BIRTH    = ' + placeofbirth;
+				templatel = '\n\{\{Persondata\n| NAME              =' + listas + '\n| ALTERNATIVE NAMES = ' + alternativesname + '\n| SHORT DESCRIPTION = ' + shortdescription + '\n| DATE OF BIRTH     = ' + (dateofbirth ? dateofbirth + ', ' : '') + yearofbirth + '\n| PLACE OF BIRTH    = ' + placeofbirth;
 				if (living === 'dead') {
 					templatel += '\n| DATE OF DEATH     = ' + dateofdeath + ', ' + yearofdeath + '\n| PLACE OF DEATH    = ' + placeofdeath + '\n\}\}';
 				} else {
@@ -658,11 +658,18 @@ function afcHelper_act(action) {
 			cat_re = /\[\[Category/gi;
 			if (!cat_re.test(pagetext) && (assessment !== 'disambig') && (assessment !== 'redirect') && (assessment !== 'project') && (assessment !== 'portal') && (assessment !== 'template')) {
 				if (biography) {
-					pagetext += '\{\{subst:dated|Improve categories\}\}';
+					pagetext += '\n\{\{subst:dated|Improve categories\}\}';
 				} else {
-					pagetext += '\{\{subst:dated|uncategorized\}\}';
+					pagetext += '\n\{\{subst:dated|uncategorized\}\}';
 				}
 			}
+
+			// disambig check
+			if ((assessment === 'disambig') && (!disambig_re.test(pagetext))) {
+				pagetext += '\n\{\{disambig\}\}';
+			}
+
+			// stub tags
 			var stub_re = /stub\}\}/gi;
 			if ((assessment === 'stub') && (!stub_re.test(pagetext))) {
 				if (biography) {
@@ -671,10 +678,6 @@ function afcHelper_act(action) {
 					pagetext += '\n\{\{stub\}\}';
 				}
 			}
-			// disambig check
-			if ((assessment === 'disambig') && (!disambig_re.test(pagetext))) {
-				pagetext += '\n\{\{disambig\}\}';
-			}
 
 			// automatic tagging of linkrot
 			// TODO: Use non-regex for html
@@ -682,6 +685,7 @@ function afcHelper_act(action) {
 			if(linkrotre.test(pagetext)){	
 				pagetext = "{{subst:dated|Cleanup-bare URLs}}" + pagetext;
 			}
+
 			//check if page is orphaned (mainspace) and tag it!
 			if ((assessment !== 'disambig') && (assessment !== 'redirect') && (assessment !== 'project') && (assessment !== 'portal') && (assessment !== 'template')) {
 				afcHelper_displaymessagehelper('status','orphan');
@@ -701,14 +705,15 @@ function afcHelper_act(action) {
 					})
 					.responseText
 				);
-				var isorphaned = response['query']['backlinks'].length;
-				if (isorphaned) {
-					$("#afcHelper_orphan").html("Orphan check: all ok. No tagging needed.");
+				var not_orphaned = response['query']['backlinks'].length;
+				if (not_orphaned) {
+					$("#afcHelper_orphan").html("Page is not orphaned; no tagging needed.");
 				} else {
 					pagetext = '\{\{subst:dated|Orphan\}\}' + pagetext;
-					$("#afcHelper_orphan").html("Page is orphaned, adding tag.");
+					$("#afcHelper_orphan").html("Page is orphaned; adding tag.");
 				}
 			}
+
 			afcHelper_editPage(newtitle, pagetext, "Cleanup following [[Wikipedia:Articles for creation]] creation", false);
 		};
 		afcHelper_movePage(afcHelper_PageName, newtitle, 'Created via \[\[WP:AFC|Articles for creation\]\] (\[\[WP:WPAFC|you can help!\]\])', callback, true);
