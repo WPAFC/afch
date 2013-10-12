@@ -104,23 +104,27 @@ function afcHelper_redirect_init() {
 	// now layout the text.
 	var afcHelper_Redirect_empty = 1;
 	for (var k = 0; k < afcHelper_RedirectSubmissions.length; k++) {
-		if (afcHelper_RedirectSubmissions[k].to != undefined)
+		if (afcHelper_RedirectSubmissions[k].to !== undefined)
 			var submissionname = afcHelper_RedirectSubmissions[k].to.replace(/\s/g,'');
 		else
 			var submissionname = "";
 		text += '<ul>';
 		if (afcHelper_RedirectSubmissions[k].type === 'redirect') {
 			text += '<li>Redirect(s) to ';
-			if (submissionname.length == 0){
-				needsupdate.push({
-					id: k,
-					reason: 'notarget'
+			if (!submissionname) {
+				for (var i = afcHelper_RedirectSubmissions[k].from.length - 1; i >= 0; i--) {
+					needsupdate.push({
+						id: afcHelper_RedirectSubmissions[k].from[i].id,
+						reason: 'notarget'
 					});
-			} else if(afcHelper_RedirectSubmissions[k].to.length == 0){
-				needsupdate.push({
-					id: k,
-					reason: 'notredirect'
+				};
+			} else if (!afcHelper_RedirectSubmissions[k].to) {
+				for (var i = afcHelper_RedirectSubmissions[k].from.length - 1; i >= 0; i--) {
+					needsupdate.push({
+						id: afcHelper_RedirectSubmissions[k].from[i].id,
+						reason: 'notredirect'
 					});
+				};
 			}
 			if (afcHelper_RedirectSubmissions[k] === '' || afcHelper_RedirectSubmissions[k] === ' ') {
 				text += 'Empty submission \#' + afcHelper_Redirect_empty + '<ul>';
@@ -134,7 +138,7 @@ function afcHelper_redirect_init() {
 			for (var l = 0; l < afcHelper_RedirectSubmissions[k].from.length; l++) {
 				var from = afcHelper_RedirectSubmissions[k].from[l];
 				var toarticle = from.title;
-				if (toarticle.replace(/\s*/gi, "").length == 0) toarticle = "<b>no title (source) specified</b>, check the request details";
+				if (toarticle.replace(/\s*/gi, "").length == 0) toarticle = "<b>no title specified</b>, check the request details";
 				text += "<li>From: " + toarticle + '<br/><label for="afcHelper_redirect_action_' + from.id + '">Action: </label>' + afcHelper_generateSelect('afcHelper_redirect_action_' + from.id, [{
 					label: 'Accept',
 					value: 'accept'
