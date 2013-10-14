@@ -181,6 +181,7 @@ function afcHelper_deletePage(title,reason) {
 		return true;
 	} else {
 		$('#afcHelper_delete' + jqEsc(title)).html('<div style="color:red"><b>Deletion failed on <a href="' + wgArticlePath.replace("$1", encodeURI(title)) + '" title="' + title + '">' + title + '</a></b></div>. Error info: ' + JSON.stringify(delresponse));
+		window.console && console.error('Deletion failed on %s (%s). Error info: %s', wgArticlePath.replace("$1", encodeURI(title)), title, JSON.stringify(delresponse));
 		return false;
 	}
 }
@@ -208,6 +209,7 @@ function afcHelper_editPage(title, newtext, summary, createonly, nopatrol) {
 					$('#afcHelper_edit' + jqEsc(title)).html('Saved <a href="' + wgArticlePath.replace("$1", encodeURI(title)) + '" title="' + title + '">' + title + '</a>');
 				} else {
 					$('#afcHelper_edit' + jqEsc(title)).html('<span class="afcHelper_notice"><b>Edit failed on <a href="' + wgArticlePath.replace("$1", encodeURI(title)) + '" title="' + title + '">' + title + '</a></b></span>. Error info: ' + JSON.stringify(data));
+					window.console && console.error('Edit failed on %s (%s). Error info: %s', wgArticlePath.replace("$1", encodeURI(title)), title, JSON.stringify(data));
 				}
 			} )
 			.fail( function ( error ) {
@@ -241,6 +243,7 @@ function afcHelper_editPage(title, newtext, summary, createonly, nopatrol) {
 								$('#afcHelper_patrol' + jqEsc(title)).html('Marked <a href="' + wgArticlePath.replace("$1", encodeURI(title)) + '" title="' + title + '">' + title + '</a> as patrolled');
 							} else {
 								$('#afcHelper_patrol' + jqEsc(title)).html('<span class="afcHelper_notice"><b>Patrolling failed on <a href="' + wgArticlePath.replace("$1", encodeURI(title)) + '" title="' + title + '">' + title + '</a></b></span> with an unknown error');
+								window.console && console.error('Patrolling failed on %s (%s) with an unknown error.', wgArticlePath.replace("$1", encodeURI(title)), title);
 							}
 						} )
 						.fail( function ( error ) {
