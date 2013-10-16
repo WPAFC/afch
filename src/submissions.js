@@ -1101,6 +1101,7 @@ function afcHelper_cleanup(text,type) {
 			'unicodify.js',
 			'isbn.js',
 			'whitespace.js',
+			'wikilinks.js',
 			'htmltowikitext.js',
 			'headlines.js',
 			'unicodecontrolchars.js',
@@ -1125,11 +1126,11 @@ function afcHelper_cleanup(text,type) {
 		text = autoEdUnicodify(text);
 		text = autoEdISBN(text);
 		text = autoEdWhitespace(text);
-		text = autoEdUnicodeHex(text);
 		text = autoEdWikilinks(text);
 		text = autoEdHTMLtoWikitext(text);
 		text = autoEdHeadlines(text);
 		text = autoEdUnicodeControlChars(text);
+		text = autoEdUnicodeHex(text);
 		text = autoEdTemplates(text);
 		text = autoEdTablestoWikitext(text);
 		text = autoEdExtraBreaks(text);
