@@ -774,7 +774,7 @@ function afcHelper_act(action) {
 
 		summary = "Declining submission";
 		if (code === 'reason' || code === null) {
-			summarycustom = customreason.match(/[^\s]+/g).slice(0,5).join(" "); // Get the first five words of the custom decline rationale
+			summarycustom = customreason.match(/[^\s]+/g).slice(0,10).join(" "); // Get the first ten words of the custom decline rationale
 			if (summarycustom != customreason) summarycustom += "..."; // Add an ellipsis if the rationale if >5 words
 			summary += ': ' + summarycustom;
 		} else {
