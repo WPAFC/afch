@@ -1087,6 +1087,23 @@ function afcHelper_cleanup(text,type) {
 		text = text.replace(/\[\[:?Category:Submissions by Doncram ready for review\]\]/gi, "");
 		// Template uncommenting -- covert {{tl}}'d templates to the real thing
 		text = text.replace(/\{\{(tl|tlx|tlg)\|(.*?)\}\}/ig, "\{\{$2\}\}");
+		// Remove all unneeded HTML comments and wizardy things
+		text = text.replace("\* \[http\:\/\/www.example.com\/ example.com\]", "");
+		text = text.replace(/'''Subject of my article''' is.../ig, "");
+		text = text.replace(/\<\!--- Carry on from here, and delete this comment. ---\>/ig, "");
+		text = text.replace(/\<\!--- Enter template purpose and instructions here. ---\>/ig, "");
+		text = text.replace(/\<\!--- Enter the content and\/or code of the template here. ---\>/ig, "");
+		text = text.replace(/\<\!-- EDIT BELOW THIS LINE --\>/ig, "");
+		text = text.replace(/\<\!-- This will add a notice to the bottom of the page and won't blank it! The new template which says that your draft is waiting for a review will appear at the bottom; simply ignore the old \(grey\) drafted templates and the old \(red\) decline templates. A bot will update your article submission. Until then, please don't change anything in this text box\s*(and|.\s*Just)+ press "Save page". --\>/ig, "");
+		text = text.replace(/\<\!--Do not include any categories - these don't need to be added until the article is accepted; They will just get removed by a bot!--\>/ig, "");
+		text = text.replace(/\<\!--- Categories ---\>/gi, '');
+		text = text.replace(/\<\!--- After listing your sources please cite them using inline citations and place them after the information they cite. Please see \[\[Wikipedia:REFB\]\] for instructions on how to add citations. ---\>/ig, "");
+		text = text.replace(/\<\!-- Be sure to cite all of your sources in \<ref\>...\<\/ref\> tags and they will automatically display when you hit save. The more reliable sources added the better! See \[\[Wikipedia:REFB\]\] for more information--\>/ig, "");
+		text = text.replace(/<!---? See (?:\[\[Wikipedia:Footnotes\]\]|http\:\/\/en\.wikipedia\.org\/wiki\/Wikipedia:Footnotes) on how to create references using[ ]?(?:\<ref\>\<\/ref\> tags|tags) which will then appear here automatically --\>/ig, "");
+		text = text.replace(/\<\!-- Please leave this line alone! --\>/ig, "");
+		text = text.replace(/\<\!-- Do not include any categories - these don't need to be added until the article is accepted; They will just get removed by a bot! --\>/ig, "");
+		text = text.replace(/\<\!-{1,3}\s*Important, do not remove this line before (template|article) has been created.\s*-{1,3}\>/ig, "");
+		text = text.replace(/\[\[:Category:Articles created via the Article Wizard\]\]/gi, "[[Category:Articles created via the Article Wizard]]");
 	} else {
 		// If we're not accepting, comment out categories
 		text = text.replace(/\[\[Category:/gi, "\[\[:Category:");
@@ -1110,7 +1127,7 @@ function afcHelper_cleanup(text,type) {
 			'tablestowikitext.js',
 			'extrabreaks.js',
 			'links.js'
-		]
+		];
 		//Import individual modules for use
 		for (var i = modules.length - 1; i >= 0; i--) {
 			$.ajax({
@@ -1166,31 +1183,8 @@ function afcHelper_cleanup(text,type) {
 		$('#afcHelper_cleanscripts').html('Successfully cleaned up the page using AutoEd.')
 	}
 
-	//Ref tag correction part #1: remove whitespaces and commas between the ref tags and whitespaces before ref tags
-	text = text.replace(/\s*(\<\/\s*ref\s*\>)\s*[,]*\s*(<\s*ref\s*(name\s*=|group\s*=)*\s*[^\/]*>)[ \t]*$/gim, "$1$2");
-	text = text.replace(/\s*(<\s*ref\s*(name\s*=|group\s*=)*\s*.*[^\/]+>)[ \t]*$/gim, "$1");
-	//Ref tag correction part #2: move :;.,!? before ref tags
-	text = text.replace(/\s*((<\s*ref\s*(name\s*=|group\s*=)*\s*.*[\/]{1}>)|(<\s*ref\s*(name\s*=|group\s*=)*\s*[^\/]*>(?:\\<[^\<\>]*\>|[^><])*\<\/\s*ref\s*\>))[ \t]*([.!?,;:])+$/gim, "$6$1");
-	//Link / Template correction: replace {{http://example.com/foobar}} with "* http://example.com/foo" (common error by new users)
-	text = text.replace(/\n\{\{(http[s]?|ftp[s]?|irc|gopher|telnet)\:\/\/(.*?)\}\}/gi, "\n\* $1:\/\/$3");
-
-	// Remove all unneeded HTML comments and wizards stuff
-	text = text.replace("\* \[http\:\/\/www.example.com\/ example.com\]", "");
-	text = text.replace(/'''Subject of my article''' is.../ig, "");
-	text = text.replace(/\<\!--- Carry on from here, and delete this comment. ---\>/ig, "");
-	text = text.replace(/\<\!--- Enter template purpose and instructions here. ---\>/ig, "");
-	text = text.replace(/\<\!--- Enter the content and\/or code of the template here. ---\>/ig, "");
-	text = text.replace(/\<\!-- EDIT BELOW THIS LINE --\>/ig, "");
-	text = text.replace(/\<\!-- This will add a notice to the bottom of the page and won't blank it! The new template which says that your draft is waiting for a review will appear at the bottom; simply ignore the old \(grey\) drafted templates and the old \(red\) decline templates. A bot will update your article submission. Until then, please don't change anything in this text box\s*(and|.\s*Just)+ press "Save page". --\>/ig, "");
-	text = text.replace(/\<\!--Do not include any categories - these don't need to be added until the article is accepted; They will just get removed by a bot!--\>/ig, "");
-	text = text.replace(/\<\!--- Categories ---\>/gi, '');
-	text = text.replace(/\<\!--- After listing your sources please cite them using inline citations and place them after the information they cite. Please see \[\[Wikipedia:REFB\]\] for instructions on how to add citations. ---\>/ig, "");
-	text = text.replace(/\<\!-- Be sure to cite all of your sources in \<ref\>...\<\/ref\> tags and they will automatically display when you hit save. The more reliable sources added the better! See \[\[Wikipedia:REFB\]\] for more information--\>/ig, "");
-	text = text.replace(/<!---? See (?:\[\[Wikipedia:Footnotes\]\]|http\:\/\/en\.wikipedia\.org\/wiki\/Wikipedia:Footnotes) on how to create references using[ ]?(?:\<ref\>\<\/ref\> tags|tags) which will then appear here automatically --\>/ig, "");
+	// These replacements are always performed
 	text = text.replace(/\<\!--Please don't change anything and press save --\>/ig, "");
-	text = text.replace(/\<\!-- Please leave this line alone! --\>/ig, "");
-	text = text.replace(/\<\!-- Do not include any categories - these don't need to be added until the article is accepted; They will just get removed by a bot! --\>/ig, "");
-	text = text.replace(/\<\!-{1,3}\s*Important, do not remove this line before (template|article) has been created.\s*-{1,3}\>/ig, "");
 	text = text.replace(/\<\!-- Just press the \"Save page\" button below without changing anything! Doing so will submit your article submission for review. Once you have saved this page you will find a new yellow 'Review waiting' box at the bottom of your submission page. If you have submitted your page previously, the old pink 'Submission declined' template or the old grey 'Draft' template will still appear at the top of your submission page, but you should ignore them. Again, please don't change anything in this text box. Just press the \"Save page\" button below. --\>/ig, "");
 	text = text.replace(/== Request review at \[\[WP:AFC\]\] ==\n/ig, "");
 	text = text.replace(/(?:<\s*references\s*>([\S\s]*)<\/references>|<\s*references\s*\/\s*>)/gi, "\n{{reflist|refs=$1}}");
@@ -1198,9 +1192,16 @@ function afcHelper_cleanup(text,type) {
 	text = text.replace(/\{\{(userspacedraft|userspace draft|user sandbox|Please leave this line alone \(sandbox heading\))(?:\{\{[^{}]*\}\}|[^}{])*\}\}/ig, "");
 	text = text.replace(/<!--\s*-->/ig, ""); // Remove empty HTML comments
 	text = text.replace(/^----+$/igm, ""); // Removes horizontal rules
-	text = text.replace(/\[\[:Category:Articles created via the Article Wizard\]\]/gi, "[[Category:Articles created via the Article Wizard]]");
 	if (afc_re.test(text)) // Remove "AfC submission with missing AfC template" maintenace category - a cleanup will remove the cat without adding any!
 		text = text.replace(/\[\[:?Category:AfC(_|\s*)+submissions(_|\s*)+with(_|\s*)+missing(_|\s*)+AfC(_|\s*)+template\]\]/gi, "");
+
+	//Ref tag correction part #1: remove whitespaces and commas between the ref tags and whitespaces before ref tags
+	text = text.replace(/\s*(\<\/\s*ref\s*\>)\s*[,]*\s*(<\s*ref\s*(name\s*=|group\s*=)*\s*[^\/]*>)[ \t]*$/gim, "$1$2");
+	text = text.replace(/\s*(<\s*ref\s*(name\s*=|group\s*=)*\s*.*[^\/]+>)[ \t]*$/gim, "$1");
+	//Ref tag correction part #2: move :;.,!? before ref tags
+	text = text.replace(/\s*((<\s*ref\s*(name\s*=|group\s*=)*\s*.*[\/]{1}>)|(<\s*ref\s*(name\s*=|group\s*=)*\s*[^\/]*>(?:\\<[^\<\>]*\>|[^><])*\<\/\s*ref\s*\>))[ \t]*([.!?,;:])+$/gim, "$6$1");
+	//Link / Template correction: replace {{http://example.com/foobar}} with "* http://example.com/foo" (common error by new users)
+	text = text.replace(/\n\{\{(http[s]?|ftp[s]?|irc|gopher|telnet)\:\/\/(.*?)\}\}/gi, "\n\* $1:\/\/$3");
 
 	// Remove empty list elements and empty headers
 	text = text.replace(/^\s*[\*#:;]\s*$/igm, "");
