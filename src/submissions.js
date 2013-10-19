@@ -871,10 +871,10 @@ function afcHelper_act(action) {
 						pagetext = "\{\{Db-g12\}\}\n" + newtemplate + '\n' + newcomment + '\n\{\{afc cleared\}\}';
 					}
 					// And for good measure log the CSD nomination
-					afcHelper_logcsd(afcHelper_PageName,"[[WP:G12]] ({{tl|db-copyvio}})",[afcHelper_authorusername]);
+					afcHelper_logcsd(afcHelper_PageName,"[[WP:G12]] ({{tl|db-copyvio}})",(notify ? [afcHelper_authorusername] : false));
 				} else {
 					pagetext = newtemplate + '\n' + newcomment + '\n\{\{afc cleared|csd\}\}';
-					afcHelper_logcsd(afcHelper_PageName,"{{tl|db-reason}} ([[WP:AFC|Articles for creation]])",[afcHelper_authorusername]);
+					afcHelper_logcsd(afcHelper_PageName,"{{tl|db-reason}} ([[WP:AFC|Articles for creation]])",(notify ? [afcHelper_authorusername] : false));
 				}
 			} else {
 				// If we just need to blank the submission, *just blank it*
