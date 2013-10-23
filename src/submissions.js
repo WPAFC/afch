@@ -909,13 +909,13 @@ function afcHelper_act(action) {
 		pagetext = pagetext.replace(exclusive_pending_afc_re, "$1r\|\|$2\|reviewer=\{\{subst:REVISIONUSER\}\}\|reviewts={{subst:CURRENTTIMESTAMP}}\|$3");
 		pagetext = afcHelper_addcomment(comment) + pagetext;
 		pagetext = afcHelper_cleanup(pagetext);
-		afcHelper_editPage(afcHelper_PageName, pagetext, "Marking [[Wikipedia:Articles for creation]] submission as being reviewed", false);
+		afcHelper_editPage(afcHelper_PageName, pagetext, "Marking [[Wikipedia:Articles for creation]] submission as under review", false);
 	} else if (action === 'unmark') {
 		if (!afcHelper_underreview()) return;
 		displayMessage('<ul id="afcHelper_status"></ul><ul id="afcHelper_finish"></ul>');
 		afcHelper_displaymessagehelper('done','standard');
 		if (!reviewing_afc_re.test(pagetext)) {
-			alert("Unable to locate AFC submission template or page is not marked as being reviewed, aborting...");
+			alert("Unable to locate AFC submission template or page is not marked as under review, aborting...");
 			return;
 		}
 		var template = reviewing_afc_re.exec(pagetext)[0];
@@ -924,7 +924,7 @@ function afcHelper_act(action) {
 		newtemplate = newtemplate.replace(/\|\s*reviewts=\s*([0-9]{14})[^\|]*\|/i, "");
 		pagetext = pagetext.replace(template, newtemplate);
 		pagetext = afcHelper_cleanup(pagetext);
-		afcHelper_editPage(afcHelper_PageName, pagetext, "Unmarking [[Wikipedia:Articles for creation]] submission as being reviewed", false);
+		afcHelper_editPage(afcHelper_PageName, pagetext, "Unmarking [[Wikipedia:Articles for creation]] submission as under review", false);
 	} else if (action === 'cleanup') {
 		displayMessage('<ul id="afcHelper_status"></ul><ul id="afcHelper_finish"></ul>');
 		pagetext = afcHelper_cleanup(pagetext);
