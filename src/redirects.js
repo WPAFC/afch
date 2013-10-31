@@ -381,7 +381,7 @@ function afcHelper_redirect_performActions() {
 						$('#afcHelper_status').html($('#afcHelper_status').html() + '<li>Skipping ' + redirect.title + ': No decline reason specified.</li>');              
 						continue;
 					}
-					declinecomment += redirect.title + " &rarr; " + redirect.to + ": " + reason + ". ";
+					declinecomment += ((redirect.reason === 'blank' || redirect.reason === 'notredirect') ? reason + ". " : redirect.title + " &rarr; " + redirect.to + ": " + reason + ". ");
 					declinecount++;
 				} else if (redirect.action === 'comment') {
 					othercomment += redirect.title + ": " + redirect.comment + ". ";
