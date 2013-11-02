@@ -1685,6 +1685,7 @@ function afcHelper_checkTarget() {
 		'indexpageids': true
 	};
 	result.html('<img src="https://upload.wikimedia.org/wikipedia/en/thumb/e/e0/Symbol_question.svg/17px-Symbol_question.svg.png" alt=" [...] "> checking title availability');
+	$('#afcHelper_prompt_button').removeAttr('disabled');
 	$.ajax({
 		url: mw.util.wikiScript('api'),
 		data: request,
@@ -1694,10 +1695,13 @@ function afcHelper_checkTarget() {
 				if (response['query']['pageids'][0] == -1)
 					result.html('<img src="https://upload.wikimedia.org/wikipedia/en/thumb/f/fb/Yes_check.svg/18px-Yes_check.svg.png" alt=" [✓]"> title is available');	
 				else
-					if (response.query.redirects)
-						result.html('<img src="https://upload.wikimedia.org/wikipedia/en/thumb/e/e0/Symbol_question.svg/17px-Symbol_question.svg.png" alt=" [?]"> a redirect exists at this location (target: <a href="'+ wgArticlePath.replace("$1", response['query']['redirects'][0]['to']) + '" target="_blank">'+response['query']['redirects'][0]['to']+'</a>)');							
-					else
-						result.html('<img src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/a2/X_mark.svg/18px-X_mark.svg.png" alt=" [X]"> a page already exists at this location (<a href="'+ wgArticlePath.replace("$1", response['query']['pages'][pageid]['title']) + '" target="_blank">view</a>)');							
+					if (response.query.redirects) {
+						result.html('<img src="https://upload.wikimedia.org/wikipedia/en/thumb/e/e0/Symbol_question.svg/17px-Symbol_question.svg.png" alt=" [?]"> a redirect exists at this location (target: <a href="'+ wgArticlePath.replace("$1", response['query']['redirects'][0]['to']) + '" target="_blank">'+response['query']['redirects'][0]['to']+'</a>)');
+					}
+					else {
+						result.html('<img src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/a2/X_mark.svg/18px-X_mark.svg.png" alt=" [X]"> a page already exists at this location (<a href="'+ wgArticlePath.replace("$1", response['query']['pages'][pageid]['title']) + '" target="_blank">view</a>)');
+						$('#afcHelper_prompt_button').attr('disabled','disabled');
+					}
 			} else {
 				result.html('<img src="https://upload.wikimedia.org/wikipedia/en/thumb/e/e0/Symbol_question.svg/17px-Symbol_question.svg.png" alt=" [?]"> unable to check title availability');				
 			}
