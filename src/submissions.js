@@ -328,7 +328,7 @@ function afcHelper_prompt(type) {
 		'<br /><label for="afcHelper_dateofdeath">Month and day of death (if known/given, e.g. <i>September 3</i>): </label><input type="text" id="afcHelper_dateofdeath" spellcheck="true"/>' +
 		'<br /><label for="afcHelper_yearofdeath">Year of death (if known/given): </label><input type="text" id="afcHelper_yearofdeath" />' +
 		'</div></div><div id="afcHelper_extra_inline"></div>' +
-		'<button class="afcHelper_button" type="button" id="afcHelper_accept_button" onclick="afcHelper_act(\'accept\')">Accept and publish to mainspace</button>';
+		'<button class="afcHelper_button accept" type="button" id="afcHelper_prompt_button" onclick="afcHelper_act(\'accept\')">Accept and publish to mainspace</button>';
 		$("#afcHelper_extra").html(text);
 		// Expand textareas on click so they don't take up space, and then...
 		$('textarea.afcHelper_expand').focus(function () {
@@ -360,7 +360,7 @@ function afcHelper_prompt(type) {
 		'<input type="radio" name="afcHelper_submit" id="afcHelper_submit3" value="creator" checked /> <label for="afcHelper_submit3">submit with the page creator as the submitter</label><br>' +
 		'<input type="radio" name="afcHelper_submit" id="afcHelper_submit4" value="self" checked /> <label for="afcHelper_submit3">submit with yourself as the submitter</label><br>' +
 		'<input type="radio" name="afcHelper_submit" id="afcHelper_submit5" value="custom" /> <label for="afcHelper_submit4">submit with a custom submitter:</label> <input type="text" id="afcHelper_custom_submitter" /><br>' +
-		'<button class="afcHelper_button" type="button" id="afcHelper_submit_button" onclick="afcHelper_act(\'submit\')">Place a submit template</button>';
+		'<button class="afcHelper_button submit" type="button" id="afcHelper_prompt_button" onclick="afcHelper_act(\'submit\')">Place a submit template</button>';
 		$("#afcHelper_extra").html(text);
 	} else if (type === 'draft') {
 		var text = '<h3>Place a draft submission template on ' + afcHelper_PageName + '</h3>';
@@ -368,7 +368,7 @@ function afcHelper_prompt(type) {
 		'<input type="radio" name="afcHelper_draft" id="afcHelper_draft2" value="last" /> <label for="afcHelper_submit2">tag with the last non-bot editor as the submitter</label><br>' +
 		'<input type="radio" name="afcHelper_draft" id="afcHelper_draft3" value="creator" checked /> <label for="afcHelper_submit3">tag with the page creator as the submitter</label><br>' +
 		'<input type="radio" name="afcHelper_draft" id="afcHelper_draft4" value="custom" /> <label for="afcHelper_submit4">tag with a custom submitter:</label> <input type="text" id="afcHelper_draft_submitter" /><br>' +
-		'<button class="afcHelper_button" type="button" id="afcHelper_draft_button" onclick="afcHelper_act(\'draft\')">Place {{AFC draft}} template</button>';
+		'<button class="afcHelper_button draft" type="button" id="afcHelper_prompt_button" onclick="afcHelper_act(\'draft\')">Place {{AFC draft}} template</button>';
 		$("#afcHelper_extra").html(text);
 	} else if (type === 'mark') {
 		var text = '<h3>Marking submission ' + afcHelper_PageName + ' as under review</h3>' +
