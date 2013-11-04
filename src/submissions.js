@@ -1711,6 +1711,7 @@ function afcHelper_checkTarget() {
 		},
 		fail: function() {
 			$('#afcHelper_prompt_button').removeAttr('disabled');
+			$('#afcHelper_prompt_button').text('Accept and publish to mainspace');
 			result.html('<img src="https://upload.wikimedia.org/wikipedia/en/thumb/e/e0/Symbol_question.svg/17px-Symbol_question.svg.png" alt=" [?]"> unable to check title availability');
 		}
 	});
