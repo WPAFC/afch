@@ -1685,11 +1685,14 @@ function afcHelper_checkTarget() {
 		'indexpageids': true
 	};
 	result.html('<img src="https://upload.wikimedia.org/wikipedia/en/thumb/e/e0/Symbol_question.svg/17px-Symbol_question.svg.png" alt=" [...] "> checking title availability');
-	$('#afcHelper_prompt_button').removeAttr('disabled');
+	$('#afcHelper_prompt_button').attr('disabled','disabled');
+	$('#afcHelper_prompt_button').text('Checking target page status');
 	$.ajax({
 		url: mw.util.wikiScript('api'),
 		data: request,
 		success: function (response) {
+			$('#afcHelper_prompt_button').removeAttr('disabled');
+			$('#afcHelper_prompt_button').text('Accept and publish to mainspace');
 			if (response.query) {
 				var pageid = response.query.pageids[0];
 				if (response['query']['pageids'][0] == -1)
@@ -1700,13 +1703,15 @@ function afcHelper_checkTarget() {
 					} else {
 						result.html('<img src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/a2/X_mark.svg/18px-X_mark.svg.png" alt=" [X]"> a page already exists at this location (<a href="'+ wgArticlePath.replace("$1", response['query']['pages'][pageid]['title']) + '" target="_blank">view</a>)');
 						$('#afcHelper_prompt_button').attr('disabled','disabled');
+						$('#afcHelper_prompt_button').text('A page already exists at this location');
 					}
 			} else {
 				result.html('<img src="https://upload.wikimedia.org/wikipedia/en/thumb/e/e0/Symbol_question.svg/17px-Symbol_question.svg.png" alt=" [?]"> unable to check title availability');				
 			}
 		},
 		fail: function() {
-				result.html('<img src="https://upload.wikimedia.org/wikipedia/en/thumb/e/e0/Symbol_question.svg/17px-Symbol_question.svg.png" alt=" [?]"> unable to check title availability');
+			$('#afcHelper_prompt_button').removeAttr('disabled');
+			result.html('<img src="https://upload.wikimedia.org/wikipedia/en/thumb/e/e0/Symbol_question.svg/17px-Symbol_question.svg.png" alt=" [?]"> unable to check title availability');
 		}
 	});
 }
