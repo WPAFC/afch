@@ -192,7 +192,7 @@ var afcHelper_reasonhash = [{
 function afcHelper_init() {
 	displayMessage('<div id="afcHelper_loadingmsg">Loading the Article for creation helper script...</div>');
 
-	if (!wfSupportsAjax()) {
+	if ('ajax' in $.support && !$.support.ajax) {
 		displayMessage('<span class="afcHelper_notice">Uh-oh! Your browser appears to be too old to handle the helper script or does not support AJAX. Please <a href="http://browsehappy.com">upgrade</a> to the latest version of Firefox, Safari, Chrome, or Opera for best results. Sorry about that; please <a href="https://en.wikipedia.org/wiki/Wikipedia_talk:WikiProject_Articles_for_creation/Helper_script" target="_blank">let us know</a> if you need further assistance.</span>');
 		return;
 	}
