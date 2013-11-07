@@ -331,7 +331,7 @@ function afcHelper_ffu_performActions() {
 					var header = text.match(/==[^=]*==/)[0];
 					text = header + "\n\{\{subst:ffu a\}\}\n" + text.substring(header.length);
 					if (sub_m.to === '') text += '\n*\{\{subst:ffu|a\}\} \~\~\~\~\n';
-					else text += '\n*\{\{subst:ffu|file=' + sub_m.to + '\}\} \~\~\~\~\n';
+					else text += '\n*\{\{subst:ffu|file=' + sub_m.to + '\}\}' + (sub_m.comment ? ' ' + $.trim(sub_m.comment) : '') + ' \~\~\~\~\n';
 					text += '\{\{subst:ffu b\}\}\n';
 					totalaccept++;
 					// update [[Wikipedia:Files for upload/recent]]
