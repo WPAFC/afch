@@ -1465,7 +1465,7 @@ function afcHelper_warnings(pagetext) {
 	var rerefdouble = /\<\s*ref\s*(name\s*=|group\s*=)*\s*[^\/]*\>?(\<\s*[^\/]*\s*ref\s*(name\s*=|group\s*=)*)/ig;
 	var refdouble = texttest.match(rerefdouble);
 	if (refdouble) {
-		errormsg += 'The script found following malformed references:<br/><i>';
+		errormsg += 'The script found the following malformed references:<br/><i>';
 		for (i = 0; i < refdouble.length; i++)
 		errormsg += afcHelper_escapeHtmlChars(refdouble[i].toString()) + '&gt;<br/>';
 		errormsg += '</i>';
