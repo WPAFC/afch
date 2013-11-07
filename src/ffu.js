@@ -262,7 +262,7 @@ function afcHelper_ffu_performActions() {
 				afcHelper_Submissions[i].to = $("#afcHelper_ffu_to_" + i).val();
 				afcHelper_Submissions[i].talkpage = $("#afcHelper_ffu_filetalkpage_" + i).attr("checked") == 'checked';
 				afcHelper_Submissions[i].append = $("#afcHelper_ffu_append_" + i).val();
-				afcHelper_Submissions[i].recent = $("#afcHelper_ffu_recent_" + i).attr("checked");
+				afcHelper_Submissions[i].recent = $("#afcHelper_ffu_recent_" + i).attr("checked") == 'checked';
 				afcHelper_Submissions[i].recenttext = $("#afcHelper_ffu_recenttext_" + i).val();
 			} else if (action == 'decline') {
 				afcHelper_Submissions[i].reason = $('#afcHelper_ffu_decline_' + i).val();
@@ -336,7 +336,7 @@ function afcHelper_ffu_performActions() {
 					totalaccept++;
 					// update [[Wikipedia:Files for upload/recent]]
 					if (sub_m.recent == true) {
-						recentpagetext = afcHelper_getPageText('Wikipedia:Files_for_upload/recent', true);
+						recentpagetext = afcHelper_getPageText('Wikipedia:Files for upload/recent', true);
 						var newentry = "\| File:" + sub_m.to + " | " + (typeof sub_m.recenttext !== "undefined" ? sub_m.recenttext : "") + "\n";
 						var lastentry = recentpagetext.toLowerCase().lastIndexOf("| file:");
 						var firstentry = recentpagetext.toLowerCase().indexOf("| file:");
