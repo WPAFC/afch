@@ -1613,10 +1613,11 @@ function afcHelper_page_creator(title) {
 }
 
 function afcHelper_addcomment(comment) {
-	if (comment == "")
-		return "";
+	var trimmed_comment = $.trim(comment);
+	if (trimmed_comment !== "")
+		return "\{\{afc comment|1=" + trimmed_comment + " \~\~\~\~\}\}";
 	else
-		return "\{\{afc comment|1=" + comment + " \~\~\~\~\}\}";
+		return "";
 }
 
 function afcHelper_underreview() {
