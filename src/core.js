@@ -13,17 +13,17 @@ var pagetext = '';
 var usertalkpage = '';
 
 // CSS stylesheet
-importStylesheetURI(mw.config.get('wgServer') + '/w/index.php?action=raw&ctype=text/css&title=MediaWiki:Gadget-afchelper.css');
+mw.loader.load(mw.config.get('wgServer') + '/w/index.php?action=raw&ctype=text/css&title=MediaWiki:Gadget-afchelper.css', 'text/css');
 
 if (wgPageName.indexOf('Wikipedia:Articles_for_creation/Redirects') !== -1) {
-	importScriptURI(afchelper_baseurl + '/redirects.js');
+	mw.loader.load(afchelper_baseurl + '/redirects.js');
 } else if (wgPageName.indexOf('Wikipedia:Files_for_upload') !== -1) {
-	importScriptURI(afchelper_baseurl + '/ffu.js');		
+	mw.loader.load(afchelper_baseurl + '/ffu.js');		
 } else if ((wgPageName.indexOf('Wikipedia:Articles_for_creation/') !== -1)
 			|| (wgPageName.indexOf('Wikipedia_talk:Articles_for_creation/') !== -1)
 			|| (wgPageName.indexOf('User:') !== -1)
 			){
-	importScriptURI(afchelper_baseurl + '/submissions.js');				
+	mw.loader.load(afchelper_baseurl + '/submissions.js');				
 }
 
 // This enables the beta notice for all uses except the official gadget
