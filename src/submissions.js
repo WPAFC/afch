@@ -1697,7 +1697,7 @@ function afcHelper_checkTarget() {
 			if (response.query) {
 				var pageid = response.query.pageids[0];
 				if (response['query']['pageids'][0] == -1)
-					result.html('<img src="https://upload.wikimedia.org/wikipedia/en/thumb/f/fb/Yes_check.svg/18px-Yes_check.svg.png" alt=" [✓]"> title is available');	
+					result.html('<img src="https://upload.wikimedia.org/wikipedia/en/thumb/f/fb/Yes_check.svg/18px-Yes_check.svg.png" alt=" [&#10003;]"> title is available');	
 				else
 					if (response.query.redirects) {
 						result.html('<img src="https://upload.wikimedia.org/wikipedia/en/thumb/e/e0/Symbol_question.svg/17px-Symbol_question.svg.png" alt=" [?]"> a redirect exists at this location (target: <a href="'+ wgArticlePath.replace("$1", response['query']['redirects'][0]['to']) + '" target="_blank">'+response['query']['redirects'][0]['to']+'</a>)');
