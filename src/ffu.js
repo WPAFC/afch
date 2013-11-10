@@ -259,21 +259,21 @@ function afcHelper_ffu_performActions() {
 			afcHelper_Submissions[i].action = action;
 			if (action == 'none') continue;
 			if (action == 'accept') {
-				afcHelper_Submissions[i].to = $("#afcHelper_ffu_to_" + i).val();
+				afcHelper_Submissions[i].to = $.trim($("#afcHelper_ffu_to_" + i).val());
 				afcHelper_Submissions[i].talkpage = $("#afcHelper_ffu_filetalkpage_" + i).attr("checked") == 'checked';
-				afcHelper_Submissions[i].append = $("#afcHelper_ffu_append_" + i).val();
+				afcHelper_Submissions[i].append = $.trim($("#afcHelper_ffu_append_" + i).val());
 				afcHelper_Submissions[i].recent = $("#afcHelper_ffu_recent_" + i).attr("checked") == 'checked';
-				afcHelper_Submissions[i].recenttext = $("#afcHelper_ffu_recenttext_" + i).val();
+				afcHelper_Submissions[i].recenttext = $.trim($("#afcHelper_ffu_recenttext_" + i).val());
 			} else if (action == 'decline') {
-				afcHelper_Submissions[i].reason = $('#afcHelper_ffu_decline_' + i).val();
+				afcHelper_Submissions[i].reason = $.trim($('#afcHelper_ffu_decline_' + i).val());
 			} else if (action == 'hold') {
-				afcHelper_Submissions[i].holdrat = $('#afcHelper_ffu_hold_' + i).val();
+				afcHelper_Submissions[i].holdrat = $.trim($('#afcHelper_ffu_hold_' + i).val());
 			} else if (action == 'comment') {
-				afcHelper_Submissions[i].prefmtcomment = $("#afcHelper_ffu_prefmtcomment_" + i).val();
+				afcHelper_Submissions[i].prefmtcomment = $.trim($("#afcHelper_ffu_prefmtcomment_" + i).val());
 			}
-			afcHelper_Submissions[i].addtl = $('#afcHelper_title_' + i).val();
-			afcHelper_Submissions[i].addloc = $('#afcHelper_location_' + i).val();
-			afcHelper_Submissions[i].comment = $("#afcHelper_ffu_comment_" + i).val();
+			afcHelper_Submissions[i].addtl = $.trim($('#afcHelper_title_' + i).val());
+			afcHelper_Submissions[i].addloc = $.trim($('#afcHelper_location_' + i).val());
+			afcHelper_Submissions[i].comment = $.trim($("#afcHelper_ffu_comment_" + i).val());
 			afcHelper_Submissions[i].notify = $("#afcHelper_ffu_notify_" + i).attr("checked") == 'checked';
 		}
 	}
