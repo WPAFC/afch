@@ -6,6 +6,7 @@ var afcHelper_RedirectSections = new Array();
 var afcHelper_numTotal = 0;
 var afcHelper_AJAXnumber = 0;
 var afcHelper_Submissions = new Array();
+var needsupdate = new Array();
 var afcHelper_redirectDecline_reasonhash = {
 	'exists': 'The title you suggested already exists on Wikipedia',
 	'blank': 'We cannot accept empty submissions',
@@ -23,33 +24,19 @@ var afcHelper_categoryDecline_reasonhash = {
 };
 
 function afcHelper_redirect_init() {
-	afcHelper_RedirectSubmissions = new Array();
-	afcHelper_RedirectSections = new Array();
-	afcHelper_numTotal = 0;
-
 	pagetext = afcHelper_getPageText(afcHelper_RedirectPageName, false);
-	// let the parsing begin.
-	// first, strip out the parts before the first section.
-	var section_re = /==[^=]*==/;
-	pagetext = pagetext.substring(pagetext.search(section_re));
+	// cleanup the wikipedia links for preventing stuff like https://en.wikipedia.org/w/index.php?diff=576244067&oldid=576221437
+	pagetext = afcHelper_cleanuplinks(pagetext);
 
-	// now parse it into sections.
-	//		section_re = /==\s*\[\[(\s*[^=]*)\]\]\s*==/g;
-	var section_re = /==[^=]*==/g;
-	var section_headers = pagetext.match(section_re);
-	for (var i = 0; i < section_headers.length; i++) {
-		var section_start = pagetext.indexOf(section_headers[i]);
-		var section_text = pagetext.substring(section_start);
-		if (i < section_headers.length - 1) {
-			var section_end = section_text.substring(section_headers[i].length).indexOf(section_headers[i + 1]) + section_headers[i].length;
-			section_text = section_text.substring(0, section_end);
-		}
-		afcHelper_RedirectSections.push(section_text);
-	}
+	// first, strip out the parts before the first section.
+	var section_re = /==.*?==/;
+	pagetext = pagetext.substring(pagetext.search(section_re));
+	// then split it into the rest of the sections
+	afcHelper_RedirectSections = pagetext.match(/^==.*?==$((\r?\n?)(?!==[^=]).*)*/img);
 
 	// parse the sections.
 	for (var i = 0; i < afcHelper_RedirectSections.length; i++) {
-		var closed = /\{\{\s*afc(?!\s+comment)/i.test(afcHelper_RedirectSections[i]);
+		var closed = /(\{\{\s*afc(?!\s+comment)|This is an archived discussion)/i.test(afcHelper_RedirectSections[i]);
 		if (!closed) {
 			// parse.
 			var header = afcHelper_RedirectSections[i].match(section_re)[0];
@@ -57,13 +44,13 @@ function afcHelper_redirect_init() {
 				var wikilink_re = /\[\[(\s*[^=]*?)*?\]\]/g;
 				var links = header.match(wikilink_re);
 				if (!links) continue;
-				for (var j = 0; j < links.length; j++) {
-					links[j] = links[j].replace(/[\[\]]/g, '');
-					if (links[j].charAt(0) === ':') links[j] = links[j].substring(1);
+				for (var l = 0; l < links.length; l++) {
+					links[l] = links[l].replace(/[\[\]]/g, '');
+					if (links[l].charAt(0) === ':') links[l] = links[l].substring(1);
 				}
 				var re = /Target of redirect:\s*\[\[([^\[\]]*)\]\]/i;
 				re.test(afcHelper_RedirectSections[i]);
-				var to = RegExp.$1;
+				var to = $.trim(RegExp.$1);
 				var submission = {
 					type: 'redirect',
 					from: new Array(),
@@ -113,20 +100,46 @@ function afcHelper_redirect_init() {
 			}
 		}
 	}
-	var text = '<h3>Reviewing AFC redirect requests</h3>';
+	var text = '<h3>Reviewing AfC redirect requests</h3>';
 	// now layout the text.
 	var afcHelper_Redirect_empty = 1;
 	for (var k = 0; k < afcHelper_RedirectSubmissions.length; k++) {
+		if (afcHelper_RedirectSubmissions[k].to !== undefined)
+			var submissionname = afcHelper_RedirectSubmissions[k].to.replace(/\s/g,'');
+		else
+			var submissionname = "";
 		text += '<ul>';
 		if (afcHelper_RedirectSubmissions[k].type === 'redirect') {
 			text += '<li>Redirect(s) to ';
+			if (!submissionname) {
+				for (var i = afcHelper_RedirectSubmissions[k].from.length - 1; i >= 0; i--) {
+					needsupdate.push({
+						id: afcHelper_RedirectSubmissions[k].from[i].id,
+						reason: 'notarget'
+					});
+				};
+			} else if (!afcHelper_RedirectSubmissions[k].to) {
+				for (var i = afcHelper_RedirectSubmissions[k].from.length - 1; i >= 0; i--) {
+					needsupdate.push({
+						id: afcHelper_RedirectSubmissions[k].from[i].id,
+						reason: 'notredirect'
+					});
+				};
+			}
 			if (afcHelper_RedirectSubmissions[k] === '' || afcHelper_RedirectSubmissions[k] === ' ') {
 				text += 'Empty submission \#' + afcHelper_Redirect_empty + '<ul>';
 				afcHelper_Redirect_empty++;
-			} else text += '<a href="' + wgArticlePath.replace("$1", encodeURIComponent(afcHelper_RedirectSubmissions[k].to)) + '">' + afcHelper_RedirectSubmissions[k].to + '</a>: <ul>';
+			} else {
+				if (submissionname.length > 0)
+					text += '<a href="' + wgArticlePath.replace("$1", encodeURIComponent(afcHelper_RedirectSubmissions[k].to)) + '">' + afcHelper_RedirectSubmissions[k].to + '</a>: <ul>';
+				else
+					text += '<b>no target given</b>: <ul>';
+			}
 			for (var l = 0; l < afcHelper_RedirectSubmissions[k].from.length; l++) {
 				var from = afcHelper_RedirectSubmissions[k].from[l];
-				text += "<li>From: " + from.title + '<br/><label for="afcHelper_redirect_action_' + from.id + '">Action: </label>' + afcHelper_generateSelect('afcHelper_redirect_action_' + from.id, [{
+				var toarticle = from.title;
+				if (toarticle.replace(/\s*/gi, "").length == 0) toarticle = "<b>no title specified</b>, check the request details";
+				text += "<li>From: " + toarticle + '<br/><label for="afcHelper_redirect_action_' + from.id + '">Action: </label>' + afcHelper_generateSelect('afcHelper_redirect_action_' + from.id, [{
 					label: 'Accept',
 					value: 'accept'
 				}, {
@@ -143,8 +156,8 @@ function afcHelper_redirect_init() {
 			}
 			text += '</ul></li>';
 		} else {
-			text += '<li>Category submission: ' + afcHelper_RedirectSubmissions[k].title;
-			text += '<br/> <label for="afcHelper_redirect_action_' + afcHelper_RedirectSubmissions[k].id + '">Action: </label>' + afcHelper_generateSelect('afcHelper_redirect_action_' + afcHelper_RedirectSubmissions[k].id, [{
+			text += '<li>Category submission: <a href="/wiki/' + afcHelper_RedirectSubmissions[k].title + '" title="' + afcHelper_RedirectSubmissions[k].title + '">' + afcHelper_RedirectSubmissions[k].title + '</a>';
+			text += '<br /><label for="afcHelper_redirect_action_' + afcHelper_RedirectSubmissions[k].id + '">Action: </label>' + afcHelper_generateSelect('afcHelper_redirect_action_' + afcHelper_RedirectSubmissions[k].id, [{
 				label: 'Accept',
 				value: 'accept'
 			}, {
@@ -163,17 +176,22 @@ function afcHelper_redirect_init() {
 	}
 	text += '<input type="button" id="afcHelper_redirect_done_button" name="afcHelper_redirect_done_button" value="Done" onclick="afcHelper_redirect_performActions()" />';
 	displayMessage(text);
+	for (var y = 0; y < needsupdate.length; y++){
+		$('#afcHelper_redirect_action_'+needsupdate[y].id).attr('value', 'decline');
+		afcHelper_redirect_onActionChange(needsupdate[y].id);
+		$('#afcHelper_redirect_decline_'+needsupdate[y].id).attr('value', needsupdate[y].reason);
+	}
 }
 
 function afcHelper_redirect_onActionChange(id) {
 	var extra = $("#afcHelper_redirect_extra_" + id);
 	var selectValue = $("#afcHelper_redirect_action_" + id).val();
-	if (selectValue === 'none') extra.html('');
-	else if (selectValue === 'accept') {
+	extra.html(''); // Blank it first
+	if (selectValue === 'accept') {
 		if (afcHelper_Submissions[id].type === 'redirect') {
 			extra.html(extra.html() + '<label for="afcHelper_redirect_from_' + id + '">From: </label><input type="text" ' + 'name="afcHelper_redirect_from_' + id + '" id="afcHelper_redirect_from_' + id + '" value="' + afcHelper_escapeHtmlChars(afcHelper_Submissions[id].title) + '" />');
-			extra.html(extra.html() + '&nbsp;<label for="afcHelper_redirect_to_' + id + '">To: </label><input type="text" ' + 'name="afcHelper_redirect_to_' + id + '" id="afcHelper_redirect_to_' + id + '" value="' + afcHelper_escapeHtmlChars(afcHelper_Submissions[id].to) + '" />');
-			extra.html(extra.html() + '<label for="afcHelper_redirect_append_' + id + '">Template to append: </label>' + afcHelper_generateSelect('afcHelper_redirect_append_' + id, [{
+			extra.html(extra.html() + '&nbsp;<br /><label for="afcHelper_redirect_to_' + id + '">To: </label><input type="text" ' + 'name="afcHelper_redirect_to_' + id + '" id="afcHelper_redirect_to_' + id + '" value="' + afcHelper_escapeHtmlChars(afcHelper_Submissions[id].to) + '" />');
+			extra.html(extra.html() + '<br /><label for="afcHelper_redirect_append_' + id + '">Template to append: </label>' + afcHelper_generateSelect('afcHelper_redirect_append_' + id, [{
 				label: 'R from alternative name',
 				value: 'R from alternative name'
 			}, {
@@ -200,10 +218,11 @@ function afcHelper_redirect_onActionChange(id) {
 				value: 'none'
 			}]));
 		} else {
-			extra.html('<label for="afcHelper_redirect_name_' + id + '">name: </label><input type="text" ' + 'name="afcHelper_redirect_name_' + id + '" id="afcHelper_redirect_name_' + id + '" value="' + afcHelper_escapeHtmlChars(afcHelper_Submissions[id].title) + '" />');
-			extra.html(extra.html() + '<label for="afcHelper_redirect_parent_' + id + '">Parent category:</label>' + '<input type="text" id="afcHelper_redirect_parent_' + id + '" name="afcHelper_redirect_parent_' + id + '" value="' + afcHelper_escapeHtmlChars(afcHelper_Submissions[id].parent) + '" />');
+			// now Categories
+			extra.html('<label for="afcHelper_redirect_name_' + id + '">Category name: </label><input type="text" size="100" ' + 'name="afcHelper_redirect_name_' + id + '" id="afcHelper_redirect_name_' + id + '" value="' + afcHelper_escapeHtmlChars(afcHelper_Submissions[id].title) + '" />');
+			extra.html(extra.html() + '<br /><label for="afcHelper_redirect_parent_' + id + '">Parent category:</label>' + '<input type="text" size="100" id="afcHelper_redirect_parent_' + id + '" name="afcHelper_redirect_parent_' + id + '" value="' + afcHelper_escapeHtmlChars(afcHelper_Submissions[id].parent) + '" />');
 		}
-		extra.html(extra.html() + '<label for="afcHelper_redirect_comment_' + id + '">Comment:</label>' + '<input type="text" id="afcHelper_redirect_comment_' + id + '" name="afcHelper_redirect_comment_' + id + '"/>');
+		extra.html(extra.html() + '<br /><label for="afcHelper_redirect_comment_' + id + '">Comment:</label>' + '<input type="text" size="100" id="afcHelper_redirect_comment_' + id + '" name="afcHelper_redirect_comment_' + id + '"/>');
 	} else if (selectValue === 'decline') {
 		if (afcHelper_Submissions[id].type === 'redirect') {
 			extra.html('<label for="afcHelper_redirect_decline_' + id + '">Reason for decline: </label>' + afcHelper_generateSelect('afcHelper_redirect_decline_' + id, [{				label: 'Already exists',
@@ -226,6 +245,7 @@ function afcHelper_redirect_onActionChange(id) {
 				value: 'custom'
 			}]));
 		} else {
+			// now Categories
 			extra.html('<label for="afcHelper_redirect_decline_' + id + '">Reason for decline: </label>' + afcHelper_generateSelect('afcHelper_redirect_decline_' + id, [{
 				label: 'Already exists',
 				value: 'exists'
@@ -244,10 +264,12 @@ function afcHelper_redirect_onActionChange(id) {
 				value: 'custom'
 			}]));
 		}
-		extra.html(extra.html() + '<label for="afcHelper_redirect_comment_' + id + '">Comment:</label>' + '<input type="text" id="afcHelper_redirect_comment_' + id + '" name="afcHelper_redirect_comment_' + id + '"/>');
-    } 
+		extra.html(extra.html() + '<br/><label for="afcHelper_redirect_comment_' + id + '">Comment: </label>' + '<input type="text" size="100" id="afcHelper_redirect_comment_' + id + '" name="afcHelper_redirect_comment_' + id + '"/>');
+	} else if (selectValue === 'none'){
+		// for categories and redirects!
+		extra.html('');
 	} else {
-		extra.html(extra.html() + '<label for="afcHelper_redirect_comment_' + id + '">Comment:</label>' + '<input type="text" id="afcHelper_redirect_comment_' + id + '" name="afcHelper_redirect_comment_' + id + '"/>');
+		extra.html(extra.html() + '<label for="afcHelper_redirect_comment_' + id + '">Comment: </label>' + '<input type="text" size="100" id="afcHelper_redirect_comment_' + id + '" name="afcHelper_redirect_comment_' + id + '"/>');
 	}
 }
 
@@ -263,7 +285,7 @@ function afcHelper_redirect_performActions() {
 				afcHelper_Submissions[i].to = $("#afcHelper_redirect_to_" + i).val();
 				afcHelper_Submissions[i].append = $("#afcHelper_redirect_append_" + i).val();
 				if (afcHelper_Submissions[i].append === 'custom') {
-					afcHelper_Submissions[i].append = prompt("Please enter the template to append for " + afcHelper_Submissions[i].title + ". Do not include the curly brackets.");
+					afcHelper_Submissions[i].append = prompt("Please enter the template to append to " + afcHelper_Submissions[i].title + ". Do not include the curly brackets.");
 				}
 				if (afcHelper_Submissions[i].append === 'none' || afcHelper_Submissions[i].append === null) afcHelper_Submissions[i].append = '';
 				else afcHelper_Submissions[i].append = '\{\{' + afcHelper_Submissions[i].append + '\}\}';
@@ -347,9 +369,9 @@ function afcHelper_redirect_performActions() {
 					afcHelper_editPage(talktitle, talktext, 'Placing WPAFC project banner', true);
 					acceptcomment += redirect.title + " &rarr; " + redirect.to;
 					if (redirect.comment !== '') {
-						acceptcomment += ': ' + redirect.comment + '; ';
+						acceptcomment += ': ' + redirect.comment + '. ';
 						hascomment = true;
-					} else acceptcomment += '; ';
+					} else acceptcomment += '. ';
 					acceptcount++;
 				} else if (redirect.action === 'decline') {
 					var reason = afcHelper_redirectDecline_reasonhash[redirect.reason];
@@ -359,10 +381,10 @@ function afcHelper_redirect_performActions() {
 						$('#afcHelper_status').html($('#afcHelper_status').html() + '<li>Skipping ' + redirect.title + ': No decline reason specified.</li>');              
 						continue;
 					}
-					declinecomment += redirect.title + " &rarr; " + redirect.to + ": " + reason + "; ";
+					declinecomment += ((redirect.reason === 'blank' || redirect.reason === 'notredirect') ? reason + ". " : redirect.title + " &rarr; " + redirect.to + ": " + reason + ". ");
 					declinecount++;
 				} else if (redirect.action === 'comment') {
-					othercomment += redirect.title + ": " + redirect.comment + ", ";
+					othercomment += redirect.title + ": " + redirect.comment + ". ";
 					commentcount++;
 				}
 			}
@@ -405,7 +427,11 @@ function afcHelper_redirect_performActions() {
 	}
 
 	afcHelper_editPage(afcHelper_RedirectPageName, pagetext, summary, false);
-	$('afcHelper_finished_main').css("display", '');
+
+	// Display the "Done" text only after all ajax requests are completed
+	$(document).ajaxStop(function () {
+		$("#afcHelper_finished_main").css("display", "");
+	});
 }
 
 // Create portlet link
@@ -413,6 +439,12 @@ var redirectportletLink = mw.util.addPortletLink('p-cactions', '#', 'Review', 'c
 // Bind click handler
 $(redirectportletLink).click(function(e) {
 	e.preventDefault();
+	// clear variables for the case somebody is clicking multiple times on "review"
+	afcHelper_RedirectSubmissions.length = 0;
+	afcHelper_RedirectSections.length = 0;
+	afcHelper_numTotal = 0;
+	afcHelper_Submissions.length = 0;
+	needsupdate.length = 0;
 	afcHelper_redirect_init();
 });
 //</nowiki>

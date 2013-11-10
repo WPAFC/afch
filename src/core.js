@@ -13,17 +13,17 @@ var pagetext = '';
 var usertalkpage = '';
 
 // CSS stylesheet
-importStylesheetURI(mw.config.get('wgServer') + '/w/index.php?action=raw&ctype=text/css&title=MediaWiki:Gadget-afchelper.css');
+mw.loader.load(mw.config.get('wgServer') + '/w/index.php?action=raw&ctype=text/css&title=MediaWiki:Gadget-afchelper.css', 'text/css');
 
 if (wgPageName.indexOf('Wikipedia:Articles_for_creation/Redirects') !== -1) {
-	importScriptURI(afchelper_baseurl + '/redirects.js');
+	mw.loader.load(afchelper_baseurl + '/redirects.js');
 } else if (wgPageName.indexOf('Wikipedia:Files_for_upload') !== -1) {
-	importScriptURI(afchelper_baseurl + '/ffu.js');		
+	mw.loader.load(afchelper_baseurl + '/ffu.js');		
 } else if ((wgPageName.indexOf('Wikipedia:Articles_for_creation/') !== -1)
 			|| (wgPageName.indexOf('Wikipedia_talk:Articles_for_creation/') !== -1)
 			|| (wgPageName.indexOf('User:') !== -1)
 			){
-	importScriptURI(afchelper_baseurl + '/submissions.js');				
+	mw.loader.load(afchelper_baseurl + '/submissions.js');				
 }
 
 // This enables the beta notice for all uses except the official gadget
@@ -127,7 +127,7 @@ function afcHelper_getPageText(title, show, redirectcheck, timestamp) {
 	}		
 	if (show && !redirectcheck)	$('#afcHelper_status').html($('#afcHelper_status').html() + '<li id="afcHelper_get' + jqEsc(title) + '">Got <a href="' + wgArticlePath.replace("$1", encodeURI(title)) + '" title="' + title + '">' + title + '</a></li>');
 	if (!timestamp) return newtext;
-	else return {'pagetext':newtext,'timestamp':response['query']['pages'][pageid]['revisions'][0]['timestamp']}
+	else return {'pagetext':newtext,'timestamp':response['query']['pages'][pageid]['revisions'][0]['timestamp']};
 }
 
 function afcHelper_deletePage(title,reason) {
@@ -139,13 +139,13 @@ function afcHelper_deletePage(title,reason) {
 
 	// Then get the deletion token
 	var tokenrequest = {
-				'action': 'query',
-				'prop': 'info',
-				'format': 'json',
-				'intoken': 'delete',
-				'indexpageids': true,
-				'titles': title
-			};
+		'action': 'query',
+		'prop': 'info',
+		'format': 'json',
+		'intoken': 'delete',
+		'indexpageids': true,
+		'titles': title
+	};
 	var tokenresponse = JSON.parse(
 		$.ajax({
 			url: mw.util.wikiScript('api'),
@@ -180,7 +180,8 @@ function afcHelper_deletePage(title,reason) {
 		$('#afcHelper_delete' + jqEsc(title)).html('Deleted <a href="' + wgArticlePath.replace("$1", encodeURI(title)) + '" title="' + title + '">' + title + '</a>');
 		return true;
 	} else {
-		$('#afcHelper_delete' + jqEsc(title)).html('<div style="color:red"><b>Deletion failed on <a href="' + wgArticlePath.replace("$1", encodeURI(title)) + '" title="' + title + '">' + title + '</a></b></div>. Error info:' + error);
+		$('#afcHelper_delete' + jqEsc(title)).html('<div style="color:red"><b>Deletion failed on <a href="' + wgArticlePath.replace("$1", encodeURI(title)) + '" title="' + title + '">' + title + '</a></b></div>. Error info: ' + JSON.stringify(delresponse));
+		window.console && console.error('Deletion failed on %s (%s). Error info: %s', wgArticlePath.replace("$1", encodeURI(title)), title, JSON.stringify(delresponse));
 		return false;
 	}
 }
@@ -198,7 +199,7 @@ function afcHelper_editPage(title, newtext, summary, createonly, nopatrol) {
 				'text': newtext,
 				'summary': summary,
 				'token': edittoken
-			}
+		};
 	if (createonly) request.createonly = true;
 
 	var api = new mw.Api();
@@ -207,14 +208,15 @@ function afcHelper_editPage(title, newtext, summary, createonly, nopatrol) {
 				if ( data && data.edit && data.edit.result && data.edit.result == 'Success' ) {
 					$('#afcHelper_edit' + jqEsc(title)).html('Saved <a href="' + wgArticlePath.replace("$1", encodeURI(title)) + '" title="' + title + '">' + title + '</a>');
 				} else {
-					$('#afcHelper_edit' + jqEsc(title)).html('<span class="notice><b>Edit failed on <a href="' + wgArticlePath.replace("$1", encodeURI(title)) + '" title="' + title + '">' + title + '</a></b></span>. Error info:' + data['error']['code'] + ': ' + data['error']['info']);
+					$('#afcHelper_edit' + jqEsc(title)).html('<span class="afcHelper_notice"><b>Edit failed on <a href="' + wgArticlePath.replace("$1", encodeURI(title)) + '" title="' + title + '">' + title + '</a></b></span>. Error info: ' + JSON.stringify(data));
+					window.console && console.error('Edit failed on %s (%s). Error info: %s', wgArticlePath.replace("$1", encodeURI(title)), title, JSON.stringify(data));
 				}
 			} )
 			.fail( function ( error ) {
 				if (createonly && error == "articleexists")
-					$('#afcHelper_edit' + jqEsc(title)).html('<span class="notice><b>Edit failed on <a href="' + wgArticlePath.replace("$1", encodeURI(title)) + '" title="' + title + '">' + title + '</a></b></span>. Error info: The article already exists!');
+					$('#afcHelper_edit' + jqEsc(title)).html('<span class="afcHelper_notice"><b>Edit failed on <a href="' + wgArticlePath.replace("$1", encodeURI(title)) + '" title="' + title + '">' + title + '</a></b></span>. Error info: The article already exists!');
 				else
-					$('#afcHelper_edit' + jqEsc(title)).html('<span class="notice><b>Edit failed on <a href="' + wgArticlePath.replace("$1", encodeURI(title)) + '" title="' + title + '">' + title + '</a></b></span>. Error info: ' + error); 
+					$('#afcHelper_edit' + jqEsc(title)).html('<span class="afcHelper_notice"><b>Edit failed on <a href="' + wgArticlePath.replace("$1", encodeURI(title)) + '" title="' + title + '">' + title + '</a></b></span>. Error info: ' + error); 
 			})
 			.always( function () {
 				$("#afcHelper_AJAX_finished_" + func_id).css("display", '');
@@ -234,21 +236,36 @@ function afcHelper_editPage(title, newtext, summary, createonly, nopatrol) {
 							'format': 'json',
 							'token': mw.user.tokens.get('patrolToken'),
 							'rcid': rcid
-						}
+					};
 				api.post(patrolrequest)
 						.done(function ( data ) {
 							if ( data ) {
 								$('#afcHelper_patrol' + jqEsc(title)).html('Marked <a href="' + wgArticlePath.replace("$1", encodeURI(title)) + '" title="' + title + '">' + title + '</a> as patrolled');
 							} else {
-								$('#afcHelper_patrol' + jqEsc(title)).html('<span class="notice><b>Patrolling failed on <a href="' + wgArticlePath.replace("$1", encodeURI(title)) + '" title="' + title + '">' + title + '</a></b></span>. Error info:' + data['error']['code'] + ': ' + data['error']['info']);
+								$('#afcHelper_patrol' + jqEsc(title)).html('<span class="afcHelper_notice"><b>Patrolling failed on <a href="' + wgArticlePath.replace("$1", encodeURI(title)) + '" title="' + title + '">' + title + '</a></b></span> with an unknown error');
+								window.console && console.error('Patrolling failed on %s (%s) with an unknown error.', wgArticlePath.replace("$1", encodeURI(title)), title);
 							}
 						} )
 						.fail( function ( error ) {
-							$('#afcHelper_patrol' + jqEsc(title)).html('<span class="notice><b>Patrolling failed on <a href="' + wgArticlePath.replace("$1", encodeURI(title)) + '" title="' + title + '">' + title + '</a></b></span>. Error info: ' + error); 
+							$('#afcHelper_patrol' + jqEsc(title)).html('<span class="afcHelper_notice"><b>Patrolling failed on <a href="' + wgArticlePath.replace("$1", encodeURI(title)) + '" title="' + title + '">' + title + '</a></b></span>. Error info: ' + error); 
 						});
 			}				
 		}
-
 	}
-}	
+}
+
+function afcHelper_cleanuplinks(text) {
+	// Convert external links to Wikipedia articles to proper wikilinks
+	var wikilink_re = /(\[){1,2}(?:https?:)?\/\/(en.wikipedia.org\/wiki|enwp.org)\/([^\s\|\]\[]+)(\s|\|)?((?:\[\[[^\[\]]*\]\]|[^\]\[])*)(\]){1,2}/gi;
+	var temptext = text;
+	var match;
+	while (match = wikilink_re.exec(temptext)) {
+		var pagename = decodeURI(match[3].replace(/_/g,' '));
+		var displayname = decodeURI(match[5].replace(/_/g,' '));
+		if (pagename === displayname) displayname = '';
+		var replacetext = '[[' + pagename + ((displayname) ? '|' + displayname : '') + ']]';
+		pagetext = pagetext.replace(match[0],replacetext);
+	}
+	return text;
+}
 //</nowiki>
