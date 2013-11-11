@@ -19,6 +19,7 @@ var not_draft_afc_re = /\{\{\s*afc submission\s*\|\s*[^t](?:\{\{[^\{\}]*\}\}|[^\
 var submissiontemplate_re = /(\{\{\s*afc submission\s*\|\s*([||t|r|d])(?:\{\{[^\{\}]*\}\}|[^\}\{])*)(\|\s*ts\s*=\s*([0-9]{14})|\{\{subst:LOCALTIMESTAMP\}\}|\{\{REVISIONTIMESTAMP\}\})((?:\{\{[^\{\}]*\}\}|[^\}\{]))*\}\}/i;
 var exclusive_pending_afc_re = /(\{\{\s*afc submission\s*\|)(\s*[|]\s*)*((?:\{\{[^\{\}]*\}\}|[^\}\{])*\}\})/i;
 var afcHelper_pageStatuses = new Array(); // List of all statuses on the page (e.g., ['r','d'])
+var afcHelper_submitTimestamp = 0;
 var afcHelper_cache = {};
 var afcHelper_longcomments = {};
 var afcHelper_reasonhash = [{
@@ -1350,11 +1351,13 @@ function afcHelper_cleanup(text,type) {
 		text = temptemplate + "\n" + text;
 	}
 
-	// Save the statuses to a global variable
 	$.each(submissiontemplates, function(index, data) {
+		// Save the statuses to a global variable
 		var status = data.status;
 		if (status === "|") status = "";
 		afcHelper_pageStatuses.push(status.toLowerCase());
+		// And while we're at it update the timestamp of the submission
+		if (data.timestamp > afcHelper_submitTimestamp) afcHelper_submitTimestamp = data.timestamp;
 	});
 	if (afcHelper_pageStatuses.length === 0) afcHelper_pageStatuses = false;
 
@@ -1510,10 +1513,11 @@ function afcHelper_displaymessagehelper(type,detail) {
 	// type == "status" for messages that should be displayed as they occur
 	if (type === "done") {
 		if (detail === "standard") {
-			$('#afcHelper_finish').html($('#afcHelper_finish').html() + '<span id="afcHelper_finished_wrapper"><span id="afcHelper_finished_main" style="display:none"><li id="afcHelper_done"><b>Done (<a href="' + wgArticlePath.replace("$1", encodeURI(afcHelper_PageName)) + '?action=purge" title="' + afcHelper_PageName + '">Reload page</a>)</b></li></span></span>');
+			$('#afcHelper_finish').html($('#afcHelper_finish').html() + '<span id="afcHelper_finished_wrapper"><span id="afcHelper_finished_main" style="display:none"><li id="afcHelper_done"><b>Done (<a href="' + wgArticlePath.replace("$1", encodeURI(afcHelper_PageName)) + '?action=purge" title="' + afcHelper_PageName + '">Reload page</a>)</b></li><span id="afcHelper_nextPage"></span></span></span>');
 		} else if (detail === "cleanednochange") {
-			$('#afcHelper_finish').html($('#afcHelper_finish').html() + '<span id="afcHelper_finished_wrapper"><span id="afcHelper_finished_main"><span id="afcHelper_done"><li id="afcHelper_done"><b>This submission is already cleaned. Nothing changed. (<a href="' + wgArticlePath.replace("$1", encodeURI(afcHelper_PageName)) + '?action=purge" title="' + afcHelper_PageName + '">Reload page</a>)</b></li></span></span>');
+			$('#afcHelper_finish').html($('#afcHelper_finish').html() + '<span id="afcHelper_finished_wrapper"><span id="afcHelper_finished_main"><span id="afcHelper_done"><li id="afcHelper_done"><b>This submission is already cleaned. Nothing changed. (<a href="' + wgArticlePath.replace("$1", encodeURI(afcHelper_PageName)) + '?action=purge" title="' + afcHelper_PageName + '">Reload page</a>)</b></li><span id="afcHelper_nextPage"></span></span></span>');
 		}
+		afcHelper_getNextPage();
 	} else if (type === "status") {
 		if (detail === "orphan") {
 			$('#afcHelper_status').html($('#afcHelper_status').html() + '<li id="afcHelper_orphan">Checking if article is an orphan...</li>');
@@ -1714,6 +1718,33 @@ function afcHelper_checkTarget() {
 			$('#afcHelper_prompt_button').removeAttr('disabled');
 			$('#afcHelper_prompt_button').text('Accept and publish to mainspace');
 			result.html('<img src="https://upload.wikimedia.org/wikipedia/en/thumb/e/e0/Symbol_question.svg/17px-Symbol_question.svg.png" alt=" [?]"> unable to check title availability');
+		}
+	});
+}
+
+function afcHelper_getNextPage(older) {
+	// By default, get the next *newer* pending submission. To change this, set `older` to true.
+	var request = {
+		'action': 'query',
+		'list': 'categorymembers',
+		'format': 'json',
+		'cmtitle': 'Category:Pending AfC submissions',
+		'cmnamespace': 5,
+		'cmtype': 'page',
+		'cmlimit': 1,
+		'cmsort': 'sortkey',
+		'cmdir': (older ? 'desc' : 'asc'),
+		'cmstartsortkey': 'P' + (older ? parseInt(afcHelper_submitTimestamp/100) : parseInt(afcHelper_submitTimestamp/100) + 1)
+	};
+	$.ajax({
+		url: mw.util.wikiScript('api'),
+		data: request,
+		success: function (response) {
+			if (response && response.query && response.query.categorymembers) {
+				$('#afcHelper_nextPage').html('<li><b><a href="' + wgArticlePath.replace("$1", encodeURI(response.query.categorymembers[0].title)) + '" title="' + response.query.categorymembers[0].title + '"> Continue to next submission, ' + response.query.categorymembers[0].title + ' &raquo;</a></b></li>');
+			} else {
+				return false // Just die.
+			}
 		}
 	});
 }
