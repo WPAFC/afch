@@ -1741,7 +1741,7 @@ function afcHelper_getNextPage(older) {
 		data: request,
 		success: function (response) {
 			if (response && response.query && response.query.categorymembers) {
-				$('#afcHelper_nextPage').html('<li><b><a href="' + wgArticlePath.replace("$1", encodeURI(response.query.categorymembers[0].title)) + '" title="' + response.query.categorymembers[0].substring(37) + '"> Continue to next submission (' + response.query.categorymembers[0].title + ') &raquo;</a></b></li>');
+				$('#afcHelper_nextPage').html('<li><b><a href="' + wgArticlePath.replace("$1", encodeURI(response.query.categorymembers[0].title)) + '" title="' + response.query.categorymembers[0].title + '"> Continue to next submission (' + response.query.categorymembers[0].title.substring(37) + ') &raquo;</a></b></li>');
 			} else {
 				return false // Just die.
 			}
