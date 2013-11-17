@@ -12,7 +12,6 @@ var afcHelper_defaultPreferences = {
 	'summary': '([[WP:AFCH|AFCH]])',
 	'afc_logCSD': true,
 	'afc_customDeclineRationales': [],
-	'afc_customAcceptRationales': [],
 	'dosomething': true
 }
 
@@ -38,11 +37,6 @@ function afcHelper_assemblePrefSetter() {
 					'id':'afc_logCSD',
 					'type':'checkbox',
 					'prompt':'Should we automatically log CSD nominations to User:' + mw.config.get('wgUserName') + '/CSD log?'
-				},
-				{
-					'id':'afc_customAcceptRationales',
-					'type':'userlist',
-					'prompt':'Enter custom accept rationales that will appear when reviewing AFC submissions.'
 				},
 				{
 					'id':'afc_customDeclineRationales',
