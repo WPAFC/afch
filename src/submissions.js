@@ -329,7 +329,7 @@ function afcHelper_prompt(type) {
 		'<br /><label for="afcHelper_dateofdeath">Month and day of death (if known/given, e.g. <i>September 3</i>): </label><input type="text" id="afcHelper_dateofdeath" spellcheck="true"/>' +
 		'<br /><label for="afcHelper_yearofdeath">Year of death (if known/given): </label><input type="text" id="afcHelper_yearofdeath" />' +
 		'</div></div><div id="afcHelper_extra_inline"></div>' +
-		'<button class="afcHelper_button accept" type="button" id="afcHelper_prompt_button" onclick="afcHelper_act(\'accept\')">Accept and publish to mainspace</button>';
+		'<button class="afcHelper_button accept" type="button" id="afcHelper_prompt_button" onclick="afcHelper_act(\'accept\')">Accept and publish</button>';
 		$("#afcHelper_extra").html(text);
 		// Expand textareas on click so they don't take up space, and then...
 		$('textarea.afcHelper_expand').focus(function () {
@@ -1697,7 +1697,7 @@ function afcHelper_checkTarget() {
 		data: request,
 		success: function (response) {
 			$('#afcHelper_prompt_button').removeAttr('disabled');
-			$('#afcHelper_prompt_button').text('Accept and publish to mainspace');
+			$('#afcHelper_prompt_button').text('Accept and publish');
 			if (response.query) {
 				var pageid = response.query.pageids[0];
 				if (response['query']['pageids'][0] == -1)
@@ -1716,7 +1716,7 @@ function afcHelper_checkTarget() {
 		},
 		fail: function() {
 			$('#afcHelper_prompt_button').removeAttr('disabled');
-			$('#afcHelper_prompt_button').text('Accept and publish to mainspace');
+			$('#afcHelper_prompt_button').text('Accept and publish');
 			result.html('<img src="https://upload.wikimedia.org/wikipedia/en/thumb/e/e0/Symbol_question.svg/17px-Symbol_question.svg.png" alt=" [?]"> unable to check title availability');
 		}
 	});
