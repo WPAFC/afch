@@ -737,12 +737,14 @@ function afcHelper_act(action) {
 		for (i = 0; i < (afcHelper_reasonhash.length + 1); i++) {
 			if ((typeof(afcHelper_reasonhash[i]) !== 'undefined') && (afcHelper_reasonhash[i].value === code)) {
 				var reasontext = afcHelper_reasonhash[i].reason;
-			} else {
-				// For custom rationales
-				var customreason = code;
-				code = 'reason';
 			}
 		}
+		if (!reasontext) {
+			// For custom rationales
+			var customreason = code;
+			code = 'reason';
+		}
+
 		if (!customreason) var customreason = $("#afcHelper_comments").val();
 		var append = false;
 		var keep = false;
