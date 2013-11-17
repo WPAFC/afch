@@ -10,8 +10,10 @@
 
 var afcHelper_defaultPreferences = {
 	'summary': '([[WP:AFCH|AFCH]])',
-	'csdlog': true,
-	'dosomething': false
+	'afc_logCSD': true,
+	'afc_customDeclineRationales': [],
+	'afc_customAcceptRationales': [],
+	'dosomething': true
 }
 
 function afcHelper_assemblePrefSetter() {
@@ -24,7 +26,7 @@ function afcHelper_assemblePrefSetter() {
 				{
 					'id':'summary',
 					'type':'text',
-					'prompt':'Edit summary ad'
+					'prompt':'What text should be appended to the edit summary when using the helper script?'
 				}
 			]
 		},{
@@ -33,12 +35,22 @@ function afcHelper_assemblePrefSetter() {
 			'title':'Articles for creation',
 			'preferences': [
 				{
-					'id':'csdlog',
+					'id':'afc_logCSD',
 					'type':'checkbox',
-					'prompt':'Log CSD nominations'
+					'prompt':'Should we automatically log CSD nominations to User:' + mw.config.get('wgUserName') + '/CSD log?'
+				},
+				{
+					'id':'afc_customAcceptRationales',
+					'type':'userlist',
+					'prompt':'Enter custom accept rationales that will appear when reviewing AFC submissions.'
+				},
+				{
+					'id':'afc_customDeclineRationales',
+					'type':'userlist',
+					'prompt':'Enter custom decline rationales that will appear when reviewing AFC submissions.'
 				}
 			]
-		},{
+		}/*,{
 			'type':'category',
 			'id':'ffu',
 			'title':'Files for upload',
@@ -49,7 +61,7 @@ function afcHelper_assemblePrefSetter() {
 					'prompt':'Should we do something?'
 				}
 			]
-		}
+		}*/
 	];
 
 	$('#afcHelper_prefs').html('<div id="afcHelper_prefheader"><a href="//en.wikipedia.org/wiki/Wikipedia:AFCH">Articles for creation helper script</a> preferences manager<div id="afcHelper_prefstatus"></div></div><div id="afcHelper_prefsetter"></div>')
@@ -66,24 +78,49 @@ function afcHelper_assemblePrefSetter() {
 		for (var g = 0; g < prefs.length; g++) {
 			var pref = prefs[g];
 			var preftype = pref.type;
-			var input_code = $('<input>')
-				.attr('id',pref.id)
-				.attr('type',preftype)
-				.attr('class','afcHelper_pref')
 
-			switch (preftype) {
-				case 'checkbox':
-					if (afcHelper_preferences[pref.id] == true) input_code.attr('checked', 'checked');
-					break;
-				default:
-					input_code.attr('value',afcHelper_preferences[pref.id]);
-					break;
+			if (preftype === 'userlist') {
+				var current_vals = afcHelper_preferences[pref.id];
+				if (current_vals.length === 0) current_vals.push('Enter text here');
+
+				var maintable = $('<table>')
+					.attr('id',pref.id)
+					.attr('type','userlist')
+					.attr('style','width:80%; margin-left:2em;')
+					.attr('class','afcHelper_pref wikitable');
+
+				$.each(current_vals, function(index,value) { maintable.append(afcHelper_makeRowWithInput(value,pref.id)); });
+
+				var buttonrow = $('<tr>')
+					.attr('class','afcHelper_addbutton');
+				var button = $('<button>Add additional row</button>')
+					.attr('onclick',"afcHelper_makeRowWithInput('Enter text here','" + pref.id + "')");
+				buttonrow.append($('<td>').append(button));
+
+				maintable.append(buttonrow);
+
+				var pref_div = $('<div>')
+					.html('<label for="'+pref.id+'">'+pref.prompt+'</label>')
+					.append(maintable);
+				category_div.append($('<li>').append(pref_div));
+			} else {
+				var input_code = $('<input>')
+					.attr('id',pref.id)
+					.attr('type',preftype)
+					.attr('class','afcHelper_pref');
+				switch (preftype) {
+					case 'checkbox':
+						if (afcHelper_preferences[pref.id] == true) input_code.attr('checked', 'checked');
+						break;
+					default:
+						input_code.attr('value',afcHelper_preferences[pref.id]);
+						break;
+				}
+				var pref_div = $('<div>')
+					.html('<label for="'+pref.id+'">'+pref.prompt+'</label>')
+					.append(input_code);
+				category_div.append($('<li>').append(pref_div));
 			}
-
-			var pref_div = $('<div>')
-				.html('<label for="'+pref.id+'">'+pref.prompt+'</label>')
-				.append(input_code);
-			category_div.append(pref_div);
 		};
 		// And finally add this category to the list
 		$('#afcHelper_prefsetter').append(category_div);
@@ -104,6 +141,16 @@ function afcHelper_savePrefs() {
 		switch (jqpref.attr('type')) {
 			case 'checkbox':
 				var value = ((jqpref.attr("checked") != undefined) ? true : false);
+				break;
+			case 'userlist':
+				console.log('its a userlist');
+				console.log(jqpref.find('input[type=text]'));
+				console.log(jqpref);
+				var value = [];
+				jqpref.find('input[type=text]').each(function(index,val) {
+					jqval = $(val);
+					if (jqval.val() !== "Enter text here") value.push($.trim(jqval.val()));
+				});
 				break;
 			default:
 				var value = $.trim(jqpref.val());
@@ -145,6 +192,23 @@ function afcHelper_savePrefsApi(prefs,verb) {
 			.fail(function(error) {
 				$('#afcHelper_prefstatus').html('<span class="afcHelper_notice"><b>Could not save preferences!</b></span> Error info: could not get save token (' + error + ')'); 
 			});
+}
+
+function afcHelper_makeRowWithInput(value,tableid) {
+	var maintable = $('#'+tableid);
+	var row = $('<tr>');
+	var input = $('<input>')
+		.attr('type','text')
+		.attr('style','width:89%; float:left;')
+		.attr('value',value);
+	var deletebutton = $('<a>')
+		.attr('class','afchelper_deleterow')
+		.attr('style','width:10%; float:right;')
+		.attr('onclick','$(this).parent().remove();')
+		.text('[remove]');
+	row.append($('<td>').append(input,deletebutton));
+	maintable.find('.afcHelper_addbutton').before(row);
+	return row;
 }
 
 function afcHelper_getUserPrefs(defaultprefs) {
