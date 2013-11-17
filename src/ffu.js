@@ -132,7 +132,7 @@ function afcHelper_ffu_init() {
 						value: 'none'
 					}];
 				}
-				if (/flickr.com/gi.test(from.title)) text += ' (<a href="http:// toolserver.org/~bryan/flickr/upload?username=' + wgUserName + '&link=' + from.title + '" target="_blank"><b>launch Flickuploadbot</b></a> in a new window)';
+				if (/flickr.com/gi.test(from.title)) text += ' (<a href="http://toolserver.org/~bryan/flickr/upload?username=' + wgUserName + '&link=' + from.title + '" target="_blank"><b>launch Flickuploadbot</b></a> in a new window)';
 				text += '<br/><label for="afcHelper_ffu_action_' + from.id + '">Action: </label>' + afcHelper_generateSelect('afcHelper_ffu_action_' + from.id, selectoptions, 'afcHelper_ffu_onActionChange(' + from.id + ')') + '<div id="afcHelper_ffu_extra_' + from.id + '"></div></li>';
 			}
 			text += '</ul></li>';
@@ -259,21 +259,21 @@ function afcHelper_ffu_performActions() {
 			afcHelper_Submissions[i].action = action;
 			if (action == 'none') continue;
 			if (action == 'accept') {
-				afcHelper_Submissions[i].to = $("#afcHelper_ffu_to_" + i).val();
+				afcHelper_Submissions[i].to = $.trim($("#afcHelper_ffu_to_" + i).val());
 				afcHelper_Submissions[i].talkpage = $("#afcHelper_ffu_filetalkpage_" + i).attr("checked") == 'checked';
-				afcHelper_Submissions[i].append = $("#afcHelper_ffu_append_" + i).val();
-				afcHelper_Submissions[i].recent = $("#afcHelper_ffu_recent_" + i).attr("checked");
-				afcHelper_Submissions[i].recenttext = $("#afcHelper_ffu_recenttext_" + i).val();
+				afcHelper_Submissions[i].append = $.trim($("#afcHelper_ffu_append_" + i).val());
+				afcHelper_Submissions[i].recent = $("#afcHelper_ffu_recent_" + i).attr("checked") == 'checked';
+				afcHelper_Submissions[i].recenttext = $.trim($("#afcHelper_ffu_recenttext_" + i).val());
 			} else if (action == 'decline') {
-				afcHelper_Submissions[i].reason = $('#afcHelper_ffu_decline_' + i).val();
+				afcHelper_Submissions[i].reason = $.trim($('#afcHelper_ffu_decline_' + i).val());
 			} else if (action == 'hold') {
-				afcHelper_Submissions[i].holdrat = $('#afcHelper_ffu_hold_' + i).val();
+				afcHelper_Submissions[i].holdrat = $.trim($('#afcHelper_ffu_hold_' + i).val());
 			} else if (action == 'comment') {
-				afcHelper_Submissions[i].prefmtcomment = $("#afcHelper_ffu_prefmtcomment_" + i).val();
+				afcHelper_Submissions[i].prefmtcomment = $.trim($("#afcHelper_ffu_prefmtcomment_" + i).val());
 			}
-			afcHelper_Submissions[i].addtl = $('#afcHelper_title_' + i).val();
-			afcHelper_Submissions[i].addloc = $('#afcHelper_location_' + i).val();
-			afcHelper_Submissions[i].comment = $("#afcHelper_ffu_comment_" + i).val();
+			afcHelper_Submissions[i].addtl = $.trim($('#afcHelper_title_' + i).val());
+			afcHelper_Submissions[i].addloc = $.trim($('#afcHelper_location_' + i).val());
+			afcHelper_Submissions[i].comment = $.trim($("#afcHelper_ffu_comment_" + i).val());
 			afcHelper_Submissions[i].notify = $("#afcHelper_ffu_notify_" + i).attr("checked") == 'checked';
 		}
 	}
@@ -331,12 +331,12 @@ function afcHelper_ffu_performActions() {
 					var header = text.match(/==[^=]*==/)[0];
 					text = header + "\n\{\{subst:ffu a\}\}\n" + text.substring(header.length);
 					if (sub_m.to === '') text += '\n*\{\{subst:ffu|a\}\} \~\~\~\~\n';
-					else text += '\n*\{\{subst:ffu|file=' + sub_m.to + '\}\} \~\~\~\~\n';
+					else text += '\n*\{\{subst:ffu|file=' + sub_m.to + '\}\}' + (sub_m.comment ? ' ' + $.trim(sub_m.comment) : '') + ' \~\~\~\~\n';
 					text += '\{\{subst:ffu b\}\}\n';
 					totalaccept++;
 					// update [[Wikipedia:Files for upload/recent]]
 					if (sub_m.recent == true) {
-						recentpagetext = afcHelper_getPageText('Wikipedia:Files_for_upload/recent', true);
+						recentpagetext = afcHelper_getPageText('Wikipedia:Files for upload/recent', true);
 						var newentry = "\| File:" + sub_m.to + " | " + (typeof sub_m.recenttext !== "undefined" ? sub_m.recenttext : "") + "\n";
 						var lastentry = recentpagetext.toLowerCase().lastIndexOf("| file:");
 						var firstentry = recentpagetext.toLowerCase().indexOf("| file:");
@@ -442,8 +442,8 @@ function add_review_links() {
 			offset = offset - 1;
 		}
 	});
-	$("#bodyContent [sectionIndex]").click((function() {
-		$("#bodyContent [sectionIndex]").each(function(i) {
+	$('body [sectionIndex]').click((function() {
+		$('body [sectionIndex]').each(function(i) {
 			$(this).html("Reviewing requests...");
 		});
 		afcHelper_ffu_init();
