@@ -178,17 +178,29 @@ var afcHelper_reasonhash = [{
 	label: 'OTHER',
 	value: 'Other',
 	disabled: true
-}, {
+}];
+
+for (var i = afcHelper_preferences.afc_customDeclineRationales.length - 1; i >= 0; i--) {
+	afcHelper_reasonhash.push({
+		label: afcHelper_preferences.afc_customDeclineRationales[i],
+		value: afcHelper_preferences.afc_customDeclineRationales[i],
+		reason: ''
+	});
+};
+
+afcHelper_reasonhash.push({
 	label: 'custom - Enter a decline reason in the box below, linking to relevant policies',
 	value: 'reason',
 	reason: ''
-}, {
+});
+
+afcHelper_reasonhash.push({
 	label: 'Select a reason for declining',
 	selected: true,
 	value: 'reason',
 	disabled: true,
 	reason: ''
-}];
+});
 
 function afcHelper_init() {
 	displayMessage('<div id="afcHelper_loadingmsg">Loading the Article for creation helper script...</div>');
@@ -723,9 +735,15 @@ function afcHelper_act(action) {
 	} else if (action === 'decline') {
 		var code = $("#afcHelper_reason").val();
 		for (i = 0; i < (afcHelper_reasonhash.length + 1); i++) {
-			if ((typeof(afcHelper_reasonhash[i]) !== 'undefined') && (afcHelper_reasonhash[i].value === code)) var reasontext = afcHelper_reasonhash[i].reason;
+			if ((typeof(afcHelper_reasonhash[i]) !== 'undefined') && (afcHelper_reasonhash[i].value === code)) {
+				var reasontext = afcHelper_reasonhash[i].reason;
+			} else {
+				// For custom rationales
+				var customreason = code;
+				code = 'reason';
+			}
 		}
-		var customreason = $("#afcHelper_comments").val();
+		if (!customreason) var customreason = $("#afcHelper_comments").val();
 		var append = false;
 		var keep = false;
 		var blank = $("#afcHelper_blank").attr("checked");
