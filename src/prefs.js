@@ -137,9 +137,6 @@ function afcHelper_savePrefs() {
 				var value = ((jqpref.attr("checked") != undefined) ? true : false);
 				break;
 			case 'userlist':
-				console.log('its a userlist');
-				console.log(jqpref.find('input[type=text]'));
-				console.log(jqpref);
 				var value = [];
 				jqpref.find('input[type=text]').each(function(index,val) {
 					jqval = $(val);
