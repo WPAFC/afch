@@ -257,15 +257,15 @@ function afcHelper_editPage(title, newtext, summary, createonly, nopatrol) {
 function afcHelper_cleanuplinks(text) {
 	// Convert external links to Wikipedia articles to proper wikilinks
 	var wikilink_re = /(\[){1,2}(?:https?:)?\/\/(en.wikipedia.org\/wiki|enwp.org)\/([^\s\|\]\[]+)(\s|\|)?((?:\[\[[^\[\]]*\]\]|[^\]\[])*)(\]){1,2}/gi;
-	var temptext = text;
+	var newtext = text;
 	var match;
-	while (match = wikilink_re.exec(temptext)) {
+	while (match = wikilink_re.exec(text)) {
 		var pagename = decodeURI(match[3].replace(/_/g,' '));
 		var displayname = decodeURI(match[5].replace(/_/g,' '));
 		if (pagename === displayname) displayname = '';
-		var replacetext = '[[' + pagename + ((displayname) ? '|' + displayname : '') + ']]';
-		pagetext = pagetext.replace(match[0],replacetext);
+		var replacetext = '[[' + pagename + (displayname ? '|' + displayname : '') + ']]';
+		newtext = newtext.replace(match[0],replacetext);
 	}
-	return text;
+	return newtext;
 }
 //</nowiki>
