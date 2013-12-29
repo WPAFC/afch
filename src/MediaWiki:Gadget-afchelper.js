@@ -6,7 +6,7 @@
 ////////////////////////////////////////////
 //<nowiki>
 if ((wgPageName.indexOf('Wikipedia:Articles_for_creation') !== -1) || (wgPageName.indexOf('Wikipedia_talk:Articles_for_creation') !== -1) || (wgPageName.indexOf('Wikipedia:Files_for_upload') !== -1) || (wgPageName.indexOf('User:') !== -1) || (wgPageName.indexOf('Draft:') !== -1)) {
-	var afchelper_baseurl = mw.config.get('wgServer') + '/w/index.php?action=raw&ctype=text/javascript&title=MediaWiki:Gadget-afchelper.js';
+	var afchelper_baseurl = mw.config.get('wgServer') + mw.config.get('wgScript') + '?action=raw&ctype=text/javascript&title=MediaWiki:Gadget-afchelper.js';
 	importScriptURI(afchelper_baseurl + '/core.js');
 }
 //</nowiki>
