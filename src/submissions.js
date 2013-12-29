@@ -1578,6 +1578,9 @@ function afcHelper_logcsd(title,reason,usersnotified) {
 }
 
 function afcHelper_g13_eligible(title) {
+	// Wikipedia and Wikipedia_talk namespaces only
+	if ( $.inArray( new mw.Title(title).getNamespaceId(), [4, 5] ) === -1 ) return false;
+	// Must be >6 months old
 	var timeNow = new Date();
 	var timeNowMonth = timeNow.getMonth();
 	var sixMonthsAgo = new Date();
