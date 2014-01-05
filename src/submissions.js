@@ -1581,6 +1581,12 @@ function afcHelper_g13_eligible(title) {
 	// Wikipedia and Wikipedia_talk namespaces only
 	// Adding Namespaces 2/3 (User/Talk) and 118/119 (Draft/Talk) to the list of appropriate places to check in
 	if ( $.inArray( new mw.Title(title).getNamespaceId(), [2, 3, 4, 5, 118, 119] ) === -1 ) return false;
+  // Check to see if there's at least 1 submission template on the page.
+  page_text = afcHelper_getPageText(title)
+  // We found no submission templates, short circuit out
+  if null = page_text.match(submissiontemplate_re){
+    return false
+  }
 	// Must be >6 months old
 	var timeNow = new Date();
 	var timeNowMonth = timeNow.getMonth();
