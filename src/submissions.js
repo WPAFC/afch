@@ -1579,7 +1579,8 @@ function afcHelper_logcsd(title,reason,usersnotified) {
 
 function afcHelper_g13_eligible(title) {
 	// Wikipedia and Wikipedia_talk namespaces only
-	if ( $.inArray( new mw.Title(title).getNamespaceId(), [4, 5] ) === -1 ) return false;
+	// Adding Namespaces 2/3 (User/Talk) and 118/119 (Draft/Talk) to the list of appropriate places to check in
+	if ( $.inArray( new mw.Title(title).getNamespaceId(), [2, 3, 4, 5, 118, 119] ) === -1 ) return false;
 	// Must be >6 months old
 	var timeNow = new Date();
 	var timeNowMonth = timeNow.getMonth();
