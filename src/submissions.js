@@ -1584,7 +1584,7 @@ function afcHelper_g13_eligible(title) {
   // Check to see if there's at least 1 submission template on the page.
   page_text = afcHelper_getPageText(title)
   // We found no submission templates, short circuit out
-  if null == page_text.match(submissiontemplate_re){
+  if (null == page_text.match(submissiontemplate_re)){
     return false
   }
 	// Must be >6 months old
