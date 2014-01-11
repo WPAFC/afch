@@ -1191,7 +1191,7 @@ function afcHelper_cleanup(text,type) {
 	text = text.replace(/(?:<\s*references\s*>([\S\s]*)<\/references>|<\s*references\s*\/\s*>)/gi, "\n{{reflist|refs=$1}}");
 	text = text.replace("{{reflist|refs=}}", "{{reflist}}"); // hack to make sure we don't leave an unneeded |refs=
 	text = text.replace(/\{\{(userspacedraft|userspace draft|user sandbox|Please leave this line alone \(sandbox heading\))(?:\{\{[^{}]*\}\}|[^}{])*\}\}/ig, "");
-	text = text.replace(/\{\{(((change|edit|mediawiki|protected|sper|sudo)[ -]?(lock|semi|template)?[ -]?(protect|request)?[ -]?(ed(it)?|ion)?)(.*?)\}\}/gi, "");//drafts should never be protected or have edit requests on them
+	//text = text.replace(/\{\{(((change|edit|mediawiki|protected|sper|sudo)[ -]?(lock|semi|template)?[ -]?(protect|request)?[ -]?(ed(it)?|ion)?)(.*?)\}\}/gi, "");//drafts should never be protected or have edit requests on them
 	text = text.replace(/<!--\s*-->/ig, ""); // Remove empty HTML comments
 	text = text.replace(/^----+$/igm, ""); // Removes horizontal rules
 	if (afc_re.test(text)) // Remove "AfC submission with missing AfC template" maintenace category - a cleanup will remove the cat without adding any!
