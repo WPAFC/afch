@@ -1105,8 +1105,8 @@ function afcHelper_cleanup(text,type) {
 		text = text.replace(/\<\!-- Do not include any categories - these don't need to be added until the article is accepted; They will just get removed by a bot! --\>/ig, "");
 		text = text.replace(/\<\!-{1,3}\s*Important, do not remove this line before (template|article) has been created.\s*-{1,3}\>/ig, "");
 		text = text.replace(/\[\[:Category:Articles created via the Article Wizard\]\]/gi, "[[Category:Articles created via the Article Wizard]]");
-    // Strip the AFC G13 postponement template
-    text = text.replace(/\{\{AfC postpone G13\|.\}\}\n\n/gi,"");
+		// Strip the AFC G13 postponement template
+		text = text.replace(/\{\{AfC postpone G13(?:\|\d*)?\}\}\n*/gi,"");
 	} else {
 		// If we're not accepting, comment out categories
 		text = text.replace(/\[\[Category:/gi, "\[\[:Category:");
