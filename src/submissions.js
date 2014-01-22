@@ -802,7 +802,7 @@ function afcHelper_act(action) {
 			usertext += "\n== Your submission at \[\[Wikipedia:Articles for creation|Articles for creation\]\]: \[\[" + afcHelper_PageName + "|" + afcHelper_submissionTitle + "\]\] ({{subst:CURRENTMONTHNAME}} {{subst:CURRENTDAY}}) ==";
 			usertext += "\n\{\{subst:afc decline|full=" + afcHelper_PageName;
 			if (code === 'cv') usertext += "|cv=yes";
-			usertext += "|sig=yes\}\}";
+			usertext += "|sig=yes|nofloat=yes\}\}";
 
 			if (teahouse) {
 				$('#afcHelper_status').html($("#afcHelper_status").html() + '<div id="afcHelper_get_teahouse"></div>');
