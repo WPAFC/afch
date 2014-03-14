@@ -308,7 +308,6 @@ function afcHelper_prompt(type) {
 		'<br /><label for="afcHelper_talkAppend">Append wikicode to talk page (optional, e.g. WikiProject templates): </label><br><textarea class="afcHelper_expand" rows="1" cols="60" id="afcHelper_talkAppend" spellcheck="true"></textarea>' +
 		'<br /><label for="afcHelper_reqphoto">Does the article need a photo/image? (will add &#123;&#123;<a href="'+ wgArticlePath.replace("$1", 'Template:Reqphoto') + '" title="Template:Reqphoto" target="_blank">reqphoto</a>&#125;&#125; to talk page) </label><input type="checkbox" id="afcHelper_reqphoto"/>' +
 		'<br /><label for="afcHelper_reqinfobox">Does the article need an infobox? (will add &#123;&#123;<a href="'+ wgArticlePath.replace("$1", 'Template:Reqinfobox') + '" title="Template:Reqinfobox" target="_blank">reqinfobox</a>&#125;&#125; to talk page) </label><input type="checkbox" id="afcHelper_reqinfobox"/>' +
-    '<br /><label for="afcHelper_noPatrol">Should we [[Wikipedia:Page Curation/Help|"New Page Patrol"]] this page?</label><input type="checkbox" id="afcHelper_noPatrol"/>' +
 		'<br /><label for="afcHelper_biography">Is the article a biography? </label><input type="checkbox" id="afcHelper_biography" onchange=afcHelper_trigger(\'afcHelper_biography_blp\') />' +
 		'<div id="afcHelper_biography_blp" style="display:none"><label for="afcHelper_dateofbirth">Month and day of birth (if known/given, e.g. <i>November 2</i>): </label><input type="text" id="afcHelper_dateofbirth" spellcheck="true"/>' +
 		'<br /><label for="afcHelper_yearofbirth">Year of birth (if known/given, e.g. <i>1901</i>): </label><input type="text" id="afcHelper_yearofbirth" />' +
@@ -352,7 +351,6 @@ function afcHelper_prompt(type) {
 		'<label for="afcHelper_blank">Blank the submission (replace the content with {{<a href="' + wgArticlePath.replace("$1", 'Template:Afc_cleared') + '" title="Template:Afc cleared" target="_blank">afc cleared</a>}}):</label><input type="checkbox" id="afcHelper_blank" onchange=afcHelper_trigger(\'afcHelper_afcccleared\') /><br/>' +
 		'<div id="afcHelper_extra_afccleared" style="display:none"><label for="afcHelper_afccleared">Trigger the \'csd\' parameter and nominate the submission for speedy deletion?</label> <input type="checkbox" id="afcHelper_blank_csd"/><br/></div>' +
 		'<label for="afcHelper_notify">Notify author:</label><input type="checkbox" onchange=afcHelper_trigger(\'afcHelper_notify_Teahouse\') id="afcHelper_notify" checked="checked" /><br/>' +
-    '<br /><label for="afcHelper_noPatrol">Should we [[Wikipedia:Page Curation/Help|"New Page Patrol"]] this page?</label><input type="checkbox" id="afcHelper_noPatrol"/>' +
 		'<div id="afcHelper_notify_Teahouse"><label for="afcHelper_notify_Teahouse">Notify author about <a href="' + wgArticlePath.replace("$1", 'Wikipedia:Teahouse') + '" title="Wikipedia:Teahouse" target="_blank">Wikipedia:Teahouse</a>:</label><input type="checkbox" id="afcHelper_Teahouse" /><br/></div><button type="button" class="afcHelper_button decline" id="afcHelper_prompt_button" onclick="afcHelper_act(\'decline\')">Decline</button>';
 		$("#afcHelper_extra").html(text);
 	} else if (type === 'submit') {
@@ -363,7 +361,6 @@ function afcHelper_prompt(type) {
 		'<input type="radio" name="afcHelper_submit" id="afcHelper_submit3" value="creator" checked /> <label for="afcHelper_submit3">submit with the page creator as the submitter</label><br>' +
 		'<input type="radio" name="afcHelper_submit" id="afcHelper_submit4" value="self" checked /> <label for="afcHelper_submit3">submit with yourself as the submitter</label><br>' +
 		'<input type="radio" name="afcHelper_submit" id="afcHelper_submit5" value="custom" /> <label for="afcHelper_submit4">submit with a custom submitter:</label> <input type="text" id="afcHelper_custom_submitter" /><br>' +
-    '<br /><label for="afcHelper_noPatrol">Should we [[Wikipedia:Page Curation/Help|"New Page Patrol"]] this page?</label><input type="checkbox" id="afcHelper_noPatrol"/>' +
 		'<button class="afcHelper_button submit" type="button" id="afcHelper_prompt_button" onclick="afcHelper_act(\'submit\')">Place a submit template</button>';
 		$("#afcHelper_extra").html(text);
 	} else if (type === 'draft') {
@@ -372,26 +369,19 @@ function afcHelper_prompt(type) {
 		'<input type="radio" name="afcHelper_draft" id="afcHelper_draft2" value="last" /> <label for="afcHelper_submit2">tag with the last non-bot editor as the submitter</label><br>' +
 		'<input type="radio" name="afcHelper_draft" id="afcHelper_draft3" value="creator" checked /> <label for="afcHelper_submit3">tag with the page creator as the submitter</label><br>' +
 		'<input type="radio" name="afcHelper_draft" id="afcHelper_draft4" value="custom" /> <label for="afcHelper_submit4">tag with a custom submitter:</label> <input type="text" id="afcHelper_draft_submitter" /><br>' +
-    '<br /><label for="afcHelper_noPatrol">Should we [[Wikipedia:Page Curation/Help|"New Page Patrol"]] this page?</label><input type="checkbox" id="afcHelper_noPatrol"/>' +
 		'<button class="afcHelper_button draft" type="button" id="afcHelper_prompt_button" onclick="afcHelper_act(\'draft\')">Place {{AFC draft}} template</button>';
 		$("#afcHelper_extra").html(text);
 	} else if (type === 'mark') {
 		var text = '<h3>Marking submission ' + afcHelper_PageName + ' as under review</h3>' +
-		'<label for="afcHelper_comments">Additional comment (signature is automatically added): </label><textarea rows="3" cols="60" id="afcHelper_comments" spellcheck="true"></textarea>' +
-    '<br /><label for="afcHelper_noPatrol">Should we [[Wikipedia:Page Curation/Help|"New Page Patrol"]] this page?</label><input type="checkbox" id="afcHelper_noPatrol"/>' +
-    '<br/><button type="button" class="afcHelper_button mark" id="afcHelper_prompt_button" onclick="afcHelper_act(\'mark\')">Place under review</button>';
+		'<label for="afcHelper_comments">Additional comment (signature is automatically added): </label><textarea rows="3" cols="60" id="afcHelper_comments" spellcheck="true"></textarea><br/><button type="button" class="afcHelper_button mark" id="afcHelper_prompt_button" onclick="afcHelper_act(\'mark\')">Place under review</button>';
 		$("#afcHelper_extra").html(text);
 	} else if (type === 'comment') {
 		var text = '<h3>Commenting on ' + afcHelper_PageName + ' </h3>' +
-		'<label for="afcHelper_comments">Comment (signature is automatically added): </label><textarea rows="3" cols="60" id="afcHelper_comments" spellcheck="true"></textarea>'+
-    '<br /><label for="afcHelper_noPatrol">Should we [[Wikipedia:Page Curation/Help|"New Page Patrol"]] this page?</label><input type="checkbox" id="afcHelper_noPatrol"/>' +
-    '<br/><button type="button" class="afcHelper_button comment" id="afcHelper_prompt_button" onclick="afcHelper_act(\'comment\')">Add comment</button>';
+		'<label for="afcHelper_comments">Comment (signature is automatically added): </label><textarea rows="3" cols="60" id="afcHelper_comments" spellcheck="true"></textarea><br/><button type="button" class="afcHelper_button comment" id="afcHelper_prompt_button" onclick="afcHelper_act(\'comment\')">Add comment</button>';
 		$("#afcHelper_extra").html(text);
 	} else if (type === 'postpone_g13') {
 		var text = '<h3>Additional comment when postponing speedy deletion</h3>' +
-		'<label for="afcHelper_comments">Comment (signature is automatically added): </label><textarea rows="3" cols="60" id="afcHelper_comments" spellcheck="true"></textarea><br/>' +
-    '<br /><label for="afcHelper_noPatrol">Should we [[Wikipedia:Page Curation/Help|"New Page Patrol"]] this page?</label><input type="checkbox" id="afcHelper_noPatrol"/>' +
-    '<button type="button" class="afcHelper_button" id="afcHelper_prompt_button" onclick="afcHelper_act(\'postpone_g13\')">Postpone G13 speedy deletion</button>'+
+		'<label for="afcHelper_comments">Comment (signature is automatically added): </label><textarea rows="3" cols="60" id="afcHelper_comments" spellcheck="true"></textarea><br/><button type="button" class="afcHelper_button" id="afcHelper_prompt_button" onclick="afcHelper_act(\'postpone_g13\')">Postpone G13 speedy deletion</button>';
 		$("#afcHelper_extra").html(text);
 	}
 }
@@ -407,7 +397,6 @@ function afcHelper_act(action) {
 	if (action === 'draft') {
 		var typeofsubmit = $("input[name=afcHelper_draft]:checked").val();
 		var customuser = $("#afcHelper_draft_submitter").val();
-    var noPatrol = $("#afcHelper_noPatrol").attr("checked");
 		displayMessage('<ul id="afcHelper_status"></ul><ul id="afcHelper_finish"></ul>');
 		afcHelper_displaymessagehelper('done','standard');
 		if (typeofsubmit == "last") {
@@ -425,11 +414,9 @@ function afcHelper_act(action) {
 		}
 		newtext = submit + pagetext;
 		newtext = afcHelper_cleanup(newtext);
-    var doWePatrol = ( noPatrol != "checked");
-		afcHelper_editPage(afcHelper_PageName, newtext, "Tagging [[Wikipedia:Articles for creation]] draft", doWePatrol);
+		afcHelper_editPage(afcHelper_PageName, newtext, "Tagging [[Wikipedia:Articles for creation]] draft", false);
 	} else if (action === 'postpone_g13') {
 		var comment = $("#afcHelper_comments").val();
-    var doWePatrol = $("#afcHelper_noPatrol").attr("checked");
 		displayMessage('<ul id="afcHelper_status"></ul><ul id="afcHelper_finish"></ul>');
 		afcHelper_displaymessagehelper('done','standard');
 		pagetext = afcHelper_addcomment(comment) + pagetext;
@@ -446,18 +433,14 @@ function afcHelper_act(action) {
 			newtext = pagetext+"\n{{AfC postpone G13|1}}";
 		}
 		newtext = afcHelper_cleanup(newtext);
-    var doWePatrol = ( noPatrol != "checked");
-		afcHelper_editPage(afcHelper_PageName, newtext, "Postponing [[WP:G13|G13]] speedy deletion", doWePatrol);
+		afcHelper_editPage(afcHelper_PageName, newtext, "Postponing [[WP:G13|G13]] speedy deletion", false);
 	} else if (action === 'g13') {
 		displayMessage('<ul id="afcHelper_status"></ul><ul id="afcHelper_finish"></ul>');
 		afcHelper_displaymessagehelper('done','standard');
 		timestamp = afcHelper_cache.afcHelper_lastedited;
 		newtext = "{{Db-g13|ts=" + timestamp + "}}\n" + pagetext;
 		newtext = afcHelper_cleanup(newtext);
-    // No user options on this so we're defaulting to NOT patrol on ones we're 
-    // G13ing in case the page gets restored in the future to give it a
-    // opportunity for review later
-		afcHelper_editPage(afcHelper_PageName, newtext, "Tagging abandoned [[Wikipedia:Articles for creation]] draft for speedy deletion under [[WP:G13|G13]]", true);
+		afcHelper_editPage(afcHelper_PageName, newtext, "Tagging abandoned [[Wikipedia:Articles for creation]] draft for speedy deletion under [[WP:G13|G13]]", false);
 		// notify users
 		var users = new Array();
 		var templates = pagetext.match(all_afc_re);
@@ -495,8 +478,6 @@ function afcHelper_act(action) {
 		if (typeofsubmit == 'last') {
 			// Get the last non-bot editor to the page
 			var submitinfo = afcHelper_last_nonbot(afcHelper_PageName);
-      var noPatrol = $("#afcHelper_noPatrol").attr("checked");
-      var doWePatrol = ( noPatrol != "checked");
 			if (submitinfo) {
 				dt = new Date(submitinfo['timestamp']);
 				// output the date in the correct format
@@ -504,7 +485,7 @@ function afcHelper_act(action) {
 				var submit = "{{AFC submission|||ts=" + date + "|u=" + submitinfo['user'] + "|ns=" + wgNamespaceNumber + "}}\n";
 				newtext = submit + pagetext;
 				newtext = afcHelper_cleanup(newtext);
-				afcHelper_editPage(afcHelper_PageName, newtext, "Submitting [[Wikipedia:Articles for creation]] submission", doWePatrol);
+				afcHelper_editPage(afcHelper_PageName, newtext, "Submitting [[Wikipedia:Articles for creation]] submission", false);
 			} else {
 				alert("Unable to find a non-bot editor; please check the page history.");
 			}
@@ -553,7 +534,7 @@ function afcHelper_act(action) {
 				newtext = submit + pagetext
 			}
 			newtext = afcHelper_cleanup(newtext);
-			afcHelper_editPage(afcHelper_PageName, newtext, "Submitting [[Wikipedia:Articles for creation]] submission", doWePatrol);
+			afcHelper_editPage(afcHelper_PageName, newtext, "Submitting [[Wikipedia:Articles for creation]] submission", false);
 		}
 	} else if (action === 'accept') {
 		var newtitle = $("#afcHelper_movetarget").val();
@@ -563,7 +544,6 @@ function afcHelper_act(action) {
 		var talkAppend = $("#afcHelper_talkAppend").val();
 		var biography = $("#afcHelper_biography").attr("checked");
 		var reqinfobox = $("#afcHelper_reqinfobox").attr("checked");
-    var noPatrol = $("#afcHelper_noPatrol").attr("checked");
 		var reqphoto = $("#afcHelper_reqphoto").attr("checked");
 
 		var selectedwikiprojects = new Array();
@@ -736,8 +716,8 @@ function afcHelper_act(action) {
 					$("#afcHelper_orphan").html("Page is orphaned; adding tag.");
 				}
 			}
-      var doWePatrol = ( noPatrol != "checked");
-			afcHelper_editPage(newtitle, pagetext, "Cleanup following [[Wikipedia:Articles for creation]] creation", doWePatrol);
+
+			afcHelper_editPage(newtitle, pagetext, "Cleanup following [[Wikipedia:Articles for creation]] creation", false);
 		};
 		afcHelper_movePage(afcHelper_PageName, newtitle, 'Created via \[\[WP:AFC|Articles for creation\]\] (\[\[WP:WPAFC|you can help!\]\])', callback, true);
 	} else if (action === 'decline') {
@@ -752,7 +732,6 @@ function afcHelper_act(action) {
 		var blank_csd = $("#afcHelper_blank_csd").attr("checked");
 		var notify = $("#afcHelper_notify").attr("checked");
 		var teahouse = $("#afcHelper_Teahouse").attr("checked");
-    var noPatrol = $("#afcHelper_noPatrol").attr("checked");
 		var extra = '';
 		if (code === 'cv' || code === 'dup' || code === 'mergeto' || code === 'exists' || code === 'lang' || code === 'plot') {
 			extra = $("#afcHelper_extra_inlinebox").val();
@@ -904,12 +883,9 @@ function afcHelper_act(action) {
 			}
 		}
 		pagetext = afcHelper_cleanup(pagetext);
-    var doWePatrol = ( noPatrol != "checked");
-		afcHelper_editPage(afcHelper_PageName, pagetext, summary, doWePatrol);
+		afcHelper_editPage(afcHelper_PageName, pagetext, summary, false);
 	} else if (action === 'comment') {
 		var comment = $("#afcHelper_comments").val();
-    var noPatrol = $("#afcHelper_noPatrol").attr("checked");
-    var doWePatrol = ( noPatrol != "checked");
 		displayMessage('<ul id="afcHelper_status"></ul><ul id="afcHelper_finish"></ul>');
 		afcHelper_displaymessagehelper('done','standard');
 
@@ -920,11 +896,9 @@ function afcHelper_act(action) {
 			return;
 		}
 		pagetext = afcHelper_cleanup(pagetext);
-		afcHelper_editPage(afcHelper_PageName, pagetext, "Commenting on [[Wikipedia:Articles for creation]] submission", doWePatrol);
+		afcHelper_editPage(afcHelper_PageName, pagetext, "Commenting on [[Wikipedia:Articles for creation]] submission", false);
 	} else if (action === 'mark') {
 		var comment = $("#afcHelper_comments").val();
-    var noPatrol = $("#afcHelper_noPatrol").attr("checked");
-    var doWePatrol = ( noPatrol != "checked");
 		if (comment == undefined) comment = window.overwrite_comment; // This handles the overwrite_redirect scenario
 		displayMessage('<ul id="afcHelper_status"></ul><ul id="afcHelper_finish"></ul>');
 		afcHelper_displaymessagehelper('done','standard');
@@ -936,7 +910,7 @@ function afcHelper_act(action) {
 		pagetext = pagetext.replace(exclusive_pending_afc_re, "$1r\|\|$2\|reviewer=\{\{subst:REVISIONUSER\}\}\|reviewts={{subst:CURRENTTIMESTAMP}}\|$3");
 		pagetext = afcHelper_addcomment(comment) + pagetext;
 		pagetext = afcHelper_cleanup(pagetext);
-		afcHelper_editPage(afcHelper_PageName, pagetext, "Marking [[Wikipedia:Articles for creation]] submission as under review", doWePatrol);
+		afcHelper_editPage(afcHelper_PageName, pagetext, "Marking [[Wikipedia:Articles for creation]] submission as under review", false);
 	} else if (action === 'unmark') {
 		if (!afcHelper_underreview()) return;
 		displayMessage('<ul id="afcHelper_status"></ul><ul id="afcHelper_finish"></ul>');
@@ -951,9 +925,7 @@ function afcHelper_act(action) {
 		newtemplate = newtemplate.replace(/\|\s*reviewts=\s*([0-9]{14})[^\|]*\|/i, "");
 		pagetext = pagetext.replace(template, newtemplate);
 		pagetext = afcHelper_cleanup(pagetext);
-    // No user options on this so we're defaulting to NOT patrol on ones we're 
-    // un-marking for review to give users an opportunity to patrol it later
-		afcHelper_editPage(afcHelper_PageName, pagetext, "Unmarking [[Wikipedia:Articles for creation]] submission as under review", true);
+		afcHelper_editPage(afcHelper_PageName, pagetext, "Unmarking [[Wikipedia:Articles for creation]] submission as under review", false);
 	} else if (action === 'cleanup') {
 		displayMessage('<ul id="afcHelper_status"></ul><ul id="afcHelper_finish"></ul>');
 		pagetext = afcHelper_cleanup(pagetext);
@@ -961,9 +933,7 @@ function afcHelper_act(action) {
 		if (text === pagetext) {
 			afcHelper_displaymessagehelper('done','cleanednochange');
 		} else {
-      // No user options on this so we're defaulting to NOT patrol on ones we're 
-      // only cleaning to give users an opportunity to patrol it later
-			afcHelper_editPage(afcHelper_PageName, pagetext, "Cleaning [[Wikipedia:Articles for creation]] submission", true);
+			afcHelper_editPage(afcHelper_PageName, pagetext, "Cleaning [[Wikipedia:Articles for creation]] submission", false);
 			afcHelper_displaymessagehelper('done','standard');
 		}
 	}
